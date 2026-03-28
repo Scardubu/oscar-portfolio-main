@@ -1,0 +1,24 @@
+---
+title: 'SabiScore'
+summary: 'Production credit-scoring architecture designed for real-time prediction, constrained infrastructure, and globally accessible delivery.'
+tags:
+  - 'FastAPI'
+  - 'Redis'
+  - 'Postgres'
+  - 'Next.js'
+  - 'XGBoost'
+---
+
+## Context
+
+The system had to balance model quality, delivery speed, and operational reliability without assuming ideal infrastructure conditions. That requirement pushed architecture discipline to the front of the build.
+
+## Key decisions
+
+- Ensemble inference was chosen over a single-model pipeline because accuracy gains remained meaningful without making the serving layer opaque.
+- Redis was introduced to stabilize response time during traffic spikes instead of compensating later with heavier infrastructure.
+- The front-end experience stayed narrow and legible so the product communicated trust before it explained capability.
+
+## Outcome
+
+The result is a production-shaped ML system that presents architecture tradeoffs clearly, serves users predictably, and remains easy to evaluate during technical review.

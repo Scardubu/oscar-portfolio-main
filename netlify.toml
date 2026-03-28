@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Environment variables (set in Netlify dashboard for secrets)
+# NEXT_PUBLIC_GA_ID = "G-TJKVCMC4FY"
+# NEXT_PUBLIC_BASE_URL = "https://scardubu.dev"

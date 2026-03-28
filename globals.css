@@ -1,0 +1,486 @@
+/* ============================================================
+   OSCAR DUBU — PORTFOLIO DESIGN SYSTEM
+   2026 PRODUCTION REFINEMENTS MARKED WITH // 2026 REFINEMENT
+   ============================================================ */
+
+/* ── @property declarations (2026 REFINEMENT) ─────────────── */
+@property --glass-thickness {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1px;
+}
+
+@property --glass-refraction-scale {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 60;
+}
+
+@property --glow-intensity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.6;
+}
+
+@property --shimmer-progress {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: -40%;
+}
+
+/* ── @theme tokens (Tailwind v4) ───────────────────────────── */
+@theme {
+  /* Base palette */
+  --color-space-black: #0a0a0f;
+  --color-space-deep: #0d0d15;
+  --color-space-mid: #111118;
+  --color-space-surface: #16161f;
+  --color-space-elevated: #1c1c28;
+
+  /* Accent — cyan reserved for trust/action states only */
+  --color-accent-primary: #00c8e8;        /* 2026 REFINEMENT: shifted warmer */
+  --color-accent-dim: #00c8e820;
+  --color-accent-glow: #00c8e840;
+  --color-accent-text: #4dd9f0;
+
+  /* Type scale */
+  --color-text-primary: #f0f0f8;
+  --color-text-secondary: #8888a8;
+  --color-text-tertiary: #55556a;
+  --color-text-accent: #00c8e8;
+
+  /* Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+
+  /* Fonts — 2026 REFINEMENT: Syne display + DM Sans body */
+  --font-display: "Syne", "Syne Fallback", sans-serif;
+  --font-body: "DM Sans", "DM Sans Fallback", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", monospace;
+
+  /* Glass shadows */
+  --shadow-liquid-resting: 0 4px 24px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+
+  --shadow-liquid-hover: 0 12px 48px rgba(0, 200, 232, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.4) inset;
+
+  --shadow-liquid-active: 0 6px 24px rgba(0, 200, 232, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.18) inset;
+
+  /* Gradients */
+  --gradient-hero-glow: radial-gradient(
+    ellipse 800px 600px at 50% 0%,
+    rgba(0, 200, 232, 0.08) 0%,
+    transparent 70%
+  );
+
+  --gradient-glass-surface: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+
+  /* Glass borders — Fresnel edges (2026 REFINEMENT) */
+  --border-glass-top: rgba(255, 255, 255, 0.35);
+  --border-glass-bottom: rgba(255, 255, 255, 0.05);
+
+  /* Layout */
+  --bento-gap: clamp(8px, 2vw, 20px);            /* 2026 REFINEMENT */
+  --bento-radius: 16px;                            /* 2026 REFINEMENT */
+  --bento-pad: clamp(16px, 3vw, 24px);            /* 2026 REFINEMENT */
+
+  /* Glow system */
+  --glow-spread: 600px;
+  --glow-blur: 120px;
+
+  /* Noise + grid */
+  --noise-opacity: 0.05;
+  --retro-grid-opacity: 0.08;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ── Reset & base ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-space-black);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.6vw, 17px);
+  line-height: 1.65;
+  overflow-x: hidden;
+  min-height: 100dvh;
+}
+
+/* ── Noise overlay (2026 REFINEMENT) ──────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+  mix-blend-mode: overlay;
+}
+
+/* ── Retro grid background (2026 REFINEMENT) ──────────────── */
+.retro-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center center;
+  transform: perspective(800px) rotateX(55deg) translateY(-10%);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.6) 30%, transparent 70%);
+  animation: grid-drift 20s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes grid-drift {
+  from { background-position: center 0px; }
+  to   { background-position: center 60px; }
+}
+
+/* ── Glass surface system ──────────────────────────────────── */
+.glass-surface {
+  --glass-thickness: 1px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: var(--bento-radius);
+  border: var(--glass-thickness) solid var(--color-border-glass);
+  box-shadow: var(--shadow-liquid-resting);
+  transition:
+    --glass-thickness 200ms ease-out,
+    box-shadow 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.glass-surface:hover {
+  --glass-thickness: 2px;
+  box-shadow: var(--shadow-liquid-hover);
+}
+
+/* Fresnel top edge (2026 REFINEMENT) */
+.glass-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top-left specular edge (2026 REFINEMENT) */
+.glass-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--border-glass-top);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid var(--border-glass-bottom);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-surface--heavy {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+}
+
+.glass-surface--light {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+/* ── Shimmer sweep (2026 REFINEMENT, GPU-only) ─────────────── */
+.shimmer-sweep {
+  overflow: hidden;
+}
+
+.shimmer-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 60%
+  );
+  animation: shimmer 1.2s ease-out both;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%) rotate(5deg); }
+  to   { transform: translateX(200%) rotate(5deg); }
+}
+
+/* ── Chromatic fringe (2026 REFINEMENT, hero/metric only) ──── */
+.chromatic-fringe {
+  box-shadow:
+    var(--shadow-liquid-resting),
+    1px 0 0 rgba(255, 80, 80, 0.08),
+    -1px 0 0 rgba(80, 200, 255, 0.08);
+}
+
+.chromatic-fringe:hover {
+  box-shadow:
+    var(--shadow-liquid-hover),
+    2px 0 0 rgba(255, 80, 80, 0.12),
+    -2px 0 0 rgba(80, 200, 255, 0.12);
+}
+
+/* ── Bento grid system (2026 REFINEMENT) ───────────────────── */
+.bento-dense {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-flow: dense;
+  gap: var(--bento-gap);
+}
+
+.bento-cell {
+  padding: var(--bento-pad);
+  min-height: 180px;
+}
+
+.bento-cell--span-2 { grid-column: span 2; }
+.bento-cell--span-3 { grid-column: span 3; }
+.bento-cell--span-4 { grid-column: span 4; }
+.bento-cell--span-6 { grid-column: span 6; }
+.bento-cell--span-8 { grid-column: span 8; }
+.bento-cell--span-12 { grid-column: span 12; }
+.bento-cell--tall { grid-row: span 2; }
+.bento-cell--wide { grid-column: span 8; }
+
+/* ── Kinetic headline (2026 REFINEMENT) ────────────────────── */
+.kinetic-headline {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.kinetic-headline .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: char-reveal 0.4s var(--ease-out-expo) forwards;
+}
+
+@keyframes char-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Profile glow (2026 REFINEMENT) ────────────────────────── */
+.profile-glow {
+  position: relative;
+}
+
+.profile-glow::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 200, 232, 0.25) 0%,
+    transparent 70%
+  );
+  z-index: -1;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.05); }
+}
+
+/* ── Location badge ─────────────────────────────────────────── */
+.location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.01em;
+}
+
+/* ── Metric card glass ──────────────────────────────────────── */
+.metric-card-glass {
+  padding: var(--bento-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metric-card-glass .label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+
+.metric-card-glass .title {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.metric-card-glass .body {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Metric pulse (card 4 only, 2026 REFINEMENT) */
+.metric-pulse {
+  animation: metric-breath 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes metric-breath {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric-pulse { animation: none; }
+  .shimmer-sweep::after { animation: none; }
+  .kinetic-headline .char {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .retro-grid { animation: none; }
+  .profile-glow::before { animation: none; }
+}
+
+/* ── Live dot ────────────────────────────────────────────────── */
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+  opacity: 0.3;
+  animation: live-ping 2s ease-out infinite;
+}
+
+@keyframes live-ping {
+  0%   { transform: scale(0.8); opacity: 0.4; }
+  70%  { transform: scale(2);   opacity: 0; }
+  100% { transform: scale(2);   opacity: 0; }
+}
+
+/* ── Cursor glow ─────────────────────────────────────────────── */
+.cursor-glow {
+  position: fixed;
+  width: var(--glow-spread);
+  height: var(--glow-spread);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 200, 232, calc(var(--glow-intensity) * 0.06)) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+  transition: opacity 400ms ease;
+}
+
+/* ── Focus rings (branded) ──────────────────────────────────── */
+.focus-ring-branded:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Fallback: no backdrop-filter support ──────────────────── */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-surface {
+    background: rgba(22, 22, 31, 0.92);
+    backdrop-filter: none;
+  }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-space-black); }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 200, 232, 0.3);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 200, 232, 0.6);
+}
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: rgba(0, 200, 232, 0.2);
+  color: var(--color-text-primary);
+}

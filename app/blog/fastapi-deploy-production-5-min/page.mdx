@@ -1,0 +1,129 @@
+# 5-Minute Guide: Deploy FastAPI to Production
+
+**A concise, copy-pasteable checklist for taking a FastAPI app from localhost to a secure, production-ready deployment.**
+
+---
+
+## 1. Containerize the App
+
+```bash
+# Dockerfile
+FROM python:3.11-slim AS base
+
+WORKDIR /app
+COPY pyproject.toml poetry.lock* ./
+RUN pip install --no-cache-dir poetry && poetry install --no-root --only main
+
+COPY . .
+
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+**Checklist:**
+
+- `HEALTHCHECK` route implemented (`/health`)
+- `app.state.model` loaded once at startup
+- No secrets in the image (use env vars)
+
+---
+
+## 2. Pick a Simple Host (DigitalOcean Example)
+
+```bash
+# Create droplet (UI or doctl)
+ssh root@your-ip
+
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Start app
+docker build -t fastapi-app .
+docker run -d --name fastapi-app -p 8000:8000 --restart=always fastapi-app
+```
+
+You now have a public FastAPI instance at `http://your-ip:8000`.
+
+---
+
+## 3. Put Nginx in Front
+
+```bash
+apt-get update && apt-get install -y nginx
+
+cat > /etc/nginx/sites-available/fastapi << 'EOF'
+server {
+  listen 80;
+  server_name your-domain.com;
+
+  location / {
+    proxy_pass http://127.0.0.1:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+EOF
+
+ln -s /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled/fastapi
+nginx -t && systemctl restart nginx
+```
+
+Hit `http://your-domain.com` → Nginx → FastAPI.
+
+---
+
+## 4. Add HTTPS in 60 Seconds
+
+```bash
+apt-get install -y certbot python3-certbot-nginx
+certbot --nginx -d your-domain.com --redirect --non-interactive \
+  --agree-tos -m you@example.com
+```
+
+You now have **HTTPS + automatic renewal**.
+
+---
+
+## 5. Observability Essentials
+
+- Log format: include request ID, path, status, latency
+- Metrics: expose `/metrics` (Prometheus) or plug into a hosted solution
+
+```python
+from fastapi import FastAPI, Request
+import time
+
+app = FastAPI()
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    duration = (time.perf_counter() - start) * 1000
+    app.logger.info(
+        "method=%s path=%s status=%s duration_ms=%.1f",
+        request.method,
+        request.url.path,
+        response.status_code,
+        duration,
+    )
+    return response
+```
+
+---
+
+## 6. Sanity Checklist Before Sleeping
+
+- [ ] `/health` returns 200 and checks dependencies
+- [ ] Uvicorn started with `--workers` (2–4 to start)
+- [ ] Nginx proxies only to `127.0.0.1:8000`
+- [ ] HTTPS working, forced redirect from HTTP
+- [ ] Logs visible on server (`journalctl` / `docker logs`)
+- [ ] CPU/RAM usage under control at expected traffic
+
+If you want a deeper, end-to-end example, see:
+
+- **[FastAPI for ML Engineers: Serving Models with &lt;100ms Latency](/blog/fastapi-ml-engineers)**
+
+Or if you’d rather have someone set this up with you, **[reach out](/#contact)** and we’ll design a deployment path tailored to your stack.

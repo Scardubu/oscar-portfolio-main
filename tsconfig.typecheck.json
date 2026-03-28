@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "components/blog/**/*.ts",
+    "components/blog/**/*.tsx",
+    "components/ui/**/*.ts",
+    "components/ui/**/*.tsx",
+    "components/ContinueReadingBanner.tsx",
+    "components/LiveBuildFeed.tsx",
+    "components/ProductionPatternsVisualization.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "app/blog/BlogPostAnalytics.tsx",
+    "app/components/KeyboardShortcuts.tsx"
+  ]
+}

@@ -1,0 +1,191 @@
+# Building AI Products in Nigeria: Challenges, Solutions, and Opportunities
+
+**A practical guide to building ML solutions in the Nigerian context, covering infrastructure, data, and market opportunities.**
+
+---
+
+## Why Nigeria Is a Perfect (and Brutal) Testbed
+
+Nigeria is one of the most interesting places on earth to build AI:
+
+- **Huge market** – 200M+ people, young, mobile-first
+- **Real problems** – credit, healthcare, logistics, agriculture, betting
+- **Hard constraints** – unreliable power, expensive compute, patchy internet
+
+If you can ship a reliable ML product here, you can ship it anywhere.
+
+This post breaks down what it *actually* takes to build AI products in Nigeria—based on shipping systems like **SabiScore** to real users.
+
+---
+
+## Challenge 1: Infrastructure Reality (Power, Network, Cloud)
+
+Let’s start with the obvious: **nothing is stable by default.**
+
+- Power goes out when you least expect it
+- Mobile data dies in the middle of a deployment
+- Cloud regions closest to Africa still have higher latency
+
+Instead of complaining, design for it.
+
+```python
+# Robust HTTP client with retries (essential in Nigerian conditions)
+import httpx
+import tenacity
+
+@tenacity.retry(
+    stop=tenacity.stop_after_attempt(5),
+    wait=tenacity.wait_exponential(multiplier=1, min=1, max=30),
+    retry=tenacity.retry_if_exception_type(httpx.RequestError),
+)
+async def safe_get(url: str) -> dict:
+    async with httpx.AsyncClient(timeout=8.0) as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.json()
+```
+
+**Design rule**: _Assume every network call fails once._ Your systems should retry gracefully, log smartly, and avoid blocking the user.
+
+---
+
+## Challenge 2: Data Is Messy, Late, or Non-Existent
+
+You will not find a clean, well-documented "Nigeria-ML-dataset.zip" for your problem.
+
+For SabiScore, we needed:
+- Historical match data
+- Odds from multiple bookmakers
+- League tables and form metrics
+
+What we actually got:
+- Inconsistent APIs
+- Rate limits that weren’t documented
+- Missing data for local leagues
+
+**Solution: Build a data aggregation layer.**
+
+```python
+DATA_SOURCES = ["primary_api", "backup_api", "manual_entry"]
+
+async def fetch_match(match_id: str) -> dict:
+    errors = []
+    for source in DATA_SOURCES:
+        try:
+            data = await fetch_from_source(source, match_id)
+            if validate(data):
+                return data
+        except Exception as e:  # log properly in real code
+            errors.append((source, str(e)))
+            continue
+    raise RuntimeError(f"No valid data for {match_id}: {errors}")
+```
+
+**Key mindset shift**: you’re not just training models—you’re building **data products** in a hostile environment.
+
+---
+
+## Challenge 3: Talent and Skill Gaps
+
+There are brilliant engineers in Nigeria. But the pipeline from:
+
+> "I took a Coursera ML course"
+
+to:
+
+> "I can deploy, monitor, and maintain an ML system in production"
+
+is still very narrow.
+
+If you're leading an AI product here, you must:
+
+- **Teach production skills**: logging, monitoring, Docker, CI/CD
+- **Pair ML with strong backend engineering**
+- **Invest in docs and onboarding**
+
+One simple pattern that worked well for us:
+
+```python
+# Simple, readable service boundary between ML code and API
+
+class PredictionService:
+    def __init__(self, model_registry, feature_store):
+        self.model_registry = model_registry
+        self.feature_store = feature_store
+
+    def predict(self, request: "PredictionRequest") -> "PredictionResponse":
+        features = self.feature_store.build_features(request)
+        model = self.model_registry.get_current_model()
+        probs = model.predict_proba([features])[0]
+        return self._to_response(request, probs, features)
+```
+
+This separation makes it easier for more junior engineers to touch API code without breaking ML logic.
+
+---
+
+## Massive Opportunity: Local Context, Global Tools
+
+Where Nigeria really shines is **context**.
+
+You understand:
+
+- Local betting patterns
+- How small businesses actually operate
+- The real friction around payments, trust, and UX
+
+Combine that with global tooling:
+
+- **Python + FastAPI** for APIs
+- **PostgreSQL** for structured data
+- **Redis** for caching
+- **React/Next.js** for interfaces
+
+And suddenly you can build products foreign companies can’t:
+
+- Credit scoring for informal businesses
+- AI-powered agri-tools for smallholder farmers
+- Sports prediction tools tailored to Nigerian leagues
+
+---
+
+## Practical Opportunities You Can Build *Now*
+
+Here are a few ideas that sit at the intersection of **feasible** and **high-impact**:
+
+1. **"Explain my bet" assistant** for sports bettors
+2. **Creditworthiness scoring** for POS agents and micro-SMEs
+3. **Logistics ETA prediction** for Lagos delivery routes
+4. **"Power outage forecaster"** using public data + private signals
+5. **Fraud detection** for local fintech transaction streams
+
+Each one is:
+
+- Data-backed
+- Technically approachable
+- Pain-killer, not vitamin
+
+---
+
+## Lessons From Shipping SabiScore
+
+What I’d tell any Nigerian founder building AI in 2025:
+
+- **Start simple**. One model, one narrow use case, one metric.
+- **Bias for reliability over fancy models**. Users don’t care if it’s a transformer or a tree—they care if it works.
+- **Educate your users**. Many people are using an ML product for the first time.
+- **Charge something, even small**. It validates that you’re solving a real problem.
+
+---
+
+## Call to Action
+
+If you're building ML products in Nigeria or Africa and want:
+
+- A second pair of eyes on your architecture
+- Help getting from notebook → production
+- Someone who has fought these exact constraints
+
+**Let’s talk.** [Reach out here](/#contact) and mention this article.
+
+And if you’re just getting started, read next: **[From Notebook to Production: Deploying Your First ML Web App](/blog/fastapi-ml-engineers)**.

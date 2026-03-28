@@ -1,0 +1,366 @@
+# 0 c 99.9% Uptime: Turning a Flaky ML API Into a Reliable Product in 4 Weeks
+
+**How I took a real ML API from constant outages and angry users to 99.9% uptime in a month c and the exact playbook you can steal.**
+
+---
+
+## The Problem: When It Works on My Machine Starts Costing Real Money
+
+In 2024 I worked with a team that had what most ML engineers would call a good problem:
+
+- Their model was performing well in offline tests.
+- Users *loved* the idea of the product.
+- Traffic was growing organically.
+
+But in production, their ML API was a mess:
+
+- 50 outages *per month*.
+- Random 500 errors they couldnt reproduce.
+- Latency spikes to 30 seconds during peak hours.
+
+The founders summary was brutal:
+
+> We dont have an ML problem. We have a reliability problem.
+
+This post is the exact 4-week playbook we used to go from **1cuptime** to **99.9% uptime**, without rewriting the entire system or spending enterprise money.
+
+If youre running an ML API that keeps breaking at the worst possible time, steal this.
+
+---
+
+## Week 1 c Baseline: Measure Before You Touch Anything
+
+### Step 1: Instrument the Current Reality
+
+Before changing infrastructure, we needed to know what was *actually* happening.
+
+We added three things:
+
+1. **Uptime monitoring** (UptimeRobot)
+   - HTTP checks on `/health` every 10 minutes.
+   - Alert channels: email + Discord.
+
+2. **Error tracking** (Sentry)
+   - Captured stack traces for 500 errors.
+   - Tagged errors by endpoint, environment, and deployment version.
+
+3. **Latency + error metrics** (Prometheus + Grafana)
+   - Histograms for p50 / p95 / p99 latency.
+   - Error rate by endpoint.
+   - CPU, memory, disk, and DB connections.
+
+**Why this matters:**
+
+- Most teams guess wrong about whats causing downtime.
+- Good observability turns I think into I know.
+
+### Step 2: First-Week Reality Check
+
+After 7 days, the picture was clear:
+
+- **Uptime:** ~97.8%
+- **p95 latency:** **8000ms** on main prediction endpoint.
+- **Error bursts:** clustered around deploys and traffic spikes.
+
+Patterns we saw:
+
+- CPU and memory spiking during model loads.
+- DB connections hitting the limit during traffic bursts.
+- Errors increasing right after manual deployments.
+
+**Key insight:** most random incidents had boring, repeatable causes.
+
+---
+
+## Week 2 c Architecture: Remove Single Points of Failure
+
+### Step 3: Redesign the API Topology (Without a Rewrite)
+
+**Before:**
+
+```text
+[Clients] e [API Server] e [Postgres]
+                          e [ML Model in Process]
+```
+
+- 1 API instance.
+- 1 database.
+- Model loaded inside the same process.
+
+If that single server died, *everything* died.
+
+**After:**
+
+```text
+[Clients]
+   e [Cloudflare]
+        e [NGINX Load Balancer]
+              e [API 1]
+              e [API 2]
+                    e [Redis Cache]
+                    e [Postgres Primary] e [Postgres Standby]
+```
+
+Changes we made:
+
+- **2 API instances** behind an NGINX load balancer.
+- **Managed Postgres** with automatic failover.
+- **Redis cache** in front of expensive model calls.
+
+This alone doesnt give you 99.9% uptime, but it removes the most obvious single points of failure.
+
+### Step 4: Timeouts, Retries, and Health Checks
+
+Downtime isnt just server is dead. Its also:
+
+- Requests hanging forever.
+- Slow dependencies dragging everything down.
+
+We tightened up the edge using NGINX:
+
+```nginx
+upstream api_backend {
+    server api1.internal:8000 max_fails=3 fail_timeout=30s;
+    server api2.internal:8000 max_fails=3 fail_timeout=30s;
+    keepalive 32;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name api.example.com;
+
+    location / {
+        proxy_pass http://api_backend;
+        proxy_next_upstream error timeout http_500 http_502 http_503;
+        proxy_connect_timeout 2s;
+        proxy_send_timeout 10s;
+        proxy_read_timeout 10s;
+    }
+
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+    }
+}
+```
+
+Key principles:
+
+- **Short timeouts** on upstreams.
+- **Retry only on safe failures** (network errors, 5xx), not on every error.
+- **Health checks** that reflect app health, not just container status.
+
+Result after Week 2:
+
+- Fewer full outages.
+- Clearer separation between net issues and app issues.
+
+---
+
+## Week 3 c Monitoring That Prevents 3 AM Surprises
+
+### Step 5: Define Red / Yellow / Green States
+
+We formalized health states:
+
+- **Green:**
+  - Error rate < 1%.
+  - p95 latency < 200ms.
+  - No critical alerts.
+
+- **Yellow (degraded):**
+  - Error rate 10c3%.
+  - p95 latency 2000c400ms.
+  - Non-critical alerts firing.
+
+- **Red:**
+  - Error rate > 3% for > 5 minutes.
+  - p95 latency > 400ms.
+  - Health checks failing.
+
+Each state mapped to an action plan:
+
+- Green: just monitor.
+- Yellow: investigate within working hours.
+- Red: drop everything and respond.
+
+### Step 6: Concrete Monitoring Setup
+
+**UptimeRobot**
+
+- Checks `/health` every 60 seconds.
+- Alerts after 2 consecutive failures.
+
+**Sentry**
+
+- Alert rules:
+  - New error type.
+  - Error rate spike on prediction endpoint.
+
+**Prometheus + Grafana**
+
+Dashboards we built:
+
+- Latency by endpoint (p50, p95, p99).
+- Error rate by status code.
+- Resource usage:
+  - CPU, memory, disk, DB connections.
+
+Suddenly, incidents had timelines instead of guesses:
+
+> At 14:02, latency spiked.
+> At 14:03, DB connections maxed out.
+> At 14:04, health checks failed.
+
+---
+
+## Week 4 c Deployments & Incidents: Stop Breaking Prod Yourself
+
+### Step 7: Zero-Downtime Deploys for Models and APIs
+
+Most of this teams incidents were **self-inflicted**:
+
+- Deploying on Friday evenings.
+- Reloading models in-process while serving traffic.
+- Running DB migrations that locked hot tables.
+
+We changed the rules:
+
+- **No Friday deploys.**
+- **Every deploy must be reversible.**
+- **Models use bluecgreen style hot swaps.**
+
+A simplified version of the model registry pattern:
+
+```python
+class ModelRegistry:
+    def __init__(self, model_dir: Path):
+        self.model_dir = model_dir
+        self.blue_model = self._load_latest()
+        self.green_model = None
+        self.active = "blue"
+
+    def _load_latest(self):
+        model_files = sorted(self.model_dir.glob("model_v*.pkl"))
+        return joblib.load(model_files[-1])
+
+    def update_model(self, new_model_path: Path):
+        candidate = joblib.load(new_model_path)
+
+        if not self._passes_smoke_tests(candidate):
+            raise ValueError("New model failed validation")
+
+        if self.active == "blue":
+            self.green_model = candidate
+            self.active = "green"
+        else:
+            self.blue_model = candidate
+            self.active = "blue"
+
+    def predict(self, features):
+        model = self.blue_model if self.active == "blue" else self.green_model
+        return model.predict(features)
+```
+
+For the API:
+
+- Roll one instance at a time.
+- Only mark instance healthy after smoke tests pass.
+
+### Step 8: Incident Runbook + Post-Mortems
+
+We wrote a **one-page incident runbook**:
+
+1. Confirm its not a false alarm.
+2. Check:
+   - Status page.
+   - Deploy history (last 2 hours).
+   - Dashboards.
+3. Decide:
+   - Rollback?
+   - Scale up?
+   - Hotfix?
+4. Communicate:
+   - Internal Slack.
+   - Public status page.
+
+And we used a lightweight post-mortem template for serious incidents:
+
+- What happened (timeline).
+- Root cause.
+- Why it wasnt caught earlier.
+- 3c5 concrete action items.
+
+One real example:
+
+- **Incident:** primary DB ran out of disk.
+- **Impact:** 23 minutes of 500s.
+- **Fixes:**
+  - Disk space alerts at 80/90%.
+  - Log rotation.
+  - Weekly cleanup job.
+
+---
+
+## Results: Before vs After
+
+### Hard Numbers
+
+**Before:**
+
+- Uptime: ~970c98%.
+- p95 latency: ~800ms.
+- 80+ incidents/month.
+
+**After 4 weeks:**
+
+- Uptime: **99.9%+** over the following quarter.
+- p95 latency: **1500c200ms**.
+- Incidents: 10c2 per month, resolved faster with less stress.
+
+### Soft Wins
+
+- The team stopped being afraid of deploys.
+- Stakeholders trusted the product again.
+- Engineers had time to improve the *model*, not just fight fires.
+
+---
+
+## Your 4-Week 99.9% Uptime Plan (Copy-Paste)
+
+You can follow the exact same arc:
+
+- **Week 1:** instrument everything.
+- **Week 2:** remove obvious single points of failure (API, DB, cache).
+- **Week 3:** build dashboards and alerts that point to root causes.
+- **Week 4:** fix deployments and create a real incident response loop.
+
+If your system already has traffic and revenue, this work usually pays for itself in **one avoided outage**.
+
+---
+
+## Need Help Getting There Faster?
+
+I work with teams who have working ML systems but unreliable production environments.
+
+If youre:
+
+- Tired of 3 AM pages.
+- Nervous every time you deploy.
+- Losing user trust because of downtime.
+
+I offer:
+
+- **MLOps & Reliability Architecture Review (90 minutes)**
+  - Deep dive into your current setup.
+  - Risk analysis across infra, monitoring, and deploys.
+  - Actionable roadmap for getting to 99.9% uptime.
+
+**Want to chat?**
+
+- [Schedule a call](https://scardubu.dev/#contact?ref=blog-mlops-999-uptime-case-study)
+- Or email me at [scardubu@gmail.com](mailto:scardubu@gmail.com) with subject line `MLOps Uptime Review`.
+
+---
+
+*If you know a team whose ML system keeps going down, send them this post. It might save their next launch.*

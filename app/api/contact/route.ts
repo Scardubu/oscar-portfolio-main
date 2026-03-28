@@ -1,0 +1,104 @@
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { contactSchema } from "@/app/lib/validations";
+
+// Lazy-initialize Resend client to avoid build-time errors when env var is missing
+let resend: Resend | null = null;
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null;
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
+
+const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+
+function getClientKey(request: Request, email: string): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const ip = forwardedFor?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+
+  return `${ip}:${email.toLowerCase()}`;
+}
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+
+  if (!entry) {
+    rateLimitMap.set(key, { count: 1, timestamp: now });
+    return false;
+  }
+
+  if (now - entry.timestamp > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(key, { count: 1, timestamp: now });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  entry.count += 1;
+  return false;
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const parseResult = contactSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parseResult.error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    const data = parseResult.data;
+    const rateKey = getClientKey(request, data.email);
+
+    if (isRateLimited(rateKey)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+
+    if (data.honeypot && data.honeypot.length > 0) {
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
+
+    const client = getResendClient();
+    if (!client) {
+      return NextResponse.json(
+        { error: "Contact channel is temporarily unavailable." },
+        { status: 503 },
+      );
+    }
+
+    const subject = `[Portfolio] ${data.inquiryType.toUpperCase()} inquiry from ${data.name}`;
+
+    await client.emails.send({
+      from: "Oscar Portfolio <noreply@scardubu.dev>",
+      to: "scardubu@gmail.com",
+      subject,
+      text: `Name: ${data.name}
+Email: ${data.email}
+Company: ${data.company ?? "-"}
+Type: ${data.inquiryType}
+
+Message:
+${data.message}`,
+    });
+
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch {
+    return NextResponse.json(
+      { error: "Unexpected server error" },
+      { status: 500 },
+    );
+  }
+}

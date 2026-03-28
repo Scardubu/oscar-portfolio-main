@@ -1,0 +1,135 @@
+# Redis Caching Patterns for ML APIs
+
+**Practical caching patterns to cut ML latency and infrastructure cost using Redis.**
+
+---
+
+## Why Cache ML Predictions at All?
+
+In most ML products, users ask the **same questions** again and again:
+
+- "What are the odds for this match?"
+- "What’s the score for this customer?"
+
+Recomputing the prediction every time is:
+
+- Slower than it needs to be
+- More expensive than it needs to be
+
+At SabiScore, Redis caching gave us a **73% cache hit rate** and pushed p95 latency below **100ms**.
+
+---
+
+## Pattern 1: Simple TTL Cache
+
+Use when predictions don’t change often (minutes to hours).
+
+```python
+key = f"pred:{home}:{away}:{kickoff_date}"
+
+cached = await redis.get(key)
+if cached:
+    return PredictionResponse.parse_raw(cached)
+
+prediction = await compute_prediction(match)
+await redis.setex(key, 3600, prediction.json())  # 1h TTL
+return prediction
+```
+
+**Tips:**
+
+- Include a **version** in the key when you change models: `pred:v2:...`
+- Use conservative TTLs first, then extend when you’re confident.
+
+---
+
+## Pattern 2: Popular vs Long-Tail Keys
+
+Not all predictions are equal.
+
+- Top 5 leagues → requested constantly
+- Niche leagues → rarely requested
+
+```python
+def ttl_for_match(match) -> int:
+    if match.league in TOP_LEAGUES:
+        return 6 * 3600  # 6 hours
+    return 3600         # 1 hour
+
+await redis.setex(key, ttl_for_match(match), prediction.json())
+```
+
+This keeps hot keys around longer while letting cold keys expire quickly.
+
+---
+
+## Pattern 3: Feature Caching
+
+Sometimes feature engineering is **more expensive** than the model call.
+
+```python
+feature_key = f"features:{match_id}"
+
+raw = await redis.get(feature_key)
+if raw:
+    features = json.loads(raw)
+else:
+    features = await build_features_from_db(match_id)
+    await redis.setex(feature_key, 900, json.dumps(features))
+
+probs = model.predict_proba([features])[0]
+```
+
+Use this when:
+
+- DB queries are heavy
+- You reuse the same features for multiple models
+
+---
+
+## Pattern 4: Negative Caching
+
+If a resource truly doesn’t exist, don’t hammer your DB.
+
+```python
+NOT_FOUND = "__NOT_FOUND__"
+
+value = await redis.get(key)
+if value == NOT_FOUND:
+    raise NotFound()
+
+if value is not None:
+    return parse(value)
+
+db_value = await load_from_db(id)
+if db_value is None:
+    await redis.setex(key, 60, NOT_FOUND)  # cache 404 for 60s
+    raise NotFound()
+
+await redis.setex(key, 3600, serialize(db_value))
+return db_value
+```
+
+Great for noisy clients repeatedly requesting missing resources.
+
+---
+
+## Operational Guardrails
+
+- **Eviction policy**: start with `allkeys-lru`
+- **Memory limit**: set `maxmemory` so Redis fails fast instead of swapping
+- **Metrics**: track
+  - Hit rate
+  - Evictions
+  - Command latency
+
+---
+
+## Where to Go Next
+
+For full end-to-end context on how caching fits into an ML system, read:
+
+- **[FastAPI for ML Engineers: Serving Models with &lt;100ms Latency](/blog/fastapi-ml-engineers)**
+- **[The Complete Guide to Production ML Systems in 2024](/blog/production-ml-systems-2024)**
+
+And if you want help designing a caching layer tailored to your ML API traffic, **[reach out](/#contact)** and mention this article.

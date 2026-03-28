@@ -1,0 +1,153 @@
+'use client'
+
+import * as React from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { fadeIn, viewportOnce } from '@/lib/motion'
+import { cn } from '@/lib/utils'
+
+import { METRICS } from '@/lib/metrics/registry'
+import { assertMetricIntegrity } from '@/lib/metrics/assert'
+import { trackMetricView } from '@/lib/metrics/analytics'
+
+import type { BadgeType } from '@/lib/types'
+
+// ─── Types ─────────────────────────────────────────────────────────────
+
+export interface MetricBadgeProps {
+  metric: string
+  size?: 'sm' | 'md' | 'lg'
+  animate?: boolean
+  className?: string
+}
+
+// ─── Badge Config (unchanged) ──────────────────────────────────────────
+
+interface BadgeConfig {
+  label: string
+  color: string
+  dot: string
+  bg: string
+  border: string
+  pulse: boolean
+}
+
+const BADGE_CONFIG: Record<BadgeType, BadgeConfig> = {
+  live: {
+    label: 'LIVE',
+    color: 'text-[color:var(--metric-live)]',
+    dot: 'bg-[color:var(--metric-live)]',
+    bg: 'bg-green-950/40',
+    border: 'border-green-800/40',
+    pulse: true,
+  },
+  documented: {
+    label: 'DOCUMENTED',
+    color: 'text-[color:var(--metric-documented)]',
+    dot: 'bg-[color:var(--metric-documented)]',
+    bg: 'bg-blue-950/40',
+    border: 'border-blue-800/40',
+    pulse: false,
+  },
+  backtested: {
+    label: 'BACKTESTED',
+    color: 'text-[color:var(--metric-backtested)]',
+    dot: 'bg-[color:var(--metric-backtested)]',
+    bg: 'bg-amber-950/40',
+    border: 'border-amber-800/40',
+    pulse: false,
+  },
+  snapshot: {
+    label: 'SNAPSHOT',
+    color: 'text-[color:var(--metric-snapshot)]',
+    dot: 'bg-[color:var(--metric-snapshot)]',
+    bg: 'bg-zinc-900/40',
+    border: 'border-zinc-700/40',
+    pulse: false,
+  },
+}
+
+// ─── Size Config ───────────────────────────────────────────────────────
+
+const SIZE_CONFIG = {
+  sm: { value: 'text-2xl', label: 'text-xs', sublabel: 'text-[11px]' },
+  md: { value: 'text-[2rem]', label: 'text-sm', sublabel: 'text-xs' },
+  lg: { value: 'text-metric', label: 'text-base', sublabel: 'text-sm' },
+} as const
+
+// ─── Component ─────────────────────────────────────────────────────────
+
+export function MetricBadge({
+  metric,
+  size = 'md',
+  animate = true,
+  className,
+}: MetricBadgeProps) {
+  const prefersReduced = useReducedMotion()
+  const shouldAnimate = animate && !prefersReduced
+
+  const data = METRICS[metric]
+
+  if (!data) {
+    throw new Error(`[MetricBadge] Unknown metric: ${metric}`)
+  }
+
+  assertMetricIntegrity(data)
+
+  React.useEffect(() => {
+    trackMetricView(metric)
+  }, [metric])
+
+  const cfg = BADGE_CONFIG[data.badge]
+  const sizes = SIZE_CONFIG[size]
+
+  const prefix = data.value.startsWith('+') ? '+' : ''
+  const rest = prefix ? data.value.slice(1) : data.value
+
+  return (
+    <motion.div
+      variants={shouldAnimate ? fadeIn : {}}
+      initial={shouldAnimate ? 'hidden' : false}
+      whileInView={shouldAnimate ? 'visible' : undefined}
+      viewport={shouldAnimate ? viewportOnce : undefined}
+      className={cn('flex flex-col gap-1', className)}
+      role="group"
+      aria-label={`${data.value} ${data.label} — ${cfg.label} metric sourced from ${data.sourceLabel}`}
+    >
+      <span className={cn(
+        sizes.value,
+        'font-extrabold tracking-tight leading-none',
+        'font-mono tabular-nums'
+      )}>
+        {prefix && <span className="opacity-70">{prefix}</span>}
+        {rest}
+      </span>
+
+      <span className="sr-only">{data.value} {data.label}</span>
+
+      <span className={cn(sizes.label, 'text-[color:var(--text-secondary)]')}>
+        {data.label}
+      </span>
+
+      {data.sublabel && (
+        <span className={cn(sizes.sublabel, 'text-[color:var(--text-muted)]')}>
+          {data.sublabel}
+        </span>
+      )}
+
+      <div className="mt-1.5">
+        <div className={cn(
+          'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold',
+          cfg.bg, cfg.border, cfg.color
+        )}>
+          <span className={cn(
+            'w-1.5 h-1.5 rounded-full',
+            cfg.dot,
+            cfg.pulse && 'animate-pulse'
+          )} />
+          {cfg.label}
+          <span className="opacity-60">· {data.sourceLabel}</span>
+        </div>
+      </div>
+    </motion.div>
+  )
+}

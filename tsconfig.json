@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+
+    "strict": true,
+    "noEmit": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+
+    "isolatedModules": true,
+    "incremental": true,
+
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/data/*": ["./data/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/app/*": ["./app/*"],
+      "@/hooks/*": ["./hooks/*"]
+    }
+  },
+
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "data/projects.ts",
+
+    "components/AboutSection.tsx",
+    "components/ContactSection.tsx",
+    "components/Footer.tsx",
+    "components/GlassCard.tsx",
+    "components/HeroSection.tsx",
+    "components/KineticName.tsx",
+    "components/MetricCard.tsx",
+    "components/Navbar.tsx",
+    "components/ProjectCard.tsx",
+    "components/ProjectsSection.tsx",
+    "components/ScrollRevealInit.tsx",
+    "components/WritingSection.tsx",
+
+    "next.config.ts",
+    "playwright.config.ts",
+    "tests/e2e/**/*.ts",
+    ".next/types/**/*.ts"
+  ],
+
+  "exclude": ["node_modules", ".next"]
+}

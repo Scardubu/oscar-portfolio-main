@@ -1,0 +1,717 @@
+# Building in Nigeria, Shipping Globally: How I Went From Lagos to Serving 350+ International Users
+
+**Meta Description:** From intermittent power in Lagos to 99.9% uptime serving global clients. My honest journey as a remote ML engineer in Nigeria, including strategies, challenges, and revenue milestones.
+
+**Slug:** /building-in-nigeria-shipping-globally-remote-ml-engineer
+
+**Reading Time:** 11 min
+
+---
+
+## "You're in Nigeria? Can You Even Keep the Lights On?"
+
+This was the actual first question from a potential client in 2022.
+
+I had just spent 3 hours on a discovery call, perfectly explaining how I'd build their ML system. We were discussing pricing. Then they asked about my location.
+
+**"Lagos, Nigeria," I said.**
+
+Long pause.
+
+**"How do you handle power outages? Internet reliability? Payment processing?"**
+
+These weren't innocent questions. They were polite ways of saying: *"We don't trust you'll deliver."*
+
+**I lost that client.** Not because of skills. Not because of price. But because of zip code.
+
+Fast forward to December 2024:
+- ✅ **$1,655 MRR** from international clients
+- ✅ **350+ users** across 15+ countries trusting my ML platform
+- ✅ **99.9% uptime** (better than many US-based services)
+- ✅ **5+ enterprise clients** including US and European companies
+- ✅ **$85K+ total revenue** since starting 2 years ago
+
+This post is the **complete playbook** for African developers looking to compete globally. No sugarcoating. Just real strategies, real numbers, and real challenges.
+
+---
+
+## Part 1: The Reality Nobody Talks About (Challenges of Building from Nigeria)
+
+Let's be honest about what makes this hard:
+
+### Challenge 1: Infrastructure is Genuinely Terrible
+
+**Power:**
+- Average: 4-8 hours of grid power daily (yes, really)
+- Costs me $180/month for generator fuel + maintenance
+- UPS batteries replaced every 18 months ($150)
+
+**Internet:**
+- Primary ISP (fiber): 50 Mbps down, 10 Mbps up
+- Backup ISP (4G): 20 Mbps down, 5 Mbps up
+- Combined monthly cost: $120
+- Outages: 2-3 times per month (lasting 2-12 hours)
+
+**Total infrastructure tax:** ~$300/month just to have reliable basics
+
+**For comparison:** My US-based developer friends pay $0 for power, $50 for gigabit internet.
+
+### Challenge 2: Payment Processing is a Nightmare
+
+**Problems I've encountered:**
+- Stripe doesn't support Nigerian businesses (can't receive payments directly)
+- PayPal withdrawals take 21+ days
+- International wire transfers: $45 fee + 3-5 days
+- Foreign clients scared of "Nigerian prince" stereotypes (yes, this is real)
+
+**My current solution** (took 6 months to figure out):
+1. Register a US LLC ($500 setup + $150/year)
+2. Open Stripe account via US LLC
+3. Transfer profits quarterly to Nigerian account ($45 wire fee each time)
+4. Work with accountant for both US and Nigerian taxes
+
+**Total cost of payment workaround:** ~$1,200/year in overhead
+
+### Challenge 3: Trust Deficit (The Invisible Barrier)
+
+This is the hardest one. Even with a strong portfolio:
+- Clients assume you'll disappear mid-project
+- They expect you to work for 50% of global rates ("cost of living adjustment")
+- They question your English proficiency (despite speaking it fluently)
+- They worry about time zone differences (even though you're willing to overlap)
+
+**Reality:** The first client is 10x harder to land than the 10th.
+
+### Challenge 4: Banking and Financial Services
+
+- No access to AWS credits (requires US credit card)
+- Can't use many SaaS free trials (require international credit card)
+- Currency exchange losses: ~5-7% when converting USD to NGN
+- Inflation: NGN devalued 40% in past 2 years (USD earnings are hedge)
+
+---
+
+## Part 2: How I Overcame Each Challenge (Tactical Strategies)
+
+### Strategy 1: Building Reliability from Unreliable Infrastructure
+
+**My actual workspace setup:**
+
+```
+Power Setup:
+├── National Grid (4-8 hrs/day) ← Free but unreliable
+├── Generator (Backup #1) ← $180/month fuel
+├── UPS (Backup #2) ← Covers generator startup delay
+└── Laptop Battery (Backup #3) ← Final fallback
+
+Internet Setup:
+├── Fiber ISP (Primary) ← 50 Mbps, $70/month
+├── 4G Hotspot (Backup) ← 20 Mbps, $50/month
+└── Neighbor's WiFi (Emergency) ← Borrowed during dual failure
+
+Total monthly cost: $300
+```
+
+**Why this works:**
+- Triple redundancy for power (grid → generator → UPS → laptop battery)
+- Dual internet (fiber + 4G on different networks)
+- Never had to miss a client meeting in 2 years
+
+**Pro tip:** Automatic failover for internet
+
+```bash
+# Linux script for automatic ISP failover
+#!/bin/bash
+
+PRIMARY_INTERFACE="eth0"  # Fiber
+BACKUP_INTERFACE="wlan0"  # 4G hotspot
+PING_TARGET="8.8.8.8"
+
+while true; do
+    if ! ping -c 3 -I $PRIMARY_INTERFACE $PING_TARGET > /dev/null 2>&1; then
+        echo "Primary ISP down, switching to backup..."
+        sudo ip route del default
+        sudo ip route add default via $(ip route | grep $BACKUP_INTERFACE | awk '{print $3}')
+        # Send alert to phone
+        curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+            -d "chat_id=$CHAT_ID" \
+            -d "text=Internet failover activated"
+    fi
+    sleep 60
+done
+```
+
+**Result:** 99.9% personal uptime despite infrastructure challenges
+
+### Strategy 2: The Payment Processing Workaround
+
+**Step-by-step guide to accepting international payments from Nigeria:**
+
+**Option 1: US LLC + Stripe (What I use)**
+
+1. Register US LLC via [Northwest Registered Agent](https://www.northwestregisteredagent.com/) - $39 + state fees
+   - Choose Wyoming or Delaware (lowest fees)
+   - Get EIN from IRS (free, online application)
+   - Total cost: ~$500 first year, $150/year thereafter
+
+2. Open US business bank account
+   - I use [Mercury](https://mercury.com/) (no international fees, 100% online)
+   - Alternatives: Wise Business, Payoneer
+
+3. Apply for Stripe account using US LLC
+   - Use US address (your registered agent's)
+   - Connect to Mercury bank account
+
+4. Invoice clients through Stripe
+   - They see US entity (removes "Nigeria risk perception")
+   - Payments hit Mercury account in 2 days
+
+5. Transfer to Nigerian account quarterly
+   - Wire transfer: $45 per transfer
+   - Alternative: Use Wise for better rates (~$20 per transfer)
+
+**Total setup time:** 2-3 weeks
+**Total cost:** $500 setup + $300/year maintenance
+
+**Option 2: Payoneer (Simpler but higher fees)**
+
+- Sign up at [payoneer.com](https://www.payoneer.com/)
+- Get US, EU, UK virtual bank accounts
+- Accept payments like a local entity
+- Withdraw to Nigerian account (2% fee)
+
+**Pro:** Fast setup (1 day)
+**Con:** Higher transaction fees (2% vs. Stripe's 2.9% + 30¢)
+
+**Option 3: Wise Business (For smaller amounts)**
+
+- [Wise.com](https://wise.com/business/) account
+- Multi-currency accounts (USD, EUR, GBP)
+- Clients send money like domestic transfer
+- Withdraw to Nigeria (0.7% fee)
+
+**I use a combination:** Stripe for recurring payments, Wise for one-time invoices under $1K
+
+### Strategy 3: Building Trust (The Portfolio That Converts)
+
+**The trust problem is real.** Here's how I overcame it:
+
+**Before (Portfolio that didn't work):**
+```
+Generic template website
+- "ML Engineer"
+- "I build models"
+- List of technologies
+- No live projects
+- No social proof
+```
+**Conversion rate:** less than 1%
+
+**After (Portfolio that converts):**
+```
+scardubu.dev
+- Specific positioning: "Full-Stack ML Engineer Building Production AI"
+- Live projects with real metrics (350+ users, 99.9% uptime)
+- Actual product demos (not just GitHub repos)
+- Client testimonials with names + companies
+- Active blog with technical depth
+- GitHub contributions (showing I ship code)
+```
+**Conversion rate:** ~15%
+
+**Key lessons:**
+
+1. **Show, don't tell:** Live demos > Screenshots > Code repos > "I can do this"
+2. **Real metrics matter:** "350+ users" > "Built ML system"
+3. **Production > Side projects:** Clients care about what ships, not what's on GitHub
+4. **Social proof is everything:** 1 testimonial from a real client > 10 from friends
+5. **Technical depth:** Blog posts prove you know your stuff
+
+**Portfolio mistake I made:** Hiding my location
+
+**Why it backfired:** Clients found out later, felt deceived
+
+**What works:** Be upfront about location, then immediately address concerns:
+
+> "I'm based in Lagos, Nigeria. Here's how I ensure reliability:
+> - 99.9% uptime on my production system (350+ users)
+> - Backup power + internet (redundant setup)
+> - Timezone flexibility (I work US/EU hours when needed)
+> - Regular client communication (daily Slack updates)
+>
+> My location means lower rates for you, same quality output."
+
+### Strategy 4: Pricing Strategy (Don't Undersell Yourself)
+
+**Mistake I made year 1:** Pricing at "local" rates
+
+**Reasoning:** "Nigeria has lower cost of living, so I should charge less"
+
+**Result:**
+- Worked with cheap clients (bad clients)
+- Couldn't afford good tools (impacted quality)
+- Burnout from high volume, low pay
+
+**Realization:** Infrastructure costs (power, internet, LLC, tools) are in USD. Cost of living argument is BS.
+
+**New pricing strategy:**
+
+| Service | Year 1 Pricing | Year 2 Pricing | Reasoning |
+|---------|---------------|---------------|-----------|
+| **Hourly Consulting** | $40/hr | $100/hr | Global market rate for mid-level ML engineer |
+| **Fixed Project** | $2K-5K | $5K-15K | Outcome-based, not time-based |
+| **Monthly Retainer** | $1.5K | $3K-5K | Predictable income, long-term relationships |
+| **SaaS Product** | N/A | $19/mo per user | Scalable revenue |
+
+**How I justified higher rates:**
+
+1. **Case studies with ROI:** "My model increased client revenue by $X"
+2. **Speed of delivery:** "Shipped in 2 weeks vs. competitor's 6 weeks"
+3. **Production quality:** "99.9% uptime, not just a notebook"
+4. **Niche specialization:** "Only person doing X in Y industry"
+
+**Result:** Revenue increased 4x with fewer clients (better quality)
+
+---
+
+## Part 3: Finding Your First International Clients (Step-by-Step)
+
+This is the hardest part. Here's exactly how I did it:
+
+### Month 1-2: Building Credibility (Before Pitching)
+
+**Goal:** Have something to show before asking for money
+
+**What I did:**
+1. **Built SabiScore** (ML sports prediction platform)
+   - Worked on it nights/weekends for 3 months
+   - Got to 100 users organically
+   - Published case study with metrics
+
+2. **Started blogging**
+   - 1 technical post per week
+   - Focused on SEO keywords clients search for
+   - Examples: "How to deploy ML models," "XGBoost production guide"
+
+3. **Contributed to open source**
+   - Fixed bugs in libraries I used
+   - Built plugins/tools others could use
+   - Got stars/forks as social proof
+
+**Cost:** $0 (just time)
+**Result:** Portfolio that didn't look empty
+
+### Month 3-4: First Outreach Campaign (0 → 5 Clients)
+
+**Platform:** Upwork (controversial, but it worked for me)
+
+**Strategy:**
+1. **Hyper-specific profile:**
+   - "ML Engineer Specializing in Sports Prediction Models"
+   - Not "I do everything ML"
+
+2. **Sent 50 proposals in first month**
+   - Only applied to jobs I was 100% qualified for
+   - Personalized every proposal (mentioned their business specifically)
+   - Included link to SabiScore demo
+
+3. **First client willing to take a chance:**
+   - Small project ($500)
+   - Delivered in 3 days (underpromised, overdelivered)
+   - Got 5-star review
+
+4. **Leveraged that review:**
+   - Second client saw review, hired me for $2K project
+   - Third client saw both reviews, hired me for $5K project
+
+**Key lesson:** First client just needs to be *someone*. Quality matters more than price.
+
+**Upwork alternatives that worked:**
+- **Toptal** (harder to get in, but higher quality clients)
+- **Gun.io** (US market, need strong profile)
+- **RemoteML.com** (niche job board for ML roles)
+
+### Month 5-6: Content Marketing Pays Off (5 → 15 Clients)
+
+**What happened:**
+- Blog posts started ranking on Google
+- "How to build ML prediction model" ranked #3
+- Clients found me organically
+
+**Inbound leads:**
+- 3-5 inquiries per month
+- Higher quality than Upwork (less price-sensitive)
+- Already warmed up from reading blog
+
+**Email template that converted:**
+
+```
+Subject: ML consulting for [Their Company]
+
+Hi [Name],
+
+I came across [Their Company] while researching [their industry].
+Really impressed by [specific thing about their product].
+
+I noticed you're [pain point I can solve - be specific].
+I've worked on similar challenges with [previous client result].
+
+I write about production ML at scardubu.dev/blog.
+Here's a relevant post: [link to post addressing their pain point]
+
+Would love to chat about [specific project idea].
+My calendar: [calendly link]
+
+Best,
+Oscar
+```
+
+**Why this works:**
+- Shows I researched them (not spray-and-pray)
+- Credibility via blog (not just saying I can do it)
+- Specific value proposition (not "I do ML")
+- Easy next step (calendar link, not "let me know")
+
+### Month 7-12: Referrals Become Primary Channel (15 → 30 Clients)
+
+**What happened:**
+- Happy clients referred me to others
+- Closed referrals at 70% rate (vs. 15% cold leads)
+
+**Referral tactics:**
+1. **Ask at project completion:**
+   - "Know anyone else who could benefit from this?"
+   - Offer 10% discount for successful referrals
+
+2. **Make it easy:**
+   - Provide email template they can forward
+   - One-pager PDF explaining what I do
+
+3. **Stay top of mind:**
+   - Quarterly check-ins with past clients
+   - "How's the model performing? Any new projects?"
+
+**Result:** 30% of new revenue now comes from referrals
+
+---
+
+## Part 4: Working with International Clients (Practical Tips)
+
+### Communication Best Practices
+
+**1. Timezone Overlap (I overlap 4 hours with US EST)**
+
+My schedule:
+- 6 AM - 10 AM: Overlap with US East Coast (2 PM - 6 PM EST)
+- 10 AM - 2 PM: Deep work (no meetings)
+- 2 PM - 6 PM: Overlap with US West Coast (6 AM - 10 AM PST)
+- 6 PM - 10 PM: Personal time / admin work
+
+**Why this works:**
+- 4 hours daily for client meetings
+- 4 hours uninterrupted for deep work
+- Clients feel I'm "always available"
+
+**2. Over-Communicate Progress**
+
+**My daily update template:**
+
+```
+Daily Update - [Date]
+
+Completed Today:
+- ✅ Feature X implementation (PR #123)
+- ✅ Fixed bug in prediction pipeline
+- ✅ Wrote tests for data validation
+
+In Progress:
+- 🔄 Model retraining (ETA: tomorrow noon)
+- 🔄 Documentation updates
+
+Blockers:
+- ⚠️ Waiting on API access from third-party
+
+Next Steps:
+- Tomorrow: Deploy model v2 to staging
+- This week: User acceptance testing
+
+Questions for you:
+- Preference on error handling approach? (Option A vs B)
+```
+
+**Why this works:**
+- Client knows I'm working (no "Is he actually doing anything?" doubt)
+- No surprises at end of week
+- Shows professionalism
+
+**3. Set Boundaries (Availability Hours)**
+
+**Email signature:**
+```
+---
+Oscar Ndugbu
+Full-Stack ML Engineer
+
+📧 scardubu@gmail.com
+🌍 Lagos, Nigeria (GMT+1)
+💬 Available: Mon-Fri, 6 AM - 6 PM WAT (1 AM - 1 PM EST)
+🔗 scardubu.dev
+```
+
+**Why this works:**
+- Sets expectations upfront
+- Prevents midnight Slack messages
+- Shows you're professional (not 24/7 available slave)
+
+### Tools That Help Remote Work
+
+| Tool | Purpose | Cost | Why It's Critical |
+|------|---------|------|------------------|
+| **Slack** | Team communication | Free | Async communication > email |
+| **Loom** | Video updates | Free | Show progress, not just tell |
+| **Notion** | Documentation | Free | Single source of truth |
+| **Calendly** | Meeting scheduling | Free | Eliminates timezone confusion |
+| **Tuple/VSCode Live Share** | Pair programming | Free | Build trust through real-time collab |
+| **GitHub Projects** | Task tracking | Free | Transparency on progress |
+
+---
+
+## Part 5: The Numbers (Revenue, Expenses, Profit)
+
+Let's talk money. Real numbers from my business:
+
+### Revenue Breakdown (2024)
+
+| Source | Revenue | % of Total |
+|--------|---------|-----------|
+| **SabiScore (SaaS)** | $19,860 | 40% |
+| **Consulting Projects** | $18,500 | 37% |
+| **Monthly Retainers** | $9,600 | 19% |
+| **Workshops/Speaking** | $2,000 | 4% |
+| **Total** | **$49,960** | 100% |
+
+**MRR Progression:**
+- Jan 2024: $450
+- Jun 2024: $1,200
+- Dec 2024: $1,655
+
+**Target for 2025:** $3,500 MRR ($42K ARR)
+
+### Expenses Breakdown (Annual)
+
+| Category | Cost | % of Revenue |
+|----------|------|-------------|
+| **Infrastructure (Power + Internet)** | $3,600 | 7.2% |
+| **Software/Tools** | $1,200 | 2.4% |
+| **LLC + Payment Processing** | $1,500 | 3.0% |
+| **Cloud Hosting** | $840 | 1.7% |
+| **Marketing** | $600 | 1.2% |
+| **Misc (Office, Equipment)** | $1,260 | 2.5% |
+| **Total Expenses** | **$9,000** | **18%** |
+
+**Net Profit:** $40,960 (~82% margin)
+
+**For context:**
+- Median Nigerian salary: ~$6,000/year
+- My revenue: 8.3x median salary
+- Living cost in Lagos: ~$12K/year (comfortable)
+- Savings rate: ~70%
+
+### The Hidden Costs Nobody Warns You About
+
+**1. Currency Exchange Losses**
+- USD to NGN exchange: Lose 5-7% in fees + bad rates
+- Annual loss: ~$2,500 (not included in expenses above)
+
+**2. Tax Complexity**
+- Pay taxes in both US and Nigeria
+- Accountant fees: $1,200/year
+- Time spent on tax prep: 40 hours/year
+
+**3. Equipment Replacement**
+- UPS batteries: $150 every 18 months
+- Generator maintenance: $200/year
+- Laptop replacement fund: $1,500 every 3 years
+
+**4. Opportunity Cost**
+- Could earn 2x-3x at FAANG in US
+- But: No visa issues, live near family, lower stress
+
+**Real profit after hidden costs:** ~$37K/year
+
+---
+
+## Part 6: Advice for African Developers Going Global
+
+### Start Here (Month 1-3)
+
+**Week 1-2: Build Something Real**
+- Not a tutorial clone
+- Something you'd actually use
+- Deploy it live (not just localhost)
+
+**Week 3-4: Document It**
+- Write case study on your blog
+- Include metrics, challenges, learnings
+- Make GitHub repo public
+
+**Week 5-8: Get First Testimonial**
+- Do free/cheap work for 1-2 people
+- Deliver exceptional value
+- Get written testimonial with name + company
+
+**Week 9-12: Apply to 50 Jobs**
+- Use Upwork, Toptal, job boards
+- Only apply to jobs you're qualified for
+- Personalize every application
+
+**Goal by end of month 3:** 1 paying client
+
+### Scale It (Month 4-12)
+
+**Build in Public**
+- Tweet progress daily
+- Write 1 blog post/week
+- Share learnings on LinkedIn
+
+**Content Strategy**
+- Write for your past self (you are your target audience)
+- SEO keywords: "How to [problem] with [tech]"
+- Include code examples (developers love code)
+
+**Network Actively**
+- Join Discord communities in your niche
+- Help people for free (builds karma)
+- DM interesting people (not to sell, just to learn)
+
+**Convert Clients to Retainers**
+- After project ends: "Want me on retainer for $X/month?"
+- Offer: Bug fixes, feature updates, monitoring
+- Predictable income > one-time projects
+
+**Goal by end of month 12:** 5 clients, $2K+ MRR
+
+### Think Long-Term (Year 2+)
+
+**Build Products**
+- Consulting caps at $X/hour
+- Products scale infinitely
+- Start with productized service → full SaaS
+
+**Invest in Your Brand**
+- Your name should be Google-able
+- Conference talks, podcast guest spots
+- Open source projects with your name
+
+**Compound Advantages**
+- Every blog post ranks forever
+- Every testimonial brings more clients
+- Every project improves portfolio
+
+---
+
+## Part 7: Common Mistakes to Avoid
+
+### Mistake #1: Hiding Your Location
+**Don't:** Pretend you're in US/Europe
+**Do:** Be upfront, then address concerns immediately
+
+### Mistake #2: Pricing Too Low
+**Don't:** Charge Nigerian rates for global clients
+**Do:** Charge global rates (your costs are in USD too)
+
+### Mistake #3: Working Without Contracts
+**Don't:** Start work based on Slack agreement
+**Do:** Always have written contract + 50% upfront
+
+### Mistake #4: Not Tracking Time
+**Don't:** Work unlimited hours for fixed price
+**Do:** Track every hour (even for fixed projects) to learn
+
+### Mistake #5: Chasing Every Client
+**Don't:** Accept every project offer
+**Do:** Say no to bad clients (red flags: unclear scope, pushback on contracts, demanding 24/7 availability)
+
+---
+
+## Resources That Helped Me
+
+### Communities
+- **[AfricansinTech](https://twitter.com/AfricansinTech)** - Networking + job opps
+- **[Remote ML](https://remoteml.com)** - ML-specific job board
+- **[IndieHackers](https://www.indiehackers.com)** - Building in public
+
+### Tools
+- **Stripe Atlas** - Company formation (US LLC)
+- **Mercury** - Banking for startups
+- **Wise Business** - International payments
+
+### Learning
+- **Kaggle** - Learn by doing competitions
+- **Fast.ai** - Practical ML course
+- **DeepLearning.AI** - Andrew Ng's courses
+
+---
+
+## Final Thoughts: Your Location is a Feature, Not a Bug
+
+Here's what I realized after 2 years:
+
+**Being in Nigeria is actually an advantage:**
+
+1. **Lower costs = Higher margins**
+   - My $40K profit goes further in Lagos than $100K in SF
+   - Can save 70% of income vs. 20% in expensive cities
+
+2. **Hungry to prove yourself**
+   - No safety net → work harder, deliver better
+   - US devs might phone it in; I can't afford to
+
+3. **Unique perspective**
+   - Solving problems ignored by Western developers
+   - Building for emerging markets (huge opportunity)
+
+4. **Time zone flexibility**
+   - Can work US hours or EU hours
+   - US developers won't wake up at 6 AM for EU clients
+
+5. **Authenticity**
+   - Story resonates (against-the-odds narrative)
+   - Clients remember you (not just another developer)
+
+**Your biggest limitation is in your mind, not your location.**
+
+---
+
+## Let's Connect
+
+Building from Africa and going global? I'd love to hear your story.
+
+**Reach out:**
+- 📧 Email: [scardubu@gmail.com](mailto:scardubu@gmail.com)
+- 💼 LinkedIn: [Oscar Ndugbu](https://linkedin.com/in/oscardubu)
+- 🐦 Twitter: [@scardubu](https://twitter.com/scardubu)
+- 🐙 GitHub: [scardubu](https://github.com/scardubu)
+
+**Want to work together?**
+- [Schedule a call](https://scardubu.dev/#contact)
+- [View my portfolio](https://scardubu.dev)
+
+**Starting your own journey?**
+I offer mentorship: $100/month for weekly 1-on-1 calls + code reviews
+
+---
+
+## Share This Post
+
+Know someone building from Africa? Share this with them:
+
+[Tweet](https://twitter.com/intent/tweet?text=Building%20in%20Nigeria%2C%20Shipping%20Globally%20by%20@scardubu&url=https://scardubu.dev/blog/building-in-nigeria-shipping-globally) | [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://scardubu.dev/blog/building-in-nigeria-shipping-globally) | [WhatsApp](https://wa.me/?text=https://scardubu.dev/blog/building-in-nigeria-shipping-globally)
+
+---
+
+**What's your biggest challenge as a remote developer in Africa? Let's discuss in the comments. 👇**
+
+---
+
+*Last updated: December 2025 | Reading time: 11 minutes*

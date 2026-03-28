@@ -1,0 +1,44 @@
+---
+title: 'Building SabiScore: Architecture Decisions in a Resource-Constrained Production System'
+date: '2025-11-12'
+summary: 'How ensemble model selection, Redis caching, and graceful fallback shaped a production ML API under uneven infrastructure conditions.'
+tags:
+  - 'ML Engineering'
+  - 'FastAPI'
+  - 'Production Systems'
+featured: true
+---
+
+## The constraint was the operating environment
+
+When infrastructure latency is inconsistent, architecture decisions stop being abstract preferences. Every extra dependency, blocking query, and synchronous fallback becomes visible to the user during the worst possible moment.
+
+SabiScore needed to respond during live traffic windows where demand spikes sharply and the tolerance for degraded behavior is effectively zero. That shaped the system more than any isolated model benchmark.
+
+## Why the inference layer stayed narrow
+
+The serving layer was kept intentionally small: FastAPI for predictable request handling, Redis for low-latency response reuse, and Postgres for authoritative state. The goal was not novelty. The goal was consistent behavior when concurrency rises and debugging time collapses.
+
+```python
+async def score_fixture(payload: ScoreRequest) -> ScoreResponse:
+    cache_key = build_cache_key(payload)
+    cached = await redis_client.get(cache_key)
+    if cached:
+        return ScoreResponse.model_validate_json(cached)
+
+    features = await feature_store.fetch(payload.fixture_id)
+    prediction = ensemble.predict(features)
+    response = ScoreResponse.from_prediction(prediction)
+    await redis_client.set(cache_key, response.model_dump_json(), ex=300)
+    return response
+```
+
+That design keeps the hot path readable, testable, and easy to reason about under failure conditions.
+
+## The tradeoff that mattered most
+
+The major decision was not whether to add another model. It was whether the overall system could remain legible when production issues appear. A slightly more complex ensemble was acceptable because the operational surface around it stayed disciplined.
+
+## Operational lesson
+
+The most valuable production pattern was graceful fallback. If a dependency slows down, the system must degrade deliberately instead of leaking uncertainty into the product experience. Reliability is usually decided there, not in the training notebook.

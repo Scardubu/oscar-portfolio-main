@@ -1,0 +1,265 @@
+# Ensemble Models in Production: How We Achieved 71% Accuracy
+
+**Deep dive into building and deploying ensemble models with XGBoost, LightGBM, and neural networks for real-world predictions.**
+
+---
+
+## The Plateau Problem
+
+Our first SabiScore model—a well-tuned XGBoost classifier—hit **64% accuracy** and refused to budge.
+
+- More trees? Overfitting.
+- Deeper trees? Overfitting.
+- More features? Diminishing returns.
+
+We weren’t stuck because XGBoost was bad. We were stuck because **one model was being asked to explain a chaotic, noisy world alone.**
+
+The fix: ensembles.
+
+---
+
+## Why Ensembles Work in the Real World
+
+Sports outcomes are messy:
+
+- Injuries
+- Weather
+- Coaching changes
+- Referee variance
+
+No single model architecture will capture all of that. But **multiple imperfect models, combined well, can.**
+
+At a high level:
+
+> Different models make different mistakes. Ensembles learn to cancel out those mistakes.
+
+---
+
+## Our Production Ensemble Architecture
+
+We used a **stacking** approach:
+
+1. Train multiple diverse base models (level 0)
+2. Use their predictions as features to train a simple meta-model (level 1)
+
+```python
+from sklearn.ensemble import StackingClassifier
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from sklearn.linear_model import LogisticRegression
+
+# Base models (Level 0)
+base_models = [
+    (
+        "xgb",
+        XGBClassifier(
+            n_estimators=500,
+            max_depth=4,
+            learning_rate=0.01,
+            subsample=0.8,
+        ),
+    ),
+    (
+        "lgbm",
+        LGBMClassifier(
+            n_estimators=500,
+            num_leaves=31,
+            learning_rate=0.01,
+        ),
+    ),
+]
+
+# Meta-learner (Level 1)
+meta_model = LogisticRegression(
+    C=0.1,
+    class_weight="balanced",
+)
+
+ensemble = StackingClassifier(
+    estimators=base_models,
+    final_estimator=meta_model,
+    cv=5,
+)
+
+ensemble.fit(X_train, y_train)
+print("Test accuracy:", ensemble.score(X_test, y_test))
+# ~71% accuracy 🎯
+```
+
+Key points:
+
+- **Diversity beats complexity** – different gradient boosters, different hyperparameters
+- **Meta-learner stays simple** – regularized logistic regression is robust and explainable
+
+---
+
+## Getting the Training Pipeline Right
+
+Ensembles are easy to get wrong in subtle ways.
+
+### 1. Respect Time
+
+Do **not** randomly shuffle sports data. Use time-based splits:
+
+```python
+split_date = df["date"].quantile(0.8)
+train = df[df["date"] < split_date]
+valid = df[df["date"] >= split_date]
+```
+
+### 2. Avoid Leakage Between Levels
+
+When training the meta-learner, you must generate base model predictions using **out-of-fold** predictions only.
+
+```python
+from sklearn.model_selection import KFold
+import numpy as np
+
+kf = KFold(n_splits=5, shuffle=False)
+
+oof_preds = np.zeros((len(X_train), len(base_models)))
+
+for fold, (train_idx, valid_idx) in enumerate(kf.split(X_train)):
+    X_tr, X_val = X_train[train_idx], X_train[valid_idx]
+    y_tr = y_train[train_idx]
+
+    for m_idx, (name, model) in enumerate(base_models):
+        model.fit(X_tr, y_tr)
+        oof_preds[valid_idx, m_idx] = model.predict_proba(X_val)[:, 1]
+
+# Train meta-learner on oof_preds
+meta_model.fit(oof_preds, y_train)
+```
+
+This ensures the meta-model only sees predictions on data the base models **haven’t** trained on.
+
+---
+
+## Deployment: Keeping Ensembles Practical
+
+More models = more complexity. Here’s how we kept it sane in production.
+
+### 1. Single Artifact, Not a Zoo
+
+We export a **single ensemble object** that encapsulates:
+
+- Preprocessing
+- Base models
+- Meta-learner
+
+```python
+class EnsembleModel:
+    def __init__(self, base_models, meta_model, preprocessor):
+        self.base_models = base_models
+        self.meta_model = meta_model
+        self.preprocessor = preprocessor
+
+    def predict_proba(self, raw_features: dict) -> list[float]:
+        X = self.preprocessor.transform(raw_features)
+        base_probs = [m.predict_proba(X)[:, 1] for m in self.base_models]
+        stacked = np.vstack(base_probs).T  # shape: (n_samples, n_models)
+        return self.meta_model.predict_proba(stacked)[0]
+```
+
+In FastAPI, we just load this `EnsembleModel` from disk.
+
+### 2. Cache Hot Paths
+
+Combine ensembles with caching and you get:
+
+- **Heavy computation** done once
+- **Fast reads** for repeated requests
+
+```python
+async def get_prediction(match_id: str) -> Prediction:
+    key = f"pred:{match_id}"
+    cached = await redis.get(key)
+    if cached:
+        return Prediction.parse_raw(cached)
+
+    features = await feature_store.build_for_match(match_id)
+    probs = ensemble.predict_proba(features)
+
+    prediction = build_prediction_response(match_id, probs, features)
+    await redis.setex(key, 3600, prediction.json())
+    return prediction
+```
+
+In production SabiScore traffic, this led to a **73% cache hit rate**.
+
+---
+
+## Explainability: Turning Black Boxes into Stories
+
+Users don’t care about log-loss. They care about **"Why should I trust this prediction?"**
+
+We use feature importances + domain-specific text snippets to build readable explanations.
+
+```python
+FEATURE_EXPLANATIONS = {
+    "home_form_5": "Home team has strong recent form ({value:.1f} pts/game)",
+    "away_form_5": "Away team has weak recent form ({value:.1f} pts/game)",
+    "market_home_win_prob": "Betting markets rate home win at {value:.0%}",
+}
+
+def generate_reasoning(features: dict, top_k: int = 3) -> list[str]:
+    importances = ensemble_feature_importances()  # precomputed
+    ranked = sorted(importances.items(), key=lambda kv: kv[1], reverse=True)[:top_k]
+
+    explanations: list[str] = []
+    for fname, _ in ranked:
+        if fname in FEATURE_EXPLANATIONS:
+            template = FEATURE_EXPLANATIONS[fname]
+            explanations.append(template.format(value=features[fname]))
+    return explanations
+```
+
+A typical reasoning block:
+
+- "Home team has strong recent form (2.4 pts/game)"
+- "Away team concedes 1.8 goals/game away"
+- "Betting markets rate home win at 68%"
+
+---
+
+## Results
+
+Moving from a tuned single XGBoost to this ensemble gave us:
+
+| Metric | Single Model | Ensemble |
+|--------|--------------|----------|
+| Accuracy | 64% | **71%** |
+| Brier score | 0.19 | **0.15** |
+| Calibration | Overconfident | **Well-calibrated** |
+
+More importantly:
+
+- Users reported **higher trust** in predictions
+- Fewer "WTF" matches where the prediction clearly ignored form
+
+---
+
+## When *Not* to Use Ensembles
+
+Don’t reach for ensembles when:
+
+- You don’t have a solid single-model baseline yet
+- Your training data is tiny
+- You can’t explain a simpler model
+
+Do reach for them when:
+
+- You’ve hit a performance ceiling
+- You have multiple diverse signals
+- You’re comfortable owning more infrastructure
+
+---
+
+## What to Read Next
+
+If you enjoyed this, you’ll probably like:
+
+- **[The Complete Guide to Production ML Systems in 2024](/blog/production-ml-systems-2024)**
+- **[Reducing ML Inference Latency: From 450ms to 87ms](/blog/fastapi-ml-engineers)**
+
+And if you’re planning an ensemble in production and want a second set of eyes on your design, **[get in touch](/#contact)**.
