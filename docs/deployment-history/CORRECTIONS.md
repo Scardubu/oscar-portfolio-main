@@ -17,3 +17,4 @@ This file is reserved for release corrections and follow-up notes for the portfo
 - Changed `/api/sabiscore-preview` from a placeholder `501` response to an intentional `410 Gone` contract for the non-public preview surface.
 - Removed debug-only metric logging from shipped code and moved metric view tracking out of render-time execution.
 - Removed broken placeholder image references from published blog posts so the public blog no longer points at missing assets.
+- Added outside-click and focus management refinements to the mobile navigation, strengthened the homepage project and writing sections, and added related-navigation rails to writing and work detail pages.

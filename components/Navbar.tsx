@@ -25,11 +25,20 @@ const NAV_LINKS = [
 
 //  Hamburger icon
 
-function HamburgerIcon({ open, onClick }: { open: boolean; onClick: () => void }) {
+function HamburgerIcon({
+  open,
+  onClick,
+  buttonRef,
+}: {
+  open: boolean;
+  onClick: () => void;
+  buttonRef?: React.RefObject<HTMLButtonElement | null>;
+}) {
   const prefersReduced = useReducedMotion();
 
   return (
     <button
+      ref={buttonRef}
       type="button"
       aria-label="Toggle navigation"
       aria-expanded={open}
@@ -65,6 +74,8 @@ export function NavBar() {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const firstMobileLinkRef = useRef<HTMLAnchorElement>(null);
 
   // Glass activates after scrollY > 8
   useEffect(() => {
@@ -103,10 +114,28 @@ export function NavBar() {
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        menuTriggerRef.current?.focus();
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+
+      if (target && navRef.current && !navRef.current.contains(target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [menuOpen]);
 
   // Body scroll lock while menu is open
@@ -120,6 +149,12 @@ export function NavBar() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (menuOpen) {
+      firstMobileLinkRef.current?.focus();
+    }
+  }, [menuOpen]);
 
   const isActive = useCallback(
     (href: string) => {
@@ -207,7 +242,11 @@ export function NavBar() {
           </span>
 
           <div className="md:hidden">
-            <HamburgerIcon open={menuOpen} onClick={() => setMenuOpen((v) => !v)} />
+            <HamburgerIcon
+              open={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+              buttonRef={menuTriggerRef}
+            />
           </div>
         </div>
       </nav>
@@ -215,51 +254,67 @@ export function NavBar() {
       {/* Mobile slide-down menu */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            id="mobile-nav"
-            key="mobile-menu"
-            variants={prefersReduced ? undefined : mobileMenu}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="glass-no-hover border-t border-white/[0.08] md:hidden"
-          >
-            <motion.ul
-              variants={prefersReduced ? undefined : mobileMenuItems}
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close navigation overlay"
+              className="fixed inset-0 top-[var(--nav-height)] z-[-1] bg-black/40 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setMenuOpen(false);
+                menuTriggerRef.current?.focus();
+              }}
+            />
+
+            <motion.div
+              id="mobile-nav"
+              key="mobile-menu"
+              variants={prefersReduced ? undefined : mobileMenu}
               initial="hidden"
               animate="visible"
-              className="container flex flex-col gap-1 py-4"
-              role="list"
+              exit="hidden"
+              className="glass-no-hover border-t border-white/[0.08] md:hidden"
             >
-              {NAV_LINKS.map((link) => (
-                <motion.li key={link.href} variants={prefersReduced ? undefined : mobileMenuItem}>
+              <motion.ul
+                variants={prefersReduced ? undefined : mobileMenuItems}
+                initial="hidden"
+                animate="visible"
+                className="container flex flex-col gap-1 py-4"
+                role="list"
+              >
+                {NAV_LINKS.map((link, index) => (
+                  <motion.li key={link.href} variants={prefersReduced ? undefined : mobileMenuItem}>
+                    <Link
+                      ref={index === 0 ? firstMobileLinkRef : undefined}
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={cn(
+                        'flex items-center rounded-xl px-3 py-3 text-base font-medium transition-colors duration-150',
+                        isActive(link.href)
+                          ? 'bg-white/[0.06] text-white'
+                          : 'text-white/60 hover:bg-white/[0.04] hover:text-white'
+                      )}
+                      aria-current={isActive(link.href) ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.li>
+                ))}
+
+                <motion.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
                   <Link
-                    href={link.href}
+                    href="/#contact"
                     onClick={() => setMenuOpen(false)}
-                    className={cn(
-                      'flex items-center rounded-xl px-3 py-3 text-base font-medium transition-colors duration-150',
-                      isActive(link.href)
-                        ? 'bg-white/[0.06] text-white'
-                        : 'text-white/60 hover:bg-white/[0.04] hover:text-white'
-                    )}
-                    aria-current={isActive(link.href) ? 'page' : undefined}
+                    className="glass-card flex w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-white"
                   >
-                    {link.label}
+                    Get in Touch
                   </Link>
                 </motion.li>
-              ))}
-
-              <motion.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
-                <Link
-                  href="/#contact"
-                  onClick={() => setMenuOpen(false)}
-                  className="glass-card flex w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-white"
-                >
-                  Get in Touch
-                </Link>
-              </motion.li>
-            </motion.ul>
-          </motion.div>
+              </motion.ul>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
