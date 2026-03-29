@@ -6,7 +6,12 @@ interface Activity { message: string; repo: string; time: string | null; }
 export function LiveActivityBar() {
   const [activity, setActivity] = useState<Activity | null>(null);
   useEffect(() => {
-    fetch("/api/activity").then(r => r.json()).then(setActivity);
+    fetch("/api/activity")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status}`))))
+      .then(setActivity)
+      .catch(() => {
+        /* silently hide on network/API failure */
+      });
   }, []);
   if (!activity) return null;
   const relative = activity.time

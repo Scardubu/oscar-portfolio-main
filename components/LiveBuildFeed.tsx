@@ -17,6 +17,7 @@ interface ActivityItem {
 export function LiveBuildFeed() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -83,8 +84,8 @@ export function LiveBuildFeed() {
           .slice(0, 5);
 
         setActivities(sorted);
-      } catch (error) {
-        console.error("Failed to fetch activities:", error);
+      } catch {
+        setFetchError(true);
       } finally {
         setIsLoading(false);
       }
@@ -143,7 +144,9 @@ export function LiveBuildFeed() {
       </div>
 
       <div className="max-h-64 space-y-2 overflow-y-auto">
-        {activities.length === 0 ? (
+        {fetchError ? (
+          <p className="text-sm text-gray-400">Activity feed unavailable — check back soon.</p>
+        ) : activities.length === 0 ? (
           <p className="text-sm text-gray-400">No recent activity</p>
         ) : (
           activities.map((activity) => {

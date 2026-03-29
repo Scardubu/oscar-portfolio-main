@@ -16,31 +16,96 @@ function LinkedInIcon() {
   );
 }
 
+function XIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.261 5.632L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
+
+function EmailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z" />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 py-8">
-      <div className="container flex flex-col gap-4 text-sm text-white/60 lg:flex-row lg:items-center lg:justify-between">
-        <p>© {new Date().getFullYear()} Oscar Scardubu</p>
-        <p className="text-center">Designed and built by Oscar Scardubu · Nigeria · 2026</p>
-        <div className="flex items-center gap-4">
-          <Link
-            href="https://github.com/Scardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open Oscar Scardubu GitHub profile"
-            className="transition hover:text-white"
-          >
-            <GitHubIcon />
-          </Link>
-          <Link
-            href="https://linkedin.com/in/oscardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open Oscar Scardubu LinkedIn profile"
-            className="transition hover:text-white"
-          >
-            <LinkedInIcon />
-          </Link>
+    <footer className="border-t border-white/10 py-10">
+      <div className="container">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          {/* Brand + back-to-top */}
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-semibold text-white/80">Oscar Ndugbu</p>
+            <p className="text-xs text-white/40">Full-Stack ML Engineer · Nigeria · © {new Date().getFullYear()}</p>
+          </div>
+
+          {/* CTA row */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/oscar-scardubu-resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Download Oscar Ndugbu resume PDF"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white/70 transition hover:border-white/50 hover:text-white"
+            >
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16" />
+              </svg>
+              Résumé
+            </Link>
+            <a
+              href="#main-content"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white/70 transition hover:border-white/50 hover:text-white"
+              aria-label="Scroll back to top of page"
+            >
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 19V5m0 0-7 7m7-7 7 7" />
+              </svg>
+              Back to top
+            </a>
+          </div>
+
+          {/* Social icons */}
+          <div className="flex items-center gap-4 text-white/50">
+            <Link
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Oscar Ndugbu GitHub profile"
+              className="transition hover:text-white"
+            >
+              <GitHubIcon />
+            </Link>
+            <Link
+              href="https://linkedin.com/in/oscardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Oscar Ndugbu LinkedIn profile"
+              className="transition hover:text-white"
+            >
+              <LinkedInIcon />
+            </Link>
+            <Link
+              href="https://x.com/scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Oscar Ndugbu X (Twitter) profile"
+              className="transition hover:text-white"
+            >
+              <XIcon />
+            </Link>
+            <Link
+              href="mailto:oscar@scardubu.dev"
+              aria-label="Email Oscar Ndugbu"
+              className="transition hover:text-white"
+            >
+              <EmailIcon />
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

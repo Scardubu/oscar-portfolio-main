@@ -18,3 +18,10 @@ This file is reserved for release corrections and follow-up notes for the portfo
 - Removed debug-only metric logging from shipped code and moved metric view tracking out of render-time execution.
 - Removed broken placeholder image references from published blog posts so the public blog no longer points at missing assets.
 - Added outside-click and focus management refinements to the mobile navigation, strengthened the homepage project and writing sections, and added related-navigation rails to writing and work detail pages.
+
+## 2026-03-29 (pass 2)
+
+- **Footer** — expanded from a minimal 2-icon strip to a full production footer: auto-updating copyright year, résumé PDF download CTA, back-to-top anchor, and X (Twitter) + email icons alongside GitHub and LinkedIn.
+- **Writing index page** (`/writing`) — added featured-article banner card with tag pills, summary, and date; added tag pills per post in the year-bucketed archive; replaced all inline style objects with Tailwind utility classes backed by CSS custom properties for maintainability.
+- **LiveBuildFeed** — removed `console.error` from the production bundle; added an explicit `fetchError` state so failed fetches surface a human-readable message ("Activity feed unavailable — check back soon.") instead of silently showing "No recent activity".
+- **LiveActivityBar** — guarded the GitHub API fetch against non-OK responses and network failures via `.catch()` so the component silently hides rather than throwing an unhandled rejection.
