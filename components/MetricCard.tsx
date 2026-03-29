@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface MetricCardProps {
   label: string;
@@ -7,17 +7,12 @@ interface MetricCardProps {
   breath?: boolean;
 }
 
-export function MetricCard({ label, body, icon, breath = false }: MetricCardProps) {
+export function MetricCard({ label, body, icon, breath = false }: Readonly<MetricCardProps>) {
   return (
-    <article
-      className="h-full"
-      aria-label={label}
-    >
-      <div className={`metric-card-inner glass-full h-full p-5 ${breath ? "metric-breath" : ""}`}>
-        {icon ? <div className="mb-4 text-white/70">{icon}</div> : null}
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.26em] text-white/50">{label}</p>
-        <p className="mt-4 text-sm leading-7 text-white/72 sm:text-base">{body}</p>
-      </div>
+    <article className={`metric-card h-full p-6 ${breath ? 'metric-breath' : ''}`} aria-label={label}>
+      {icon ? <div className="mb-[var(--space-4)] text-[var(--color-accent)]">{icon}</div> : null}
+      <p className="label mb-[var(--space-2)] text-white/45">{label}</p>
+      <p className="text-sm leading-7 text-white/68">{body}</p>
     </article>
   );
 }

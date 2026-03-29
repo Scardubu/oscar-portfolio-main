@@ -25,34 +25,33 @@ export const projects: Project[] = [
   {
     id: "sabiscore",
     title: "SabiScore",
-    tagline: "Real-time sports intelligence built for live concurrent sessions.",
+    tagline: "Production scoring infrastructure shaped for real-time delivery.",
     description:
-      "Production sports intelligence across live events, shipped end-to-end " +
-      "with ensemble models, FastAPI inference, Redis caching, Postgres, Docker, and Next.js.",
+      "Production AI systems shipped for real users rather than demo environments, " +
+      "combining ensemble models, FastAPI inference, Redis caching, Postgres, Docker, and Next.js.",
     context:
-      "Production systems serving live concurrent sessions across high-traffic " +
-      "events without sacrificing reliability or product clarity.",
+      "Built for operating environments where concurrency spikes, infrastructure conditions vary, " +
+      "and the product still needs to remain legible under pressure.",
     decisions: [
       {
-        chosen:
-          "Ensemble meta-learner (XGBoost + LightGBM + scikit-learn stacked) over single-model.",
+        chosen: "Ensemble meta-learner across gradient-boosted models.",
         rejected: "Single-model prediction pipeline",
-        reason: "+6.3pp accuracy at acceptable inference latency.",
+        reason: "Improved calibration across varied operating conditions without making the serving layer opaque.",
       },
       {
-        chosen: "Redis caching after Postgres latency exceeded 200ms at peak.",
+        chosen: "Redis caching in front of repeat inference reads.",
         rejected: "Direct Postgres reads per request",
-        reason: "Cache eliminated spikes without infrastructure scaling.",
+        reason: "Stabilized the request path during peak traffic without scaling the infrastructure footprint prematurely.",
       },
       {
-        chosen: "Embedding-based retrieval and ensemble meta-learning.",
-        rejected: "Rule-based prediction",
-        reason: "Insufficient cross-league generalization.",
+        chosen: "Embedding-based feature retrieval.",
+        rejected: "Rule-based heuristics",
+        reason: "Generalized more reliably across event types than handcrafted rules.",
       },
       {
         chosen: "FastAPI inference with Redis caching and Postgres-backed features.",
-        rejected: "GPT-based inference",
-        reason: "Cost incompatible with free-tier economics.",
+        rejected: "LLM-style request-time inference",
+        reason: "Kept the system cheaper to run, easier to debug, and more predictable under sustained usage.",
       },
     ],
     status: "live",
@@ -80,7 +79,7 @@ export const projects: Project[] = [
   {
     id: "ml-consulting",
     title: "ML Systems Consulting",
-    tagline: "ML debugging, platform reliability, and LLM integration for delivery teams.",
+    tagline: "Production ML architecture and delivery for fintech and platform teams.",
     description:
       "Technical consulting spanning model productionization, MLOps pipeline " +
       "design, observability, and team enablement across applied AI programs.",
@@ -90,6 +89,7 @@ export const projects: Project[] = [
     status: "live",
     featured: false,
     tags: ["MLOps", "Python", "AWS", "Terraform", "FastAPI", "MLflow"],
+    demoUrl: "https://www.scardubu.dev/work/ml-consulting",
     image: "/projects/consulting.webp",
   },
 ];

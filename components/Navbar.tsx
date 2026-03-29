@@ -9,31 +9,39 @@
 //   - WCAG AA: aria-expanded, aria-controls, aria-current, aria-label
 //
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
+const SECTION_LINKS = ['projects', 'about', 'contact'] as const;
+
 const NAV_LINKS = [
-  { label: 'Projects', href: '/#projects' },
+  { label: 'Projects', href: 'projects' },
   { label: 'Writing', href: '/writing' },
-  { label: 'About', href: '/#about' },
-  { label: 'Contact', href: '/#contact' },
+  { label: 'About', href: 'about' },
+  { label: 'Contact', href: 'contact' },
 ] as const;
+
+function resolveSectionHref(pathname: string, section: string) {
+  return pathname === '/' ? `#${section}` : `/#${section}`;
+}
 
 //  Hamburger icon
 
 function HamburgerIcon({
   open,
   onClick,
+  controls,
   buttonRef,
-}: {
+}: Readonly<{
   open: boolean;
   onClick: () => void;
-  buttonRef?: React.RefObject<HTMLButtonElement | null>;
-}) {
+  controls: string;
+  buttonRef: React.RefObject<HTMLButtonElement | null>;
+}>) {
   const prefersReduced = useReducedMotion();
 
   return (
@@ -42,21 +50,21 @@ function HamburgerIcon({
       type="button"
       aria-label="Toggle navigation"
       aria-expanded={open}
-      aria-controls="mobile-nav"
+      aria-controls={controls}
       onClick={onClick}
       className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-lg"
     >
-      <motion.span
+      <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
         animate={prefersReduced ? {} : open ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }}
         transition={springs.snappy}
       />
-      <motion.span
+      <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
         animate={prefersReduced ? {} : open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
         transition={springs.snappy}
       />
-      <motion.span
+      <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
         animate={prefersReduced ? {} : open ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
         transition={springs.snappy}
@@ -70,28 +78,31 @@ function HamburgerIcon({
 export function NavBar() {
   const prefersReduced = useReducedMotion();
   const pathname = usePathname();
+  const mobileNavId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('hero');
-  const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const firstMobileLinkRef = useRef<HTMLAnchorElement>(null);
 
-  // Glass activates after scrollY > 8
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      document.documentElement.toggleAttribute('data-scrolled', window.scrollY > 8);
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Section tracking  scroll-linked, not click-driven
   useEffect(() => {
     if (pathname !== '/') {
+      setActiveSection('hero');
       return;
     }
 
-    const ids = ['hero', 'projects', 'about', 'contact'];
+    const ids = ['hero', ...SECTION_LINKS];
     const observers: IntersectionObserver[] = [];
 
     ids.forEach((id) => {
@@ -110,15 +121,39 @@ export function NavBar() {
     return () => observers.forEach((obs) => obs.disconnect());
   }, [pathname]);
 
-  // Escape key closes menu
   useEffect(() => {
     if (!menuOpen) return;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMenuOpen(false);
         menuTriggerRef.current?.focus();
+        return;
+      }
+
+      if (e.key !== 'Tab' || !menuRef.current) {
+        return;
+      }
+
+      const focusable = menuRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (!first || !last) {
+        return;
+      }
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
+
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [menuOpen]);
@@ -156,6 +191,15 @@ export function NavBar() {
     }
   }, [menuOpen]);
 
+  const links = useMemo(
+    () =>
+      NAV_LINKS.map((link) => ({
+        ...link,
+        href: link.href.startsWith('/') ? link.href : resolveSectionHref(pathname, link.href),
+      })),
+    [pathname]
+  );
+
   const isActive = useCallback(
     (href: string) => {
       if (href === '/writing') {
@@ -171,37 +215,35 @@ export function NavBar() {
   return (
     <header
       ref={navRef}
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-all duration-[250ms]',
-        scrolled ? 'glass-no-hover glass-full border-b border-white/[0.08]' : 'bg-transparent'
-      )}
-      style={{ height: 'var(--nav-height)' }}
+      className="glass-nav fixed inset-x-0 top-0 z-50 border-b border-white/[0.08]"
       role="banner"
     >
       <nav
-        className="container flex h-full items-center justify-between"
-        aria-label="Main navigation"
+        className="container grid h-[var(--nav-height)] grid-cols-[auto_1fr_auto] items-center gap-4"
+        aria-label="Primary"
       >
-        {/* Logo + tagline */}
-        <Link href="/" className="flex items-center gap-3" aria-label="Oscar Scardubu home">
-          <span
-            className="text-base font-bold text-white"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            Oscar<span style={{ color: 'var(--color-accent)' }}>.</span>
+        <Link
+          href={resolveSectionHref(pathname, 'hero')}
+          className="flex items-center gap-3"
+          aria-label="Oscar Scardubu home"
+        >
+          <span className="text-base font-[var(--font-display)] font-bold text-white">
+            Oscar<span className="text-[var(--color-accent)]">.</span>
           </span>
           <span
-            className="hidden text-xs sm:block"
-            style={{ color: 'var(--color-text-muted)' }}
+            className="hidden text-xs text-[color:var(--color-text-muted)] xl:block"
             aria-hidden="true"
           >
             Production AI systems · Full-stack execution
           </span>
         </Link>
 
-        {/* Desktop nav links */}
-        <ul className="hidden items-center gap-1 md:flex" role="list" aria-label="Site sections">
-          {NAV_LINKS.map((link) => (
+        <ul
+          className="hidden items-center justify-center gap-1 md:flex"
+          role="list"
+          aria-label="Site sections"
+        >
+          {links.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -213,10 +255,9 @@ export function NavBar() {
               >
                 {link.label}
                 {isActive(link.href) && !prefersReduced && (
-                  <motion.span
+                  <m.span
                     layoutId="nav-underline"
-                    className="absolute inset-x-3 -bottom-px block h-[1.5px] rounded-full"
-                    style={{ backgroundColor: 'var(--color-accent)' }}
+                    className="absolute inset-x-3 -bottom-px block h-[1.5px] rounded-full bg-[var(--color-accent)]"
                     transition={springs.layout}
                     aria-hidden="true"
                   />
@@ -226,18 +267,13 @@ export function NavBar() {
           ))}
         </ul>
 
-        {/* Open to Work pill + hamburger */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end gap-3">
           <span
-            className="hidden items-center gap-2 rounded-full border px-3 py-1 text-xs sm:inline-flex"
-            style={{
-              borderColor: 'rgba(34,197,94,0.25)',
-              color: '#86efac',
-            }}
+            className="pill pill-cyan hidden items-center gap-2 sm:inline-flex"
             role="status"
             aria-label="Availability: open to work"
           >
-            <span className="live-dot" style={{ width: 6, height: 6 }} aria-hidden="true" />
+            <span className="live-dot h-[6px] w-[6px]" aria-hidden="true" />
             Open to Work
           </span>
 
@@ -245,6 +281,7 @@ export function NavBar() {
             <HamburgerIcon
               open={menuOpen}
               onClick={() => setMenuOpen((v) => !v)}
+              controls={mobileNavId}
               buttonRef={menuTriggerRef}
             />
           </div>
@@ -255,7 +292,7 @@ export function NavBar() {
       <AnimatePresence>
         {menuOpen && (
           <>
-            <motion.button
+            <m.button
               type="button"
               aria-label="Close navigation overlay"
               className="fixed inset-0 top-[var(--nav-height)] z-[-1] bg-black/40 md:hidden"
@@ -268,8 +305,9 @@ export function NavBar() {
               }}
             />
 
-            <motion.div
-              id="mobile-nav"
+            <m.div
+              id={mobileNavId}
+              ref={menuRef}
               key="mobile-menu"
               variants={prefersReduced ? undefined : mobileMenu}
               initial="hidden"
@@ -277,15 +315,15 @@ export function NavBar() {
               exit="hidden"
               className="glass-no-hover border-t border-white/[0.08] md:hidden"
             >
-              <motion.ul
+              <m.ul
                 variants={prefersReduced ? undefined : mobileMenuItems}
                 initial="hidden"
                 animate="visible"
                 className="container flex flex-col gap-1 py-4"
                 role="list"
               >
-                {NAV_LINKS.map((link, index) => (
-                  <motion.li key={link.href} variants={prefersReduced ? undefined : mobileMenuItem}>
+                {links.map((link, index) => (
+                  <m.li key={link.href} variants={prefersReduced ? undefined : mobileMenuItem}>
                     <Link
                       ref={index === 0 ? firstMobileLinkRef : undefined}
                       href={link.href}
@@ -300,20 +338,14 @@ export function NavBar() {
                     >
                       {link.label}
                     </Link>
-                  </motion.li>
+                  </m.li>
                 ))}
 
-                <motion.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
-                  <Link
-                    href="/#contact"
-                    onClick={() => setMenuOpen(false)}
-                    className="glass-card flex w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-white"
-                  >
-                    Get in Touch
-                  </Link>
-                </motion.li>
-              </motion.ul>
-            </motion.div>
+                <m.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
+                  <span className="pill pill-cyan justify-center">Open to Work</span>
+                </m.li>
+              </m.ul>
+            </m.div>
           </>
         )}
       </AnimatePresence>

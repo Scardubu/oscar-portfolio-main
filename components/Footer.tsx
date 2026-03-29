@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 
 function GitHubIcon() {
   return (
@@ -26,7 +26,13 @@ function XIcon() {
 
 function EmailIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 fill-none stroke-current stroke-2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z" />
     </svg>
   );
@@ -40,7 +46,9 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold text-white/80">Oscar Scardubu</p>
-            <p className="text-xs text-white/40">Designed and built by Oscar Scardubu · Nigeria · © {new Date().getFullYear()}</p>
+            <p className="text-xs text-white/40">
+              Designed and built by Oscar Scardubu &middot; Nigeria &middot; &copy; {new Date().getFullYear()}
+            </p>
           </div>
 
           {/* CTA row */}
@@ -52,17 +60,29 @@ export function Footer() {
               aria-label="Download Oscar Scardubu resume PDF"
               className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white/70 transition hover:border-white/50 hover:text-white"
             >
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-3.5 w-3.5 fill-none stroke-current stroke-2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16" />
               </svg>
-              Résumé
+              R&eacute;sum&eacute;
             </Link>
             <a
               href="#main-content"
               className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white/70 transition hover:border-white/50 hover:text-white"
               aria-label="Scroll back to top of page"
             >
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-3.5 w-3.5 fill-none stroke-current stroke-2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M12 19V5m0 0-7 7m7-7 7 7" />
               </svg>
               Back to top

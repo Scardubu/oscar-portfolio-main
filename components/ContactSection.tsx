@@ -4,18 +4,18 @@ import { GlassCard } from '@/components/GlassCard';
 const engagementModes = [
   {
     title: 'Full-time Staff+',
-    description:
-      'Staff-level ownership where model quality, platform reliability, and product clarity all matter at once.',
+    description: 'Staff/Principal Full-Stack ML Engineering roles',
+    context: 'AI-powered fintech · Platform · Infra teams',
   },
   {
-    title: 'Technical Co-founder',
-    description:
-      'Early-stage build partnership for products where technical depth and execution speed are the moat.',
+    title: 'Co-founder',
+    description: 'Technical co-founder for AI/fintech ventures',
+    context: 'Equity-based · Pre-seed through Series A',
   },
   {
-    title: 'Select Consulting',
-    description:
-      'Focused engagements across inference services, observability, retrieval systems, and production ML debugging.',
+    title: 'ML Consulting',
+    description: 'Production ML system architecture and delivery',
+    context: 'Model deployment · MLOps · Team augmentation',
   },
 ];
 
@@ -35,24 +35,30 @@ function LinkedInIcon() {
   );
 }
 
+function EmailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 fill-none stroke-current stroke-2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z" />
+    </svg>
+  );
+}
+
 export function ContactSection() {
   return (
     <section id="contact" aria-labelledby="contact-heading" className="py-20 sm:py-24">
       <div className="container">
-        <div
-          className="glass-no-hover inline-flex items-center gap-3 rounded-[999px] px-5 py-3 text-sm text-white/75"
-          role="status"
-          aria-live="polite"
-          data-reveal=""
-        >
+        <div className="pill pill-cyan inline-flex items-center gap-3" role="status" aria-live="polite" data-reveal="">
           <span className="live-dot" aria-hidden="true" />
-          Open — responding within 48 hours
+          Open — responding within 48hrs
         </div>
 
         <div className="mt-6 max-w-2xl">
-          <span className="label" data-reveal="" data-reveal-delay="1">
-            Contact
-          </span>
           <h2 id="contact-heading" className="text-4xl text-white sm:text-5xl" data-reveal="" data-reveal-delay="2">
             Let&apos;s Build Something
           </h2>
@@ -71,30 +77,29 @@ export function ContactSection() {
               data-reveal-delay={String(index + 1)}
             >
               <h3 className="text-2xl text-white">{mode.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-white/65">{mode.description}</p>
+              <p className="mt-3 text-sm leading-7 text-white/75">{mode.description}</p>
+              <p className="mt-2 text-sm leading-7 text-white/50">{mode.context}</p>
             </GlassCard>
           ))}
         </div>
 
-        <div
-          className="mt-10 flex flex-wrap items-center gap-4"
-          data-reveal=""
-          data-reveal-delay="4"
-        >
-          <GlassCard as="article" className="p-0" hover={false}>
-            <Link
-              href="mailto:oscar@scardubu.dev"
-              className="inline-flex items-center rounded-[inherit] px-5 py-3 text-sm font-medium text-white"
-            >
-              oscar@scardubu.dev
-            </Link>
-          </GlassCard>
+        <div className="mt-10 space-y-6" data-reveal="" data-reveal-delay="4">
+          <a
+            href="mailto:oscar@scardubu.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-card block rounded-[var(--radius-lg)] px-6 py-5 text-center text-[length:var(--text-xl)] text-white"
+          >
+            oscar@scardubu.dev
+          </a>
+
+          <div className="flex flex-wrap items-center gap-4 text-[color:var(--color-text-muted)]">
           <Link
             href="https://github.com/Scardubu"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Open Oscar Scardubu GitHub profile"
-            className="inline-flex items-center gap-2 text-sm text-white/75 transition hover:text-white"
+            aria-label="Oscar Scardubu on GitHub"
+            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
           >
             <GitHubIcon />
             GitHub
@@ -103,12 +108,23 @@ export function ContactSection() {
             href="https://linkedin.com/in/oscardubu"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Open Oscar Scardubu LinkedIn profile"
-            className="inline-flex items-center gap-2 text-sm text-white/75 transition hover:text-white"
+            aria-label="Oscar Scardubu on LinkedIn"
+            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
           >
             <LinkedInIcon />
             LinkedIn
           </Link>
+          <Link
+            href="mailto:oscar@scardubu.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Email Oscar Scardubu"
+            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+          >
+            <EmailIcon />
+            Email
+          </Link>
+          </div>
         </div>
       </div>
     </section>

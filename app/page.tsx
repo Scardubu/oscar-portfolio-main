@@ -1,5 +1,5 @@
 import { AboutSection } from '@/components/AboutSection';
-import { BookmarkToast } from '@/components/Bookmarktoast';
+import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/HeroSection';
@@ -23,7 +23,7 @@ export default async function Home() {
         {posts.length > 0 ? <WritingSection posts={posts} /> : null}
       </main>
       <Footer />
-      <BookmarkToast />
+      <BookmarkToastLoader />
       <ScrollRevealInit />
     </>
   );

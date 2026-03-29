@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from 'framer-motion';
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -63,7 +63,7 @@ export function LiveActivityBar() {
   }, [activity?.time]);
 
   return (
-    <motion.div
+    <m.div
       initial={pRM ? {} : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -72,7 +72,7 @@ export function LiveActivityBar() {
       aria-live="polite"
       aria-label="Live activity"
     >
-      <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-white/45">
+      <span className="font-mono text-[0.7rem] tracking-[0.2em] text-white/45 uppercase">
         Live Activity
       </span>
       <span className="live-dot" aria-hidden="true" />
@@ -83,16 +83,16 @@ export function LiveActivityBar() {
           rel="noopener noreferrer"
           className="font-mono text-xs text-white/72 transition hover:text-white sm:text-sm"
         >
-          {activity.repo ?? "oscar-portfolio"} · {activity.message}
+          {activity.repo ?? 'oscar-portfolio'} · {activity.message}
         </Link>
       ) : (
         <span className="font-mono text-xs text-white/72 sm:text-sm">
-          {activity?.repo ?? "oscar-portfolio"} · {activity?.message ?? "Active development"}
+          {activity?.repo ?? 'oscar-portfolio'} · {activity?.message ?? 'Active development'}
         </span>
       )}
-      <span className="ml-auto font-mono text-[0.7rem] uppercase tracking-[0.2em] text-white/45">
+      <span className="ml-auto font-mono text-[0.7rem] tracking-[0.2em] text-white/45 uppercase">
         {relativeTime}
       </span>
-    </motion.div>
+    </m.div>
   );
 }

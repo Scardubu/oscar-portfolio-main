@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: { formats: ['image/avif', 'image/webp'] },
   experimental: { optimizeCss: true },
+  async redirects() {
+    return [
+      {
+        source: '/blog/:path*',
+        destination: '/writing',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -62,7 +62,7 @@ export function getAllPosts(): BlogPostMeta[] {
 
   const files = fs
     .readdirSync(POSTS_DIR)
-    .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"));
+    .filter((f) => (f.endsWith(".mdx") || f.endsWith(".md")) && !f.startsWith("_"));
 
   const posts = files
     .map((filename) => {
@@ -97,7 +97,7 @@ export function getAllPostSlugs(): string[] {
   ensurePostsDir();
   return fs
     .readdirSync(POSTS_DIR)
-    .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+    .filter((f) => (f.endsWith(".mdx") || f.endsWith(".md")) && !f.startsWith("_"))
     .map((f) => f.replace(/\.mdx?$/, ""));
 }
 

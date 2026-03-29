@@ -1,7 +1,9 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { m } from 'framer-motion';
 import type { CSSProperties, ReactNode } from 'react';
+
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { springConfig } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +44,7 @@ export function GlassCard({
 }: Readonly<GlassCardProps>) {
   const prefersReducedMotion = useReducedMotion();
   const sharedClassName = cn(
+    'glass',
     hover ? 'glass-card' : 'glass-no-hover',
     `glass-${level}`,
     chromatic && 'glass-chromatic',
@@ -67,31 +70,31 @@ export function GlassCard({
 
   if (as === 'article') {
     return (
-      <motion.article className={sharedClassName} {...hoverProps} {...sharedProps}>
+      <m.article className={sharedClassName} {...hoverProps} {...sharedProps}>
         {children}
-      </motion.article>
+      </m.article>
     );
   }
 
   if (as === 'section') {
     return (
-      <motion.section className={sharedClassName} {...hoverProps} {...sharedProps}>
+      <m.section className={sharedClassName} {...hoverProps} {...sharedProps}>
         {children}
-      </motion.section>
+      </m.section>
     );
   }
 
   if (as === 'li') {
     return (
-      <motion.li className={sharedClassName} {...hoverProps} {...sharedProps}>
+      <m.li className={sharedClassName} {...hoverProps} {...sharedProps}>
         {children}
-      </motion.li>
+      </m.li>
     );
   }
 
   return (
-    <motion.div className={sharedClassName} {...hoverProps} {...sharedProps}>
+    <m.div className={sharedClassName} {...hoverProps} {...sharedProps}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }

@@ -1,26 +1,56 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
+
 import type { Project, ProjectStatus } from '@/data/projects';
 import { GlassCard } from '@/components/GlassCard';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { springConfig } from '@/lib/motion';
 
-const statusStyles: Record<ProjectStatus, { dot: string; label: string }> = {
-  live: { dot: 'bg-cyan-400', label: 'Live' },
-  wip: { dot: 'bg-amber-400', label: 'WIP' },
-  archived: { dot: 'bg-zinc-400', label: 'Archived' },
+const statusStyles: Record<
+  ProjectStatus,
+  { className: string; dotClassName: string; label: string }
+> = {
+  live: {
+    className: 'pill pill-cyan',
+    dotClassName: 'live-dot bg-cyan-400',
+    label: 'Live',
+  },
+  wip: {
+    className:
+      'inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-amber-400',
+    dotClassName: 'bg-amber-400',
+    label: 'WIP',
+  },
+  archived: {
+    className:
+      'inline-flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500',
+    dotClassName: 'bg-zinc-500',
+    label: 'Archived',
+  },
 };
 
 interface ProjectCardProps {
   project: Project;
+  revealDelay?: string;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+function getCardLevel(project: Project) {
+  if (project.featured) {
+    return 'full' as const;
+  }
+
+  return project.status === 'live' ? ('light' as const) : ('medium' as const);
+}
+
+export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCardProps>) {
   const status = statusStyles[project.status];
   const [expanded, setExpanded] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const detailsId = `project-decisions-${project.id}`;
+  const level = getCardLevel(project);
 
   return (
     <div data-project-id={project.id} className="h-full">
@@ -28,18 +58,21 @@ export function ProjectCard({ project }: ProjectCardProps) {
         as="article"
         className="card-depth flex h-full flex-col gap-4 p-6"
         chromatic={project.featured}
-        level={project.featured ? 'full' : project.status === 'live' ? 'light' : 'medium'}
+        level={level}
+        data-project-id={project.id}
+        data-reveal=""
+        data-reveal-delay={revealDelay}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-white/50">
+            <p className="text-xs font-medium tracking-[0.24em] text-white/50 uppercase">
               {project.featured ? 'Featured system' : 'Production track'}
             </p>
             <h3 className="mt-3 text-2xl text-white">{project.title}</h3>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-white/70">
+          <span className={status.className}>
             <span
-              className={`h-2.5 w-2.5 rounded-full ${status.dot} ${project.status === 'live' ? 'live-dot' : ''}`}
+              className={`h-2.5 w-2.5 rounded-full ${status.dotClassName}`}
               aria-hidden="true"
             />
             {status.label}
@@ -58,7 +91,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.tags.map((tag) => (
             <li
               key={`${project.id}-${tag}`}
-              className="rounded-full border border-white/15 px-3 py-1 font-mono text-xs uppercase tracking-[0.16em] text-white/75"
+              className="rounded-full border border-white/15 px-3 py-1 font-mono text-xs tracking-[0.16em] text-white/75 uppercase"
             >
               {tag}
             </li>
@@ -69,9 +102,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className="space-y-3">
             <button
               type="button"
-              aria-expanded={expanded ? 'true' : 'false'}
+              aria-expanded={expanded}
               aria-controls={detailsId}
-              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-cyan-100 transition hover:border-cyan-300/45 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 px-4 py-2 text-xs font-medium tracking-[0.2em] text-cyan-100 uppercase transition hover:border-cyan-300/45 hover:text-white"
               onClick={() => setExpanded((current) => !current)}
             >
               Architecture decisions
@@ -79,12 +112,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
             <AnimatePresence initial={false}>
               {expanded ? (
-                <motion.div
+                <m.div
                   id={detailsId}
                   initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
                   animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
                   exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  transition={springConfig}
                   className="overflow-hidden"
                 >
                   <div className="space-y-3 border-l border-cyan-400/40 pl-4">
@@ -102,7 +135,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                       </div>
                     ))}
                   </div>
-                </motion.div>
+                </m.div>
               ) : null}
             </AnimatePresence>
           </div>

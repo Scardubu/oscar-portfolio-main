@@ -13,13 +13,13 @@
 
   /* ─── TYPE SCALE — 7 steps, fluid clamp() ───────────── */
   --text-xs:   clamp(0.694rem, 0.67vw + 0.5rem,  0.75rem);
-  --text-sm:   clamp(0.833rem, 0.8vw  + 0.6rem,  0.875rem);
+  --text-sm:   clamp(0.833rem, 0.8vw + 0.6rem, 0.875rem);
   --text-base: 1rem;
-  --text-lg:   clamp(1.2rem,   1.2vw  + 0.9rem,  1.25rem);
-  --text-xl:   clamp(1.44rem,  1.5vw  + 1rem,    1.5rem);
-  --text-2xl:  clamp(1.728rem, 2.2vw  + 1rem,    2rem);
-  --text-3xl:  clamp(2.074rem, 3.5vw  + 0.5rem,  3rem);
-  --text-4xl:  clamp(2.488rem, 5vw    + 0rem,    4.5rem);
+  --text-lg:   clamp(1.2rem, 1.2vw + 0.9rem, 1.25rem);
+  --text-xl:   clamp(1.44rem, 1.5vw + 1rem, 1.5rem);
+  --text-2xl:  clamp(1.728rem, 2.2vw + 1rem, 2rem);
+  --text-3xl:  clamp(2.074rem, 3.5vw + 0.5rem, 3rem);
+  --text-4xl:  clamp(2.488rem, 5vw + 0rem, 4.5rem);
 
   --weight-regular:  400;
   --weight-medium:   500;
@@ -184,6 +184,7 @@
 
 html {
   scroll-behavior: smooth;
+  text-size-adjust: 100%;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
@@ -386,26 +387,25 @@ section {
 .glass-full {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
+  border-top:    1px solid var(--fresnel-top);
+  border-left:   1px solid var(--fresnel-left);
+  border-right:  1px solid var(--fresnel-right);
+  border-bottom: 1px solid var(--fresnel-bottom);
+  --glass-thickness: 1px;
+  box-shadow: var(--glass-shadow), 0 0 0 var(--glass-thickness) rgba(255,255,255,0.07) inset;
+  transition: --glass-thickness 0.2s ease, box-shadow var(--dur-base) var(--ease-out);
 }
 .glass-medium {
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
 }
 .glass-light {
   -webkit-backdrop-filter: blur(8px) saturate(140%);
   backdrop-filter: blur(8px) saturate(140%);
   background: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border-subtle);
 }
-
-/* L3 — Fresnel specular edges */
-.glass-full {
-  border-top:    1px solid var(--fresnel-top);
-  border-left:   1px solid var(--fresnel-left);
-  border-right:  1px solid var(--fresnel-right);
-  border-bottom: 1px solid var(--fresnel-bottom);
-}
-.glass-medium { border: 1px solid var(--glass-border); }
-.glass-light  { border: 1px solid var(--color-border-subtle); }
 
 /* glass-no-hover aliased from glass-light for backward compat */
 .glass-no-hover {
@@ -420,11 +420,6 @@ section {
   syntax: "<length>";
   initial-value: 1px;
   inherits: false;
-}
-.glass-full {
-  --glass-thickness: 1px;
-  box-shadow: var(--glass-shadow), 0 0 0 var(--glass-thickness) rgba(255,255,255,0.07) inset;
-  transition: --glass-thickness 0.2s ease, box-shadow var(--dur-base) var(--ease-out);
 }
 .glass-full:hover {
   --glass-thickness: 2px;
@@ -553,6 +548,7 @@ section {
   50%       { opacity: 0.5; transform: scale(1.5) translateZ(0); }
 }
 .live-dot {
+  position: relative;
   display: inline-block;
   width: 7px;
   height: 7px;
@@ -561,6 +557,33 @@ section {
   animation: pulse-dot 2.2s ease-in-out infinite;
   will-change: transform, opacity;
   flex-shrink: 0;
+}
+
+.cursor-glow {
+  position: absolute;
+  left: var(--gx, 50%);
+  top: var(--gy, 50%);
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,211,238,0.1) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: opacity 400ms ease;
+}
+
+.section-top-offset {
+  padding-top: calc(var(--nav-height) + var(--space-12));
+}
+
+.detail-header {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-10);
+}
+
+.detail-body {
+  padding-bottom: var(--space-20);
 }
 
 /* Legacy pulse alias — used by .pulse-dot class */

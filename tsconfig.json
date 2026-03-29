@@ -54,7 +54,10 @@
     "data/projects.ts",
 
     "components/AboutSection.tsx",
+    "components/BookmarkToast.tsx",
+    "components/BookmarkToastLoader.tsx",
     "components/ContactSection.tsx",
+    "components/CursorGlow.tsx",
     "components/Footer.tsx",
     "components/GlassCard.tsx",
     "components/HeroSection.tsx",
