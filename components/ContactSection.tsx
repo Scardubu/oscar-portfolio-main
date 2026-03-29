@@ -37,7 +37,7 @@ function LinkedInIcon() {
 
 export function ContactSection() {
   return (
-    <section id="contact" className="py-20 sm:py-24">
+    <section id="contact" aria-labelledby="contact-heading" className="py-20 sm:py-24">
       <div className="container">
         <div
           className="glass-no-hover inline-flex items-center gap-3 rounded-[999px] px-5 py-3 text-sm text-white/75"
@@ -53,7 +53,7 @@ export function ContactSection() {
           <span className="label" data-reveal="" data-reveal-delay="1">
             Contact
           </span>
-          <h2 className="text-4xl text-white sm:text-5xl" data-reveal="" data-reveal-delay="2">
+          <h2 id="contact-heading" className="text-4xl text-white sm:text-5xl" data-reveal="" data-reveal-delay="2">
             Let&apos;s Build Something
           </h2>
           <p className="mt-4 text-lg text-white/65" data-reveal="" data-reveal-delay="3">

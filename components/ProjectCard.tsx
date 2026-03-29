@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { Project, ProjectStatus } from '@/data/projects';
 import { GlassCard } from '@/components/GlassCard';
 
@@ -20,7 +20,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const status = statusStyles[project.status];
   const [expanded, setExpanded] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const detailsId = useId();
+  const detailsId = `project-decisions-${project.id}`;
 
   return (
     <div data-project-id={project.id} className="h-full">
@@ -69,7 +69,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className="space-y-3">
             <button
               type="button"
-              aria-expanded={expanded}
+              aria-expanded={expanded ? 'true' : 'false'}
               aria-controls={detailsId}
               className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-cyan-100 transition hover:border-cyan-300/45 hover:text-white"
               onClick={() => setExpanded((current) => !current)}
@@ -91,7 +91,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     {project.decisions.map((decision) => (
                       <div key={`${project.id}-${decision.rejected}`} className="space-y-1">
                         <p className="text-sm leading-7 text-white/75">
-                          <span className="font-semibold text-cyan-100">Key Decision:</span>{' '}
+                          <span className="font-semibold text-cyan-100">Chose:</span>{' '}
                           {decision.chosen}
                         </p>
                         <p className="text-sm leading-7 text-white/62">{decision.reason}</p>

@@ -37,10 +37,10 @@ export function Footer() {
     <footer className="border-t border-white/10 py-10">
       <div className="container">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          {/* Brand + back-to-top */}
+          {/* Brand */}
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-semibold text-white/80">Oscar Ndugbu</p>
-            <p className="text-xs text-white/40">Full-Stack ML Engineer · Nigeria · © {new Date().getFullYear()}</p>
+            <p className="text-sm font-semibold text-white/80">Oscar Scardubu</p>
+            <p className="text-xs text-white/40">Designed and built by Oscar Scardubu · Nigeria · © {new Date().getFullYear()}</p>
           </div>
 
           {/* CTA row */}
@@ -49,7 +49,7 @@ export function Footer() {
               href="/oscar-scardubu-resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Download Oscar Ndugbu resume PDF"
+              aria-label="Download Oscar Scardubu resume PDF"
               className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-white/70 transition hover:border-white/50 hover:text-white"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -75,7 +75,7 @@ export function Footer() {
               href="https://github.com/Scardubu"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Open Oscar Ndugbu GitHub profile"
+              aria-label="Open Oscar Scardubu GitHub profile"
               className="transition hover:text-white"
             >
               <GitHubIcon />
@@ -84,7 +84,7 @@ export function Footer() {
               href="https://linkedin.com/in/oscardubu"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Open Oscar Ndugbu LinkedIn profile"
+              aria-label="Open Oscar Scardubu LinkedIn profile"
               className="transition hover:text-white"
             >
               <LinkedInIcon />
@@ -93,14 +93,14 @@ export function Footer() {
               href="https://x.com/scardubu"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Open Oscar Ndugbu X (Twitter) profile"
+              aria-label="Open Oscar Scardubu X (Twitter) profile"
               className="transition hover:text-white"
             >
               <XIcon />
             </Link>
             <Link
               href="mailto:oscar@scardubu.dev"
-              aria-label="Email Oscar Ndugbu"
+              aria-label="Email Oscar Scardubu"
               className="transition hover:text-white"
             >
               <EmailIcon />

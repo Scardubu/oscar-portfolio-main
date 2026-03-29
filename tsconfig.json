@@ -24,6 +24,7 @@
 
     "isolatedModules": true,
     "incremental": true,
+    "forceConsistentCasingInFileNames": true,
 
     "plugins": [
       {
@@ -31,7 +32,6 @@
       }
     ],
 
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["./components/*"],

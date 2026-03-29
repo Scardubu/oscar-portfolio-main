@@ -19,11 +19,11 @@ const stackGroups = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-20 sm:py-24">
+    <section id="about" aria-labelledby="about-heading" className="py-20 sm:py-24">
       <div className="container grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:items-start">
         <div className="glass-no-hover rounded-[var(--radius-lg)] p-6 md:p-8" data-reveal="">
           <span className="label">About</span>
-          <h2 className="mt-4 text-4xl text-white sm:text-5xl">
+          <h2 id="about-heading" className="mt-4 text-4xl text-white sm:text-5xl">
             Full-Stack ML Engineer — Production AI Systems
           </h2>
           <div className="mt-6 space-y-4 text-base leading-8 text-white/70">

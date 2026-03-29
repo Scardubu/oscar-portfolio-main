@@ -373,8 +373,8 @@ section {
 /* L1 — Base */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   box-shadow: var(--glass-shadow);
   will-change: transform;
   transform: translateZ(0);
@@ -384,16 +384,16 @@ section {
 
 /* L2 — Saturation levels */
 .glass-full {
-  backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
 }
 .glass-medium {
-  backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
 }
 .glass-light {
-  backdrop-filter: blur(8px) saturate(140%);
   -webkit-backdrop-filter: blur(8px) saturate(140%);
+  backdrop-filter: blur(8px) saturate(140%);
   background: rgba(255,255,255,0.03);
 }
 
@@ -409,8 +409,8 @@ section {
 
 /* glass-no-hover aliased from glass-light for backward compat */
 .glass-no-hover {
-  backdrop-filter: blur(12px) saturate(150%);
   -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
 }
@@ -488,16 +488,16 @@ section {
 
 .glass-nav {
   background: rgba(9,9,14,0.72);
-  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   border-bottom: 1px solid var(--color-border);
 }
 
 /* Metric card */
 .metric-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   transition:
@@ -514,10 +514,6 @@ section {
 
 /* Metric breath — card 4 only, GPU-only */
 @keyframes metric-breath {
-  0%, 100% { transform: scale(1) translateZ(0); }
-  50%       { transform: scale(1.018) translateZ(0); }
-}
-@keyframes metric-card-breath {
   0%, 100% { transform: scale(1) translateZ(0); }
   50%       { transform: scale(1.018) translateZ(0); }
 }
@@ -567,23 +563,12 @@ section {
   flex-shrink: 0;
 }
 
-/* Legacy pulse aliases */
+/* Legacy pulse alias — used by .pulse-dot class */
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
   50%       { transform: scale(1.1); opacity: 0.72; }
 }
 .pulse-dot { animation: pulse 1.8s ease-in-out infinite; }
-
-@keyframes live-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.35);
-  }
-  50% {
-    transform: scale(1.18);
-    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
-  }
-}
 
 /* ─── CARD LIFT ──────────────────────────────────────────── */
 .card-lift {
