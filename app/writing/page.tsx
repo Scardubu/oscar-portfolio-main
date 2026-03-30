@@ -33,7 +33,7 @@ export default async function WritingIndexPage() {
         <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
           <div className="container">
             <span className="label">Writing</span>
-            <h1 className="mt-2">Notes on building</h1>
+            <h1 className="gradient-text mt-2">Notes on building</h1>
             <p className="mt-4 max-w-2xl text-lg text-[color:var(--color-text-muted)]">
               ML systems, fintech architecture, and the decisions that don&apos;t show up in the
               commit history.
@@ -43,7 +43,7 @@ export default async function WritingIndexPage() {
             {featured && (
               <Link
                 href={`/writing/${featured.slug}`}
-                className="group mt-10 block rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-white/25 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                className="glass glass-full glass-chromatic group mt-10 block rounded-[var(--radius-xl)] p-6 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 sm:p-8"
                 aria-label={`Featured article: ${featured.title}`}
               >
                 <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -66,7 +66,9 @@ export default async function WritingIndexPage() {
                   {featured.summary}
                 </p>
                 <div className="mt-4 flex items-center gap-4 text-xs text-[color:var(--color-text-muted)]">
-                  <time className="font-mono">{formatDate(featured.date)}</time>
+                  <time dateTime={featured.date} className="font-mono">
+                    {formatDate(featured.date)}
+                  </time>
                   <span>{featured.readingTime} min read</span>
                   <span className="ml-auto text-xs font-semibold text-[color:var(--color-text-primary)]">
                     Read article →
@@ -77,6 +79,12 @@ export default async function WritingIndexPage() {
 
             {/* Year-bucketed archive */}
             <div className="mt-12 grid gap-12 pb-20">
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <p className="text-sm text-[color:var(--color-text-muted)]">
+                  {sorted.length} published notes on production systems, fintech architecture, and
+                  ML delivery.
+                </p>
+              </div>
               {Object.entries(groups)
                 .sort(([left], [right]) => Number(right) - Number(left))
                 .map(([year, yearPosts]) => (
@@ -87,7 +95,10 @@ export default async function WritingIndexPage() {
                     <div>
                       {yearPosts.map((post) => (
                         <article key={post.slug} className="writing-row">
-                          <time className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]">
+                          <time
+                            dateTime={post.date}
+                            className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]"
+                          >
                             {formatDate(post.date)}
                           </time>
                           <div className="min-w-0 flex-1">

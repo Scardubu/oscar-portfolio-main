@@ -72,68 +72,68 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: "sabiscore",
-    name: "SabiScore",
-    tagline: "Sports Intelligence Platform",
+    id: 'sabiscore',
+    name: 'SabiScore',
+    tagline: 'Sports Intelligence Platform',
     description:
-      "End-to-end sports prediction platform that processes live match data, runs ML inference, and surfaces actionable insights for fans and analysts.",
+      'End-to-end sports prediction platform that processes live match data, runs ML inference, and surfaces actionable insights for fans and analysts.',
     problem:
       "Sports fans make decisions based on gut feel. Data exists but isn't accessible or actionable in real time.",
     solution:
-      "Built a full pipeline: data ingestion → feature engineering → model serving → real-time API → consumer UI. Prediction model trained on 3 seasons of match data.",
+      'Built a full pipeline: data ingestion → feature engineering → model serving → real-time API → consumer UI. Prediction model trained on 3 seasons of match data.',
     outcome:
-      "7 out of 10 predictions correct. Running 24/7 on self-hosted infra. Used daily for match analysis.",
-    status: "live",
+      'Designed for repeated live-decision sessions on self-hosted infrastructure, with the product surface kept readable during match analysis.',
+    status: 'live',
     featured: true,
-    tags: ["Python", "FastAPI", "PyTorch", "PostgreSQL", "Next.js", "Redis", "Docker"],
+    tags: ['Python', 'FastAPI', 'PyTorch', 'PostgreSQL', 'Next.js', 'Redis', 'Docker'],
     links: {
-      live: "https://sabiscore.app",
-      repo: "https://github.com/Scardubu/sabiscore",
+      live: 'https://sabiscore.app',
+      repo: 'https://github.com/Scardubu/sabiscore',
     },
-    accent: "cyan",
-    size: "large",
+    accent: 'cyan',
+    size: 'large',
   },
   {
-    id: "ml-pipeline",
-    name: "MLOps Pipeline",
-    tagline: "Production ML Infrastructure",
+    id: 'ml-pipeline',
+    name: 'MLOps Pipeline',
+    tagline: 'Production ML Infrastructure',
     description:
-      "Reusable MLOps framework covering experiment tracking, model versioning, automated retraining triggers, and inference monitoring.",
+      'Reusable MLOps framework covering experiment tracking, model versioning, automated retraining triggers, and inference monitoring.',
     problem:
-      "ML projects stall at the Jupyter notebook stage because productionising a model requires building infra from scratch each time.",
+      'ML projects stall at the Jupyter notebook stage because productionising a model requires building infra from scratch each time.',
     solution:
-      "Abstracted the common pipeline: data validation → training → evaluation → registry → serving → drift detection. Configurable per project.",
+      'Abstracted the common pipeline: data validation → training → evaluation → registry → serving → drift detection. Configurable per project.',
     outcome:
       "Powers SabiScore's model lifecycle. Redeployments take under 5 minutes. Drift alerts fire before prediction quality degrades.",
-    status: "documented",
+    status: 'documented',
     featured: false,
-    tags: ["Python", "MLflow", "FastAPI", "PostgreSQL", "Docker", "GitHub Actions"],
+    tags: ['Python', 'MLflow', 'FastAPI', 'PostgreSQL', 'Docker', 'GitHub Actions'],
     links: {
-      repo: "https://github.com/Scardubu/ml-pipeline",
+      repo: 'https://github.com/Scardubu/ml-pipeline',
     },
-    accent: "violet",
-    size: "medium",
+    accent: 'violet',
+    size: 'medium',
   },
   {
-    id: "data-ingestion",
-    name: "Real-Time Data Ingestion",
-    tagline: "Event-Driven Sports Data Layer",
+    id: 'data-ingestion',
+    name: 'Real-Time Data Ingestion',
+    tagline: 'Event-Driven Sports Data Layer',
     description:
-      "WebSocket-based ingestion service that normalises live sports data from multiple sources into a consistent schema for downstream ML consumption.",
+      'WebSocket-based ingestion service that normalises live sports data from multiple sources into a consistent schema for downstream ML consumption.',
     problem:
-      "Sports data APIs are inconsistent, unreliable, and expensive. A prediction model is only as good as its input data.",
+      'Sports data APIs are inconsistent, unreliable, and expensive. A prediction model is only as good as its input data.',
     solution:
-      "Built an adapter layer that fans out to multiple providers, deduplicates events, validates schema, and streams clean events to a message queue.",
+      'Built an adapter layer that fans out to multiple providers, deduplicates events, validates schema, and streams clean events to a message queue.',
     outcome:
-      "Reduced data pipeline failures from weekly to near-zero. Supports 3 data sources with automatic failover.",
-    status: "documented",
+      'Reduced data pipeline failures from weekly to near-zero. Supports 3 data sources with automatic failover.',
+    status: 'documented',
     featured: false,
-    tags: ["Python", "WebSockets", "Redis Streams", "Pydantic", "FastAPI"],
+    tags: ['Python', 'WebSockets', 'Redis Streams', 'Pydantic', 'FastAPI'],
     links: {
-      repo: "https://github.com/Scardubu/data-ingestion",
+      repo: 'https://github.com/Scardubu/data-ingestion',
     },
-    accent: "teal",
-    size: "medium",
+    accent: 'teal',
+    size: 'medium',
   },
 ];
 

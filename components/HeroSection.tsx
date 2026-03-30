@@ -13,23 +13,32 @@ import { Skeleton } from '@/components/Skeleton';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { scaleIn } from '@/lib/motion';
 
-const metrics: Array<{ label: string; body: string; breath?: boolean }> = [
+const metrics: Array<{
+  label: string;
+  body: string;
+  breath?: boolean;
+  accent?: 'cyan' | 'indigo' | 'success';
+}> = [
   {
     label: 'LIVE IN PRODUCTION',
     body: 'Ensemble models + FastAPI inference serving live concurrent sessions via Redis and Postgres.',
+    accent: 'cyan',
   },
   {
     label: 'DECISIONS DOCUMENTED',
     body: 'Architecture tradeoffs between retrieval strategies visible in case studies — not just outcomes.',
+    accent: 'indigo',
   },
   {
     label: 'ZERO-DOWNTIME DESIGN',
     body: 'Graceful fallback, health checks, and environment-scoped boundaries built in from deployment one.',
+    accent: 'success',
   },
   {
     label: 'FULL OWNERSHIP',
     body: 'Feature engineering to production inference to the frontend. No handoffs.',
     breath: true,
+    accent: 'indigo',
   },
 ];
 
@@ -54,10 +63,10 @@ export function HeroSection() {
       />
       <CursorGlow containerRef={heroRef} />
       <div className="relative z-10 container">
-        <p role="status" className="pill pill-cyan inline-flex items-center gap-3">
+        <div role="status" className="pill pill-cyan inline-flex items-center gap-3">
           <span className="live-dot" aria-hidden="true" />
           Available — Staff+ · Co-founder · Consulting
-        </p>
+        </div>
 
         <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_320px] lg:gap-14">
           <div>
@@ -69,7 +78,7 @@ export function HeroSection() {
               name="Oscar Scardubu"
               className="block max-w-full text-[clamp(2.15rem,10vw,5.8rem)] leading-[0.92] whitespace-nowrap text-white"
             />
-            <p className="mt-[var(--space-6)] mb-[var(--space-8)] max-w-[52ch] text-[length:var(--text-lg)] leading-[var(--leading-snug)] text-[color:var(--color-text-secondary)]">
+            <p className="mt-[var(--space-6)] mb-[var(--space-8)] max-w-[60ch] text-[length:var(--text-lg)] leading-[var(--leading-snug)] text-[color:var(--color-text-secondary)]">
               The engineer you bring in when AI behavior, platform reliability, and product clarity
               must hold simultaneously — and the system has to work at 2am during a live match.
             </p>
@@ -77,19 +86,19 @@ export function HeroSection() {
             <div className="mb-[var(--space-8)] flex flex-wrap gap-[var(--space-4)]">
               <Link
                 href="#projects"
-                className="rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--color-accent-hover)]"
+                className="rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-px hover:bg-[var(--color-accent-hover)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)]"
               >
                 View Projects
               </Link>
               <Link
                 href="#contact"
-                className="rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-white/85 transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-white/85 transition hover:-translate-y-px hover:border-white/30 hover:text-white"
               >
                 Get in Touch
               </Link>
               <Link
                 href="/oscar-scardubu-resume.pdf"
-                className="rounded-full px-5 py-3 text-sm font-medium text-white/65 transition hover:text-white"
+                className="rounded-full px-5 py-3 text-sm font-medium text-white/65 transition hover:-translate-y-px hover:text-white"
               >
                 Resume ↓
               </Link>
@@ -127,6 +136,7 @@ export function HeroSection() {
               label={metric.label}
               body={metric.body}
               breath={metric.breath}
+              accent={metric.accent}
             />
           ))}
         </div>

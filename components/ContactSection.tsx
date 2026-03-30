@@ -66,7 +66,7 @@ export function ContactSection() {
         <div className="mt-6 max-w-2xl">
           <h2
             id="contact-heading"
-            className="text-4xl text-white sm:text-5xl"
+            className="gradient-text text-4xl sm:text-5xl"
             data-reveal=""
             data-reveal-delay="2"
           >
@@ -103,7 +103,10 @@ export function ContactSection() {
             oscar@scardubu.dev
           </a>
 
-          <div className="flex flex-wrap items-center gap-4 text-[color:var(--color-text-muted)]">
+          <nav
+            aria-label="Social links"
+            className="flex flex-wrap items-center gap-4 text-[color:var(--color-text-muted)]"
+          >
             <Link
               href="https://github.com/Scardubu"
               target="_blank"
@@ -124,17 +127,15 @@ export function ContactSection() {
               <LinkedInIcon />
               LinkedIn
             </Link>
-            <Link
+            <a
               href="mailto:oscar@scardubu.dev"
-              target="_blank"
-              rel="noopener noreferrer"
               aria-label="Email Oscar Scardubu"
               className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
             >
               <EmailIcon />
               Email
-            </Link>
-          </div>
+            </a>
+          </nav>
         </div>
       </div>
     </section>

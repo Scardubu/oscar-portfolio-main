@@ -143,187 +143,180 @@ export const HERO_METRICS: HeroMetric[] = [
 
 export const PROJECTS: Project[] = [
   {
-    id: "sabiscore",
-    title: "SabiScore",
-    subtitle: "AI Sports Prediction Platform",
+    id: 'sabiscore',
+    title: 'SabiScore',
+    subtitle: 'AI Sports Prediction Platform',
     description:
-      "Production ML platform serving 350+ active users. Ensemble XGBoost + LightGBM models achieving 71% average prediction accuracy across 5 leagues.",
+      'Production ML platform with ensemble gradient-boosted models, monitored inference delivery, and a legible decision-support surface.',
     longDescription:
-      "End-to-end ML system: data ingestion pipelines from 3 sports APIs, feature engineering for 140+ match features, ensemble model training with Optuna hyperparameter tuning, real-time inference API at sub-87ms latency, and a Next.js dashboard for user-facing predictions. Auto-retraining CI/CD kicks off weekly.",
-    tags: ["Next.js", "FastAPI", "XGBoost", "PostgreSQL", "Redis", "Docker"],
-    accent: "cyan",
+      'End-to-end ML system: data ingestion pipelines from 3 sports APIs, feature engineering for 140+ match features, ensemble model training with Optuna hyperparameter tuning, real-time inference API at sub-87ms latency, and a Next.js dashboard for user-facing predictions. Auto-retraining CI/CD kicks off weekly.',
+    tags: ['Next.js', 'FastAPI', 'XGBoost', 'PostgreSQL', 'Redis', 'Docker'],
+    accent: 'cyan',
     featured: true,
-    status: "live",
+    status: 'live',
     metrics: [
       {
-        value: "71%",
-        label: "Prediction Accuracy",
-        sublabel: "Avg. across backtests",
-        variant: "backtested",
+        value: '71%',
+        label: 'Prediction Accuracy',
+        sublabel: 'Avg. across backtests',
+        variant: 'backtested',
       },
       {
-        value: "76.5%",
-        label: "High-Confidence Rate",
-        sublabel: "Predictions >70% confidence",
-        variant: "live",
+        value: '76.5%',
+        label: 'High-Confidence Rate',
+        sublabel: 'Predictions >70% confidence',
+        variant: 'live',
       },
       {
-        value: "Backtested",
-        label: "Model Review",
-        sublabel: "Historical evaluation only",
-        variant: "backtested",
+        value: 'Backtested',
+        label: 'Model Review',
+        sublabel: 'Historical evaluation only',
+        variant: 'backtested',
       },
       {
-        value: "350+",
-        label: "Active Users",
-        sublabel: "Monthly registered",
-        variant: "live",
+        value: 'Live',
+        label: 'Production Status',
+        sublabel: 'Public-facing delivery',
+        variant: 'live',
       },
       {
-        value: "99.9%",
-        label: "System Uptime",
-        sublabel: "HA cluster",
-        variant: "live",
+        value: '99.9%',
+        label: 'System Uptime',
+        sublabel: 'HA cluster',
+        variant: 'live',
       },
       {
-        value: "87ms",
-        label: "API Latency",
-        sublabel: "Avg. prediction response",
-        variant: "live",
+        value: '87ms',
+        label: 'API Latency',
+        sublabel: 'Avg. prediction response',
+        variant: 'live',
       },
     ],
     links: {
-      live: "https://sabiscore.vercel.app",
-      repo: "https://github.com/scardubu/sabiscore",
-      caseStudy: "#",
+      live: 'https://sabiscore.vercel.app',
+      repo: 'https://github.com/scardubu/sabiscore',
+      caseStudy: '#',
     },
     githubStats: {
       stars: 12,
       forks: 3,
-      language: "TypeScript",
-      lastCommit: "2024-11-15",
+      language: 'TypeScript',
+      lastCommit: '2024-11-15',
     },
   },
   {
-    id: "hashablanca",
-    title: "Hashablanca",
-    subtitle: "Blockchain Token Distribution",
+    id: 'hashablanca',
+    title: 'Hashablanca',
+    subtitle: 'Blockchain Token Distribution',
     description:
-      "Multi-chain token distribution with ZK proofs for privacy-preserving transactions. Runs across Ethereum, Polygon, BSC, and StarkNet.",
+      'Multi-chain token distribution with ZK proofs for privacy-preserving transactions. Runs across Ethereum, Polygon, BSC, and StarkNet.',
     longDescription:
-      "Built a CBOR-streaming pipeline that handles 4GB+ datasets without memory explosion. ZK circuits in Circom provide transaction privacy; GDPR compliance layer auto-detects and anonymizes PII. Test suite at 90%+ coverage with unit + integration tests across all four chains.",
-    tags: ["FastAPI", "React", "Web3.py", "Circom", "PostgreSQL", "Docker"],
-    accent: "violet",
+      'Built a CBOR-streaming pipeline that handles 4GB+ datasets without memory explosion. ZK circuits in Circom provide transaction privacy; GDPR compliance layer auto-detects and anonymizes PII. Test suite at 90%+ coverage with unit + integration tests across all four chains.',
+    tags: ['FastAPI', 'React', 'Web3.py', 'Circom', 'PostgreSQL', 'Docker'],
+    accent: 'violet',
     featured: true,
-    status: "live",
+    status: 'live',
     metrics: [
       {
-        value: "4",
-        label: "Networks",
-        sublabel: "ETH · Polygon · BSC · StarkNet",
-        variant: "live",
+        value: '4',
+        label: 'Networks',
+        sublabel: 'ETH · Polygon · BSC · StarkNet',
+        variant: 'live',
       },
       {
-        value: "4GB+",
-        label: "File Processing",
-        sublabel: "CBOR streaming pipeline",
-        variant: "documented",
+        value: '4GB+',
+        label: 'File Processing',
+        sublabel: 'CBOR streaming pipeline',
+        variant: 'documented',
       },
       {
-        value: "90%+",
-        label: "Test Coverage",
-        sublabel: "Unit + integration",
-        variant: "documented",
+        value: '90%+',
+        label: 'Test Coverage',
+        sublabel: 'Unit + integration',
+        variant: 'documented',
       },
       {
-        value: "ZK",
-        label: "Privacy Layer",
-        sublabel: "Zero-knowledge proofs",
-        variant: "live",
+        value: 'ZK',
+        label: 'Privacy Layer',
+        sublabel: 'Zero-knowledge proofs',
+        variant: 'live',
       },
     ],
     links: {
-      caseStudy: "#",
+      caseStudy: '#',
     },
   },
   {
-    id: "ai-consulting",
-    title: "AI Consulting & LLM Integration",
-    subtitle: "Production ML Debugging & Integration",
+    id: 'ai-consulting',
+    title: 'AI Consulting & LLM Integration',
+    subtitle: 'Production ML Debugging & Integration',
     description:
-      "Fractional ML engineering for startups — cutting debugging time by 60% and translating model outputs into stakeholder-ready reports via LLM pipelines.",
+      'Fractional ML engineering for startups — cutting debugging time by 60% and translating model outputs into stakeholder-ready reports via LLM pipelines.',
     longDescription:
-      "Embedded with 5+ client teams as fractional ML lead. Core deliverables: model audit frameworks, LLM-powered explanation pipelines (Ollama + GPT-4 + LangChain), and internal tooling that converts raw model outputs into business-readable summaries. Repeat engagement rate: 100%.",
-    tags: ["Ollama", "GPT-4", "LangChain", "Python", "FastAPI"],
-    accent: "teal",
+      'Embedded with 5+ client teams as fractional ML lead. Core deliverables: model audit frameworks, LLM-powered explanation pipelines (Ollama + GPT-4 + LangChain), and internal tooling that converts raw model outputs into business-readable summaries. Repeat engagement rate: 100%.',
+    tags: ['Ollama', 'GPT-4', 'LangChain', 'Python', 'FastAPI'],
+    accent: 'teal',
     featured: false,
-    status: "live",
+    status: 'live',
     metrics: [
       {
-        value: "60%",
-        label: "Time Saved",
-        sublabel: "10hr → 4hr debug cycles",
-        variant: "documented",
+        value: '60%',
+        label: 'Time Saved',
+        sublabel: '10hr → 4hr debug cycles',
+        variant: 'documented',
       },
       {
-        value: "5+",
-        label: "Clients Served",
-        sublabel: "Startups & enterprises",
-        variant: "live",
+        value: '5+',
+        label: 'Clients Served',
+        sublabel: 'Startups & enterprises',
+        variant: 'live',
       },
       {
-        value: "100%",
-        label: "LLM Coverage",
-        sublabel: "Technical → business",
-        variant: "documented",
+        value: '100%',
+        label: 'LLM Coverage',
+        sublabel: 'Technical → business',
+        variant: 'documented',
       },
     ],
     links: {
-      caseStudy: "#",
+      caseStudy: '#',
     },
   },
   {
-    id: "taxbridge",
-    title: "TaxBridge",
-    subtitle: "Nigerian SME Tax Compliance Automation",
+    id: 'taxbridge',
+    title: 'TaxBridge',
+    subtitle: 'Nigerian SME Tax Compliance Automation',
     description:
-      "Full-stack SaaS automating VAT, WHT, PIT, CIT, and CGT compliance for Nigerian SMEs. Offline-first mobile app with NTA 2025 integration.",
+      'Full-stack SaaS automating VAT, WHT, PIT, CIT, and CGT compliance for Nigerian SMEs. Offline-first mobile app with NTA 2025 integration.',
     longDescription:
-      "End-to-end tax compliance platform built on Turborepo monorepo: Fastify 5 API, React Native Expo SDK 54, Next.js 15 admin dashboard. Integrates with DigiTax/APP for IRN generation, Paystack/Flutterwave for payments, Youverify for KYC, and ML Kit OCR for receipt scanning. 5-zone DashboardZone mobile layout with Lagos Pidgin i18n.",
-    tags: [
-      "Next.js 15",
-      "React Native",
-      "Fastify 5",
-      "Prisma",
-      "PostgreSQL",
-      "BullMQ",
-    ],
-    accent: "teal",
+      'End-to-end tax compliance platform built on Turborepo monorepo: Fastify 5 API, React Native Expo SDK 54, Next.js 15 admin dashboard. Integrates with DigiTax/APP for IRN generation, Paystack/Flutterwave for payments, Youverify for KYC, and ML Kit OCR for receipt scanning. 5-zone DashboardZone mobile layout with Lagos Pidgin i18n.',
+    tags: ['Next.js 15', 'React Native', 'Fastify 5', 'Prisma', 'PostgreSQL', 'BullMQ'],
+    accent: 'teal',
     featured: true,
-    status: "in-progress",
+    status: 'in-progress',
     metrics: [
       {
-        value: "5",
-        label: "Tax Types",
-        sublabel: "VAT·WHT·PIT·CIT·CGT",
-        variant: "documented",
+        value: '5',
+        label: 'Tax Types',
+        sublabel: 'VAT·WHT·PIT·CIT·CGT',
+        variant: 'documented',
       },
       {
-        value: "NTA 2025",
-        label: "Compliance",
-        sublabel: "Nigerian Tax Authority",
-        variant: "documented",
+        value: 'NTA 2025',
+        label: 'Compliance',
+        sublabel: 'Nigerian Tax Authority',
+        variant: 'documented',
       },
       {
-        value: "Offline",
-        label: "Architecture",
-        sublabel: "SQLite sync queue",
-        variant: "documented",
+        value: 'Offline',
+        label: 'Architecture',
+        sublabel: 'SQLite sync queue',
+        variant: 'documented',
       },
     ],
     links: {
-      repo: "https://github.com/Scardubu/taxbridge",
-      caseStudy: "#",
+      repo: 'https://github.com/Scardubu/taxbridge',
+      caseStudy: '#',
     },
   },
 ];
@@ -506,12 +499,12 @@ export const PRODUCTION_PATTERNS: ProductionPattern[] = [
       "Parallel model execution with Redis prediction cache. Stale-while-revalidate keeps latency under 100ms even during retraining windows.",
     codeSnippet: `async def predict_match(match_id: str) -> PredictionResult:
     cache_key = f"pred:{match_id}:{model_version}"
-    
+
     # Stale-while-revalidate: serve cached, refresh async
     if cached := await redis.get(cache_key):
         asyncio.create_task(refresh_if_stale(match_id))
         return PredictionResult.parse_raw(cached)
-    
+
     # Parallel ensemble execution
     xgb_fut = executor.submit(xgb_model.predict, features)
     lgb_fut = executor.submit(lgb_model.predict, features)
@@ -519,11 +512,11 @@ export const PRODUCTION_PATTERNS: ProductionPattern[] = [
         loop.run_in_executor(None, xgb_fut.result),
         loop.run_in_executor(None, lgb_fut.result),
     )
-    
+
     # Weighted ensemble: XGB=0.6, LGB=0.4
     final_prob = 0.6 * xgb_prob + 0.4 * lgb_prob
     result = PredictionResult(probability=final_prob, model_version=model_version)
-    
+
     await redis.setex(cache_key, 300, result.json())
     return result`,
     language: "python",
@@ -547,14 +540,14 @@ export const PRODUCTION_PATTERNS: ProductionPattern[] = [
     """Memory-flat CBOR streaming — 4GB+ without OOM."""
     decoder = CBORDecoder(file_path.open("rb"))
     chunk: list[dict] = []
-    
+
     for item in decoder:
         chunk.append(item)
         if len(chunk) >= chunk_size:
             yield chunk
             chunk = []
             gc.collect()  # explicit collection between chunks
-    
+
     if chunk:
         yield chunk
 
@@ -585,7 +578,7 @@ export async function enqueueTaxSubmission(
   payload: TaxSubmissionPayload,
 ): Promise<QueueResult> {
   const idempotencyKey = await generateIRN(payload);
-  
+
   // 1. Write to local SQLite first — survives offline
   await db.taxQueue.create({
     data: {
@@ -595,7 +588,7 @@ export async function enqueueTaxSubmission(
       retryCount: 0,
     },
   });
-  
+
   // 2. Attempt immediate NTA DigiTax submission
   try {
     const result = await ntaClient.submitVAT(payload, idempotencyKey);

@@ -10,17 +10,25 @@ import type { Project } from '@/components/ProjectCard';
  */
 export const projects: Project[] = [
   {
-    id:       'sabiscore',
-    name:     'SabiScore',
+    id: 'sabiscore',
+    name: 'SabiScore',
     category: 'Sports Intelligence Platform',
-    status:   'live',
+    status: 'live',
     featured: true,
-    wide:     true,
+    wide: true,
     claim:
       'A production AI product designed to keep fast decisions legible during live sports windows. Ensemble inference, Redis-cached predictions, real-time frontend — one engineer, full ownership.',
     stack: [
-      'Python', 'FastAPI', 'XGBoost', 'LightGBM', 'scikit-learn',
-      'Redis', 'PostgreSQL', 'Docker', 'Next.js', 'React',
+      'Python',
+      'FastAPI',
+      'XGBoost',
+      'LightGBM',
+      'scikit-learn',
+      'Redis',
+      'PostgreSQL',
+      'Docker',
+      'Next.js',
+      'React',
     ],
     context:
       'Sports prediction products usually fail in the same place: they expose too much raw signal, rely on fragile data providers, and become hard to trust the moment traffic or uncertainty rises. The constraint was building something legible and reliable under those exact conditions — from Nigeria, on commodity infrastructure.',
@@ -30,39 +38,43 @@ export const projects: Project[] = [
       'Ingestion, inference, and product surface built as a single system with explicit failure modes at every boundary. Fallback-aware data pipelines, Redis caching on the hot prediction path, clear confidence framing in the UI, ensemble meta-learning over single-model to reduce overfit on narrow historical windows.',
     decisions: [
       {
-        chosen:   'Ensemble meta-learner (XGBoost + LightGBM + scikit-learn stacked)',
+        chosen: 'Ensemble meta-learner (XGBoost + LightGBM + scikit-learn stacked)',
         rejected: 'Single XGBoost model',
-        reason:   'Backtesting showed +6.3pp accuracy gain at acceptable inference latency for the confidence threshold in use.',
+        reason:
+          'Backtesting showed +6.3pp accuracy gain at acceptable inference latency for the confidence threshold in use.',
       },
       {
-        chosen:   'Redis caching layer on prediction hot path',
+        chosen: 'Redis caching layer on prediction hot path',
         rejected: 'Direct Postgres query per request',
-        reason:   'Postgres query latency exceeded 200ms during peak match windows. Cache hit rate eliminated latency spikes without infrastructure scaling.',
+        reason:
+          'Postgres query latency exceeded 200ms during peak match windows. Cache hit rate eliminated latency spikes without infrastructure scaling.',
       },
       {
-        chosen:   'Embedding-based retrieval for similar-match context',
+        chosen: 'Embedding-based retrieval for similar-match context',
         rejected: 'Rule-based prediction heuristics',
-        reason:   'Insufficient generalization across leagues — rules captured recency bias, not structural match patterns.',
+        reason:
+          'Insufficient generalization across leagues — rules captured recency bias, not structural match patterns.',
       },
       {
-        chosen:   'FastAPI + self-hosted Docker inference',
+        chosen: 'FastAPI + self-hosted Docker inference',
         rejected: 'GPT-based inference API',
-        reason:   'Cost-per-call incompatible with free-tier user economics at target prediction volume.',
+        reason:
+          'Cost-per-call incompatible with free-tier user economics at target prediction volume.',
       },
     ],
     outcome:
-      'System runs 24/7 through live sporting event windows. Prediction latency under 60ms at the cache layer. Ensemble accuracy consistently above rule-based baseline across tested leagues. Single-engineer ownership from feature engineering through production inference through UI.',
+      'System designed for repeated live-decision sessions during high-traffic match windows. Redis-backed delivery keeps the prediction path responsive, and ownership spans feature engineering through production inference through UI.',
     links: {
-      demo:   'https://sabiscore.vercel.app',
+      demo: 'https://sabiscore.vercel.app',
       github: 'https://github.com/Scardubu/sabiscore',
     },
   },
 
   {
-    id:       'hashablanca',
-    name:     'Hashablanca',
+    id: 'hashablanca',
+    name: 'Hashablanca',
     category: 'Blockchain Data Transfer',
-    status:   'wip',
+    status: 'wip',
     featured: false,
     claim:
       'Multi-chain encrypted data transfer with zero-knowledge proof architecture. Sensitive data never touches an intermediary in plaintext.',
@@ -75,14 +87,16 @@ export const projects: Project[] = [
       'ZK-SNARK proofs generated client-side before submission. IPFS content addressing for encrypted payload storage. Multi-chain adapter layer abstracts verification cost differences between Ethereum L1 and Polygon.',
     decisions: [
       {
-        chosen:   'ZK-SNARKs (Groth16) for proof generation',
+        chosen: 'ZK-SNARKs (Groth16) for proof generation',
         rejected: 'STARK-based proofs',
-        reason:   'Groth16 proof size is significantly smaller, reducing on-chain verification gas cost — critical for L1 deployments.',
+        reason:
+          'Groth16 proof size is significantly smaller, reducing on-chain verification gas cost — critical for L1 deployments.',
       },
       {
-        chosen:   'IPFS for encrypted payload storage',
+        chosen: 'IPFS for encrypted payload storage',
         rejected: 'On-chain data storage',
-        reason:   'Gas cost of on-chain storage is prohibitive for payloads above ~32 bytes. IPFS content addressing preserves integrity guarantees without the cost.',
+        reason:
+          'Gas cost of on-chain storage is prohibitive for payloads above ~32 bytes. IPFS content addressing preserves integrity guarantees without the cost.',
       },
     ],
     outcome:
@@ -93,14 +107,23 @@ export const projects: Project[] = [
   },
 
   {
-    id:       'ml-consulting',
-    name:     'ML Debugging Tooling & LLM Integration',
+    id: 'ml-consulting',
+    name: 'ML Debugging Tooling & LLM Integration',
     category: 'Technical Consulting',
-    status:   'live',
+    status: 'live',
     featured: false,
     claim:
       'ML debugging tools and LLM integration work for teams that need technical model behavior translated to business-readable form. Covers the observability gaps standard monitoring misses.',
-    stack: ['Python', 'FastAPI', 'LangChain', 'OpenAI', 'Anthropic', 'PostgreSQL', 'Redis', 'TypeScript'],
+    stack: [
+      'Python',
+      'FastAPI',
+      'LangChain',
+      'OpenAI',
+      'Anthropic',
+      'PostgreSQL',
+      'Redis',
+      'TypeScript',
+    ],
     context:
       'Teams integrating LLMs consistently hit the same wall: standard application monitoring does not surface the failure modes that matter — prompt drift, context window saturation, embedding retrieval degradation, confidence calibration gaps. The symptom appears in user behavior, not error logs.',
     problem:
@@ -109,14 +132,16 @@ export const projects: Project[] = [
       'Purpose-built observability layer: structured prompt/response logging with diff tracking, confidence score distribution monitoring, embedding similarity drift detection, and business-readable anomaly surfacing. Deployed as a sidecar to existing LLM integration points.',
     decisions: [
       {
-        chosen:   'Structured logging with semantic diff tracking',
+        chosen: 'Structured logging with semantic diff tracking',
         rejected: 'Raw request/response logging',
-        reason:   'Raw logs grow fast and produce no signal. Semantic diffs surface the changes that actually affect model behavior.',
+        reason:
+          'Raw logs grow fast and produce no signal. Semantic diffs surface the changes that actually affect model behavior.',
       },
       {
-        chosen:   'Business-readable anomaly layer above raw metrics',
+        chosen: 'Business-readable anomaly layer above raw metrics',
         rejected: 'Exposing raw perplexity / logprob scores to stakeholders',
-        reason:   'Technical scores without context cause decision paralysis. Translation to business impact produces action.',
+        reason:
+          'Technical scores without context cause decision paralysis. Translation to business impact produces action.',
       },
     ],
     outcome:

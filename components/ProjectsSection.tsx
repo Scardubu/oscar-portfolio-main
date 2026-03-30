@@ -13,7 +13,7 @@ export function ProjectsSection() {
           </span>
           <h2
             id="projects-heading"
-            className="mt-[var(--space-2)] text-white"
+            className="gradient-text mt-[var(--space-2)]"
             data-reveal=""
             data-reveal-delay="1"
           >
@@ -39,15 +39,6 @@ export function ProjectsSection() {
             </div>
           ))}
         </div>
-
-        <p
-          className="mt-[var(--space-8)] text-sm text-[color:var(--color-text-muted)]"
-          data-reveal=""
-          data-reveal-delay="4"
-        >
-          Each system ships with architecture decisions, a live demo, and a monitored production
-          deployment.
-        </p>
       </div>
     </section>
   );

@@ -55,6 +55,18 @@ pnpm test:e2e
 - Content loading and MDX compilation live in `lib/content.ts`
 - Published MDX should not reference placeholder assets; broken image references are treated as release blockers
 
+## Component Architecture
+
+- `components/` is the canonical shared component tree for the production app.
+- Route files under `app/` should import reusable UI from `@/components/*` rather than `app/components/*`.
+- The old `app/components/` parallel tree was removed to prevent duplicate implementations drifting out of sync.
+
+## Visual System
+
+- Global tokens and interaction primitives live in `app/globals.css`.
+- Home surfaces use the liquid-glass system, gradient headline treatment, and card-depth hover behavior as the canonical visual language.
+- Writing and work detail routes use editorial two-column layouts with sticky metadata rails; preserve that structure when extending those pages.
+
 ## License
 
 Personal portfolio. All content © Oscar Scardubu.

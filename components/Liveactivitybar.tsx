@@ -10,6 +10,12 @@ interface ActivityData {
   repo: string;
 }
 
+const FALLBACK_ACTIVITY: ActivityData = {
+  ago: 'Recently',
+  type: 'PushEvent',
+  repo: 'oscar-portfolio-main',
+};
+
 function typeLabel(type: string): string {
   switch (type) {
     case 'PushEvent':
@@ -33,14 +39,25 @@ export function LiveActivityBar() {
     const controller = new AbortController();
 
     fetch('/api/activity', { signal: controller.signal })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Activity request failed with status ${response.status}`);
+        }
+
+        return response.json();
+      })
       .then((data: ActivityData) => {
         setActivity(data);
-        setLoading(false);
       })
       .catch(() => {
-        setActivity({ ago: 'Recently', type: 'PushEvent', repo: 'oscar-portfolio-main' });
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setActivity(FALLBACK_ACTIVITY);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       });
 
     return () => controller.abort();
@@ -60,17 +77,7 @@ export function LiveActivityBar() {
       aria-live="polite"
       className="mt-2 flex items-center gap-2 text-sm text-[color:var(--color-text-muted)]"
     >
-      <span
-        aria-hidden="true"
-        style={{
-          display: 'inline-block',
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: 'var(--color-success)',
-          flexShrink: 0,
-        }}
-      />
+      <span aria-hidden="true" className="live-dot h-[6px] w-[6px]" />
       {typeLabel(activity.type)} · {activity.ago}
     </p>
   );

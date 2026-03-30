@@ -21,7 +21,7 @@ export function KineticName({ name, className, id }: KineticNameProps) {
           key={index}
           initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.028, duration: 0.24 }}
+          transition={{ delay: index * 0.022, duration: 0.22 }}
           aria-hidden="true"
         >
           {character === ' ' ? '\u00A0' : character}

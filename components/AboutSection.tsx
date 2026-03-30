@@ -34,10 +34,13 @@ export function AboutSection() {
             <p>
               SabiScore runs end-to-end: feature engineering, ensemble model training, FastAPI
               inference, Redis caching, Postgres, Docker, Next.js. One engineer. Full ownership.
-              Running in production. Consulting covers ML debugging tooling and LLM integration for
-              teams needing technical model behavior translated into business-readable outputs. Open
-              to Staff ML engineering roles, technical co-founder partnerships, and consulting
-              engagements where full-stack ownership matters.
+              Deployed and running in production.
+            </p>
+            <p>
+              Consulting work covers ML debugging tooling and LLM integration for teams that need
+              model behavior translated into business outputs. Open to Staff ML engineering roles,
+              technical co-founder partnerships, and engagements where full-stack ownership is the
+              expectation.
             </p>
           </div>
         </div>

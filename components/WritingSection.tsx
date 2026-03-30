@@ -7,16 +7,25 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
   const [featuredPost, ...otherPosts] = posts;
 
   return (
-    <section id="writing" aria-labelledby="writing-heading">
+    <section id="writing" aria-labelledby="writing-heading" className="py-20 sm:py-24">
       <div className="container">
         <div className="mb-[var(--space-10)]">
           <span className="label" data-reveal="">
             Writing
           </span>
-          <h2 id="writing-heading" data-reveal="" data-reveal-delay="1" className="mt-[var(--space-2)]">
+          <h2
+            id="writing-heading"
+            data-reveal=""
+            data-reveal-delay="1"
+            className="gradient-text mt-[var(--space-2)]"
+          >
             Notes on building
           </h2>
-          <p data-reveal="" data-reveal-delay="2" className="mt-[var(--space-4)] text-[length:var(--text-lg)]">
+          <p
+            data-reveal=""
+            data-reveal-delay="2"
+            className="mt-[var(--space-4)] text-[length:var(--text-lg)]"
+          >
             ML systems, fintech architecture, and the decisions that don&apos;t show up in the
             commit history.
           </p>
@@ -25,7 +34,7 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
         {featuredPost ? (
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <article
-              className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-6 sm:p-8"
+              className="glass glass-medium rounded-[var(--radius-xl)] p-6 sm:p-8"
               data-reveal=""
               data-reveal-delay="3"
             >
@@ -40,7 +49,7 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
                 ))}
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/55">
-                <time>{formatDate(featuredPost.date)}</time>
+                <time dateTime={featuredPost.date}>{formatDate(featuredPost.date)}</time>
                 <span aria-hidden="true">•</span>
                 <span>{featuredPost.readingTime} min read</span>
               </div>
@@ -55,7 +64,10 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
             <div data-reveal="" data-reveal-delay="4">
               {otherPosts.map((post) => (
                 <div key={post.slug} className="writing-row">
-                  <time className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]">
+                  <time
+                    dateTime={post.date}
+                    className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]"
+                  >
                     {formatDate(post.date)}
                   </time>
                   <div className="flex-1">
@@ -64,7 +76,7 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
                     </Link>
                     <p className="mt-[var(--space-2)] text-sm">{post.summary}</p>
                   </div>
-                  <span className="whitespace-nowrap text-xs text-[color:var(--color-text-muted)]">
+                  <span className="text-xs whitespace-nowrap text-[color:var(--color-text-muted)]">
                     {post.readingTime} min
                   </span>
                 </div>
@@ -74,7 +86,10 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
         ) : null}
 
         <div className="mt-[var(--space-8)]" data-reveal="" data-reveal-delay="4">
-          <Link href="/writing" className="text-sm tracking-[var(--tracking-wide)] text-[color:var(--color-cyan)]">
+          <Link
+            href="/writing"
+            className="pill pill-cyan inline-flex items-center gap-2 transition hover:-translate-y-px"
+          >
             All writing →
           </Link>
         </div>

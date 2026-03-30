@@ -18,24 +18,28 @@ interface MetricItem {
 
 const DEFAULT_METRICS: MetricItem[] = [
   {
-    id: "reach", label: "Real-World Reach",
-    value: "Production systems, live users",
-    desc:  "Working software with public surfaces, real traffic, and observable operating constraints.",
+    id: 'reach',
+    label: 'Real-World Reach',
+    value: 'Production systems, live users',
+    desc: 'Working software with public surfaces, real traffic, and observable operating constraints.',
   },
   {
-    id: "ai", label: "Precision AI",
-    value: "Embedding-based, not rule-based",
-    desc:  "Retrieval, ranking, and model behavior framed around coherence under edge cases instead of brittle heuristics.",
+    id: 'ai',
+    label: 'Precision AI',
+    value: 'Embedding-based, not rule-based',
+    desc: 'Retrieval, ranking, and model behavior framed around coherence under edge cases instead of brittle heuristics.',
   },
   {
-    id: "on", label: "Always On",
-    value: "24/7 across high-traffic windows",
-    desc:  "Health checks, graceful fallback paths, and environment-scoped guardrails keep the surface usable when pressure rises.",
+    id: 'on',
+    label: 'Resilient Delivery',
+    value: 'Reliable through high-traffic windows',
+    desc: 'Health checks, graceful fallback paths, and environment-scoped guardrails keep the surface usable when pressure rises.',
   },
   {
-    id: "years", label: "4+ Years",
-    value: "Shipping ML at production scale",
-    desc:  "End-to-end ownership across data, inference, interface, deployment, and operating feedback loops.",
+    id: 'years',
+    label: '4+ Years',
+    value: 'Shipping ML at production scale',
+    desc: 'End-to-end ownership across data, inference, interface, deployment, and operating feedback loops.',
     pulse: true,
   },
 ];

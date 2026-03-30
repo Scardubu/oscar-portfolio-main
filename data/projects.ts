@@ -25,10 +25,10 @@ export const projects: Project[] = [
   {
     id: 'sabiscore',
     title: 'SabiScore',
-    tagline: 'Production credit-scoring API for emerging market fintech.',
+    tagline: 'Production sports intelligence platform for live decision windows.',
     description:
-      'End-to-end ML pipeline processing alternative financial data signals through a trained gradient ' +
-      'boosting model, served via FastAPI with real-time monitoring and drift alerts.',
+      'End-to-end ML pipeline for sports event prediction, served through FastAPI with Redis-backed ' +
+      'response delivery, operational monitoring, and clear confidence framing.',
     context:
       'Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa while ' +
       'serving a global audience through high-traffic concurrent events.',
@@ -92,7 +92,6 @@ export const projects: Project[] = [
     status: 'live',
     featured: false,
     tags: ['MLOps', 'Python', 'AWS', 'Terraform', 'FastAPI', 'MLflow'],
-    demoUrl: 'https://www.scardubu.dev/work/ml-consulting',
     image: '/projects/consulting.webp',
   },
 ];

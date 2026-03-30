@@ -50,7 +50,7 @@ export const heroCopy = {
   headline: "Hey, I'm Oscar 👋",
   position:
     'I engineer production AI systems that turn complex intelligence into tools people trust and actually use.',
-  bio: 'My flagship sports intelligence platform SabiScore delivers real-time insights that help enthusiasts make sharper, better-informed decisions — running 24/7 with proven reliability across high-traffic events. With 4+ years shipping scalable ML systems from Nigeria to global audiences, I specialize in bridging frontier research and intentional design — building AI experiences that hold up under real-world conditions.',
+  bio: 'SabiScore centers on real-time delivery under uneven infrastructure conditions. The work focuses on bridging frontier research and intentional design so AI experiences remain legible when traffic rises and operating conditions get messy.',
   proofTitle:
     'The engineer you hire when product clarity, platform reliability, and AI behavior all have to hold at the same time.',
   proofBody:
@@ -75,7 +75,7 @@ export const heroMetrics: HeroMetric[] = [
   },
   {
     value: 'Always On',
-    title: '24/7 across high-traffic windows',
+    title: 'Reliable through high-traffic windows',
     detail:
       'Health checks, graceful fallback paths, and environment-scoped guardrails keep the surface usable when pressure rises.',
   },

@@ -12,14 +12,16 @@
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
 const SECTION_LINKS = ['projects', 'about', 'writing', 'contact'] as const;
+const MOBILE_NAV_ID = 'mobile-navigation';
+
 function openCommandPalette() {
-  window.dispatchEvent(new Event('command-palette:open'));
+  globalThis.dispatchEvent(new Event('command-palette:open'));
 }
 
 const NAV_LINKS = [
@@ -30,7 +32,59 @@ const NAV_LINKS = [
 ] as const;
 
 function resolveSectionHref(pathname: string, section: string) {
-  return pathname === '/' ? `#${section}` : `/#${section}`;
+  if (pathname === '/') {
+    return `#${section}`;
+  }
+
+  return `/#${section}`;
+}
+
+function getHamburgerBarAnimations(open: boolean, prefersReduced: boolean) {
+  if (prefersReduced) {
+    return {
+      top: {},
+      middle: {},
+      bottom: {},
+    };
+  }
+
+  if (open) {
+    return {
+      top: { rotate: 45, y: 6.5 },
+      middle: { opacity: 0, scaleX: 0 },
+      bottom: { rotate: -45, y: -6.5 },
+    };
+  }
+
+  return {
+    top: { rotate: 0, y: 0 },
+    middle: { opacity: 1, scaleX: 1 },
+    bottom: { rotate: 0, y: 0 },
+  };
+}
+
+function getAriaCurrent(isCurrent: boolean) {
+  if (isCurrent) {
+    return 'page' as const;
+  }
+
+  return undefined;
+}
+
+function getDesktopLinkClass(isCurrent: boolean) {
+  if (isCurrent) {
+    return 'text-white';
+  }
+
+  return 'text-white/55 hover:text-white';
+}
+
+function getMobileLinkClass(isCurrent: boolean) {
+  if (isCurrent) {
+    return 'bg-white/[0.06] text-white';
+  }
+
+  return 'text-white/60 hover:bg-white/[0.04] hover:text-white';
 }
 
 //  Hamburger icon
@@ -38,39 +92,37 @@ function resolveSectionHref(pathname: string, section: string) {
 function HamburgerIcon({
   open,
   onClick,
-  controls,
   buttonRef,
 }: Readonly<{
   open: boolean;
   onClick: () => void;
-  controls: string;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
 }>) {
   const prefersReduced = useReducedMotion();
+  const barAnimations = getHamburgerBarAnimations(open, Boolean(prefersReduced));
 
   return (
     <button
       ref={buttonRef}
       type="button"
       aria-label="Toggle navigation"
-      aria-expanded={open}
-      aria-controls={controls}
+      data-state={open ? 'open' : 'closed'}
       onClick={onClick}
       className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-lg"
     >
       <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
-        animate={prefersReduced ? {} : open ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }}
+        animate={barAnimations.top}
         transition={springs.snappy}
       />
       <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
-        animate={prefersReduced ? {} : open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+        animate={barAnimations.middle}
         transition={springs.snappy}
       />
       <m.span
         className="block h-[1.5px] w-5 origin-center rounded-full bg-white/70"
-        animate={prefersReduced ? {} : open ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
+        animate={barAnimations.bottom}
         transition={springs.snappy}
       />
     </button>
@@ -82,8 +134,8 @@ function HamburgerIcon({
 export function NavBar() {
   const prefersReduced = useReducedMotion();
   const pathname = usePathname();
-  const mobileNavId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [paletteShortcut, setPaletteShortcut] = useState('Ctrl K');
   const [activeSection, setActiveSection] = useState<string>('hero');
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -92,12 +144,12 @@ export function NavBar() {
 
   useEffect(() => {
     const onScroll = () => {
-      document.documentElement.toggleAttribute('data-scrolled', window.scrollY > 8);
+      document.documentElement.toggleAttribute('data-scrolled', globalThis.scrollY > 8);
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    globalThis.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => globalThis.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
@@ -179,7 +231,12 @@ export function NavBar() {
 
   // Body scroll lock while menu is open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
     return () => {
       document.body.style.overflow = '';
     };
@@ -195,6 +252,17 @@ export function NavBar() {
     }
   }, [menuOpen]);
 
+  useEffect(() => {
+    const isApplePlatform = /Mac|iPhone|iPad|iPod/i.test(globalThis.navigator.userAgent);
+
+    if (isApplePlatform) {
+      setPaletteShortcut('⌘K');
+      return;
+    }
+
+    setPaletteShortcut('Ctrl K');
+  }, []);
+
   const links = useMemo(
     () =>
       NAV_LINKS.map((link) => ({
@@ -204,6 +272,10 @@ export function NavBar() {
     [pathname]
   );
 
+  const mobileMenuVariants = prefersReduced ? undefined : mobileMenu;
+  const mobileMenuItemsVariants = prefersReduced ? undefined : mobileMenuItems;
+  const mobileMenuItemVariants = prefersReduced ? undefined : mobileMenuItem;
+
   const isActive = useCallback(
     (href: string) => {
       if (href === '/writing') {
@@ -211,7 +283,12 @@ export function NavBar() {
       }
 
       const sectionId = href.split('#')[1];
-      return pathname === '/' && sectionId ? activeSection === sectionId : false;
+
+      if (pathname !== '/' || !sectionId) {
+        return false;
+      }
+
+      return activeSection === sectionId;
     },
     [activeSection, pathname]
   );
@@ -242,20 +319,16 @@ export function NavBar() {
           </span>
         </Link>
 
-        <ul
-          className="hidden items-center justify-center gap-1 md:flex"
-          role="list"
-          aria-label="Site sections"
-        >
+        <ul className="hidden items-center justify-center gap-1 md:flex">
           {links.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={cn(
                   'relative block rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150',
-                  isActive(link.href) ? 'text-white' : 'text-white/55 hover:text-white'
+                  getDesktopLinkClass(isActive(link.href))
                 )}
-                aria-current={isActive(link.href) ? 'page' : undefined}
+                aria-current={getAriaCurrent(isActive(link.href))}
               >
                 {link.label}
                 {isActive(link.href) && !prefersReduced && (
@@ -280,24 +353,19 @@ export function NavBar() {
               aria-label="Open command palette"
               className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[color:var(--color-text-muted)] transition hover:text-[color:var(--color-text-primary)]"
             >
-              ⌘K
+              {paletteShortcut}
             </button>
           </div>
 
-          <span
-            className="pill pill-cyan hidden items-center gap-2 sm:inline-flex"
-            role="status"
-            aria-label="Availability: open to work"
-          >
+          <div className="pill pill-cyan hidden items-center gap-2 sm:inline-flex">
             <span className="live-dot h-[6px] w-[6px]" aria-hidden="true" />
-            Open to Work
-          </span>
+            <span>Open to Work</span>
+          </div>
 
           <div className="md:hidden">
             <HamburgerIcon
               open={menuOpen}
               onClick={() => setMenuOpen((v) => !v)}
-              controls={mobileNavId}
               buttonRef={menuTriggerRef}
             />
           </div>
@@ -322,49 +390,46 @@ export function NavBar() {
             />
 
             <m.div
-              id={mobileNavId}
+              id={MOBILE_NAV_ID}
               ref={menuRef}
               key="mobile-menu"
-              variants={prefersReduced ? undefined : mobileMenu}
+              variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"
               exit="hidden"
               className="glass-no-hover border-t border-white/[0.08] md:hidden"
             >
               <m.ul
-                variants={prefersReduced ? undefined : mobileMenuItems}
+                variants={mobileMenuItemsVariants}
                 initial="hidden"
                 animate="visible"
                 className="container flex flex-col gap-1 py-4"
-                role="list"
               >
                 {links.map((link, index) => (
-                  <m.li key={link.href} variants={prefersReduced ? undefined : mobileMenuItem}>
+                  <m.li key={link.href} variants={mobileMenuItemVariants}>
                     <Link
                       ref={index === 0 ? firstMobileLinkRef : undefined}
                       href={link.href}
                       onClick={() => setMenuOpen(false)}
                       className={cn(
                         'flex items-center rounded-xl px-3 py-3 text-base font-medium transition-colors duration-150',
-                        isActive(link.href)
-                          ? 'bg-white/[0.06] text-white'
-                          : 'text-white/60 hover:bg-white/[0.04] hover:text-white'
+                        getMobileLinkClass(isActive(link.href))
                       )}
-                      aria-current={isActive(link.href) ? 'page' : undefined}
+                      aria-current={getAriaCurrent(isActive(link.href))}
                     >
                       {link.label}
                     </Link>
                   </m.li>
                 ))}
 
-                <m.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
+                <m.li variants={mobileMenuItemVariants} className="pt-2">
                   <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 px-3 py-3">
                     <span className="text-sm text-white/70">Theme</span>
                     <ThemeToggle />
                   </div>
                 </m.li>
 
-                <m.li variants={prefersReduced ? undefined : mobileMenuItem}>
+                <m.li variants={mobileMenuItemVariants}>
                   <button
                     type="button"
                     onClick={() => {
@@ -374,11 +439,11 @@ export function NavBar() {
                     className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-base font-medium text-white/60 transition hover:bg-white/[0.04] hover:text-white"
                   >
                     <span>Command palette</span>
-                    <span className="text-xs text-white/40">⌘K</span>
+                    <span className="text-xs text-white/40">{paletteShortcut}</span>
                   </button>
                 </m.li>
 
-                <m.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
+                <m.li variants={mobileMenuItemVariants} className="pt-2">
                   <span className="pill pill-cyan justify-center">Open to Work</span>
                 </m.li>
               </m.ul>

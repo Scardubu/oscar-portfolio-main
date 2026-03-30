@@ -19,6 +19,8 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openRef = useRef(open);
+  const activeIndexRef = useRef(activeIndex);
   const router = useRouter();
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
@@ -73,7 +75,7 @@ export function CommandPalette() {
         label: 'Send email',
         shortcut: 'E',
         action: () => {
-          window.location.href = 'mailto:oscar@scardubu.dev';
+          globalThis.location.href = 'mailto:oscar@scardubu.dev';
         },
       },
     ],
@@ -89,6 +91,11 @@ export function CommandPalette() {
 
     return commands.filter((command) => command.label.toLowerCase().includes(normalizedQuery));
   }, [commands, query]);
+  const filteredCommandsRef = useRef(filteredCommands);
+
+  openRef.current = open;
+  activeIndexRef.current = activeIndex;
+  filteredCommandsRef.current = filteredCommands;
 
   const executeCommand = useCallback(
     (command: CommandItem) => {
@@ -109,7 +116,7 @@ export function CommandPalette() {
         return;
       }
 
-      if (!open) {
+      if (!openRef.current) {
         return;
       }
 
@@ -122,7 +129,7 @@ export function CommandPalette() {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
         setActiveIndex((current) =>
-          Math.min(current + 1, Math.max(filteredCommands.length - 1, 0))
+          Math.min(current + 1, Math.max(filteredCommandsRef.current.length - 1, 0))
         );
       }
 
@@ -131,24 +138,26 @@ export function CommandPalette() {
         setActiveIndex((current) => Math.max(current - 1, 0));
       }
 
-      if (event.key === 'Enter' && filteredCommands[activeIndex]) {
+      const selectedCommand = filteredCommandsRef.current[activeIndexRef.current];
+
+      if (event.key === 'Enter' && selectedCommand) {
         event.preventDefault();
-        executeCommand(filteredCommands[activeIndex]);
+        executeCommand(selectedCommand);
       }
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('command-palette:open', openPalette);
+    globalThis.addEventListener('keydown', onKeyDown);
+    globalThis.addEventListener('command-palette:open', openPalette);
 
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('command-palette:open', openPalette);
+      globalThis.removeEventListener('keydown', onKeyDown);
+      globalThis.removeEventListener('command-palette:open', openPalette);
     };
-  }, [activeIndex, close, executeCommand, filteredCommands, open]);
+  }, [close, executeCommand]);
 
   useEffect(() => {
     if (open) {
-      window.setTimeout(() => inputRef.current?.focus(), 40);
+      globalThis.setTimeout(() => inputRef.current?.focus(), 40);
     }
   }, [open]);
 
@@ -187,28 +196,26 @@ export function CommandPalette() {
               autoComplete="off"
             />
 
-            <div role="listbox" aria-label="Commands">
+            <ul className="py-2" aria-label="Commands">
               {filteredCommands.length === 0 ? (
-                <div className="cmd-item" style={{ color: 'var(--color-text-muted)' }}>
-                  No results for “{query}”
-                </div>
+                <li className="cmd-item cmd-item-muted">No results for “{query}”</li>
               ) : null}
 
               {filteredCommands.map((command, index) => (
-                <div
-                  key={command.id}
-                  className="cmd-item"
-                  role="option"
-                  aria-selected={index === activeIndex}
-                  data-active={index === activeIndex}
-                  onClick={() => executeCommand(command)}
-                  onMouseEnter={() => setActiveIndex(index)}
-                >
-                  {command.label}
-                  {command.shortcut ? <kbd>{command.shortcut}</kbd> : null}
-                </div>
+                <li key={command.id}>
+                  <button
+                    type="button"
+                    className="cmd-item w-full"
+                    data-active={index === activeIndex}
+                    onClick={() => executeCommand(command)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                  >
+                    {command.label}
+                    {command.shortcut ? <kbd>{command.shortcut}</kbd> : null}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </m.div>
         </m.div>
       ) : null}
