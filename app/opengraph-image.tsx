@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-import { OGImage } from '@/app/components/OGImage';
+import { OGImage } from '@/components/OGImage';
 
 export const runtime = 'edge';
 

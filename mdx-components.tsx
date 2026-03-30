@@ -2,12 +2,12 @@ import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ReactNode, isValidElement, Children } from 'react';
-import { CodeBlockClient } from '@/app/components/CodeBlockClient';
+import { CodeBlockClient } from '@/components/CodeBlockClient';
 
 // Helper to extract language from className (e.g., "language-python" -> "python")
 function extractLanguage(className?: string): string | undefined {
   if (!className) return undefined;
-  const match = className.match(/language-(\w+)/);
+  const match = /language-(\w+)/.exec(className);
   return match ? match[1] : undefined;
 }
 
