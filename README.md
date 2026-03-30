@@ -1,72 +1,42 @@
 # Oscar Scardubu — Portfolio
-
-Production portfolio for [scardubu.dev](https://scardubu.dev), built as a Next.js 15 App Router site for case studies, technical writing, and production ML product positioning.
+Production portfolio · [scardubu.dev](https://scardubu.dev)
 
 ## Stack
-
-Next.js 15 · React 19 · TypeScript strict · Tailwind CSS 4 · Framer Motion · MDX · Vercel Analytics · Vercel OG · Playwright
-
-## Core Surfaces
-
-- `/` home page with hero, production systems, about, contact, and featured writing
-- `/writing` article index and `/writing/[slug]` article detail pages
-- `/work/[slug]` case-study pages sourced from MDX content
-- `/og` edge-generated social image
-
-## Public API Surfaces
-
-- `/api/contact` validates contact submissions with Zod, rate-limits repeated attempts, and sends mail via Resend when `RESEND_API_KEY` is configured
-- `/api/portfolio-metrics` returns cacheable benchmarked portfolio metrics for optional dashboard surfaces
-- `/api/live-metrics` returns public-safe operational status without exposing real-time product counts
-- `/api/sabiscore-preview` intentionally returns `410 Gone` because the preview surface is not exposed publicly
+Next.js 15 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Framer Motion · MDX · Vercel Edge
 
 ## Development
-
-Use `pnpm` only.
-
 ```bash
-pnpm install
-pnpm dev
-pnpm lint
-pnpm type-check
-pnpm build
-pnpm test:e2e
+pnpm install         # install dependencies
+pnpm dev             # localhost:3000  (Turbopack)
+pnpm type-check      # tsc --noEmit against tsconfig.typecheck.json
+pnpm lint            # ESLint across app/ components/ data/ e2e/
+pnpm build           # production build
+pnpm test:e2e        # build + Playwright Chromium smoke suite (20 tests)
+pnpm test:all        # build + full 5-browser Playwright suite
 ```
 
-For a production verification pass, run the commands in this order:
+## Key routes
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage — hero, projects, about, writing, contact |
+| `/work/[slug]` | Case study pages (sabiscore, hashablanca, ml-consulting) |
+| `/writing` | Writing index |
+| `/writing/[slug]` | Article detail with reading progress |
+| `/blog/[slug]` | Blog posts (MDX, statically generated) |
+| `/api/og` | Homepage OG image (edge) |
+| `/work/[slug]/og` | Per-project OG image (edge) |
+| `/api/activity` | Last GitHub commit — ISR 1h |
 
-```bash
-pnpm lint
-pnpm type-check
-pnpm build
-pnpm test:e2e
-```
+## Design system
+All CSS custom properties live in `app/globals.css` (design tokens, glass system,
+fluid type scale, motion tokens). Tailwind utilities consume these via `tailwind.config.js`.
 
-## Deployment
-
-- CI runs lint, type-check, build, and Chromium Playwright smoke tests through [.github/workflows/ci.yml](.github/workflows/ci.yml)
-- Lighthouse runs separately through [.github/workflows/lighthouse.yml](.github/workflows/lighthouse.yml)
-- Vercel deploys from the `main` branch
-
-## Content
-
-- Writing content lives in `content/writing/*.mdx`
-- Case-study content lives in `content/work/*.mdx`
-- Content loading and MDX compilation live in `lib/content.ts`
-- Published MDX should not reference placeholder assets; broken image references are treated as release blockers
-
-## Component Architecture
-
-- `components/` is the canonical shared component tree for the production app.
-- Route files under `app/` should import reusable UI from `@/components/*` rather than `app/components/*`.
-- The old `app/components/` parallel tree was removed to prevent duplicate implementations drifting out of sync.
-
-## Visual System
-
-- Global tokens and interaction primitives live in `app/globals.css`.
-- Home surfaces use the liquid-glass system, gradient headline treatment, and card-depth hover behavior as the canonical visual language.
-- Writing and work detail routes use editorial two-column layouts with sticky metadata rails; preserve that structure when extending those pages.
+## Testing
+Playwright smoke suite: `e2e/smoke.spec.ts` — 20 tests covering:
+skip-nav, hero, copy integrity, overflow, project count, nav scroll,
+command palette keyboard, theme toggle, mailto CTA, `noopener` links,
+architecture decisions expand, writing index, sitemap, metric cards,
+OG images, reading progress bars, JSON-LD schema, and activity API.
 
 ## License
-
 Personal portfolio. All content © Oscar Scardubu.

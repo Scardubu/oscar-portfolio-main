@@ -1,8 +1,8 @@
-import createMDX from '@next/mdx';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
 import type { NextConfig } from 'next';
+import createMDX from '@next/mdx';
 import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
+import rehypePrettyCode from 'rehype-pretty-code';
 
 const withMDX = createMDX({
   options: {
@@ -35,15 +35,17 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
         ],
       },
       {
         source: '/fonts/(.*)',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        source: '/og(.*)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=86400' }],
       },
     ];
   },

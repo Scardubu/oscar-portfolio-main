@@ -8,12 +8,16 @@ interface ActivityData {
   ago: string;
   type: string;
   repo: string;
+  sha?: string;
+  message?: string;
 }
 
 const FALLBACK_ACTIVITY: ActivityData = {
   ago: 'Recently',
   type: 'PushEvent',
   repo: 'oscar-portfolio-main',
+  sha: 'unknown',
+  message: 'Recent update',
 };
 
 function typeLabel(type: string): string {
@@ -78,7 +82,9 @@ export function LiveActivityBar() {
       className="mt-2 flex items-center gap-2 text-sm text-[color:var(--color-text-muted)]"
     >
       <span aria-hidden="true" className="live-dot h-[6px] w-[6px]" />
-      {typeLabel(activity.type)} · {activity.ago}
+      {activity.sha && activity.sha !== 'unknown' ? `${activity.sha} · ` : ''}
+      {activity.message ? `${activity.message} · ` : `${typeLabel(activity.type)} · `}
+      {activity.ago}
     </p>
   );
 }

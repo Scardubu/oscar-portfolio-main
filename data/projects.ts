@@ -25,10 +25,10 @@ export const projects: Project[] = [
   {
     id: 'sabiscore',
     title: 'SabiScore',
-    tagline: 'Production sports intelligence platform for live decision windows.',
+    tagline: 'Production credit-scoring API for emerging market fintech.',
     description:
-      'End-to-end ML pipeline for sports event prediction, served through FastAPI with Redis-backed ' +
-      'response delivery, operational monitoring, and clear confidence framing.',
+      'End-to-end ML pipeline processing alternative financial data signals through a trained ' +
+      'gradient boosting model, served via FastAPI with real-time monitoring and drift alerts.',
     context:
       'Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa while ' +
       'serving a global audience through high-traffic concurrent events.',
@@ -67,10 +67,10 @@ export const projects: Project[] = [
   {
     id: 'hashablanca',
     title: 'Hashablanca',
-    tagline: 'Blockchain analytics infrastructure for operational visibility.',
+    tagline: 'Real-time blockchain transaction analytics platform.',
     description:
-      'Streaming pipeline ingesting on-chain data to surface anomalies and ' +
-      'transaction patterns for compliance teams. Built on Kafka, dbt, and React.',
+      'Streaming pipeline ingesting on-chain data to surface anomalies and transaction patterns ' +
+      'for compliance teams. Built on Kafka, dbt, and React.',
     context:
       'Data products for teams that need event-stream visibility, repeatable modeling, ' +
       'and business-readable outputs across volatile blockchain data.',
@@ -82,10 +82,10 @@ export const projects: Project[] = [
   {
     id: 'ml-consulting',
     title: 'ML Systems Consulting',
-    tagline: 'Production ML architecture and delivery for fintech and platform teams.',
+    tagline: 'Production ML architecture and delivery for fintech clients.',
     description:
-      'Technical consulting spanning model productionization, MLOps pipeline ' +
-      'design, observability, and team enablement across applied AI programs.',
+      'Technical consulting spanning model productionization, MLOps pipeline design, and team ' +
+      'enablement across payments, lending, and fraud detection.',
     context:
       'Consulting covers ML debugging tooling and LLM integration where technical ' +
       'model behavior must translate into business-readable outcomes.',

@@ -1,0 +1,2682 @@
+# CONVICTION ENGINE v6.0 — PORTFOLIO SYSTEM PROMPT
+
+## STEP 2 — DEPENDENCIES
+
+```bash
+pnpm add @next/mdx @mdx-js/react @mdx-js/loader remark-gfm rehype-slug \
+  rehype-pretty-code shiki gray-matter
+pnpm add @vercel/analytics @vercel/speed-insights @vercel/og
+pnpm add schema-dts
+pnpm install --frozen-lockfile
+```
+
+**Verify present:** `framer-motion` · `lucide-react` · `@mdx-js/react` · `shiki` · `gray-matter` · `schema-dts`
+
+---
+
+## STEP 3 — FOUNDATION FILES
+
+### `next.config.ts`
+
+```typescript
+import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import rehypePrettyCode from "rehype-pretty-code";
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeSlug,
+      [rehypePrettyCode, { theme: "github-dark-dimmed", keepBackground: false }],
+    ],
+  },
+});
+
+const nextConfig: NextConfig = {
+  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  images: { formats: ["image/avif", "image/webp"] },
+  experimental: { optimizeCss: true },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options",    value: "nosniff" },
+          { key: "X-Frame-Options",           value: "DENY" },
+          { key: "Referrer-Policy",           value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy",        value: "camera=(), microphone=(), geolocation=()" },
+          { key: "X-DNS-Prefetch-Control",    value: "on" },
+        ],
+      },
+      {
+        source: "/fonts/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/og(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=3600, s-maxage=86400" }],
+      },
+    ];
+  },
+};
+
+export default withMDX(nextConfig);
+```
+
+### `tsconfig.json`
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+### `eslint.config.mjs`
+
+```javascript
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = dirname(__filename);
+const compat     = new FlatCompat({ baseDirectory: __dirname });
+
+export default compat.extends("next/core-web-vitals", "next/typescript");
+```
+
+> Delete any `.eslintrc`, `.eslintrc.json`, `.eslintrc.js`, `.eslintrc.yaml` — they block flat config.
+
+### `package.json` scripts block
+
+```json
+"scripts": {
+  "dev":         "next dev",
+  "build":       "next build",
+  "start":       "next start",
+  "lint":        "next lint",
+  "type-check":  "tsc --noEmit",
+  "test":        "playwright test",
+  "test:e2e":    "playwright test --project=chromium",
+  "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
+  "analyze":     "ANALYZE=true next build"
+}
+```
+
+---
+
+## STEP 4 — DESIGN SYSTEM (`app/globals.css` — FULL REPLACEMENT)
+
+**Design principles in priority order:**
+1. Clarity > decoration
+2. Hierarchy > density
+3. Restraint > trend
+4. Evidence > assertion
+5. Motion supports understanding — never competes with it
+
+```css
+/* ═══════════════════════════════════════════════════════════════
+   OSCAR SCARDUBU — DESIGN SYSTEM v6.0
+   Liquid Glass · 8px Grid · 7-Step Fluid Type · Theme-Aware
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --font-sans:    var(--font-dm-sans), system-ui, sans-serif;
+  --font-display: var(--font-syne), var(--font-sans);
+  --font-mono:    var(--font-jetbrains-mono), "Courier New", monospace;
+
+  --text-xs:   clamp(0.694rem, 0.67vw + 0.5rem,  0.75rem);
+  --text-sm:   clamp(0.833rem, 0.8vw  + 0.6rem,  0.875rem);
+  --text-base: 1rem;
+  --text-lg:   clamp(1.2rem,   1.2vw  + 0.9rem,  1.25rem);
+  --text-xl:   clamp(1.44rem,  1.5vw  + 1rem,    1.5rem);
+  --text-2xl:  clamp(1.728rem, 2.2vw  + 1rem,    2rem);
+  --text-3xl:  clamp(2.074rem, 3.5vw  + 0.5rem,  3rem);
+  --text-4xl:  clamp(2.488rem, 5vw    + 0rem,    4.5rem);
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  --tracking-tight:   -0.04em;
+  --tracking-snug:    -0.02em;
+  --tracking-normal:   0em;
+  --tracking-wide:     0.06em;
+  --tracking-widest:   0.12em;
+
+  --leading-tight:  1.1;
+  --leading-snug:   1.3;
+  --leading-normal: 1.6;
+  --leading-loose:  1.8;
+
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  --section-gap-hero:  var(--space-24);
+  --section-gap-mid:   var(--space-16);
+  --section-gap-dense: var(--space-12);
+
+  --glass-bg:           rgba(255,255,255,0.065);
+  --glass-bg-hover:     rgba(255,255,255,0.11);
+  --glass-border:       rgba(255,255,255,0.12);
+  --glass-border-hover: rgba(255,255,255,0.22);
+  --glass-blur:         20px;
+  --glass-sat:          180%;
+  --glass-shadow:
+    0 1px 0 0 rgba(255,255,255,0.08) inset,
+    0 8px 32px -4px rgba(0,0,0,0.28),
+    0 1px 2px 0 rgba(0,0,0,0.3);
+  --glass-shadow-hover:
+    0 1px 0 0 rgba(255,255,255,0.13) inset,
+    0 16px 48px -8px rgba(0,0,0,0.38),
+    0 2px 4px 0 rgba(0,0,0,0.4);
+  --glass-refraction:
+    linear-gradient(135deg,
+      rgba(255,255,255,0.18) 0%,
+      rgba(255,255,255,0.04) 40%,
+      transparent 100%);
+
+  --fresnel-top:    rgba(255,255,255,0.32);
+  --fresnel-left:   rgba(255,255,255,0.22);
+  --fresnel-right:  rgba(255,255,255,0.04);
+  --fresnel-bottom: rgba(255,255,255,0.04);
+
+  --color-bg:             #09090e;
+  --color-surface:        #0f0f17;
+  --color-surface-raised: #14141e;
+  --color-border:         rgba(255,255,255,0.08);
+  --color-border-subtle:  rgba(255,255,255,0.05);
+
+  --color-text-primary:   rgba(255,255,255,0.92);
+  --color-text-secondary: rgba(255,255,255,0.52);
+  --color-text-muted:     rgba(255,255,255,0.30);
+  --color-text-disabled:  rgba(255,255,255,0.18);
+
+  --color-accent:         #6366f1;
+  --color-accent-hover:   #818cf8;
+  --color-accent-glow:    rgba(99,102,241,0.22);
+  --color-accent-surface: rgba(99,102,241,0.08);
+
+  --color-cyan:           #22d3ee;
+  --color-cyan-hover:     #67e8f9;
+  --color-cyan-glow:      rgba(34,211,238,0.12);
+  --color-cyan-surface:   rgba(34,211,238,0.07);
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger:  #ef4444;
+
+  --ease-spring:  cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:     cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out:  cubic-bezier(0.65,0,0.35,1);
+  --dur-instant:  80ms;
+  --dur-fast:     150ms;
+  --dur-base:     240ms;
+  --dur-slow:     380ms;
+  --dur-glacial:  600ms;
+
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+  --max-width:       1200px;
+  --max-width-prose:   72ch;
+  --nav-height:        60px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --glass-bg:            rgba(255,255,255,0.72);
+    --glass-bg-hover:      rgba(255,255,255,0.88);
+    --glass-border:        rgba(0,0,0,0.07);
+    --glass-border-hover:  rgba(0,0,0,0.13);
+    --glass-shadow:
+      0 1px 0 0 rgba(255,255,255,0.9) inset,
+      0 8px 32px -4px rgba(0,0,0,0.09),
+      0 1px 2px 0 rgba(0,0,0,0.06);
+    --color-bg:             #f5f5fa;
+    --color-surface:        #ffffff;
+    --color-surface-raised: #fafaff;
+    --color-border:         rgba(0,0,0,0.07);
+    --color-border-subtle:  rgba(0,0,0,0.04);
+    --color-text-primary:   rgba(0,0,0,0.88);
+    --color-text-secondary: rgba(0,0,0,0.52);
+    --color-text-muted:     rgba(0,0,0,0.36);
+    --color-text-disabled:  rgba(0,0,0,0.22);
+  }
+}
+
+[data-theme="light"] {
+  --glass-bg:            rgba(255,255,255,0.72);
+  --glass-bg-hover:      rgba(255,255,255,0.88);
+  --glass-border:        rgba(0,0,0,0.07);
+  --glass-border-hover:  rgba(0,0,0,0.13);
+  --color-bg:             #f5f5fa;
+  --color-surface:        #ffffff;
+  --color-surface-raised: #fafaff;
+  --color-border:         rgba(0,0,0,0.07);
+  --color-border-subtle:  rgba(0,0,0,0.04);
+  --color-text-primary:   rgba(0,0,0,0.88);
+  --color-text-secondary: rgba(0,0,0,0.52);
+  --color-text-muted:     rgba(0,0,0,0.36);
+  --color-text-disabled:  rgba(0,0,0,0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0; padding: 0;
+  border: 0 solid var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark light;
+}
+
+body {
+  font-family:      var(--font-sans);
+  font-size:        var(--text-base);
+  font-weight:      var(--weight-regular);
+  line-height:      var(--leading-normal);
+  color:            var(--color-text-primary);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out);
+}
+
+h1 {
+  font-family:    var(--font-display);
+  font-size:      var(--text-4xl);
+  font-weight:    var(--weight-bold);
+  line-height:    var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  overflow-wrap:  break-word;
+}
+h2 {
+  font-family:    var(--font-display);
+  font-size:      var(--text-3xl);
+  font-weight:    var(--weight-semibold);
+  line-height:    var(--leading-tight);
+  letter-spacing: var(--tracking-snug);
+}
+h3 {
+  font-family:    var(--font-display);
+  font-size:      var(--text-xl);
+  font-weight:    var(--weight-semibold);
+  line-height:    var(--leading-snug);
+  letter-spacing: var(--tracking-snug);
+}
+h4 {
+  font-family: var(--font-sans);
+  font-size:   var(--text-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+h5, h6 {
+  font-family:    var(--font-sans);
+  font-size:      var(--text-base);
+  font-weight:    var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+p {
+  line-height: var(--leading-normal);
+  color:       var(--color-text-secondary);
+  max-width:   var(--max-width-prose);
+}
+
+.label {
+  display:        block;
+  font-size:      var(--text-xs);
+  font-weight:    var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color:          var(--color-text-muted);
+}
+
+code, pre, kbd, samp { font-family: var(--font-mono); font-size: 0.875em; }
+code:not(pre code) {
+  background:    var(--color-surface-raised);
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  padding:       0.15em 0.4em;
+  font-size:     var(--text-sm);
+  color:         var(--color-cyan);
+}
+
+a {
+  color:           inherit;
+  text-decoration: none;
+  transition:      color var(--dur-fast) var(--ease-out);
+}
+
+:focus-visible {
+  outline:        2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius:  var(--radius-xs);
+}
+
+.skip-nav {
+  position:      absolute;
+  top:  var(--space-4);
+  left: var(--space-4);
+  z-index: 200;
+  padding:       var(--space-3) var(--space-6);
+  background:    var(--color-accent);
+  color:         #fff;
+  font-size:     var(--text-sm);
+  font-weight:   var(--weight-medium);
+  border-radius: var(--radius-md);
+  transform:     translateY(-150%);
+  transition:    transform var(--dur-fast) var(--ease-out);
+}
+.skip-nav:focus-visible { transform: translateY(0); }
+
+[id] { scroll-margin-top: calc(var(--nav-height) + var(--space-4)); }
+
+.container {
+  width:     100%;
+  max-width: var(--max-width);
+  margin:    0 auto;
+  padding:   0 var(--space-4);
+}
+@media (min-width: 640px)  { .container { padding: 0 var(--space-8);  } }
+@media (min-width: 1024px) { .container { padding: 0 var(--space-12); } }
+
+section {
+  padding-top:    var(--section-gap-mid);
+  padding-bottom: var(--section-gap-mid);
+}
+
+.prose {
+  max-width:   var(--max-width-prose);
+  color:       var(--color-text-secondary);
+  line-height: var(--leading-loose);
+}
+.prose h2 { margin-top: var(--space-12); margin-bottom: var(--space-4); font-size: var(--text-2xl); }
+.prose h3 { margin-top: var(--space-8);  margin-bottom: var(--space-3); font-size: var(--text-xl); }
+.prose p  { margin-bottom: var(--space-6); }
+.prose ul, .prose ol { margin-bottom: var(--space-6); padding-left: var(--space-6); }
+.prose li { margin-bottom: var(--space-2); }
+.prose blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-6);
+  margin: var(--space-8) 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-12) 0;
+}
+.prose pre {
+  background:    var(--color-surface-raised);
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding:       var(--space-6);
+  overflow-x:    auto;
+  margin:        var(--space-6) 0;
+  font-size:     var(--text-sm);
+}
+.prose a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(34,211,238,0.3);
+}
+.prose a:hover { text-decoration-color: var(--color-cyan); }
+.prose img {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  max-width: 100%;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  box-shadow: var(--glass-shadow);
+  will-change: transform;
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+  transition: background var(--dur-base) var(--ease-out),
+              box-shadow  var(--dur-base) var(--ease-out);
+}
+
+.glass-full   { backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+.glass-medium { backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); }
+.glass-light  {
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  background: rgba(255,255,255,0.03);
+}
+
+.glass-full {
+  border-top:    1px solid var(--fresnel-top);
+  border-left:   1px solid var(--fresnel-left);
+  border-right:  1px solid var(--fresnel-right);
+  border-bottom: 1px solid var(--fresnel-bottom);
+}
+.glass-medium { border: 1px solid var(--glass-border); }
+.glass-light  { border: 1px solid var(--color-border-subtle); }
+
+@property --glass-thickness { syntax: "<length>"; initial-value: 1px; inherits: false; }
+.glass-full {
+  --glass-thickness: 1px;
+  box-shadow: var(--glass-shadow), 0 0 0 var(--glass-thickness) rgba(255,255,255,0.07) inset;
+  transition: --glass-thickness 0.2s ease, box-shadow var(--dur-base) var(--ease-out);
+}
+.glass-full:hover {
+  --glass-thickness: 2px;
+  box-shadow:
+    0 0 0 var(--glass-thickness) rgba(255,255,255,0.12) inset,
+    0 20px 60px rgba(0,0,0,0.42),
+    0 0 40px rgba(34,211,238,0.05);
+}
+
+.glass::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: var(--glass-refraction);
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.5;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+.glass::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+  will-change: background-position;
+}
+
+.glass-chromatic {
+  box-shadow:
+    var(--glass-shadow),
+     1px  1px 0 rgba(255,80,80,0.025),
+    -1px -1px 0 rgba(34,211,238,0.035);
+}
+
+.glass-card {
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+.glass-card:hover { background: var(--glass-bg-hover); box-shadow: var(--glass-shadow-hover); }
+.glass-card:hover::before { opacity: 0.9; }
+
+.glass-nav {
+  background: rgba(9,9,14,0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--color-border);
+}
+[data-theme="light"] .glass-nav { background: rgba(245,245,250,0.82); }
+
+.metric-card {
+  background:    var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border:        1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow   var(--dur-base) var(--ease-out);
+}
+.metric-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), 0 0 20px var(--color-accent-glow);
+}
+
+@keyframes metric-breath {
+  0%, 100% { transform: scale(1) translateZ(0); }
+  50%       { transform: scale(1.018) translateZ(0); }
+}
+.metric-breath { animation: metric-breath 3s ease-in-out infinite; }
+
+.bento-featured { grid-column: span 2; grid-row: span 2; }
+.bento-side     { grid-column: span 1; grid-row: span 1; }
+.bento-full     { grid-column: 1 / -1; }
+@media (max-width: 639px) {
+  .bento-featured, .bento-side, .bento-full { grid-column: 1 / -1; grid-row: span 1; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .bento-featured { grid-column: span 2; grid-row: span 1; }
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px) translateZ(0);
+  transition:
+    opacity   var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+[data-reveal].revealed     { opacity: 1; transform: translateY(0) translateZ(0); }
+[data-reveal-delay="1"]    { transition-delay: 80ms;  }
+[data-reveal-delay="2"]    { transition-delay: 160ms; }
+[data-reveal-delay="3"]    { transition-delay: 240ms; }
+[data-reveal-delay="4"]    { transition-delay: 320ms; }
+
+.reading-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: var(--progress, 0%);
+  background: var(--color-accent);
+  z-index: 200;
+  will-change: width;
+  transform: translateZ(0);
+  transition: width 50ms linear;
+  pointer-events: none;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1) translateZ(0); }
+  50%       { opacity: 0.5; transform: scale(1.5) translateZ(0); }
+}
+.live-dot {
+  display:       inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background:    var(--color-success);
+  animation:     pulse-dot 2.2s ease-in-out infinite;
+  will-change:   transform, opacity;
+  flex-shrink:   0;
+}
+
+.card-lift { transition: transform 200ms ease-out, box-shadow 200ms ease-out; }
+.card-lift:hover { transform: translateY(-5px) translateZ(0); box-shadow: var(--glass-shadow-hover); }
+
+.divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(
+    90deg, transparent 0%, var(--color-border) 30%,
+    var(--color-border) 70%, transparent 100%
+  );
+}
+
+.pill {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--space-2);
+  padding:        var(--space-1) var(--space-3);
+  border-radius:  var(--radius-full);
+  font-size:      var(--text-xs);
+  font-weight:    var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  border:         1px solid var(--color-border);
+  color:          var(--color-text-secondary);
+  background:     transparent;
+}
+.pill-accent {
+  border-color: var(--color-accent-surface);
+  background:   var(--color-accent-surface);
+  color:        var(--color-accent-hover);
+}
+.pill-cyan {
+  border-color: var(--color-cyan-surface);
+  background:   var(--color-cyan-surface);
+  color:        var(--color-cyan);
+}
+
+.writing-row {
+  display:       flex;
+  align-items:   baseline;
+  gap:           var(--space-4);
+  padding:       var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition:    transform var(--dur-fast) var(--ease-out);
+}
+.writing-row:hover { transform: translateX(4px); }
+.writing-row:hover .writing-title { color: var(--color-text-primary); }
+.writing-title { color: var(--color-text-secondary); transition: color var(--dur-fast) var(--ease-out); }
+
+@keyframes skeleton-sweep {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-raised) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.cmd-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 150;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+}
+.cmd-panel {
+  width: min(560px, calc(100vw - var(--space-8)));
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 32px 80px rgba(0,0,0,0.5);
+}
+.cmd-input {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  outline: none;
+}
+.cmd-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--dur-instant) var(--ease-out),
+              color var(--dur-instant) var(--ease-out);
+}
+.cmd-item:hover,
+.cmd-item[data-active="true"] {
+  background: var(--color-accent-surface);
+  color: var(--color-text-primary);
+}
+.cmd-item kbd {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-surface-raised);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-xs);
+}
+
+@media print {
+  .glass-nav, .skip-nav, .bookmark-toast,
+  .cmd-overlay, .reading-progress,
+  footer button, [aria-label="Toggle navigation"],
+  [data-reveal] { display: none !important; }
+
+  body { background: white; color: black; font-size: 11pt; }
+  .prose { max-width: 100%; color: black; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #555; }
+  .glass-card, .metric-card {
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  h1, h2, h3 { page-break-after: avoid; }
+  pre, blockquote { page-break-inside: avoid; }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-card, .glass-nav, .metric-card,
+  .glass-full, .glass-medium, .glass-light {
+    background: rgba(10,10,20,0.92);
+  }
+}
+```
+
+---
+
+## STEP 5 — `app/layout.tsx`
+
+```tsx
+import type { Metadata } from "next";
+import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Analytics }     from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import "./globals.css";
+
+const syne = Syne({
+  subsets: ["latin"], variable: "--font-syne", display: "swap",
+  weight: ["400","500","600","700","800"],
+});
+const dmSans = DM_Sans({
+  subsets: ["latin"], variable: "--font-dm-sans", display: "swap",
+  weight: ["300","400","500","600"],
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"], variable: "--font-jetbrains-mono", display: "swap",
+  weight: ["400","500"],
+});
+
+export const metadata: Metadata = {
+  title: {
+    default:  "Oscar Scardubu — Staff Full-Stack ML Engineer",
+    template: "%s · Oscar Scardubu",
+  },
+  description:
+    "Production AI/fintech systems — credit scoring, blockchain analytics, ML consulting. " +
+    "Open to Staff+ roles, co-founder partnerships, and high-trust consulting engagements.",
+  metadataBase: new URL("https://www.scardubu.dev"),
+  openGraph: {
+    type:        "website",
+    url:         "https://www.scardubu.dev",
+    siteName:    "Oscar Scardubu",
+    title:       "Oscar Scardubu — Staff Full-Stack ML Engineer",
+    description: "Production AI/fintech engineer. SabiScore · Hashablanca · ML Consulting.",
+    images: [{ url: "/og", width: 1200, height: 630, alt: "Oscar Scardubu portfolio" }],
+  },
+  twitter: {
+    card:   "summary_large_image",
+    title:  "Oscar Scardubu — Staff Full-Stack ML Engineer",
+    images: ["/og"],
+  },
+  robots:     { index: true, follow: true },
+  alternates: { canonical: "https://www.scardubu.dev" },
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type":    "Person",
+  name:       "Oscar Scardubu",
+  url:        "https://www.scardubu.dev",
+  jobTitle:   "Staff Full-Stack ML Engineer",
+  description:"Production AI/fintech systems engineer. SabiScore, Hashablanca, ML consulting.",
+  sameAs: [
+    "https://github.com/Scardubu",
+    "https://linkedin.com/in/oscarscardubuu",
+  ],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="en"
+      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+      </head>
+      <body>
+        <a href="#main-content" className="skip-nav">Skip to main content</a>
+        <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
+          <defs>
+            <filter id="glass-refraction">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65 0.85" numOctaves="3" seed="2" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+        </svg>
+        <ThemeProvider>{children}</ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+
+---
+
+## STEP 6 — ROUTE ARCHITECTURE
+
+```
+app/
+├── layout.tsx
+├── page.tsx
+├── og/route.tsx                    homepage OG (edge)
+├── api/activity/route.ts           GitHub live activity (edge)
+├── sitemap.ts
+├── robots.ts
+├── loading.tsx
+├── error.tsx
+├── not-found.tsx
+├── globals.css
+├── work/[slug]/
+│   ├── page.tsx                    MDX + reading progress + JSON-LD
+│   ├── og/route.tsx                per-project OG (edge)
+│   └── loading.tsx
+└── writing/
+    ├── page.tsx                    article index (grouped by year)
+    ├── loading.tsx
+    └── [slug]/
+        ├── page.tsx                MDX + reading progress + JSON-LD
+        └── loading.tsx
+
+content/
+├── work/
+│   ├── sabiscore.mdx
+│   ├── hashablanca.mdx
+│   └── ml-consulting.mdx
+└── writing/
+    └── building-sabiscore.mdx      (≥1 required before ship)
+
+data/projects.ts
+lib/content.ts · lib/motion.ts · lib/utils.ts
+hooks/useReducedMotion.ts · useScrollReveal.ts · useReadingProgress.ts
+components/ (full list below)
+```
+
+### `app/sitemap.ts`
+
+```typescript
+import { MetadataRoute } from "next";
+import { projects }       from "@/data/projects";
+import { getWritingPosts } from "@/lib/content";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await getWritingPosts();
+  const base  = "https://www.scardubu.dev";
+  return [
+    { url: base,              lastModified: new Date(), changeFrequency: "weekly",  priority: 1   },
+    { url: `${base}/writing`, lastModified: new Date(), changeFrequency: "weekly",  priority: 0.8 },
+    ...projects.map(p => ({
+      url: `${base}/work/${p.id}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7,
+    })),
+    ...posts.map(p => ({
+      url: `${base}/writing/${p.slug}`,
+      lastModified: new Date(p.date),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
+}
+```
+
+### `app/robots.ts`
+
+```typescript
+import { MetadataRoute } from "next";
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules:   { userAgent: "*", allow: "/" },
+    sitemap: "https://www.scardubu.dev/sitemap.xml",
+    host:    "https://www.scardubu.dev",
+  };
+}
+```
+
+### `app/api/activity/route.ts`
+
+```typescript
+import { NextResponse } from "next/server";
+export const runtime = "edge";
+
+export async function GET() {
+  try {
+    const res = await fetch(
+      "https://api.github.com/users/Scardubu/events/public?per_page=1",
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          ...(process.env.GITHUB_TOKEN
+            ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+            : {}),
+        },
+        next: { revalidate: 300 },
+      }
+    );
+    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+
+    const events = await res.json() as Array<{ created_at: string; type: string; repo: { name: string } }>;
+    if (!events.length) {
+      return NextResponse.json({ ago: "Recently", type: "PushEvent", repo: "oscar-portfolio-main" });
+    }
+
+    const event   = events[0];
+    const pushed  = new Date(event.created_at);
+    const diffMin = Math.floor((Date.now() - pushed.getTime()) / 60_000);
+    const diffHr  = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+
+    const ago =
+      diffMin  < 2  ? "Just now" :
+      diffMin  < 60 ? `${diffMin} minutes ago` :
+      diffHr   < 24 ? `${diffHr} hour${diffHr > 1 ? "s" : ""} ago` :
+                      `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
+
+    return NextResponse.json(
+      { ago, type: event.type, repo: event.repo.name },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    );
+  } catch {
+    return NextResponse.json(
+      { ago: "Recently", type: "PushEvent", repo: "oscar-portfolio-main" },
+      { status: 200 }
+    );
+  }
+}
+```
+
+---
+
+## STEP 7 — CONTENT LAYER
+
+### `lib/content.ts`
+
+```typescript
+import fs   from "fs";
+import path from "path";
+import matter from "gray-matter";
+
+export interface WritingPost {
+  slug:        string;
+  title:       string;
+  date:        string;
+  summary:     string;
+  tags:        string[];
+  readingTime: number;
+  featured?:   boolean;
+}
+
+export interface WorkCase {
+  slug:    string;
+  title:   string;
+  tagline: string;
+  date:    string;
+  status:  "live" | "wip" | "archived";
+  tags:    string[];
+  demoUrl?: string;
+  repoUrl?: string;
+}
+
+const WRITING_DIR = path.join(process.cwd(), "content/writing");
+const WORK_DIR    = path.join(process.cwd(), "content/work");
+
+function calcReadingTime(content: string): number {
+  return Math.max(1, Math.ceil(content.split(/\s+/).length / 220));
+}
+
+export async function getWritingPosts(): Promise<WritingPost[]> {
+  if (!fs.existsSync(WRITING_DIR)) return [];
+  return fs
+    .readdirSync(WRITING_DIR)
+    .filter(f => f.endsWith(".mdx"))
+    .map(file => {
+      const { data, content } = matter(fs.readFileSync(path.join(WRITING_DIR, file), "utf8"));
+      return {
+        slug:        file.replace(".mdx", ""),
+        title:       data.title   ?? "",
+        date:        data.date    ?? "",
+        summary:     data.summary ?? "",
+        tags:        data.tags    ?? [],
+        readingTime: calcReadingTime(content),
+        featured:    data.featured ?? false,
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export async function getWritingPost(slug: string) {
+  const file = path.join(WRITING_DIR, `${slug}.mdx`);
+  if (!fs.existsSync(file)) return null;
+  const { data, content } = matter(fs.readFileSync(file, "utf8"));
+  return { frontmatter: data, content, readingTime: calcReadingTime(content) };
+}
+
+export async function getWorkCase(slug: string) {
+  const file = path.join(WORK_DIR, `${slug}.mdx`);
+  if (!fs.existsSync(file)) return null;
+  const { data, content } = matter(fs.readFileSync(file, "utf8"));
+  return { frontmatter: data, content };
+}
+
+export async function getWorkCases(): Promise<WorkCase[]> {
+  if (!fs.existsSync(WORK_DIR)) return [];
+  return fs
+    .readdirSync(WORK_DIR)
+    .filter(f => f.endsWith(".mdx"))
+    .map(file => {
+      const { data } = matter(fs.readFileSync(path.join(WORK_DIR, file), "utf8"));
+      return {
+        slug:    file.replace(".mdx", ""),
+        title:   data.title   ?? "",
+        tagline: data.tagline ?? "",
+        date:    data.date    ?? "",
+        status:  data.status  ?? "live",
+        tags:    data.tags    ?? [],
+        demoUrl: data.demoUrl,
+        repoUrl: data.repoUrl,
+      };
+    });
+}
+```
+
+### `content/writing/building-sabiscore.mdx`
+
+```mdx
+---
+title: "Building SabiScore: Architecture Decisions in a Resource-Constrained Production System"
+date: "2025-11-12"
+summary: "How ensemble model selection, Redis caching strategy, and graceful fallback produced a reliable ML inference API under infrastructure constraints."
+tags: ["ML Engineering", "FastAPI", "Production Systems", "Redis"]
+featured: true
+---
+
+## The constraint was the specification
+
+When infrastructure latency is unpredictable, every architectural decision has a cost function
+that only becomes visible in production — never in a notebook.
+
+SabiScore needed to deliver real-time predictions during peak match windows with a team of one.
+That constraint shaped every decision below.
+
+## The model selection decision
+
+**Chosen:** Ensemble meta-learner (XGBoost + LightGBM + scikit-learn stacking)
+**Rejected:** Single-model XGBoost
+
+The ensemble produced a measurable accuracy improvement on the hold-out validation set.
+The cost was inference latency — which the Redis caching layer absorbed.
+
+## The caching architecture
+
+**Chosen:** Redis inference result cache with TTL keyed on input feature hash
+**Rejected:** Direct Postgres reads per request
+
+During initial load testing, direct reads exceeded 200ms at peak windows.
+The cache eliminated latency spikes without requiring infrastructure scaling.
+
+## What shipped vs. what was cut
+
+**Shipped:** Real-time feature engineering pipeline · FastAPI inference layer · Redis caching · Postgres persistence · Next.js frontend · Docker deployment
+
+**Cut:** Drift monitoring dashboard (deferred to v2 — logging is in place, alerting is next)
+```
+
+---
+
+## STEP 8 — SHARED UTILITIES
+
+### `lib/utils.ts`
+
+```typescript
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
+
+export function formatDate(
+  iso: string,
+  options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" }
+): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", options);
+}
+
+export function truncate(str: string, n: number): string {
+  return str.length > n ? str.slice(0, n - 1) + "…" : str;
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+```
+
+### `lib/motion.ts`
+
+```typescript
+import type { Variants } from "framer-motion";
+
+export const springConfig = {
+  type: "spring",
+  stiffness: 300,
+  damping: 25,
+} as const;
+
+export const fadeUp: Variants = {
+  hidden:  { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: springConfig },
+};
+
+export const fadeIn: Variants = {
+  hidden:  { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.38, ease: [0.16, 1, 0.3, 1] } },
+};
+
+export const staggerContainer: Variants = {
+  hidden:  {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+
+export const scaleIn: Variants = {
+  hidden:  { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: springConfig },
+};
+```
+
+### `hooks/useReducedMotion.ts`
+
+```typescript
+"use client";
+import { useReducedMotion as useFramerReducedMotion } from "framer-motion";
+export function useReducedMotion(): boolean {
+  return useFramerReducedMotion() ?? false;
+}
+```
+
+### `hooks/useScrollReveal.ts`
+
+```typescript
+"use client";
+import { useEffect } from "react";
+
+export function useScrollReveal(selector = "[data-reveal]"): void {
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      document.querySelectorAll<HTMLElement>(selector).forEach(el => el.classList.add("revealed"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add("revealed"); observer.unobserve(entry.target); }
+      }),
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll<HTMLElement>(selector).forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [selector]);
+}
+```
+
+### `hooks/useReadingProgress.ts`
+
+```typescript
+"use client";
+import { useEffect, useState } from "react";
+import { clamp } from "@/lib/utils";
+
+export function useReadingProgress(): number {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+      setProgress(clamp(window.scrollY / docHeight, 0, 1));
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return progress;
+}
+```
+
+### `components/ScrollRevealInit.tsx`
+
+```tsx
+"use client";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+export function ScrollRevealInit(): null { useScrollReveal(); return null; }
+```
+
+---
+
+## STEP 9 — COMPONENTS
+
+### Universal rules — enforced at review, no exceptions
+
+| Rule | Enforcement |
+|------|-------------|
+| `any` / `@ts-ignore` | Forbidden — explicit interfaces or `unknown` + type guards |
+| `<img>` | Forbidden — `next/image` with explicit `width` and `height` |
+| Empty `alt=""` | Forbidden — descriptive alt text required |
+| External `<a>` without `rel` | Must have `rel="noopener noreferrer"` |
+| First-person in rendered text | Forbidden |
+| Unverifiable metrics | Forbidden — no percentages, ROI, "improved by" |
+| Animation | GPU only — `transform` and `opacity` exclusively |
+| Spring config | Import `springConfig` from `@/lib/motion` |
+| Spacing | Only `--space-N` CSS tokens — no arbitrary pixel values in style props |
+| `useReducedMotion` | Import from `@/hooks/useReducedMotion` — call before any motion code |
+| `\u2192` | Forbidden — use `→` directly in source |
+| `"24/7"` or `"Active users"` | Forbidden |
+
+**After each file:** `pnpm exec tsc --noEmit`
+
+---
+
+### `components/ThemeProvider.tsx`
+
+```tsx
+"use client";
+import { createContext, useContext, useEffect, useState } from "react";
+
+type Theme = "dark" | "light" | "system";
+interface ThemeContextValue { theme: Theme; resolved: "dark" | "light"; setTheme: (t: Theme) => void; }
+
+const ThemeContext = createContext<ThemeContextValue>({ theme: "dark", resolved: "dark", setTheme: () => {} });
+export function useTheme() { return useContext(ThemeContext); }
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme,    setThemeState] = useState<Theme>("dark");
+  const [resolved, setResolved]   = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const stored = (localStorage.getItem("theme") as Theme | null) ?? "dark";
+    setThemeState(stored);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: light)");
+    const apply = (t: Theme) => {
+      const r = t === "system" ? (mq.matches ? "light" : "dark") : t;
+      setResolved(r);
+      document.documentElement.setAttribute("data-theme", r);
+    };
+    apply(theme);
+    if (theme === "system") {
+      const handler = () => apply("system");
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }
+  }, [theme]);
+
+  const setTheme = (t: Theme) => { localStorage.setItem("theme", t); setThemeState(t); };
+
+  return <ThemeContext.Provider value={{ theme, resolved, setTheme }}>{children}</ThemeContext.Provider>;
+}
+```
+
+### `components/ThemeToggle.tsx`
+
+```tsx
+"use client";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme }          from "@/components/ThemeProvider";
+import { useReducedMotion }  from "@/hooks/useReducedMotion";
+import { springConfig }      from "@/lib/motion";
+
+export function ThemeToggle() {
+  const { resolved, setTheme } = useTheme();
+  const reduced = useReducedMotion();
+  const isDark  = resolved === "dark";
+
+  return (
+    <button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+      style={{
+        width: 32, height: 32,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        borderRadius: "var(--radius-md)",
+        border: "1px solid var(--color-border)",
+        background: "transparent",
+        color: "var(--color-text-muted)",
+        cursor: "pointer",
+        transition: `color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out)`,
+        flexShrink: 0,
+      }}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.svg key="moon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+            initial={reduced ? false : { opacity: 0, rotate: -30 }}
+            animate={{ opacity: 1, rotate: 0 }}
+            exit={reduced ? {} : { opacity: 0, rotate: 30 }}
+            transition={springConfig} aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </motion.svg>
+        ) : (
+          <motion.svg key="sun" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+            initial={reduced ? false : { opacity: 0, rotate: 30 }}
+            animate={{ opacity: 1, rotate: 0 }}
+            exit={reduced ? {} : { opacity: 0, rotate: -30 }}
+            transition={springConfig} aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="2" x2="12" y2="4" />
+            <line x1="12" y1="20" x2="12" y2="22" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="2" y1="12" x2="4" y2="12" />
+            <line x1="20" y1="12" x2="22" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </motion.svg>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
+```
+
+### `components/CommandPalette.tsx`
+
+```tsx
+"use client";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter }               from "next/navigation";
+import { useReducedMotion }        from "@/hooks/useReducedMotion";
+import { springConfig }            from "@/lib/motion";
+
+interface Command { id: string; label: string; shortcut?: string; action: () => void; }
+
+export function CommandPalette() {
+  const [open,   setOpen]   = useState(false);
+  const [query,  setQuery]  = useState("");
+  const [active, setActive] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router   = useRouter();
+  const reduced  = useReducedMotion();
+
+  const commands: Command[] = [
+    { id: "projects", label: "Go to Projects", action: () => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" }) },
+    { id: "about",    label: "Go to About",    action: () => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }) },
+    { id: "writing",  label: "Go to Writing",  action: () => document.getElementById("writing")?.scrollIntoView({ behavior: "smooth" }) },
+    { id: "contact",  label: "Go to Contact",  action: () => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }) },
+    { id: "sabiscore",   label: "Open SabiScore case study",   action: () => router.push("/work/sabiscore") },
+    { id: "hashablanca", label: "Open Hashablanca case study", action: () => router.push("/work/hashablanca") },
+    { id: "all-writing", label: "All writing",                 action: () => router.push("/writing") },
+    { id: "resume",  label: "Download resume", shortcut: "R", action: () => window.open("/oscar-scardubu-resume.pdf", "_blank") },
+    { id: "email",   label: "Send email",      shortcut: "E", action: () => window.open("mailto:oscar@scardubu.dev") },
+  ];
+
+  const filtered = query.trim()
+    ? commands.filter(c => c.label.toLowerCase().includes(query.toLowerCase()))
+    : commands;
+
+  const exec = useCallback((cmd: Command) => {
+    cmd.action(); setOpen(false); setQuery(""); setActive(0);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setOpen(o => !o); }
+      if (!open) return;
+      if (e.key === "Escape")    { setOpen(false); setQuery(""); }
+      if (e.key === "ArrowDown") { e.preventDefault(); setActive(a => Math.min(a + 1, filtered.length - 1)); }
+      if (e.key === "ArrowUp")   { e.preventDefault(); setActive(a => Math.max(a - 1, 0)); }
+      if (e.key === "Enter" && filtered[active]) exec(filtered[active]);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, active, filtered, exec]);
+
+  useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 50); }, [open]);
+  useEffect(() => { setActive(0); }, [query]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div className="cmd-overlay"
+          initial={reduced ? {} : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduced ? {} : { opacity: 0 }}
+          onClick={() => { setOpen(false); setQuery(""); }}
+          aria-modal="true" role="dialog" aria-label="Command palette">
+          <motion.div className="cmd-panel glass glass-full"
+            initial={reduced ? {} : { opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduced ? {} : { opacity: 0, y: -8, scale: 0.97 }}
+            transition={springConfig}
+            onClick={e => e.stopPropagation()}>
+            <input ref={inputRef} className="cmd-input" placeholder="Search or jump to…"
+              value={query} onChange={e => setQuery(e.target.value)}
+              aria-label="Command search" autoComplete="off" />
+            <div role="listbox" aria-label="Commands">
+              {filtered.length === 0 && (
+                <div className="cmd-item" style={{ color: "var(--color-text-muted)" }}>No results for "{query}"</div>
+              )}
+              {filtered.map((cmd, i) => (
+                <div key={cmd.id} className="cmd-item" role="option" aria-selected={i === active}
+                  data-active={i === active} onClick={() => exec(cmd)} onMouseEnter={() => setActive(i)}>
+                  {cmd.label}
+                  {cmd.shortcut && <kbd>{cmd.shortcut}</kbd>}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+### `components/ReadingProgress.tsx`
+
+```tsx
+"use client";
+import { useReadingProgress } from "@/hooks/useReadingProgress";
+
+export function ReadingProgress() {
+  const progress = useReadingProgress();
+  return (
+    <div
+      className="reading-progress"
+      role="progressbar"
+      aria-label="Reading progress"
+      aria-valuenow={Math.round(progress * 100)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      style={{ "--progress": `${progress * 100}%` } as React.CSSProperties}
+    />
+  );
+}
+```
+
+### `components/Skeleton.tsx`
+
+```tsx
+interface SkeletonProps { width?: number | string; height?: number | string; style?: React.CSSProperties; }
+
+export function Skeleton({ width, height, style }: SkeletonProps) {
+  return (
+    <div className="skeleton" aria-hidden="true"
+      style={{ width: width ?? "100%", height: height ?? 16, ...style }} />
+  );
+}
+```
+
+### `components/GlassCard.tsx`
+
+```tsx
+"use client";
+import { motion }           from "framer-motion";
+import { springConfig }     from "@/lib/motion";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { cn }               from "@/lib/utils";
+
+type GlassLevel = "full" | "medium" | "light";
+interface GlassCardProps {
+  children: React.ReactNode; className?: string; hover?: boolean; chromatic?: boolean;
+  level?: GlassLevel; as?: React.ElementType; style?: React.CSSProperties;
+  "data-project-id"?: string; "data-reveal"?: string; "data-reveal-delay"?: string;
+  onClick?: () => void;
+}
+
+export function GlassCard({ children, className, hover = true, chromatic = false,
+  level = "full", as: Tag = "div", style, onClick, ...rest }: GlassCardProps) {
+  const reduced  = useReducedMotion();
+  const MotionEl = motion(Tag as "div");
+  return (
+    <MotionEl
+      whileHover={hover && !reduced ? { y: -4, scale: 1.008 } : undefined}
+      transition={springConfig}
+      className={cn("glass", `glass-${level}`, hover && "glass-card card-lift", chromatic && "glass-chromatic", className)}
+      style={{ borderRadius: "var(--radius-lg)", ...style }}
+      onClick={onClick}
+      {...rest}>
+      {children}
+    </MotionEl>
+  );
+}
+```
+
+### `components/LiveActivityBar.tsx`
+
+```tsx
+"use client";
+import { useEffect, useState } from "react";
+import { Skeleton }            from "@/components/Skeleton";
+
+interface ActivityData { ago: string; type: string; repo: string; }
+
+function typeLabel(type: string): string {
+  switch (type) {
+    case "PushEvent":        return "Active development";
+    case "PullRequestEvent": return "Pull request";
+    case "CreateEvent":      return "Branch created";
+    case "IssuesEvent":      return "Issue activity";
+    default:                 return "Recent activity";
+  }
+}
+
+export function LiveActivityBar() {
+  const [data,    setData]    = useState<ActivityData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(false);
+
+  useEffect(() => {
+    fetch("/api/activity")
+      .then(r => r.json())
+      .then((d: ActivityData) => { setData(d); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
+  }, []);
+
+  if (loading) return <Skeleton width={280} height={16} />;
+  if (error || !data) return null;
+
+  return (
+    <p role="status" aria-live="polite"
+      style={{ display: "flex", alignItems: "center", gap: "var(--space-2)",
+               fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>
+      <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%",
+                     background: "var(--color-success)", flexShrink: 0 }} aria-hidden="true" />
+      {typeLabel(data.type)} · {data.ago}
+    </p>
+  );
+}
+```
+
+### `components/ProjectCard.tsx`
+
+```tsx
+"use client";
+import { useState }         from "react";
+import Link                 from "next/link";
+import { motion }           from "framer-motion";
+import { GlassCard }        from "@/components/GlassCard";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import type { Project }     from "@/data/projects";
+
+interface ProjectCardProps { project: Project; featured?: boolean; revealDelay?: string; }
+
+const STATUS_MAP = {
+  live:     { label: "LIVE",     className: "pill pill-cyan" },
+  wip:      { label: "WIP",      className: "pill", style: { background: "rgba(245,158,11,0.08)", borderColor: "rgba(245,158,11,0.2)", color: "#f59e0b" } },
+  archived: { label: "ARCHIVED", className: "pill", style: { background: "rgba(113,113,122,0.08)", borderColor: "rgba(113,113,122,0.2)", color: "#71717a" } },
+} as const;
+
+export function ProjectCard({ project, featured = false, revealDelay }: ProjectCardProps) {
+  const [decisionsOpen, setDecisionsOpen] = useState(false);
+  const reduced = useReducedMotion();
+  const status  = STATUS_MAP[project.status];
+
+  return (
+    <GlassCard as="article" level={featured ? "full" : "medium"} chromatic={featured}
+      data-project-id={project.id} data-reveal="" data-reveal-delay={revealDelay}
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-4)" }}>
+        <span className="label">{featured ? "Featured System" : "Production Track"}</span>
+        <span className={status.className} style={"style" in status ? status.style : undefined}>
+          <span style={{ width: 5, height: 5, borderRadius: "50%",
+            background: project.status === "live" ? "var(--color-success)" : project.status === "wip" ? "var(--color-warning)" : "currentColor",
+            display: "inline-block", flexShrink: 0 }} aria-hidden="true" />
+          {status.label}
+        </span>
+      </header>
+
+      <h2 style={{ fontFamily: "var(--font-display)", fontSize: featured ? "var(--text-2xl)" : "var(--text-xl)",
+        fontWeight: "var(--weight-bold)", letterSpacing: "var(--tracking-snug)",
+        marginBottom: "var(--space-2)", color: "var(--color-text-primary)" }}>
+        {project.title}
+      </h2>
+
+      <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)",
+        marginBottom: "var(--space-4)", lineHeight: "var(--leading-snug)" }}>
+        {project.tagline}
+      </p>
+
+      <p style={{ fontSize: "var(--text-base)", color: "var(--color-text-secondary)",
+        lineHeight: "var(--leading-normal)", marginBottom: "var(--space-6)", flexGrow: 1 }}>
+        {project.description}
+      </p>
+
+      {featured && project.context && (
+        <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)",
+          lineHeight: "var(--leading-normal)", marginBottom: "var(--space-6)", fontStyle: "italic" }}>
+          {project.context}
+        </p>
+      )}
+
+      {project.decisions && project.decisions.length > 0 && (
+        <div style={{ marginBottom: "var(--space-6)" }}>
+          <button onClick={() => setDecisionsOpen(d => !d)} aria-expanded={decisionsOpen}
+            style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", background: "transparent",
+              border: "none", cursor: "pointer", color: "var(--color-text-muted)", fontSize: "var(--text-xs)",
+              fontWeight: "var(--weight-medium)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase",
+              padding: 0, transition: `color var(--dur-fast) var(--ease-out)` }}>
+            <motion.span animate={{ rotate: decisionsOpen ? 90 : 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.15 }}
+              style={{ display: "inline-block" }} aria-hidden="true">›</motion.span>
+            Architecture decisions
+          </button>
+
+          {decisionsOpen && (
+            <motion.div initial={reduced ? {} : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={reduced ? {} : { opacity: 0, height: 0 }}
+              style={{ overflow: "hidden", marginTop: "var(--space-4)" }}>
+              {project.decisions.map((d, i) => (
+                <div key={i} style={{ padding: "var(--space-4)", background: "var(--color-surface)",
+                  borderRadius: "var(--radius-md)", border: "1px solid var(--color-border)", marginBottom: "var(--space-3)" }}>
+                  <p style={{ fontSize: "var(--text-xs)", color: "var(--color-success)", marginBottom: "var(--space-1)" }}>Chose: {d.chosen}</p>
+                  <p style={{ fontSize: "var(--text-xs)", color: "var(--color-danger)",  marginBottom: "var(--space-1)" }}>Over: {d.rejected}</p>
+                  <p style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>Because: {d.reason}</p>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
+        {project.tags.map(tag => <span key={tag} className="pill" style={{ fontSize: "var(--text-xs)" }}>{tag}</span>)}
+      </div>
+
+      <footer style={{ display: "flex", alignItems: "center", justifyContent: "space-between",
+        gap: "var(--space-4)", paddingTop: "var(--space-4)", borderTop: "1px solid var(--color-border-subtle)" }}>
+        <div style={{ display: "flex", gap: "var(--space-4)" }}>
+          {project.demoUrl && (
+            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: "var(--text-sm)", color: "var(--color-cyan)" }}>Live demo →</a>
+          )}
+          {project.repoUrl && (
+            <a href={project.repoUrl} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>GitHub</a>
+          )}
+        </div>
+        <Link href={`/work/${project.id}`}
+          style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)",
+            fontWeight: "var(--weight-medium)", transition: `color var(--dur-fast) var(--ease-out)` }}>
+          Case study →
+        </Link>
+      </footer>
+    </GlassCard>
+  );
+}
+```
+
+---
+
+## STEP 10 — COPY SYSTEM (Final, locked)
+
+### Permanently forbidden — zero tolerance
+
+| Forbidden | Rule |
+|-----------|------|
+| `"Active users. 24/7."` | Unverifiable metric |
+| `"24/7"` anywhere | Unverifiable metric |
+| `Case study \u2192` | Unicode escape bug |
+| Any `%` improvement claim | Unverifiable |
+| Counter animations | Fabricated signal |
+| `"Self-taught from Nigeria"` | First-person identity claim |
+| `"I built"` / `"I love"` / `"I designed"` | First-person |
+| `"world-class"` / `"cutting-edge"` / `"innovative"` | Unverifiable adjective |
+| `REPLACE_BEFORE_COMMIT` in any deployed commit | Placeholder |
+
+### Final locked copy — apply verbatim
+
+```
+Nav tagline:              "Production AI systems · Full-stack execution"
+Hero status line:         "Available — Staff+ · Co-founder · Consulting"
+Hero eyebrow (label):     "Staff Full-Stack ML Engineer · AI/Fintech Systems"
+Hero name (h1):           "Oscar Scardubu"
+
+Hero pitch:
+  "The engineer you bring in when AI behavior, platform reliability,
+   and product clarity must hold simultaneously — and the system has
+   to work at 2am during a live match."
+
+Signal card 1 — LIVE IN PRODUCTION:
+  "Ensemble models + FastAPI inference serving live concurrent sessions via Redis and Postgres."
+
+Signal card 2 — DECISIONS DOCUMENTED:
+  "Architecture tradeoffs between retrieval strategies visible in case studies — not just outcomes."
+
+Signal card 3 — ZERO-DOWNTIME DESIGN:
+  "Graceful fallback, health checks, and environment-scoped boundaries built in from deployment one."
+
+Signal card 4 — FULL OWNERSHIP:
+  "Feature engineering to production inference to the frontend. No handoffs."
+
+Projects h2:              "Work that shipped"
+Projects subheading:      "End-to-end AI/fintech systems. Each ships with architecture decisions and a monitored production deployment."
+
+SabiScore tagline:        "Production credit-scoring API for emerging market fintech."
+SabiScore description:    "End-to-end ML pipeline processing alternative financial data signals through a trained gradient boosting model, served via FastAPI with real-time monitoring and drift alerts."
+
+Hashablanca tagline:      "Real-time blockchain transaction analytics platform."
+Hashablanca description:  "Streaming pipeline ingesting on-chain data to surface anomalies and transaction patterns for compliance teams. Built on Kafka, dbt, and React."
+
+About h2:                 "The systems behind the title"
+About bio:                "SabiScore runs end-to-end: feature engineering, ensemble model training, FastAPI inference, Redis caching, Postgres, Docker, Next.js. One engineer. Full ownership. Running in production. Consulting covers ML debugging tooling and LLM integration for teams needing technical model behavior translated into business-readable outputs. Open to Staff ML engineering roles, technical co-founder partnerships, and consulting engagements where full-stack ownership matters."
+
+Writing h2:               "Notes on building"
+Writing subheading:       "ML systems, fintech architecture, and the decisions that don't show up in the commit history."
+
+Contact h2:               "Available. Let's talk."
+Contact pill:             "Open — responding within 48hrs"
+Contact email:            "oscar@scardubu.dev"
+
+Footer line 1:            "© {year} Oscar Scardubu"
+Footer line 2:            "Designed and built by Oscar Scardubu · Nigeria · 2026"
+Nav pill:                 "Open to Work"
+```
+
+---
+
+## STEP 11 — `data/projects.ts`
+
+```typescript
+export type ProjectStatus = "live" | "wip" | "archived";
+
+export interface Decision { chosen: string; rejected: string; reason: string; }
+
+export interface Project {
+  id:               string;
+  title:            string;
+  tagline:          string;
+  description:      string;
+  context?:         string;
+  decisions?:       Decision[];
+  status:           ProjectStatus;
+  featured:         boolean;
+  tags:             string[];        // Max 6
+  demoUrl?:         string;          // REQUIRED if live — must resolve before commit
+  repoUrl?:         string;
+  architectureUrl?: string;
+  image?:           string;
+}
+
+export const projects: Project[] = [
+  {
+    id:       "sabiscore",
+    title:    "SabiScore",
+    tagline:  "Production credit-scoring API for emerging market fintech.",
+    description:
+      "End-to-end ML pipeline processing alternative financial data signals through a " +
+      "trained gradient boosting model, served via FastAPI with real-time monitoring and drift alerts.",
+    context:
+      "Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa " +
+      "while serving a global audience through high-traffic concurrent events.",
+    decisions: [
+      {
+        chosen:   "Ensemble meta-learner (XGBoost + LightGBM + scikit-learn stacking)",
+        rejected: "Single-model XGBoost",
+        reason:   "Measurable accuracy improvement on hold-out validation set at acceptable inference latency.",
+      },
+      {
+        chosen:   "Redis inference result cache keyed on input feature hash",
+        rejected: "Direct Postgres reads per request",
+        reason:   "Direct reads exceeded 200ms during peak windows; cache eliminated latency spikes without scaling infra.",
+      },
+      {
+        chosen:   "Embedding-based feature retrieval",
+        rejected: "Rule-based heuristics",
+        reason:   "Heuristics failed to generalize across event types and leagues.",
+      },
+      {
+        chosen:   "FastAPI inference layer with async endpoints",
+        rejected: "GPT-4o inference per request",
+        reason:   "Cost-per-call incompatible with free-tier user economics at scale.",
+      },
+    ],
+    status:   "live",
+    featured: true,
+    tags:     ["Python", "FastAPI", "XGBoost", "PostgreSQL", "Redis", "Next.js"],
+    demoUrl:  "REPLACE_BEFORE_COMMIT",
+    repoUrl:  "https://github.com/Scardubu/sabiscore",
+    image:    "/projects/sabiscore.webp",
+  },
+  {
+    id:          "hashablanca",
+    title:       "Hashablanca",
+    tagline:     "Real-time blockchain transaction analytics platform.",
+    description: "Streaming pipeline ingesting on-chain data to surface anomalies and transaction patterns for compliance teams. Built on Kafka, dbt, and React.",
+    status:      "wip",
+    featured:    false,
+    tags:        ["TypeScript", "Kafka", "dbt", "React", "Python", "Ethereum"],
+    image:       "/projects/hashablanca.webp",
+  },
+  {
+    id:          "ml-consulting",
+    title:       "ML Systems Consulting",
+    tagline:     "Production ML architecture and delivery for fintech clients.",
+    description: "Technical consulting spanning model productionization, MLOps pipeline design, and team enablement across payments, lending, and fraud detection.",
+    status:      "live",
+    featured:    false,
+    tags:        ["MLOps", "Python", "AWS", "Terraform", "FastAPI", "MLflow"],
+    image:       "/projects/consulting.webp",
+  },
+];
+// CI blocks any commit containing: REPLACE_BEFORE_COMMIT
+```
+
+---
+
+## STEP 12 — MISSING ROUTE PAGES (ALL required before ship)
+
+### `app/page.tsx`
+
+```tsx
+import { Suspense }         from "react";
+import NavBar               from "@/components/NavBar";
+import { HeroSection }      from "@/components/HeroSection";
+import { ProjectsSection }  from "@/components/ProjectsSection";
+import { AboutSection }     from "@/components/AboutSection";
+import { ContactSection }   from "@/components/ContactSection";
+import { WritingSection }   from "@/components/WritingSection";
+import Footer               from "@/components/Footer";
+import { BookmarkToast }    from "@/components/BookmarkToast";
+import { ScrollRevealInit } from "@/components/ScrollRevealInit";
+import { CommandPalette }   from "@/components/CommandPalette";
+import { getWritingPosts }  from "@/lib/content";
+
+export default async function Home() {
+  const posts = (await getWritingPosts()).filter(p => p.featured).slice(0, 3);
+  return (
+    <>
+      <NavBar />
+      <main id="main-content" tabIndex={-1}>
+        <HeroSection />
+        <ProjectsSection />
+        <AboutSection />
+        <ContactSection />
+        {posts.length > 0 && <WritingSection posts={posts} />}
+      </main>
+      <Footer />
+      <Suspense fallback={null}><BookmarkToast /></Suspense>
+      <ScrollRevealInit />
+      <CommandPalette />
+    </>
+  );
+}
+```
+
+### `app/work/[slug]/page.tsx`
+
+```tsx
+import { notFound }        from "next/navigation";
+import type { Metadata }   from "next";
+import Link                from "next/link";
+import { MDXRemote }       from "next-mdx-remote/rsc";
+import { getWorkCase }     from "@/lib/content";
+import { ReadingProgress } from "@/components/ReadingProgress";
+import { formatDate }      from "@/lib/utils";
+import { projects }        from "@/data/projects";
+
+interface Props { params: { slug: string } }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const workCase = await getWorkCase(params.slug);
+  if (!workCase) return {};
+  const { frontmatter: fm } = workCase;
+  return {
+    title: fm.title as string,
+    description: fm.tagline as string,
+    openGraph: {
+      title:       `${fm.title as string} · Oscar Scardubu`,
+      description: fm.tagline as string,
+      images: [{ url: `/work/${params.slug}/og`, width: 1200, height: 630 }],
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  return projects.map(p => ({ slug: p.id }));
+}
+
+function caseStudyJsonLd(fm: Record<string, unknown>, slug: string) {
+  return {
+    "@context":  "https://schema.org",
+    "@type":     "TechArticle",
+    name:        fm.title,
+    description: fm.tagline,
+    url:         `https://www.scardubu.dev/work/${slug}`,
+    author: { "@type": "Person", name: "Oscar Scardubu", url: "https://www.scardubu.dev" },
+  };
+}
+
+export default async function WorkSlugPage({ params }: Props) {
+  const workCase = await getWorkCase(params.slug);
+  if (!workCase) notFound();
+  const { frontmatter: fm, content } = workCase;
+
+  return (
+    <>
+      <ReadingProgress />
+      <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(caseStudyJsonLd(fm as Record<string, unknown>, params.slug)) }} />
+      <main id="main-content" tabIndex={-1}>
+        <article style={{ maxWidth: "var(--max-width-prose)", margin: "0 auto", padding: "var(--space-16) var(--space-4)" }}>
+          <Link href="/#projects"
+            style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-10)" }}>
+            ← Back to projects
+          </Link>
+          <span className={`pill ${(fm.status as string) === "live" ? "pill-cyan" : "pill"}`}
+            style={{ marginBottom: "var(--space-6)", display: "inline-flex" }}>
+            {(fm.status as string)?.toUpperCase()}
+          </span>
+          <h1 style={{ marginBottom: "var(--space-4)", color: "var(--color-text-primary)" }}>{fm.title as string}</h1>
+          <p style={{ fontSize: "var(--text-xl)", color: "var(--color-text-secondary)", marginBottom: "var(--space-8)" }}>{fm.tagline as string}</p>
+          {Array.isArray(fm.tags) && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-12)" }}>
+              {(fm.tags as string[]).map(t => <span key={t} className="pill">{t}</span>)}
+            </div>
+          )}
+          <div className="divider" style={{ marginBottom: "var(--space-12)" }} />
+          <div className="prose"><MDXRemote source={content} /></div>
+          <div style={{ display: "flex", gap: "var(--space-6)", marginTop: "var(--space-16)", paddingTop: "var(--space-8)", borderTop: "1px solid var(--color-border)" }}>
+            {(fm.demoUrl as string) && <a href={fm.demoUrl as string} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-cyan)" }}>Live demo →</a>}
+            {(fm.repoUrl as string) && <a href={fm.repoUrl as string} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-text-muted)" }}>GitHub →</a>}
+          </div>
+        </article>
+      </main>
+    </>
+  );
+}
+```
+
+### `app/work/[slug]/og/route.tsx`
+
+```tsx
+import { ImageResponse } from "@vercel/og";
+import { projects }      from "@/data/projects";
+export const runtime = "edge";
+
+export async function GET(_req: Request, { params }: { params: { slug: string } }) {
+  const project = projects.find(p => p.id === params.slug);
+  const title   = project?.title   ?? "Case Study";
+  const tagline = project?.tagline ?? "";
+  const status  = project?.status  ?? "live";
+
+  return new ImageResponse(
+    (
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%",
+        background: "linear-gradient(135deg, #09090e 0%, #0f0f17 100%)", padding: 80, position: "relative" }}>
+        <div style={{ position: "absolute", top: 0, left: 80, right: 80, height: 2,
+          background: "linear-gradient(90deg,transparent,rgba(99,102,241,0.8),rgba(34,211,238,0.5),transparent)" }} />
+        <div style={{ fontSize: 11, color: "rgba(34,211,238,0.8)", letterSpacing: 6, textTransform: "uppercase", marginBottom: 20 }}>
+          Oscar Scardubu · Case Study
+        </div>
+        <div style={{ fontSize: 64, fontWeight: 800, color: "rgba(255,255,255,0.92)", lineHeight: 1, marginBottom: 20 }}>{title}</div>
+        <div style={{ fontSize: 22, color: "rgba(255,255,255,0.52)", maxWidth: 680, lineHeight: 1.5 }}>{tagline}</div>
+        <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 14, color: "rgba(255,255,255,0.28)" }}>scardubu.dev/work/{params.slug}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: status === "live" ? "#22c55e" : "#f59e0b" }} />
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: 2 }}>{status}</span>
+          </div>
+        </div>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  );
+}
+```
+
+### `app/writing/page.tsx`
+
+```tsx
+import type { Metadata }   from "next";
+import Link                from "next/link";
+import { getWritingPosts } from "@/lib/content";
+import { formatDate }      from "@/lib/utils";
+import NavBar              from "@/components/NavBar";
+import Footer              from "@/components/Footer";
+
+export const metadata: Metadata = {
+  title: "Writing",
+  description: "ML systems, fintech architecture, and production engineering notes.",
+};
+
+export default async function WritingPage() {
+  const posts  = await getWritingPosts();
+  const byYear = posts.reduce<Record<string, typeof posts>>((acc, p) => {
+    const yr = new Date(p.date).getFullYear().toString();
+    (acc[yr] ??= []).push(p);
+    return acc;
+  }, {});
+  const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+
+  return (
+    <>
+      <NavBar />
+      <main id="main-content" tabIndex={-1}>
+        <div className="container" style={{ paddingTop: "var(--space-16)", paddingBottom: "var(--space-24)" }}>
+          <Link href="/" style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-10)" }}>
+            ← Back
+          </Link>
+          <span className="label" style={{ marginBottom: "var(--space-3)" }}>Writing</span>
+          <h1 style={{ marginBottom: "var(--space-4)" }}>Notes on building</h1>
+          <p style={{ fontSize: "var(--text-lg)", color: "var(--color-text-secondary)", marginBottom: "var(--space-12)" }}>
+            ML systems, fintech architecture, and the decisions that don't show up in the commit history.
+          </p>
+          {years.map(year => (
+            <section key={year} style={{ marginBottom: "var(--space-12)" }}>
+              <h2 style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", marginBottom: "var(--space-4)",
+                fontWeight: "var(--weight-medium)", letterSpacing: "var(--tracking-wide)" }}>{year}</h2>
+              {byYear[year].map(post => (
+                <div key={post.slug} className="writing-row">
+                  <time style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", minWidth: "5rem", flexShrink: 0 }}>
+                    {formatDate(post.date, { day: "2-digit", month: "short" })}
+                  </time>
+                  <Link href={`/writing/${post.slug}`} className="writing-title" style={{ flex: 1 }}>{post.title}</Link>
+                  <span style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>{post.readingTime} min</span>
+                </div>
+              ))}
+            </section>
+          ))}
+          {posts.length === 0 && <p style={{ color: "var(--color-text-muted)" }}>No articles published yet.</p>}
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+```
+
+### `app/writing/[slug]/page.tsx`
+
+```tsx
+import { notFound }        from "next/navigation";
+import type { Metadata }   from "next";
+import Link                from "next/link";
+import { MDXRemote }       from "next-mdx-remote/rsc";
+import { getWritingPost, getWritingPosts } from "@/lib/content";
+import { ReadingProgress } from "@/components/ReadingProgress";
+import { formatDate }      from "@/lib/utils";
+import NavBar              from "@/components/NavBar";
+import Footer              from "@/components/Footer";
+
+interface Props { params: { slug: string } }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getWritingPost(params.slug);
+  if (!post) return {};
+  const { frontmatter: fm } = post;
+  return {
+    title: fm.title as string,
+    description: fm.summary as string,
+    openGraph: { title: `${fm.title as string} · Oscar Scardubu`, description: fm.summary as string, type: "article", publishedTime: fm.date as string },
+  };
+}
+
+export async function generateStaticParams() {
+  const posts = await getWritingPosts();
+  return posts.map(p => ({ slug: p.slug }));
+}
+
+function articleJsonLd(fm: Record<string, unknown>, slug: string) {
+  return {
+    "@context":    "https://schema.org",
+    "@type":       "TechArticle",
+    headline:      fm.title,
+    description:   fm.summary,
+    datePublished: fm.date,
+    url:           `https://www.scardubu.dev/writing/${slug}`,
+    author: { "@type": "Person", name: "Oscar Scardubu", url: "https://www.scardubu.dev" },
+  };
+}
+
+export default async function WritingSlugPage({ params }: Props) {
+  const post = await getWritingPost(params.slug);
+  if (!post) notFound();
+  const { frontmatter: fm, content, readingTime } = post;
+
+  return (
+    <>
+      <NavBar />
+      <ReadingProgress />
+      <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(fm as Record<string, unknown>, params.slug)) }} />
+      <main id="main-content" tabIndex={-1}>
+        <article style={{ maxWidth: "var(--max-width-prose)", margin: "0 auto", padding: "var(--space-16) var(--space-4)" }}>
+          <Link href="/writing" style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-10)" }}>
+            ← All writing
+          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-6)" }}>
+            <time style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
+              {formatDate(fm.date as string)}
+            </time>
+            <span style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>{readingTime} min read</span>
+          </div>
+          {Array.isArray(fm.tags) && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
+              {(fm.tags as string[]).map(t => <span key={t} className="pill">{t}</span>)}
+            </div>
+          )}
+          <h1 style={{ marginBottom: "var(--space-6)" }}>{fm.title as string}</h1>
+          <p style={{ fontSize: "var(--text-xl)", color: "var(--color-text-secondary)", marginBottom: "var(--space-12)", lineHeight: "var(--leading-snug)" }}>
+            {fm.summary as string}
+          </p>
+          <div className="divider" style={{ marginBottom: "var(--space-12)" }} />
+          <div className="prose"><MDXRemote source={content} /></div>
+        </article>
+      </main>
+      <Footer />
+    </>
+  );
+}
+```
+
+---
+
+## STEP 13 — OG IMAGE (Homepage)
+
+### `app/og/route.tsx`
+
+```tsx
+import { ImageResponse } from "@vercel/og";
+export const runtime = "edge";
+
+export async function GET() {
+  return new ImageResponse(
+    (
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%",
+        background: "linear-gradient(135deg, #09090e 0%, #0f0f17 100%)", padding: 80, position: "relative" }}>
+        <div style={{ position: "absolute", top: 0, left: 80, right: 80, height: 2,
+          background: "linear-gradient(90deg,transparent,rgba(99,102,241,0.8),rgba(34,211,238,0.5),transparent)" }} />
+        <div style={{ fontSize: 12, color: "rgba(99,102,241,0.9)", letterSpacing: 6, textTransform: "uppercase", marginBottom: 20 }}>
+          Staff Full-Stack ML Engineer
+        </div>
+        <div style={{ fontSize: 68, fontWeight: 800, color: "rgba(255,255,255,0.92)", lineHeight: 1.0, marginBottom: 28 }}>
+          Oscar Scardubu
+        </div>
+        <div style={{ fontSize: 22, color: "rgba(255,255,255,0.52)", maxWidth: 680, lineHeight: 1.5, marginBottom: 48 }}>
+          Production AI/fintech systems — credit scoring, blockchain analytics, ML consulting.
+        </div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {["FastAPI", "XGBoost", "Redis", "Postgres", "Next.js", "MLflow"].map(tag => (
+            <div key={tag} style={{ fontSize: 13, color: "rgba(34,211,238,0.85)",
+              border: "1px solid rgba(34,211,238,0.18)", borderRadius: 6, padding: "4px 12px",
+              background: "rgba(34,211,238,0.06)" }}>{tag}</div>
+          ))}
+        </div>
+        <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 14, color: "rgba(255,255,255,0.28)" }}>scardubu.dev</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.38)" }}>Available · Staff+ · Co-founder · Consulting</span>
+          </div>
+        </div>
+      </div>
+    ),
+    { width: 1200, height: 630 }
+  );
+}
+```
+
+---
+
+## STEP 14 — E2E TESTS
+
+### `playwright.config.ts`
+
+```typescript
+import { defineConfig, devices } from "@playwright/test";
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI ? "github" : "list",
+  use: { baseURL: "http://localhost:3000", trace: "on-first-retry" },
+  projects: [
+    { name: "chromium",      use: { ...devices["Desktop Chrome"] }  },
+    { name: "firefox",       use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit",        use: { ...devices["Desktop Safari"] }  },
+    { name: "mobile-chrome", use: { ...devices["Pixel 5"] }         },
+    { name: "mobile-safari", use: { ...devices["iPhone 13"] }       },
+  ],
+  webServer: { command: "pnpm build && pnpm start", port: 3000, reuseExistingServer: !process.env.CI, timeout: 120_000 },
+});
+```
+
+### `e2e/smoke.spec.ts`
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test.describe("Smoke — scardubu.dev v6.0", () => {
+
+  test("skip nav is first focusable element", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("Tab");
+    await expect(page.locator(".skip-nav")).toBeFocused();
+  });
+
+  test("hero above fold, name does not orphan-wrap", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("#hero")).toBeVisible();
+    const h1Text = await page.locator("h1").first().textContent();
+    expect(h1Text?.trim()).toBe("Oscar Scardubu");
+  });
+
+  test("no unicode escape in rendered text", async ({ page }) => {
+    await page.goto("/");
+    const body = await page.locator("body").textContent();
+    expect(body).not.toContain("\\u2192");
+    expect(body).not.toContain("u2192");
+  });
+
+  test("no unverifiable metrics in rendered text", async ({ page }) => {
+    await page.goto("/");
+    const body = await page.locator("body").textContent();
+    expect(body).not.toMatch(/Active users/i);
+  });
+
+  test("no horizontal overflow at 375px", async ({ browser }) => {
+    const ctx  = await browser.newContext({ viewport: { width: 375, height: 812 } });
+    const page = await ctx.newPage();
+    await page.goto("/");
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+    expect(overflow).toBe(false);
+    await ctx.close();
+  });
+
+  test("all three project cards render", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("[data-project-id]")).toHaveCount(3);
+  });
+
+  test("architecture decisions panel toggles and shows correct labels", async ({ page }) => {
+    await page.goto("/");
+    const btn = page.locator("button", { hasText: "Architecture decisions" }).first();
+    await btn.click();
+    await expect(page.locator("text=Chose:").first()).toBeVisible();
+    await expect(page.locator("text=Over:").first()).toBeVisible();
+    await expect(page.locator("text=Because:").first()).toBeVisible();
+  });
+
+  test("command palette opens with ⌘K and closes with Escape", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("Meta+k");
+    await expect(page.locator(".cmd-panel")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".cmd-panel")).not.toBeVisible();
+  });
+
+  test("theme toggle switches data-theme attribute", async ({ page }) => {
+    await page.goto("/");
+    const toggle = page.locator("button[aria-label*='Switch to']");
+    const before = await page.locator("html").getAttribute("data-theme");
+    await toggle.click();
+    const after  = await page.locator("html").getAttribute("data-theme");
+    expect(before).not.toBe(after);
+  });
+
+  test("nav links scroll to correct sections", async ({ page }) => {
+    await page.goto("/");
+    await page.click('a[href="#projects"]');
+    await expect(page.locator("#projects")).toBeInViewport();
+    await page.click('a[href="#about"]');
+    await expect(page.locator("#about")).toBeInViewport();
+  });
+
+  test("all external links have noopener noreferrer", async ({ page }) => {
+    await page.goto("/");
+    const links = page.locator('a[target="_blank"]');
+    for (let i = 0; i < await links.count(); i++) {
+      const rel = await links.nth(i).getAttribute("rel");
+      expect(rel).toContain("noopener");
+      expect(rel).toContain("noreferrer");
+    }
+  });
+
+  test("/writing page renders article list", async ({ page }) => {
+    await page.goto("/writing");
+    await expect(page.locator("h1")).toBeVisible();
+  });
+
+  test("/writing/[slug] renders with reading progress bar", async ({ page }) => {
+    await page.goto("/writing/building-sabiscore");
+    await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator(".reading-progress")).toBeVisible();
+  });
+
+  test("/work/sabiscore renders with reading progress bar", async ({ page }) => {
+    await page.goto("/work/sabiscore");
+    await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator(".reading-progress")).toBeVisible();
+  });
+
+  test("sitemap returns 200 and contains all routes", async ({ page }) => {
+    const r = await page.request.get("/sitemap.xml");
+    expect(r.status()).toBe(200);
+    const body = await r.text();
+    expect(body).toContain("/work/sabiscore");
+    expect(body).toContain("/writing");
+  });
+
+  test("OG image returns PNG", async ({ page }) => {
+    const r = await page.request.get("/og");
+    expect(r.status()).toBe(200);
+    expect(r.headers()["content-type"]).toContain("image/png");
+  });
+
+  test("per-project OG image returns PNG", async ({ page }) => {
+    const r = await page.request.get("/work/sabiscore/og");
+    expect(r.status()).toBe(200);
+    expect(r.headers()["content-type"]).toContain("image/png");
+  });
+
+  test("JSON-LD person schema present in home page head", async ({ page }) => {
+    await page.goto("/");
+    const jsonLd = await page.locator('script[type="application/ld+json"]').first().textContent();
+    const parsed = JSON.parse(jsonLd ?? "{}");
+    expect(parsed["@type"]).toBe("Person");
+    expect(parsed.name).toBe("Oscar Scardubu");
+  });
+
+  test("activity API returns JSON with ago field", async ({ page }) => {
+    const r = await page.request.get("/api/activity");
+    expect(r.status()).toBe(200);
+    const body = await r.json() as { ago: string };
+    expect(typeof body.ago).toBe("string");
+  });
+});
+```
+
+---
+
+## STEP 15 — CI (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI
+on:
+  push:         { branches: [main] }
+  pull_request: { branches: [main] }
+
+jobs:
+  quality:
+    name: Lint · Type Check · Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm build
+      - uses: actions/upload-artifact@v4
+        with: { name: nextjs-build, path: .next/, retention-days: 1 }
+
+  content-audit:
+    name: Content Audit — Zero Violations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No unicode escapes
+        run: grep -rn "\\\\u2192" --include="*.tsx" --include="*.ts" --include="*.mdx" . && exit 1 || exit 0
+      - name: No 24/7
+        run: grep -rniE "\b24/7\b" --include="*.tsx" --include="*.mdx" . && exit 1 || exit 0
+      - name: No first-person identity claims
+        run: grep -rniE "\b(I (built|created|designed|developed|made|led|wrote|shipped))\b" --include="*.tsx" --include="*.mdx" --exclude-dir={node_modules,.next} . && exit 1 || exit 0
+      - name: No unresolved placeholders
+        run: grep -rn "REPLACE_BEFORE_COMMIT" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules . && exit 1 || exit 0
+      - name: No legacy ESLint configs
+        run: find . -maxdepth 3 -name ".eslintrc*" -not -path "*/node_modules/*" | grep . && exit 1 || exit 0
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm exec playwright test --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report, path: playwright-report/, retention-days: 7 }
+```
+
+---
+
+## STEP 16 — CODEBASE AUDIT
+
+> Zero matches required on every grep below before commit.
+
+```bash
+# No any or ts-ignore
+grep -rn ": any\|as any\|@ts-ignore" --include="*.tsx" --include="*.ts" --exclude-dir={node_modules,.next} .
+
+# No unicode escapes
+grep -rn "\\\\u2192\|u2192" --include="*.tsx" --include="*.ts" --include="*.mdx" .
+
+# No unverifiable time claims
+grep -rniE "\b24/7\b" --include="*.tsx" --include="*.mdx" .
+
+# No first-person in components
+grep -rniE "\b(I (built|created|designed|developed|made|led|wrote|shipped))\b" \
+  --include="*.tsx" --include="*.ts" --exclude-dir={node_modules,.next} .
+
+# No "Active users"
+grep -rniE "active users" --include="*.tsx" --include="*.mdx" .
+
+# No empty alt
+grep -rnE 'alt=""' --include="*.tsx" --exclude-dir=node_modules .
+
+# External links without rel
+grep -rn 'target="_blank"' --include="*.tsx" --exclude-dir=node_modules . \
+  | grep -v 'rel="noopener noreferrer"'
+
+# No hardcoded font-family in CSS
+grep -rnE "font-family:\s*['\"]" --include="*.css" --exclude-dir=node_modules .
+
+# No arbitrary px spacing in style props
+grep -rnE "padding:\s*[0-9]+px|margin:\s*[0-9]+px|gap:\s*[0-9]+px" \
+  --include="*.tsx" --exclude-dir={node_modules,.next} .
+
+# No legacy ESLint
+find . -maxdepth 3 -name ".eslintrc*" -not -path "*/node_modules/*"
+
+# No unresolved placeholders
+grep -rn "REPLACE_BEFORE_COMMIT" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules .
+```
+
+---
+
+## STEP 17 — VALIDATION GATE
+
+```bash
+pnpm exec tsc --noEmit                        # zero errors
+pnpm lint                                     # zero errors
+pnpm build                                    # succeeds · no route >150KB first-load JS
+pnpm exec playwright install --with-deps chromium
+pnpm exec playwright test --project=chromium  # all 17 smoke tests pass
+pnpm test                                     # all 5 configs pass
+```
+
+**Lighthouse (incognito · mobile preset):**
+- [ ] Performance ≥ 97 · Accessibility ≥ 97 · Best Practices ≥ 97 · SEO ≥ 97
+- [ ] LCP ≤ 2.5s · INP ≤ 200ms · CLS = 0
+
+**Responsive:**
+- [ ] 375px — no overflow, hero above fold, name single line, focus trap in nav
+- [ ] 768px — bento grid correct, command palette functional
+- [ ] 1440px — full bento grid, cursor glow active
+
+**Routes — all must return 200:**
+- [ ] `/` · `/writing` · `/writing/building-sabiscore` · `/work/sabiscore`
+- [ ] `/work/sabiscore/og` (PNG) · `/sitemap.xml` · `/robots.txt` · `/og` (PNG)
+- [ ] `/api/activity` (JSON with `ago` field)
+
+**Assets:**
+- [ ] `/headshot.webp` ≤ 80KB serves · `/oscar-scardubu-resume.pdf` serves
+- [ ] All `/projects/*.webp` serve or fallback gracefully
+
+**Content:**
+- [ ] Zero first-person in rendered text
+- [ ] Zero `Active users`, `24/7`, `u2192` in rendered output
+- [ ] Zero `REPLACE_BEFORE_COMMIT` in deployed code
+- [ ] SabiScore `demoUrl` resolves — not 404
+- [ ] Architecture decisions panel toggles — Chose/Over/Because visible
+- [ ] Live activity bar shows or falls back — never skeleton-frozen
+- [ ] Scroll reveals fire correctly with motion enabled and disabled
+- [ ] Command palette opens ⌘K · navigates arrows · executes Enter · closes Escape
+- [ ] Theme toggle switches and persists across reload
+- [ ] Reading progress visible and functional on `/work/[slug]` and `/writing/[slug]`
+- [ ] JSON-LD `Person` schema in homepage head
+- [ ] JSON-LD `Article` schema in `/writing/[slug]` head
+- [ ] Per-project OG images return correct title and status
+
+---
+
+## STEP 18 — PERCEPTION GATE
+
+> **45-second rule:** After 45 seconds, any colleague must be able to describe Oscar accurately, specifically, and confidently — without context.
+
+| Audience | Question | Required answer |
+|----------|----------|-----------------|
+| Recruiter (0–3s) | "Does this person operate at a senior level?" | Yes — interface quality, name prominent, no clutter, clear availability signal |
+| Recruiter (3–10s) | "What does this person build?" | "Production AI/fintech — credit scoring, blockchain, ML consulting" |
+| Hiring Manager | "Level? Ownership?" | "Staff — live systems, full-stack, architecture decisions visible, not just outcomes" |
+| Tech Lead | "Systems thinking?" | "Yes — chosen/rejected tradeoffs documented with reasoning in every project card" |
+| Committee | "Can I forward this without context?" | Yes — OG images per project, `/work/[slug]` self-contained, `/writing` proves communication quality |
+
+**Doubt elimination — every doubt closed on the same screen it opens:**
+
+| Doubt | Closer |
+|-------|--------|
+| "Is this production or a demo?" | Status badge LIVE + `demoUrl` that resolves |
+| "Full-stack or just ML?" | Stack pills: FastAPI · XGBoost · Redis · Postgres · Next.js |
+| "Does he reason about tradeoffs?" | Chosen/Over/Because panel in every project card |
+| "Can he communicate at this level?" | Writing section — article titles visible on scroll |
+| "Is the code quality genuine?" | Interface itself proves it — glass system, zero jank, command palette |
+| "Is he available right now?" | Green dot + "Available — Staff+" in hero and nav |
+| "Will this link look good in Slack?" | OG images tested per route |
+
+**If any answer is unclear → revise copy. Never revise layout to compensate for weak copy.**
+
+---
+
+## STEP 19 — FINAL COMMIT
+
+```bash
+git add -A
+git commit -m "feat: portfolio v6.0 — conviction engine complete
+
+Defects fixed:
+- Unicode escape u2192 → literal → in ProjectCard
+- Removed 'Active users' and '24/7' from all copy (unverifiable metrics)
+- Fixed hero name orphan-wrap with overflow-wrap constraint
+- All previously missing components fully specified and implemented
+
+New features:
+- CommandPalette (⌘K/Ctrl+K) with keyboard navigation
+- ThemeToggle with localStorage persistence and system-aware detection
+- ThemeProvider with manual override support
+- Per-project OG images at /work/[slug]/og
+- JSON-LD Person + Article structured data
+- Reading progress bar on /work/[slug] and /writing/[slug]
+- Print stylesheet for resume-quality case study output
+- Skeleton primitive component
+- useReadingProgress hook
+
+Complete deliveries:
+- app/work/[slug]/page.tsx
+- app/writing/page.tsx
+- app/writing/[slug]/page.tsx
+- api/activity/route.ts
+- LiveActivityBar.tsx (full)
+- ProjectCard.tsx (full)
+- lib/utils.ts
+
+CI additions:
+- Content audit job: unicode escapes, 24/7, first-person, placeholder URLs
+- 17 smoke tests (up from 11)
+- Per-project OG test
+- JSON-LD schema test
+- Activity API test
+
+Copy: All Step 10 copy applied verbatim. Zero first-person. Zero unverifiable
+      metrics. Evidence-first throughout. Hero name single line guaranteed."
+
+git push origin main
+```
+
+---
+
+## COMPLETION CHECKLIST — ALL MUST HOLD SIMULTANEOUSLY
+
+| Category | Criteria |
+|----------|----------|
+| **TypeScript** | `tsc --noEmit` → 0 errors |
+| **Lint** | `next lint` → 0 errors |
+| **Build** | Succeeds · No route >150KB first-load JS |
+| **E2E** | 17 smoke tests pass · 5 browser/device configs |
+| **Lighthouse** | ≥ 97 all 4 categories · LCP ≤ 2.5s · INP ≤ 200ms · CLS = 0 |
+| **Mobile** | Zero overflow at 375px · hero above fold · name single line · focus trap works |
+| **A11y** | Skip nav · ARIA landmarks · focus trap in nav + command palette · WCAG AA |
+| **Content** | Zero first-person · zero unverifiable metrics · zero placeholder URLs · all demoUrls live |
+| **Copy** | All Step 10 copy verbatim · zero "24/7" · zero "Active users" · zero unicode escapes |
+| **Writing** | ≥ 1 published article · MDX renders · reading progress functional |
+| **Routes** | All 9 routes return 200 · per-project OG images serve |
+| **SEO** | `sitemap.ts` · `robots.ts` · `generateMetadata` per page · canonical URLs · JSON-LD schemas |
+| **Analytics** | Vercel Analytics + Speed Insights active |
+| **New features** | Command palette · theme toggle · reading progress · print styles — all functional |
+| **Assets** | og PNG · per-project og PNGs · headshot.webp · resume.pdf all serve |
+| **Repo** | Root: README + CORRECTIONS only · clean git log · no secrets · no placeholders |
+| **Perception** | All 5 audience questions answered in <10s on first load |
+| **Signal** | 30s test: Staff ML engineer · live systems · thought leadership · clear CTA · no doubt |
+
+---
+
+*CONVICTION ENGINE v6.0 — COMPLETE SYSTEM — ZERO GAPS — SHIP ON FULL COMPLIANCE ONLY*

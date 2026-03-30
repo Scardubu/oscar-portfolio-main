@@ -49,7 +49,7 @@ export function Footer() {
               © {new Date().getFullYear()} Oscar Scardubu
             </p>
             <p className="text-xs text-white/40">
-              Designed and built by Oscar Scardubu · Nigeria · {new Date().getFullYear()}
+              Designed and built by Oscar Scardubu · Nigeria · 2026
             </p>
           </div>
 

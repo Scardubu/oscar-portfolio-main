@@ -9,6 +9,10 @@ test.describe('Portfolio smoke tests', () => {
 
   test('hero visible and name does not orphan wrap', async ({ page }) => {
     await page.goto('/');
+    // React 19 concurrent hydration can briefly leave both the SSR node and the
+    // hydrated node in the DOM. networkidle guarantees hydration is complete so
+    // the #hero locator resolves to exactly one element (strict-mode safe).
+    await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#hero')).toBeVisible();
     await expect(page.locator('h1').first()).toHaveText('Oscar Scardubu');
@@ -18,7 +22,7 @@ test.describe('Portfolio smoke tests', () => {
     await page.goto('/');
 
     const body = (await page.locator('body').textContent()) ?? '';
-    expect(body).not.toContain('\\u2192');
+    expect(body).not.toContain(String.raw`\u2192`);
     expect(body).not.toMatch(/Active users/i);
     expect(body).not.toContain('u2192');
   });
@@ -59,8 +63,19 @@ test.describe('Portfolio smoke tests', () => {
   test('command palette opens and closes from keyboard', async ({ page }) => {
     await page.goto('/');
 
-    const modifier = process.platform === 'darwin' ? 'Meta' : 'Control';
-    await page.keyboard.press(`${modifier}+K`);
+    // Wait until React has fully hydrated so the capture listener is registered.
+    // `networkidle` reliably indicates all async JS (including useEffect) has settled.
+    await page.waitForLoadState('networkidle');
+
+    // `page.keyboard.press` injects a trusted CDP key event that travels the full
+    // capture→target→bubble chain from the focused element up to document, so the
+    // CommandPalette's `document.addEventListener('keydown', …, { capture: true })`
+    // fires in CAPTURING_PHASE (1) — the same path a real user keystroke takes.
+    // This is more reliable than `document.dispatchEvent()` which dispatches with
+    // document as the AT_TARGET (phase 2), where ordering against inline-script
+    // listeners is implementation-defined in Blink.
+    await page.keyboard.press('Control+k');
+
     await expect(page.locator('.cmd-panel')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.locator('.cmd-panel')).toBeHidden();

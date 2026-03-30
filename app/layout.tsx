@@ -1,57 +1,58 @@
 ﻿import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { MotionProvider } from '@/components/MotionProvider';
-import { ThemeProvider } from '@/components/ThemeProvider';
+
+import { Providers } from '@/app/providers';
+
 import './globals.css';
 
-const syne = localFont({
-  src: './fonts/syne-local.ttf',
+const syne = Syne({
+  subsets: ['latin'],
   variable: '--font-syne',
   display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
-const dmSans = localFont({
-  src: './fonts/dm-sans-local.ttf',
+const dmSans = DM_Sans({
+  subsets: ['latin'],
   variable: '--font-dm-sans',
   display: 'swap',
+  weight: ['300', '400', '500', '600'],
 });
 
-const jetbrainsMono = localFont({
-  src: './fonts/jetbrains-mono-local.ttf',
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
   variable: '--font-jetbrains-mono',
   display: 'swap',
+  weight: ['400', '500'],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Oscar Scardubu \u2014 Staff Full-Stack ML Engineer',
-    template: '%s \u00b7 Oscar Scardubu',
+    default: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
+    template: '%s · Oscar Scardubu',
   },
   description:
-    'Production AI/fintech systems \u2014 credit scoring, blockchain analytics, ML consulting. ' +
-    'Open to Staff+ roles, co-founder partnerships, and ML consulting engagements.',
+    'Production AI/fintech systems — credit scoring, blockchain analytics, ML consulting. ' +
+    'Open to Staff+ roles, co-founder partnerships, and high-trust consulting engagements.',
   metadataBase: new URL('https://www.scardubu.dev'),
   openGraph: {
     type: 'website',
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Scardubu',
-    title: 'Oscar Scardubu \u2014 Staff Full-Stack ML Engineer',
-    description:
-      'Production AI/fintech engineer. SabiScore \u00b7 Hashablanca \u00b7 ML Consulting.',
-    images: [{ url: '/og', width: 1200, height: 630, alt: 'Oscar Scardubu portfolio' }],
+    title: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
+    description: 'Production AI/fintech engineer. SabiScore · Hashablanca · ML Consulting.',
+    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Scardubu portfolio' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Oscar Scardubu \u2014 Staff Full-Stack ML Engineer',
-    images: ['/og'],
+    title: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
+    images: ['/api/og'],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://www.scardubu.dev' },
 };
-
-const themeScript = `try { const stored = localStorage.getItem('theme'); const media = window.matchMedia('(prefers-color-scheme: light)'); const resolved = stored === 'light' || stored === 'dark' ? stored : (media.matches ? 'light' : 'dark'); document.documentElement.setAttribute('data-theme', resolved); } catch { document.documentElement.setAttribute('data-theme', 'dark'); }`;
 
 const personJsonLd = {
   '@context': 'https://schema.org',
@@ -59,12 +60,11 @@ const personJsonLd = {
   name: 'Oscar Scardubu',
   url: 'https://www.scardubu.dev',
   jobTitle: 'Staff Full-Stack ML Engineer',
-  description:
-    'Production AI and fintech systems engineer focused on delivery, reliability, and product clarity.',
-  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
+  description: 'Production AI/fintech systems engineer. SabiScore, Hashablanca, ML consulting.',
+  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscarscardubuu'],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -72,20 +72,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+              window.__commandPaletteRequested = false;
+              document.addEventListener('keydown', (event) => {
+                if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+                  event.preventDefault();
+                  window.__commandPaletteRequested = true;
+                }
+              }, { capture: true });
+            })();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
       <body>
-        {/* Skip navigation — first focusable element per WCAG 2.4.1 */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
-
-        {/* SVG glass-refraction displacement filter — zero layout cost */}
-        <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
+        <svg width="0" height="0" aria-hidden="true" className="absolute">
           <defs>
             <filter id="glass-refraction">
               <feTurbulence
@@ -105,10 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </filter>
           </defs>
         </svg>
-
-        <ThemeProvider>
-          <MotionProvider>{children}</MotionProvider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
       </body>

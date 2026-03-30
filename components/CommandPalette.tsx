@@ -14,6 +14,10 @@ interface CommandItem {
   action: () => void;
 }
 
+type CommandPaletteWindow = Window & {
+  __commandPaletteRequested?: boolean;
+};
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -146,14 +150,23 @@ export function CommandPalette() {
       }
     };
 
-    globalThis.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keydown', onKeyDown, { capture: true });
     globalThis.addEventListener('command-palette:open', openPalette);
 
     return () => {
-      globalThis.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keydown', onKeyDown, { capture: true });
       globalThis.removeEventListener('command-palette:open', openPalette);
     };
   }, [close, executeCommand]);
+
+  useEffect(() => {
+    const paletteWindow = window as CommandPaletteWindow;
+
+    if (paletteWindow.__commandPaletteRequested) {
+      setOpen(true);
+      paletteWindow.__commandPaletteRequested = false;
+    }
+  }, []);
 
   useEffect(() => {
     if (open) {

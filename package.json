@@ -10,10 +10,10 @@
     "lint:fix": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"data/**/*.ts\" \"e2e/**/*.ts\" \"*.{ts,mjs}\" --fix",
     "type-check": "tsc --project tsconfig.typecheck.json --noEmit",
     "analyze": "ANALYZE=true next build",
-    "test": "playwright test",
-    "test:e2e": "playwright test --project=chromium",
-    "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
-    "test:all": "playwright test"
+    "test": "pnpm build && playwright test",
+    "test:e2e": "pnpm build && playwright test --project=chromium",
+    "test:mobile": "pnpm build && playwright test --project=mobile-chrome --project=mobile-safari",
+    "test:all": "pnpm build && playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -46,6 +46,7 @@
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.4",
+    "schema-dts": "^2.0.0",
     "shiki": "^4.0.2",
     "sonner": "^1.7.1",
     "swr": "^2.4.1",
