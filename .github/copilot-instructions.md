@@ -56,6 +56,8 @@ tests/
   e2e/                # Playwright E2E tests
 ```
 
+`components/` is the only canonical shared component tree. Do not place new reusable UI under `app/components/`.
+
 ## TypeScript Path Aliases
 
 ```ts
@@ -118,6 +120,6 @@ Public variables (prefixed `NEXT_PUBLIC_`) are safe to reference in client compo
 
 - Always use `pnpm` — never `npm install` or `yarn`.
 - The TypeScript configuration (`tsconfig.json`) only includes files under `app/`, `lib/`, `hooks/`, and specific component subdirectories. New files outside those paths must be added to `tsconfig.json` if they need type checking.
-- The ESLint config (`eslint.config.mjs`) has an `ignoredFiles` list for legacy components — do not add new components to this list; fix lint issues instead.
+- The ESLint config (`eslint.config.mjs`) must not be used to hide active production code. Remove dead legacy components instead of extending the ignore list.
 - Avoid introducing new dependencies without checking for security vulnerabilities first.
 - Keep bundle size in mind: use dynamic imports (`next/dynamic`) for heavy client-side components.

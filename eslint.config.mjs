@@ -21,7 +21,6 @@ const eslintConfig = [
       "node_modules/**",
       "public/**",
       "scripts/**",
-      "app/components/Skills/**",
       "components/BentoFeaturedProjects.tsx",
       "components/BentoMetric.tsx",
       "components/ContactForm.tsx",

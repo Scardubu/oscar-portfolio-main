@@ -14,6 +14,7 @@
     "components/ui/**/*.ts",
     "components/ui/**/*.tsx",
     "components/BookmarkToast.tsx",
+    "components/CodeBlockClient.tsx",
     "components/ContactSection.tsx",
     "components/ContinueReadingBanner.tsx",
     "components/Footer.tsx",
@@ -23,6 +24,7 @@
     "components/Liveactivitybar.tsx",
     "components/LiveBuildFeed.tsx",
     "components/MetricCard.tsx",
+    "components/OGImage.tsx",
     "components/Navbar.tsx",
     "components/ProjectCard.tsx",
     "components/ProjectsSection.tsx",
@@ -39,7 +41,6 @@
   "exclude": [
     "node_modules",
     ".next",
-    "app/blog/BlogPostAnalytics.tsx",
-    "app/components/KeyboardShortcuts.tsx"
+    "app/blog/BlogPostAnalytics.tsx"
   ]
 }

@@ -4,29 +4,33 @@ import { useEffect, useState } from 'react';
 
 export function BookmarkToast() {
   const [visible, setVisible] = useState(false);
+  const [shortcutLabel, setShortcutLabel] = useState('Ctrl+D');
 
   useEffect(() => {
     try {
-      if (localStorage.getItem('bookmark_dismissed')) return;
+      if (globalThis.localStorage.getItem('bookmark_dismissed')) return;
     } catch {
       return;
     }
 
+    const isApplePlatform = /Mac|iPhone|iPad|iPod/i.test(globalThis.navigator.userAgent);
+    setShortcutLabel(isApplePlatform ? '⌘D' : 'Ctrl+D');
+
     const onScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.4) {
+      if (globalThis.scrollY > globalThis.innerHeight * 0.4) {
         setVisible(true);
-        window.removeEventListener('scroll', onScroll);
+        globalThis.removeEventListener('scroll', onScroll);
       }
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    globalThis.addEventListener('scroll', onScroll, { passive: true });
+    return () => globalThis.removeEventListener('scroll', onScroll);
   }, []);
 
   const dismiss = () => {
     setVisible(false);
     try {
-      localStorage.setItem('bookmark_dismissed', '1');
+      globalThis.localStorage.setItem('bookmark_dismissed', '1');
     } catch {
       // ignore
     }
@@ -50,7 +54,7 @@ export function BookmarkToast() {
         </svg>
       </button>
       <p className="text-sm font-semibold text-white">Enjoying the portfolio?</p>
-      <p className="mt-1 text-xs text-white/60">Press <kbd className="rounded border border-white/20 px-1 py-0.5">Ctrl+D</kbd> to bookmark this page.</p>
+      <p className="mt-1 text-xs text-white/60">Press <kbd className="rounded border border-white/20 px-1 py-0.5">{shortcutLabel}</kbd> to bookmark this page.</p>
     </div>
   );
 }

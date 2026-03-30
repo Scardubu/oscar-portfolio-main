@@ -10,7 +10,7 @@
 
 import { type CSSProperties, type ReactNode, forwardRef, useId, useState } from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
-import { LiquidGlassRefractionSVG } from '@/app/components/LiquidGlassRefractionSVG';
+import { LiquidGlassRefractionSVG } from '@/components/LiquidGlassRefractionSVG';
 import { cn } from '@/lib/utils';
 
 type Variant = 'default' | 'cyan' | 'violet' | 'teal';
