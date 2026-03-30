@@ -45,9 +45,11 @@ export function Footer() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Brand */}
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-semibold text-white/80">Oscar Scardubu</p>
+            <p className="text-sm font-semibold text-white/80">
+              © {new Date().getFullYear()} Oscar Scardubu
+            </p>
             <p className="text-xs text-white/40">
-              Designed and built by Oscar Scardubu &middot; Nigeria &middot; &copy; {new Date().getFullYear()}
+              Designed and built by Oscar Scardubu · Nigeria · 2026
             </p>
           </div>
 

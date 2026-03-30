@@ -3,8 +3,8 @@
 // Edit this file to update content — never hardcode in components.
 
 export const siteConfig = {
-  name: "Oscar Dubu",
-  title: "Oscar Dubu — Full-Stack + AI/ML Engineer",
+  name: "Oscar Scardubu",
+  title: "Oscar Scardubu — Full-Stack + AI/ML Engineer",
   description:
     "I build AI systems that ship to production. Sports intelligence, ML pipelines, and full-stack platforms — from infra to UI.",
   url: "https://www.scardubu.dev",

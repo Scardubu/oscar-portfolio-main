@@ -27,7 +27,11 @@
     "components/ProjectCard.tsx",
     "components/ProjectsSection.tsx",
     "components/AboutSection.tsx",
+    "components/ReadingProgress.tsx",
     "components/ScrollRevealInit.tsx",
+    "components/Skeleton.tsx",
+    "components/ThemeProvider.tsx",
+    "components/ThemeToggle.tsx",
     "components/WritingSection.tsx",
     "components/CursorGlow.tsx",
     "components/ProductionPatternsVisualization.tsx"

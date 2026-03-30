@@ -23,74 +23,77 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: "sabiscore",
-    title: "SabiScore",
-    tagline: "Production scoring infrastructure shaped for real-time delivery.",
+    id: 'sabiscore',
+    title: 'SabiScore',
+    tagline: 'Production credit-scoring API for emerging market fintech.',
     description:
-      "Production AI systems shipped for real users rather than demo environments, " +
-      "combining ensemble models, FastAPI inference, Redis caching, Postgres, Docker, and Next.js.",
+      'End-to-end ML pipeline processing alternative financial data signals through a trained gradient ' +
+      'boosting model, served via FastAPI with real-time monitoring and drift alerts.',
     context:
-      "Built for operating environments where concurrency spikes, infrastructure conditions vary, " +
-      "and the product still needs to remain legible under pressure.",
+      'Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa while ' +
+      'serving a global audience through high-traffic concurrent events.',
     decisions: [
       {
-        chosen: "Ensemble meta-learner across gradient-boosted models.",
-        rejected: "Single-model prediction pipeline",
-        reason: "Improved calibration across varied operating conditions without making the serving layer opaque.",
+        chosen: 'Ensemble meta-learner across gradient-boosted models.',
+        rejected: 'Single-model prediction pipeline',
+        reason:
+          'Improved calibration across varied operating conditions without making the serving layer opaque.',
       },
       {
-        chosen: "Redis caching in front of repeat inference reads.",
-        rejected: "Direct Postgres reads per request",
-        reason: "Stabilized the request path during peak traffic without scaling the infrastructure footprint prematurely.",
+        chosen: 'Redis caching in front of repeat inference reads.',
+        rejected: 'Direct Postgres reads per request',
+        reason:
+          'Direct reads exceeded 200ms during peak windows; cache eliminated latency spikes without scaling infrastructure prematurely.',
       },
       {
-        chosen: "Embedding-based feature retrieval.",
-        rejected: "Rule-based heuristics",
-        reason: "Generalized more reliably across event types than handcrafted rules.",
+        chosen: 'Embedding-based feature retrieval.',
+        rejected: 'Rule-based heuristics',
+        reason: 'Generalized more reliably across event types than handcrafted rules.',
       },
       {
-        chosen: "FastAPI inference with Redis caching and Postgres-backed features.",
-        rejected: "LLM-style request-time inference",
-        reason: "Kept the system cheaper to run, easier to debug, and more predictable under sustained usage.",
+        chosen: 'FastAPI inference with Redis caching and Postgres-backed features.',
+        rejected: 'LLM-style request-time inference',
+        reason:
+          'Kept the system cheaper to run, easier to debug, and more predictable under sustained usage.',
       },
     ],
-    status: "live",
+    status: 'live',
     featured: true,
-    tags: ["Python", "FastAPI", "XGBoost", "PostgreSQL", "Redis", "Next.js"],
-    demoUrl: "https://sabiscore.vercel.app",
-    repoUrl: "https://github.com/Scardubu/sabiscore",
-    image: "/projects/sabiscore.webp",
+    tags: ['Python', 'FastAPI', 'XGBoost', 'PostgreSQL', 'Redis', 'Next.js'],
+    demoUrl: 'https://sabiscore.vercel.app',
+    repoUrl: 'https://github.com/Scardubu/sabiscore',
+    image: '/projects/sabiscore.webp',
   },
   {
-    id: "hashablanca",
-    title: "Hashablanca",
-    tagline: "Blockchain analytics infrastructure for operational visibility.",
+    id: 'hashablanca',
+    title: 'Hashablanca',
+    tagline: 'Blockchain analytics infrastructure for operational visibility.',
     description:
-      "Streaming pipeline ingesting on-chain data to surface anomalies and " +
-      "transaction patterns for compliance teams. Built on Kafka, dbt, and React.",
+      'Streaming pipeline ingesting on-chain data to surface anomalies and ' +
+      'transaction patterns for compliance teams. Built on Kafka, dbt, and React.',
     context:
-      "Data products for teams that need event-stream visibility, repeatable modeling, " +
-      "and business-readable outputs across volatile blockchain data.",
-    status: "wip",
+      'Data products for teams that need event-stream visibility, repeatable modeling, ' +
+      'and business-readable outputs across volatile blockchain data.',
+    status: 'wip',
     featured: false,
-    tags: ["TypeScript", "Kafka", "dbt", "React", "Python", "Ethereum"],
-    image: "/projects/hashablanca.webp",
+    tags: ['TypeScript', 'Kafka', 'dbt', 'React', 'Python', 'Ethereum'],
+    image: '/projects/hashablanca.webp',
   },
   {
-    id: "ml-consulting",
-    title: "ML Systems Consulting",
-    tagline: "Production ML architecture and delivery for fintech and platform teams.",
+    id: 'ml-consulting',
+    title: 'ML Systems Consulting',
+    tagline: 'Production ML architecture and delivery for fintech and platform teams.',
     description:
-      "Technical consulting spanning model productionization, MLOps pipeline " +
-      "design, observability, and team enablement across applied AI programs.",
+      'Technical consulting spanning model productionization, MLOps pipeline ' +
+      'design, observability, and team enablement across applied AI programs.',
     context:
-      "Consulting covers ML debugging tooling and LLM integration where technical " +
-      "model behavior must translate into business-readable outcomes.",
-    status: "live",
+      'Consulting covers ML debugging tooling and LLM integration where technical ' +
+      'model behavior must translate into business-readable outcomes.',
+    status: 'live',
     featured: false,
-    tags: ["MLOps", "Python", "AWS", "Terraform", "FastAPI", "MLflow"],
-    demoUrl: "https://www.scardubu.dev/work/ml-consulting",
-    image: "/projects/consulting.webp",
+    tags: ['MLOps', 'Python', 'AWS', 'Terraform', 'FastAPI', 'MLflow'],
+    demoUrl: 'https://www.scardubu.dev/work/ml-consulting',
+    image: '/projects/consulting.webp',
   },
 ];
 

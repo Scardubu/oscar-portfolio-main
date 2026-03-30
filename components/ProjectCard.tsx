@@ -53,7 +53,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
   const level = getCardLevel(project);
 
   return (
-    <div data-project-id={project.id} className="h-full">
+    <div className="h-full">
       <GlassCard
         as="article"
         className="card-depth flex h-full flex-col gap-4 p-6"
@@ -127,10 +127,13 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
                           <span className="font-semibold text-cyan-100">Chose:</span>{' '}
                           {decision.chosen}
                         </p>
-                        <p className="text-sm leading-7 text-white/62">{decision.reason}</p>
                         <p className="text-sm leading-7 text-white/55">
-                          <span className="font-semibold text-white/72">Rejected:</span>{' '}
+                          <span className="font-semibold text-white/72">Over:</span>{' '}
                           {decision.rejected}
+                        </p>
+                        <p className="text-sm leading-7 text-white/62">
+                          <span className="font-semibold text-white/72">Because:</span>{' '}
+                          {decision.reason}
                         </p>
                       </div>
                     ))}
@@ -166,7 +169,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
             href={`/work/${project.id}`}
             className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 px-4 py-2 text-cyan-200 transition hover:border-cyan-300/50 hover:text-white"
           >
-            Case study \u2192
+            Case study →
           </Link>
         </div>
       </GlassCard>

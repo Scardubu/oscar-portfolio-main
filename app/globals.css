@@ -139,7 +139,7 @@
 
 /* ─── LIGHT MODE ─────────────────────────────────────────── */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme="dark"]) {
     --glass-bg:             rgba(255,255,255,0.72);
     --glass-bg-hover:       rgba(255,255,255,0.88);
     --glass-border:         rgba(0,0,0,0.07);
@@ -162,6 +162,30 @@
     --color-text-muted:     rgba(0,0,0,0.36);
     --color-text-disabled:  rgba(0,0,0,0.22);
   }
+}
+
+[data-theme="light"] {
+  --glass-bg:             rgba(255,255,255,0.72);
+  --glass-bg-hover:       rgba(255,255,255,0.88);
+  --glass-border:         rgba(0,0,0,0.07);
+  --glass-border-hover:   rgba(0,0,0,0.13);
+  --glass-shadow:
+    0 1px 0 0 rgba(255,255,255,0.9) inset,
+    0 8px 32px -4px rgba(0,0,0,0.09),
+    0 1px 2px 0 rgba(0,0,0,0.06);
+  --fresnel-top:    rgba(0,0,0,0.08);
+  --fresnel-left:   rgba(0,0,0,0.05);
+  --fresnel-right:  rgba(0,0,0,0.03);
+  --fresnel-bottom: rgba(0,0,0,0.03);
+  --color-bg:             #f5f5fa;
+  --color-surface:        #ffffff;
+  --color-surface-raised: #fafaff;
+  --color-border:         rgba(0,0,0,0.07);
+  --color-border-subtle:  rgba(0,0,0,0.04);
+  --color-text-primary:   rgba(0,0,0,0.88);
+  --color-text-secondary: rgba(0,0,0,0.52);
+  --color-text-muted:     rgba(0,0,0,0.36);
+  --color-text-disabled:  rgba(0,0,0,0.22);
 }
 
 /* ─── REDUCED MOTION ─────────────────────────────────────── */
@@ -190,6 +214,7 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark light;
 }
 
 body {
@@ -201,6 +226,7 @@ body {
   background-color: var(--color-bg);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
 }
 
 /* ─── TYPOGRAPHY HIERARCHY ───────────────────────────────── */
@@ -488,6 +514,10 @@ section {
   border-bottom: 1px solid var(--color-border);
 }
 
+[data-theme="light"] .glass-nav {
+  background: rgba(245,245,250,0.82);
+}
+
 /* Metric card */
 .metric-card {
   background: var(--glass-bg);
@@ -671,6 +701,120 @@ section {
   background-size: 200% 100%;
   animation: skeleton-sweep 1.5s ease-in-out infinite;
   border-radius: var(--radius-sm);
+}
+
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  height: 2px;
+  width: var(--progress, 0%);
+  background: var(--color-accent);
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: width;
+  transition: width 50ms linear;
+}
+
+.cmd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  background: rgba(0,0,0,0.5);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.cmd-panel {
+  width: min(560px, calc(100vw - var(--space-8)));
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 32px 80px rgba(0,0,0,0.5),
+    0 0 0 0 var(--color-accent-glow);
+}
+
+.cmd-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  padding: var(--space-4) var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.cmd-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--dur-instant) var(--ease-out), color var(--dur-instant) var(--ease-out);
+}
+
+.cmd-item:hover,
+.cmd-item[data-active="true"] {
+  background: var(--color-accent-surface);
+  color: var(--color-text-primary);
+}
+
+.cmd-item kbd {
+  margin-left: auto;
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-raised);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+@media print {
+  .glass-nav,
+  .skip-nav,
+  .cmd-overlay,
+  .reading-progress,
+  footer button,
+  [aria-label="Toggle navigation"],
+  [data-reveal] {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 11pt;
+  }
+
+  .prose {
+    max-width: 100%;
+    color: black;
+  }
+
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    color: #555;
+  }
+
+  .glass-card,
+  .metric-card {
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 /* ─── GLASS SHIMMER (legacy) ─────────────────────────────── */

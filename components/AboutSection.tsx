@@ -21,24 +21,23 @@ export function AboutSection() {
   return (
     <section id="about" aria-labelledby="about-heading" className="py-20 sm:py-24">
       <div className="container grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:items-start">
-        <div className="glass-no-hover rounded-[var(--radius-lg)] p-6 md:p-8" data-reveal="" data-reveal-delay="1">
+        <div
+          className="glass-no-hover rounded-[var(--radius-lg)] p-6 md:p-8"
+          data-reveal=""
+          data-reveal-delay="1"
+        >
           <span className="label">About</span>
           <h2 id="about-heading" className="mt-4 text-4xl text-white sm:text-5xl">
-            Full-Stack ML Engineer — Production AI Systems
+            The systems behind the title
           </h2>
           <div className="mt-6 space-y-4 text-base leading-8 text-white/70">
             <p>
               SabiScore runs end-to-end: feature engineering, ensemble model training, FastAPI
-              inference, Redis caching, Postgres, Docker, Next.js. Active users. Live events.
-              24/7.
-            </p>
-            <p>
-              Consulting covers ML debugging tooling and LLM integration for teams needing technical
-              model behavior translated to business-readable outcomes.
-            </p>
-            <p>
-              Open to Staff ML engineering roles, technical co-founder partnerships, and consulting
-              where full-stack ownership matters.
+              inference, Redis caching, Postgres, Docker, Next.js. One engineer. Full ownership.
+              Running in production. Consulting covers ML debugging tooling and LLM integration for
+              teams needing technical model behavior translated into business-readable outputs. Open
+              to Staff ML engineering roles, technical co-founder partnerships, and consulting
+              engagements where full-stack ownership matters.
             </p>
           </div>
         </div>

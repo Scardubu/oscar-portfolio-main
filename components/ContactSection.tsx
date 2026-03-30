@@ -53,14 +53,24 @@ export function ContactSection() {
   return (
     <section id="contact" aria-labelledby="contact-heading" className="py-20 sm:py-24">
       <div className="container">
-        <div className="pill pill-cyan inline-flex items-center gap-3" role="status" aria-live="polite" data-reveal="">
+        <div
+          className="pill pill-cyan inline-flex items-center gap-3"
+          role="status"
+          aria-live="polite"
+          data-reveal=""
+        >
           <span className="live-dot" aria-hidden="true" />
           Open — responding within 48hrs
         </div>
 
         <div className="mt-6 max-w-2xl">
-          <h2 id="contact-heading" className="text-4xl text-white sm:text-5xl" data-reveal="" data-reveal-delay="2">
-            Let&apos;s Build Something
+          <h2
+            id="contact-heading"
+            className="text-4xl text-white sm:text-5xl"
+            data-reveal=""
+            data-reveal-delay="2"
+          >
+            Available. Let&apos;s talk.
           </h2>
           <p className="mt-4 text-lg text-white/65" data-reveal="" data-reveal-delay="3">
             Open to Staff+, technical co-founder, and select consulting conversations where the work
@@ -94,36 +104,36 @@ export function ContactSection() {
           </a>
 
           <div className="flex flex-wrap items-center gap-4 text-[color:var(--color-text-muted)]">
-          <Link
-            href="https://github.com/Scardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Oscar Scardubu on GitHub"
-            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
-          >
-            <GitHubIcon />
-            GitHub
-          </Link>
-          <Link
-            href="https://linkedin.com/in/oscardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Oscar Scardubu on LinkedIn"
-            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
-          >
-            <LinkedInIcon />
-            LinkedIn
-          </Link>
-          <Link
-            href="mailto:oscar@scardubu.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Email Oscar Scardubu"
-            className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
-          >
-            <EmailIcon />
-            Email
-          </Link>
+            <Link
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Oscar Scardubu on GitHub"
+              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+            >
+              <GitHubIcon />
+              GitHub
+            </Link>
+            <Link
+              href="https://linkedin.com/in/oscardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Oscar Scardubu on LinkedIn"
+              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+            >
+              <LinkedInIcon />
+              LinkedIn
+            </Link>
+            <Link
+              href="mailto:oscar@scardubu.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Email Oscar Scardubu"
+              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+            >
+              <EmailIcon />
+              Email
+            </Link>
           </div>
         </div>
       </div>

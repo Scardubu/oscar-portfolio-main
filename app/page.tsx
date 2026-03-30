@@ -1,5 +1,6 @@
 import { AboutSection } from '@/components/AboutSection';
 import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
+import { CommandPalette } from '@/components/CommandPalette';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/HeroSection';
@@ -25,6 +26,7 @@ export default async function Home() {
       <Footer />
       <BookmarkToastLoader />
       <ScrollRevealInit />
+      <CommandPalette />
     </>
   );
 }

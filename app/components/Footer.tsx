@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="border-t border-white/6 pt-8 pb-10 md:pb-14">
       <div className="glass-surface glass-surface-light flex flex-col gap-6 rounded-[1.75rem] px-6 py-6 md:flex-row md:items-end md:justify-between md:px-8">
         <div className="space-y-3">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">Oscar Dubu</p>
+          <p className="text-lg font-semibold text-[var(--text-primary)]">Oscar Scardubu</p>
           <p className="max-w-xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
             Production AI systems, full-stack delivery, and product surfaces that stay legible under
             real operating conditions.
@@ -46,7 +46,7 @@ export function Footer() {
         </div>
       </div>
       <p className="pt-5 text-center text-xs text-[var(--text-muted)]">
-        © {currentYear} Oscar Dubu · Built with Next.js 15, TypeScript, Tailwind CSS 4, and Framer
+        © {currentYear} Oscar Scardubu · Built with Next.js 15, TypeScript, Tailwind CSS 4, and Framer
         Motion.
       </p>
     </footer>

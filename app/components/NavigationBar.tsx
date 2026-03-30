@@ -68,7 +68,7 @@ export function NavigationBar() {
             </span>
             <div className="min-w-0 leading-tight">
               <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
-                Oscar Dubu
+                Oscar Scardubu
               </p>
               <p className="truncate text-xs text-[var(--text-secondary)]">
                 Production AI systems · Full-stack execution

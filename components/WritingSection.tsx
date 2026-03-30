@@ -9,15 +9,16 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
   return (
     <section id="writing" aria-labelledby="writing-heading">
       <div className="container">
-        <div style={{ marginBottom: 'var(--space-10)' }}>
+        <div className="mb-[var(--space-10)]">
           <span className="label" data-reveal="">
             Writing
           </span>
-          <h2 id="writing-heading" data-reveal="" data-reveal-delay="1" style={{ marginTop: 'var(--space-2)' }}>
-            Technical Perspective
+          <h2 id="writing-heading" data-reveal="" data-reveal-delay="1" className="mt-[var(--space-2)]">
+            Notes on building
           </h2>
-          <p data-reveal="" data-reveal-delay="2" style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-lg)' }}>
-            ML systems, fintech architecture, and production engineering.
+          <p data-reveal="" data-reveal-delay="2" className="mt-[var(--space-4)] text-[length:var(--text-lg)]">
+            ML systems, fintech architecture, and the decisions that don&apos;t show up in the
+            commit history.
           </p>
         </div>
 
@@ -54,24 +55,16 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
             <div data-reveal="" data-reveal-delay="4">
               {otherPosts.map((post) => (
                 <div key={post.slug} className="writing-row">
-                  <time
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-xs)',
-                      color: 'var(--color-text-muted)',
-                      minWidth: '7rem',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <time className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]">
                     {formatDate(post.date)}
                   </time>
-                  <div style={{ flex: 1 }}>
-                    <Link href={`/writing/${post.slug}`} className="writing-title" style={{ display: 'block' }}>
+                  <div className="flex-1">
+                    <Link href={`/writing/${post.slug}`} className="writing-title block">
                       {post.title}
                     </Link>
-                    <p style={{ marginTop: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>{post.summary}</p>
+                    <p className="mt-[var(--space-2)] text-sm">{post.summary}</p>
                   </div>
-                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+                  <span className="whitespace-nowrap text-xs text-[color:var(--color-text-muted)]">
                     {post.readingTime} min
                   </span>
                 </div>
@@ -80,15 +73,8 @@ export function WritingSection({ posts }: { posts: WritingPost[] }) {
           </div>
         ) : null}
 
-        <div style={{ marginTop: 'var(--space-8)' }} data-reveal="" data-reveal-delay="4">
-          <Link
-            href="/writing"
-            style={{
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-cyan)',
-              letterSpacing: 'var(--tracking-wide)',
-            }}
-          >
+        <div className="mt-[var(--space-8)]" data-reveal="" data-reveal-delay="4">
+          <Link href="/writing" className="text-sm tracking-[var(--tracking-wide)] text-[color:var(--color-cyan)]">
             All writing →
           </Link>
         </div>

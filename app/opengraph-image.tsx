@@ -4,7 +4,7 @@ import { OGImage } from '@/app/components/OGImage';
 
 export const runtime = 'edge';
 
-export const alt = 'Oscar Dubu - Production AI systems and full-stack execution';
+export const alt = 'Oscar Scardubu - Production AI systems and full-stack execution';
 export const size = {
   width: 1200,
   height: 630,

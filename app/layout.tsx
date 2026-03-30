@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { MotionProvider } from '@/components/MotionProvider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import './globals.css';
 
 const syne = localFont({
@@ -50,6 +51,19 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.scardubu.dev' },
 };
 
+const themeScript = `try { const stored = localStorage.getItem('theme'); const media = window.matchMedia('(prefers-color-scheme: light)'); const resolved = stored === 'light' || stored === 'dark' ? stored : (media.matches ? 'light' : 'dark'); document.documentElement.setAttribute('data-theme', resolved); } catch { document.documentElement.setAttribute('data-theme', 'dark'); }`;
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Oscar Scardubu',
+  url: 'https://www.scardubu.dev',
+  jobTitle: 'Staff Full-Stack ML Engineer',
+  description:
+    'Production AI and fintech systems engineer focused on delivery, reliability, and product clarity.',
+  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -57,6 +71,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+      </head>
       <body>
         {/* Skip navigation — first focusable element per WCAG 2.4.1 */}
         <a href="#main-content" className="skip-nav">
@@ -85,7 +106,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </defs>
         </svg>
 
-        <MotionProvider>{children}</MotionProvider>
+        <ThemeProvider>
+          <MotionProvider>{children}</MotionProvider>
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

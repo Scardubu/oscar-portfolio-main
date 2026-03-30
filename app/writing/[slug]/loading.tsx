@@ -1,12 +1,14 @@
+import { Skeleton } from '@/components/Skeleton';
+
 export default function WritingPostLoading() {
   return (
     <main id="main-content">
-      <section style={{ paddingTop: 'calc(var(--nav-height) + var(--space-12))' }}>
-        <div className="container" style={{ display: 'grid', gap: 'var(--space-4)' }}>
-          <div className="skeleton" style={{ width: '8rem', height: '1rem' }} />
-          <div className="skeleton" style={{ width: 'min(42rem, 100%)', height: '4rem' }} />
-          <div className="skeleton" style={{ width: '14rem', height: '1rem' }} />
-          <div className="skeleton" style={{ width: '100%', height: '10rem' }} />
+      <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
+        <div className="container grid gap-[var(--space-4)]">
+          <Skeleton width="8rem" height="1rem" />
+          <Skeleton width="min(42rem, 100%)" height="4rem" />
+          <Skeleton width="14rem" height="1rem" />
+          <Skeleton height="10rem" />
         </div>
       </section>
     </main>

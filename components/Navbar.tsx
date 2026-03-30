@@ -13,10 +13,14 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
-const SECTION_LINKS = ['projects', 'about', 'contact'] as const;
+const SECTION_LINKS = ['projects', 'about', 'writing', 'contact'] as const;
+function openCommandPalette() {
+  window.dispatchEvent(new Event('command-palette:open'));
+}
 
 const NAV_LINKS = [
   { label: 'Projects', href: 'projects' },
@@ -268,6 +272,18 @@ export function NavBar() {
         </ul>
 
         <div className="flex items-center justify-end gap-3">
+          <div className="hidden items-center gap-2 md:flex">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={openCommandPalette}
+              aria-label="Open command palette"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[color:var(--color-text-muted)] transition hover:text-[color:var(--color-text-primary)]"
+            >
+              ⌘K
+            </button>
+          </div>
+
           <span
             className="pill pill-cyan hidden items-center gap-2 sm:inline-flex"
             role="status"
@@ -340,6 +356,27 @@ export function NavBar() {
                     </Link>
                   </m.li>
                 ))}
+
+                <m.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 px-3 py-3">
+                    <span className="text-sm text-white/70">Theme</span>
+                    <ThemeToggle />
+                  </div>
+                </m.li>
+
+                <m.li variants={prefersReduced ? undefined : mobileMenuItem}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      openCommandPalette();
+                    }}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-base font-medium text-white/60 transition hover:bg-white/[0.04] hover:text-white"
+                  >
+                    <span>Command palette</span>
+                    <span className="text-xs text-white/40">⌘K</span>
+                  </button>
+                </m.li>
 
                 <m.li variants={prefersReduced ? undefined : mobileMenuItem} className="pt-2">
                   <span className="pill pill-cyan justify-center">Open to Work</span>

@@ -9,25 +9,26 @@ import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CursorGlow } from '@/components/CursorGlow';
 import { KineticName } from '@/components/KineticName';
 import { MetricCard } from '@/components/MetricCard';
+import { Skeleton } from '@/components/Skeleton';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { scaleIn } from '@/lib/motion';
 
 const metrics: Array<{ label: string; body: string; breath?: boolean }> = [
   {
-    label: 'REAL-WORLD REACH',
-    body: 'Production systems serving live concurrent sessions across high-traffic events',
+    label: 'LIVE IN PRODUCTION',
+    body: 'Ensemble models + FastAPI inference serving live concurrent sessions via Redis and Postgres.',
   },
   {
-    label: 'PRECISION AI',
-    body: 'Embedding-based retrieval and ensemble meta-learning over rule-based heuristics',
+    label: 'DECISIONS DOCUMENTED',
+    body: 'Architecture tradeoffs between retrieval strategies visible in case studies — not just outcomes.',
   },
   {
-    label: 'ALWAYS ON',
-    body: 'Health checks, graceful fallback, environment-scoped boundaries — 24/7',
+    label: 'ZERO-DOWNTIME DESIGN',
+    body: 'Graceful fallback, health checks, and environment-scoped boundaries built in from deployment one.',
   },
   {
-    label: 'END-TO-END',
-    body: 'Full ownership from feature engineering to production inference',
+    label: 'FULL OWNERSHIP',
+    body: 'Feature engineering to production inference to the frontend. No handoffs.',
     breath: true,
   },
 ];
@@ -66,7 +67,7 @@ export function HeroSection() {
             <KineticName
               id="hero-heading"
               name="Oscar Scardubu"
-              className="max-w-[8.3ch] text-[clamp(3.3rem,14vw,5.8rem)] leading-[0.92] text-white sm:max-w-none"
+              className="block max-w-full text-[clamp(2.15rem,10vw,5.8rem)] leading-[0.92] whitespace-nowrap text-white"
             />
             <p className="mt-[var(--space-6)] mb-[var(--space-8)] max-w-[52ch] text-[length:var(--text-lg)] leading-[var(--leading-snug)] text-[color:var(--color-text-secondary)]">
               The engineer you bring in when AI behavior, platform reliability, and product clarity
@@ -94,7 +95,7 @@ export function HeroSection() {
               </Link>
             </div>
 
-            <Suspense fallback={<div className="skeleton" style={{ height: 16, width: 280 }} />}>
+            <Suspense fallback={<Skeleton width={280} height={16} />}>
               <LiveActivityBar />
             </Suspense>
           </div>

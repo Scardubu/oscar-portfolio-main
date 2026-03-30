@@ -95,7 +95,7 @@ export function NavigationBar({
           {/* Logo */}
           <a
             href="/"
-            aria-label="Oscar Dubu — home"
+            aria-label="Oscar Scardubu — home"
             className="focus-ring-branded"
             style={{
               display: "flex",
@@ -113,7 +113,7 @@ export function NavigationBar({
                 letterSpacing: "-0.02em",
               }}
             >
-              Oscar Dubu
+              Oscar Scardubu
             </span>
             <span
               style={{

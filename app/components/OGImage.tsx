@@ -5,7 +5,7 @@ interface OGImageProps {
 }
 
 export function OGImage({
-  title = 'Oscar Dubu',
+  title = 'Oscar Scardubu',
   subtitle = 'Production AI systems · Full-stack execution',
   caption = 'Shipped work, explicit tradeoffs, and interface quality that reads without explanation.',
 }: OGImageProps) {

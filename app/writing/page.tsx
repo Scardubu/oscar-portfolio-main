@@ -33,9 +33,10 @@ export default async function WritingIndexPage() {
         <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
           <div className="container">
             <span className="label">Writing</span>
-            <h1 className="mt-2">Technical Perspective</h1>
+            <h1 className="mt-2">Notes on building</h1>
             <p className="mt-4 max-w-2xl text-lg text-[color:var(--color-text-muted)]">
-              Articles on production ML systems, fintech architecture, and the delivery choices that hold up under real load.
+              ML systems, fintech architecture, and the decisions that don&apos;t show up in the
+              commit history.
             </p>
 
             {/* Featured article banner */}
@@ -45,17 +46,20 @@ export default async function WritingIndexPage() {
                 className="group mt-10 block rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-white/25 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                 aria-label={`Featured article: ${featured.title}`}
               >
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-text-primary)]">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-[color:var(--color-text-primary)] uppercase">
                     Featured
                   </span>
                   {featured.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[color:var(--color-text-muted)]">
+                    <span
+                      key={tag}
+                      className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[color:var(--color-text-muted)]"
+                    >
                       #{tag}
                     </span>
                   ))}
                 </div>
-                <h2 className="text-xl font-semibold leading-snug transition-colors group-hover:text-white/90">
+                <h2 className="text-xl leading-snug font-semibold transition-colors group-hover:text-white/90">
                   {featured.title}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[color:var(--color-text-muted)]">
@@ -64,7 +68,9 @@ export default async function WritingIndexPage() {
                 <div className="mt-4 flex items-center gap-4 text-xs text-[color:var(--color-text-muted)]">
                   <time className="font-mono">{formatDate(featured.date)}</time>
                   <span>{featured.readingTime} min read</span>
-                  <span className="ml-auto text-xs font-semibold text-[color:var(--color-text-primary)]">Read article →</span>
+                  <span className="ml-auto text-xs font-semibold text-[color:var(--color-text-primary)]">
+                    Read article →
+                  </span>
                 </div>
               </Link>
             )}
@@ -75,28 +81,23 @@ export default async function WritingIndexPage() {
                 .sort(([left], [right]) => Number(right) - Number(left))
                 .map(([year, yearPosts]) => (
                   <section key={year} aria-labelledby={`writing-year-${year}`}>
-                    <h2
-                      id={`writing-year-${year}`}
-                      className="mb-4 text-xl font-semibold"
-                    >
+                    <h2 id={`writing-year-${year}`} className="mb-4 text-xl font-semibold">
                       {year}
                     </h2>
                     <div>
                       {yearPosts.map((post) => (
                         <article key={post.slug} className="writing-row">
-                          <time
-                            className="shrink-0 min-w-28 font-mono text-xs text-[color:var(--color-text-muted)]"
-                          >
+                          <time className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]">
                             {formatDate(post.date)}
                           </time>
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <Link
                               href={`/writing/${post.slug}`}
                               className="writing-title block text-base"
                             >
                               {post.title}
                             </Link>
-                            <p className="mt-1 text-sm max-w-[64ch] text-[color:var(--color-text-muted)]">
+                            <p className="mt-1 max-w-[64ch] text-sm text-[color:var(--color-text-muted)]">
                               {post.summary}
                             </p>
                             {post.tags.length > 0 && (
@@ -112,7 +113,7 @@ export default async function WritingIndexPage() {
                               </div>
                             )}
                           </div>
-                          <span className="whitespace-nowrap text-xs text-[color:var(--color-text-muted)]">
+                          <span className="text-xs whitespace-nowrap text-[color:var(--color-text-muted)]">
                             {post.readingTime} min
                           </span>
                         </article>

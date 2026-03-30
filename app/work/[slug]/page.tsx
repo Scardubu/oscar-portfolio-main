@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { Footer } from '@/components/Footer';
 import { NavBar } from '@/components/Navbar';
+import { ReadingProgress } from '@/components/ReadingProgress';
 import { projects } from '@/data/projects';
 import { getWorkCase, getWorkCases } from '@/lib/content';
 
@@ -21,20 +22,36 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   const { slug } = await params;
   const project = await getWorkCase(slug);
+  const projectMeta = projects.find((entry) => entry.id === slug);
 
   if (!project) {
     return { title: 'Work' };
   }
 
   return {
-    title: project.frontmatter.title,
-    description: project.frontmatter.summary,
+    title: projectMeta?.title ?? project.frontmatter.title,
+    description: projectMeta?.tagline ?? project.frontmatter.summary,
     alternates: { canonical: `https://www.scardubu.dev/work/${slug}` },
     openGraph: {
-      title: `${project.frontmatter.title} · Oscar Scardubu`,
-      description: project.frontmatter.summary,
+      title: `${projectMeta?.title ?? project.frontmatter.title} · Oscar Scardubu`,
+      description: projectMeta?.tagline ?? project.frontmatter.summary,
       url: `https://www.scardubu.dev/work/${slug}`,
-      images: ['/og'],
+      images: [`/work/${slug}/og`],
+    },
+  };
+}
+
+function caseStudyJsonLd(title: string, description: string, slug: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    name: title,
+    description,
+    url: `https://www.scardubu.dev/work/${slug}`,
+    author: {
+      '@type': 'Person',
+      name: 'Oscar Scardubu',
+      url: 'https://www.scardubu.dev',
     },
   };
 }
@@ -49,10 +66,14 @@ export default async function WorkPage({ params }: WorkPageProps) {
 
   const projectMeta = projects.find((entry) => entry.id === slug);
   const relatedProjects = projects.filter((entry) => entry.id !== slug).slice(0, 2);
+  const title = projectMeta?.title ?? project.frontmatter.title;
+  const description = projectMeta?.tagline ?? project.frontmatter.summary;
+  const tags = projectMeta?.tags ?? project.frontmatter.tags ?? [];
 
   return (
     <>
       <NavBar />
+      <ReadingProgress />
       <main id="main-content" tabIndex={-1}>
         <section className="relative overflow-hidden pt-[calc(var(--nav-height)+var(--space-12))]">
           <div
@@ -64,38 +85,43 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(99,102,241,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 80% at 80% 60%, rgba(34,211,238,0.08) 0%, transparent 70%)',
             }}
           />
-          <div className="container" style={{ position: 'relative' }}>
+          <div className="container relative">
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(caseStudyJsonLd(title, description, slug)),
+              }}
+            />
             <Link href="/#projects" className="pill pill-cyan">
               Back to projects
             </Link>
-            <header style={{ marginTop: 'var(--space-8)', marginBottom: 'var(--space-10)' }}>
+            <header className="mt-[var(--space-8)] mb-[var(--space-10)]">
               <span className="label">Case Study</span>
-              <h1 style={{ marginTop: 'var(--space-2)' }}>{project.frontmatter.title}</h1>
-              <p style={{ marginTop: 'var(--space-4)', fontSize: 'var(--text-lg)' }}>
-                {project.frontmatter.summary}
+              <h1 className="mt-[var(--space-2)]">{title}</h1>
+              <p className="mt-[var(--space-4)] text-[length:var(--text-lg)]">
+                {description}
               </p>
               {projectMeta ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
-                  <span className="pill pill-cyan">{projectMeta.status === 'live' ? 'Live deployment' : projectMeta.status === 'wip' ? 'Active build' : 'Archived'}</span>
+                <div className="mt-[var(--space-4)] flex flex-wrap gap-[var(--space-2)]">
+                  <span className="pill pill-cyan">
+                    {projectMeta.status === 'live'
+                      ? 'Live deployment'
+                      : projectMeta.status === 'wip'
+                        ? 'Active build'
+                        : 'Archived'}
+                  </span>
                   {projectMeta.featured ? <span className="pill">Featured system</span> : null}
                 </div>
               ) : null}
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 'var(--space-2)',
-                  marginTop: 'var(--space-6)',
-                }}
-              >
-                {(project.frontmatter.tags ?? []).map((tag) => (
+              <div className="mt-[var(--space-6)] flex flex-wrap gap-[var(--space-2)]">
+                {tags.map((tag) => (
                   <span key={tag} className="pill">
                     {tag}
                   </span>
                 ))}
               </div>
               {projectMeta?.demoUrl || projectMeta?.repoUrl ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+                <div className="mt-[var(--space-6)] flex flex-wrap gap-[var(--space-3)]">
                   {projectMeta.demoUrl ? (
                     <Link
                       href={projectMeta.demoUrl}
@@ -119,25 +145,33 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 </div>
               ) : null}
             </header>
-            <article className="prose" style={{ paddingBottom: 'var(--space-20)' }}>
+            <article className="prose pb-[var(--space-20)]">
               {project.content}
             </article>
 
             {relatedProjects.length ? (
               <aside
                 aria-labelledby="related-case-studies-heading"
-                className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-6"
-                style={{ marginBottom: 'var(--space-20)' }}
+                className="glass-no-hover mb-[var(--space-20)] rounded-[var(--radius-xl)] border border-white/10 p-6"
               >
                 <span className="label">More work</span>
-                <h2 id="related-case-studies-heading" style={{ marginTop: 'var(--space-2)' }}>
+                <h2 id="related-case-studies-heading" className="mt-[var(--space-2)]">
                   Other case studies
                 </h2>
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   {relatedProjects.map((entry) => (
-                    <article key={entry.id} className="rounded-[var(--radius-lg)] border border-white/10 p-5">
+                    <article
+                      key={entry.id}
+                      className="rounded-[var(--radius-lg)] border border-white/10 p-5"
+                    >
                       <div className="flex flex-wrap gap-2">
-                        <span className="pill">{entry.status === 'live' ? 'Live' : entry.status === 'wip' ? 'WIP' : 'Archived'}</span>
+                        <span className="pill">
+                          {entry.status === 'live'
+                            ? 'Live'
+                            : entry.status === 'wip'
+                              ? 'WIP'
+                              : 'Archived'}
+                        </span>
                         {entry.tags.slice(0, 2).map((tag) => (
                           <span key={`${entry.id}-${tag}`} className="pill">
                             {tag}
