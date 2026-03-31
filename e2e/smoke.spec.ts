@@ -122,18 +122,26 @@ test.describe('Portfolio smoke tests', () => {
     await expect(page.getByText('ZERO-DOWNTIME DESIGN')).toBeVisible();
   });
 
-  test('SabiScore architecture decisions expand', async ({ page }) => {
+  test('ArchDecision panel visible without interaction', async ({ page }) => {
     await page.goto('/');
 
-    const toggle = page
-      .locator('[data-project-id="sabiscore"]')
-      .getByRole('button', { name: /architecture decisions/i });
+    await expect(page.getByText('CHOSEN').first()).toBeVisible();
+    await expect(page.getByText('BECAUSE').first()).toBeVisible();
+  });
 
-    await toggle.click();
+  test('conviction pillars have colored top borders', async ({ page }) => {
+    await page.goto('/');
 
-    await expect(page.getByText(/Chose:/i).first()).toBeVisible();
-    await expect(page.getByText(/Over:/i).first()).toBeVisible();
-    await expect(page.getByText(/Because:/i).first()).toBeVisible();
+    const pillars = page.locator('[data-pillar]');
+    await expect(pillars).toHaveCount(4);
+  });
+
+  test('three CTA button tiers are present', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(page.locator('a[data-cta="primary"]')).toBeVisible();
+    await expect(page.locator('a[data-cta="secondary"]')).toBeVisible();
+    await expect(page.getByRole('link', { name: /resume/i })).toBeVisible();
   });
 
   test('writing page renders article list', async ({ page }) => {

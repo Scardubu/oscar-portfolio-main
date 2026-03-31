@@ -1,32 +1,28 @@
 'use client';
 
-import { m } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
 
 import type { Project, ProjectStatus } from '@/data/projects';
+import { ArchDecision } from '@/components/ArchDecision';
 import { GlassCard } from '@/components/GlassCard';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { springConfig } from '@/lib/motion';
 
 const statusStyles: Record<
   ProjectStatus,
   { className: string; dotClassName: string; label: string }
 > = {
   live: {
-    className: 'pill pill-cyan',
-    dotClassName: 'live-dot bg-cyan-400',
+    className: 'badge-live',
+    dotClassName: 'dot-live',
     label: 'LIVE',
   },
   wip: {
-    className:
-      'inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-amber-400',
-    dotClassName: 'bg-amber-400',
+    className: 'badge-wip',
+    dotClassName: 'dot-wip',
     label: 'WIP',
   },
   archived: {
     className:
-      'inline-flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/60 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500',
+      'inline-flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/60 px-3 py-1 font-mono text-[10px] font-medium tracking-[0.18em] text-zinc-500 uppercase',
     dotClassName: 'bg-zinc-500',
     label: 'ARCHIVED',
   },
@@ -42,68 +38,12 @@ function ProjectStatusBadge({ status }: Readonly<{ status: ProjectStatus }>) {
 
   return (
     <span className={badge.className}>
-      <span className={`h-2.5 w-2.5 rounded-full ${badge.dotClassName}`} aria-hidden="true" />
+      <span
+        className={`inline-block h-2 w-2 rounded-full ${badge.dotClassName}`}
+        aria-hidden="true"
+      />
       {badge.label}
     </span>
-  );
-}
-
-function ProjectDecisionPanel({
-  projectId,
-  decisions,
-  expanded,
-  prefersReducedMotion,
-  onToggle,
-}: Readonly<{
-  projectId: string;
-  decisions: NonNullable<Project['decisions']>;
-  expanded: boolean;
-  prefersReducedMotion: boolean;
-  onToggle: () => void;
-}>) {
-  const detailsId = `project-decisions-${projectId}`;
-
-  return (
-    <div className="space-y-3">
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={detailsId}
-        className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 px-4 py-2 text-xs font-medium tracking-[0.2em] text-cyan-100 uppercase transition hover:border-cyan-300/45 hover:text-white"
-        onClick={onToggle}
-      >
-        Architecture decisions
-      </button>
-
-      <m.div
-        id={detailsId}
-        initial={false}
-        animate={
-          prefersReducedMotion
-            ? { opacity: expanded ? 1 : 0 }
-            : { opacity: expanded ? 1 : 0, height: expanded ? 'auto' : 0 }
-        }
-        transition={springConfig}
-        className="overflow-hidden"
-        aria-hidden={!expanded}
-      >
-        <div className="space-y-3 border-l border-cyan-400/40 pt-1 pl-4">
-          {decisions.map((decision) => (
-            <div key={`${projectId}-${decision.rejected}`} className="space-y-1">
-              <p className="text-sm leading-7 text-white/75">
-                <span className="font-semibold text-cyan-100">Chose:</span> {decision.chosen}
-              </p>
-              <p className="text-sm leading-7 text-white/55">
-                <span className="font-semibold text-white/72">Over:</span> {decision.rejected}
-              </p>
-              <p className="text-sm leading-7 text-white/62">
-                <span className="font-semibold text-white/72">Because:</span> {decision.reason}
-              </p>
-            </div>
-          ))}
-        </div>
-      </m.div>
-    </div>
   );
 }
 
@@ -123,7 +63,7 @@ function ProjectLinks({
           href={demoUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 transition hover:border-white/30 hover:text-white"
+          className="link-reveal inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] uppercase"
         >
           Live demo
         </Link>
@@ -133,14 +73,14 @@ function ProjectLinks({
           href={repoUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 transition hover:border-white/30 hover:text-white"
+          className="link-reveal inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] uppercase"
         >
           GitHub
         </Link>
       ) : null}
       <Link
         href={`/work/${projectId}`}
-        className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 px-4 py-2 text-cyan-200 transition hover:border-cyan-300/50 hover:text-white"
+        className="link-reveal inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] text-[color:var(--color-accent)] uppercase"
       >
         Case study →
       </Link>
@@ -157,15 +97,15 @@ function getCardLevel(project: Project) {
 }
 
 export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCardProps>) {
-  const [expanded, setExpanded] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
   const level = getCardLevel(project);
+  const primaryDecision = project.decisions?.[0];
+  const featuredLabel = project.featured ? 'Featured system' : 'Production track';
 
   return (
     <div className="h-full">
       <GlassCard
         as="article"
-        className="card-depth flex h-full flex-col gap-4 p-6"
+        className={`card-depth flex h-full flex-col gap-4 ${project.featured ? 'p-8' : 'p-6'}`}
         chromatic={project.featured}
         level={level}
         data-project-id={project.id}
@@ -175,7 +115,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium tracking-[0.24em] text-white/50 uppercase">
-              {project.featured ? 'Featured system' : 'Production track'}
+              {featuredLabel}
             </p>
             <h3 className="mt-3 text-2xl text-white">{project.title}</h3>
           </div>
@@ -190,26 +130,22 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
           </p>
         ) : null}
 
+        {primaryDecision ? (
+          <ArchDecision
+            chosen={primaryDecision.chosen}
+            over={primaryDecision.rejected}
+            because={primaryDecision.reason}
+            compact={!project.featured}
+          />
+        ) : null}
+
         <ul className="flex flex-wrap gap-2" aria-label={`${project.title} technology stack`}>
           {project.tags.map((tag) => (
-            <li
-              key={`${project.id}-${tag}`}
-              className="rounded-full border border-white/15 px-3 py-1 font-mono text-xs tracking-[0.16em] text-white/75 uppercase"
-            >
+            <li key={`${project.id}-${tag}`} className="tag">
               {tag}
             </li>
           ))}
         </ul>
-
-        {project.decisions?.length ? (
-          <ProjectDecisionPanel
-            projectId={project.id}
-            decisions={project.decisions}
-            expanded={expanded}
-            prefersReducedMotion={prefersReducedMotion}
-            onToggle={() => setExpanded((current) => !current)}
-          />
-        ) : null}
 
         <ProjectLinks demoUrl={project.demoUrl} repoUrl={project.repoUrl} projectId={project.id} />
       </GlassCard>

@@ -73,10 +73,10 @@ function getAriaCurrent(isCurrent: boolean) {
 
 function getDesktopLinkClass(isCurrent: boolean) {
   if (isCurrent) {
-    return 'text-white';
+    return 'text-white border-b border-[var(--color-accent)]';
   }
 
-  return 'text-white/55 hover:text-white';
+  return 'text-white/55 border-b border-transparent hover:text-white';
 }
 
 function getMobileLinkClass(isCurrent: boolean) {
@@ -136,7 +136,7 @@ export function NavBar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteShortcut, setPaletteShortcut] = useState('Ctrl K');
-  const [activeSection, setActiveSection] = useState<string>('hero');
+  const [activeSection, setActiveSection] = useState<string>('');
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
@@ -154,11 +154,11 @@ export function NavBar() {
 
   useEffect(() => {
     if (pathname !== '/') {
-      setActiveSection('hero');
+      setActiveSection('');
       return;
     }
 
-    const ids = ['hero', ...SECTION_LINKS];
+    const ids = [...SECTION_LINKS];
     const observers: IntersectionObserver[] = [];
 
     ids.forEach((id) => {
@@ -168,7 +168,7 @@ export function NavBar() {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id);
         },
-        { threshold: 0.4 }
+        { rootMargin: '-40% 0px -55% 0px', threshold: 0.15 }
       );
       obs.observe(el);
       observers.push(obs);

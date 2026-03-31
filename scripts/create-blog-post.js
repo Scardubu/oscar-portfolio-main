@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
+const fs = require('node:fs');
+const path = require('node:path');
+const readline = require('node:readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -21,8 +21,8 @@ async function createBlogPost() {
 
   const slug = title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/(^-|-$)/g, '');
 
   const today = new Date().toISOString().split('T')[0];
 

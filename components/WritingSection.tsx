@@ -3,16 +3,17 @@ import Link from 'next/link';
 import type { WritingPost } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
-export function WritingSection({ posts }: { posts: WritingPost[] }) {
+export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
   const [featuredPost, ...otherPosts] = posts;
 
   return (
     <section id="writing" aria-labelledby="writing-heading" className="py-20 sm:py-24">
       <div className="container">
         <div className="mb-[var(--space-10)]">
-          <span className="label" data-reveal="">
-            Writing
-          </span>
+          <div className="flex flex-wrap items-center gap-3" data-reveal="">
+            <span className="label">Writing</span>
+            <span className="pill">{posts.length} articles</span>
+          </div>
           <h2
             id="writing-heading"
             data-reveal=""

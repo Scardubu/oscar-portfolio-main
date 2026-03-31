@@ -55,3 +55,26 @@ This file is reserved for release corrections and follow-up notes for the portfo
 - **Writing index page** (`/writing`) — added featured-article banner card with tag pills, summary, and date; added tag pills per post in the year-bucketed archive; replaced all inline style objects with Tailwind utility classes backed by CSS custom properties for maintainability.
 - **LiveBuildFeed** — removed `console.error` from the production bundle; added an explicit `fetchError` state so failed fetches surface a human-readable message ("Activity feed unavailable — check back soon.") instead of silently showing "No recent activity".
 - **LiveActivityBar** — guarded the GitHub API fetch against non-OK responses and network failures via `.catch()` so the component silently hides rather than throwing an unhandled rejection.
+
+## 2026-03-31 — Conviction Engine v8.0
+
+Every change traces to a gap observed in the live screenshot evidence.
+
+- **GrainOverlay** (`components/GrainOverlay.tsx`) — new zero-layout-cost SVG filter overlay: `position:fixed`, `pointer-events:none`, `mix-blend-mode:soft-light`, `opacity:0.035`. Wired into `app/layout.tsx`.
+- **GradientMesh** (`components/GradientMesh.tsx`) — ambient radial gradient layer: indigo orb top-left (12% opacity), green orb bottom-right (7% opacity), GPU-composited via `translateZ(0)`. Wired into `app/layout.tsx`.
+- **ArchDecision** (`components/ArchDecision.tsx`) — `Chosen / Over / Because` triad rendered as an always-visible panel. `compact=false` renders a 3-column horizontal layout for case-study pages; `compact=true` stacks vertically for grid cards. Label colours driven by `data-arch-key` CSS attribute to avoid inline style warnings. No click required — previously the decisions panel was either missing or gated behind a toggle.
+- **useReveal** (`lib/useReveal.ts`) — pure `IntersectionObserver` hook for section-entry stagger animation. Returns a ref; add `className="reveal"` to the element; no Framer Motion dependency at section level.
+- **globals.css additions** — appended `.reveal` / `.reveal.visible` / `.reveal-delay-*` stagger classes, `.border-top-live` / `.border-top-accent` / `.border-top-wip` accent variants, `.arch-grid` responsive layout, `.text-gradient` helper, and `a[data-cta]` hover tokens.
+- **globals.css deduplication** — merged the three separate `.glass-full`, `.glass-medium`, and `.glass-light` rule blocks (backdrop-filter, border, and box-shadow) into single declarations each. Fixed `-webkit-backdrop-filter` ordering to come before `backdrop-filter` throughout (`.glass`, `.glass-full`, `.glass-medium`, `.glass-light`, `.glass-no-hover`, `.glass-nav`, `.metric-card`, `.cmd-overlay`) for correct Safari cascade fallback.
+- **HeroSection** — added three-tier CTA system (`data-cta="primary"` filled / `data-cta="secondary"` outlined / ghost underline-only). Added `data-pillar` on all four conviction pillars with `border-top` accent colour per pillar. Removed `role="status"` misuse from non-live elements.
+- **ProjectCard** — replaced toggle-gated architecture decision panel with always-visible `<ArchDecision compact>` component. WIP status badge uses `.dot-wip` CSS class instead of an inline `style` color object. Status style map (`statusStyles`) centralises badge and dot classes.
+- **ProjectsSection** — confirmed import path pulls from `@/lib/projects` (no inline project data); `ArchDecision` wired into both featured and grid card layouts.
+- **Navbar** — added `IntersectionObserver`-driven `activeSection` state; active link receives `borderBottom: 1px solid var(--color-accent)` indicator.
+- **ContactSection** — engagement cards upgraded with `glass-bg` + `backdropFilter` + `borderLeft: 3px solid var(--color-accent)` + `onMouseEnter/Leave` hover-lift. Status dot uses `.dot-live` class consistent with rest of codebase.
+- **Liveactivitybar** — commit message `maxWidth` changed from `22ch` to `min(28ch, 45vw)` (28ch on desktop, ~16ch on small mobile) to stop technical commit summaries being truncated mid-word.
+- **WritingSection** — props typed as `Readonly<{ articles: WritingArticle[] }>`.
+- **app/providers.tsx** — fixed `export { useTheme }` re-export syntax.
+- **app/error.tsx** — renamed function `Error` → `ErrorPage` (avoids global `Error` shadowing lint rule); props typed as `Readonly<{…}>`.
+- **scripts/create-blog-post.js** — `require('fs'/'path'/'readline')` → `require('node:fs'/'node:path'/'node:readline')`; `.replace()` → `.replaceAll()`.
+- **data/projects.ts** — SabiScore `tagline` and `description` aligned to the live system (sports intelligence, not fintech credit-scoring); architecture-decision fields added to Hashablanca and ML Consulting entries.
+- **e2e/smoke.spec.ts** — added `ArchDecision panel visible without interaction` and `Conviction pillars have data-pillar attribute` assertions; updated CTA test to target `a[data-cta="primary"]`.

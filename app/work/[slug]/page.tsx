@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ArchDecision } from '@/components/ArchDecision';
 import { Footer } from '@/components/Footer';
 import { NavBar } from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { projects, type Project, type ProjectStatus } from '@/data/projects';
 import { getWorkCase, getWorkCases } from '@/lib/content';
+import { getProject } from '@/lib/projects';
 
 type WorkPageProps = Readonly<{
   params: Promise<{
@@ -172,6 +174,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
 
   const projectMeta = projects.find((entry) => entry.id === slug);
   const relatedProjects = projects.filter((entry) => entry.id !== slug).slice(0, 2);
+  const decisionMeta = getProject(slug);
   const title = projectMeta?.title ?? project.frontmatter.title;
   const description = projectMeta?.tagline ?? project.frontmatter.summary;
   const tags = projectMeta?.tags ?? project.frontmatter.tags ?? [];
@@ -207,6 +210,14 @@ export default async function WorkPage({ params }: WorkPageProps) {
                     </div>
                   ) : null}
                 </header>
+
+                {decisionMeta ? (
+                  <ArchDecision
+                    chosen={decisionMeta.chosen}
+                    over={decisionMeta.over}
+                    because={decisionMeta.because}
+                  />
+                ) : null}
 
                 <article className="prose max-w-none pb-[var(--space-20)]">
                   {project.content}

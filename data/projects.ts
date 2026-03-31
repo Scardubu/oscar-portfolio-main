@@ -25,7 +25,7 @@ export const projects: Project[] = [
   {
     id: 'sabiscore',
     title: 'SabiScore',
-    tagline: 'Production credit-scoring API for emerging market fintech.',
+    tagline: 'Production sports intelligence platform for live decision windows.',
     description:
       'End-to-end ML pipeline processing alternative financial data signals through a trained ' +
       'gradient boosting model, served via FastAPI with real-time monitoring and drift alerts.',
@@ -74,6 +74,14 @@ export const projects: Project[] = [
     context:
       'Data products for teams that need event-stream visibility, repeatable modeling, ' +
       'and business-readable outputs across volatile blockchain data.',
+    decisions: [
+      {
+        chosen: 'Kafka event streaming with dbt transformation layers.',
+        rejected: 'Batch SQL pipelines with scheduled refreshes',
+        reason:
+          'Event-level granularity enables real-time anomaly detection that batch windows miss entirely.',
+      },
+    ],
     status: 'wip',
     featured: false,
     tags: ['TypeScript', 'Kafka', 'dbt', 'React', 'Python', 'Ethereum'],
@@ -89,6 +97,14 @@ export const projects: Project[] = [
     context:
       'Consulting covers ML debugging tooling and LLM integration where technical ' +
       'model behavior must translate into business-readable outcomes.',
+    decisions: [
+      {
+        chosen: 'Structured discovery-first engagement with documented architecture review.',
+        rejected: 'Direct implementation without systematic codebase audit',
+        reason:
+          'System-level diagnosis before code changes prevents rework and de-risks handover to internal teams.',
+      },
+    ],
     status: 'live',
     featured: false,
     tags: ['MLOps', 'Python', 'AWS', 'Terraform', 'FastAPI', 'MLflow'],

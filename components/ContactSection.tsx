@@ -1,23 +1,63 @@
 import Link from 'next/link';
 import { GlassCard } from '@/components/GlassCard';
 
-const engagementModes = [
+type EngagementIcon = 'briefcase' | 'spark' | 'chart';
+
+interface EngagementMode {
+  title: string;
+  description: string;
+  context: string;
+  icon: EngagementIcon;
+}
+
+const engagementModes: EngagementMode[] = [
   {
     title: 'Full-time Staff+',
     description: 'Staff/Principal Full-Stack ML Engineering roles',
     context: 'AI-powered fintech · Platform · Infra teams',
+    icon: 'briefcase',
   },
   {
     title: 'Co-founder',
     description: 'Technical co-founder for AI/fintech ventures',
     context: 'Equity-based · Pre-seed through Series A',
+    icon: 'spark',
   },
   {
     title: 'ML Consulting',
     description: 'Production ML system architecture and delivery',
     context: 'Model deployment · MLOps · Team augmentation',
+    icon: 'chart',
   },
 ];
+
+function EngagementIcon({ icon }: Readonly<{ icon: 'briefcase' | 'spark' | 'chart' }>) {
+  if (icon === 'briefcase') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
+        <path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7" />
+        <path d="M4 9.5h16v8A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-8Z" />
+        <path d="M4 12h16" />
+      </svg>
+    );
+  }
+
+  if (icon === 'spark') {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
+        <path d="m12 3 1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
+      <path d="M5 17.5 10 12l3 3 6-7" />
+      <path d="M19 10V6h-4" />
+      <path d="M4 19h16" />
+    </svg>
+  );
+}
 
 function GitHubIcon() {
   return (
@@ -59,7 +99,7 @@ export function ContactSection() {
           aria-live="polite"
           data-reveal=""
         >
-          <span className="live-dot" aria-hidden="true" />
+          <span className="dot-live" aria-hidden="true" />
           Open — responding within 48hrs
         </div>
 
@@ -82,10 +122,13 @@ export function ContactSection() {
           {engagementModes.map((mode, index) => (
             <GlassCard
               key={mode.title}
-              className="p-6"
+              className="card-depth border-l-[3px] [border-left-color:var(--color-accent)] p-6"
               data-reveal=""
               data-reveal-delay={String(index + 1)}
             >
+              <div className="mb-4 inline-flex rounded-full border border-[color:var(--glass-border)] bg-[color:var(--color-accent-surface)] p-3 text-[color:var(--color-accent)]">
+                <EngagementIcon icon={mode.icon} />
+              </div>
               <h3 className="text-2xl text-white">{mode.title}</h3>
               <p className="mt-3 text-sm leading-7 text-white/75">{mode.description}</p>
               <p className="mt-2 text-sm leading-7 text-white/50">{mode.context}</p>

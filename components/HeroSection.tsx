@@ -15,30 +15,35 @@ import { scaleIn } from '@/lib/motion';
 
 const metrics: Array<{
   label: string;
+  headline: string;
   body: string;
   breath?: boolean;
-  accent?: 'cyan' | 'indigo' | 'success';
+  accent?: 'live' | 'accent' | 'wip';
 }> = [
   {
     label: 'LIVE IN PRODUCTION',
+    headline: 'End-to-end ML systems',
     body: 'Ensemble models + FastAPI inference serving live concurrent sessions via Redis and Postgres.',
-    accent: 'cyan',
+    accent: 'live',
   },
   {
     label: 'DECISIONS DOCUMENTED',
-    body: 'Architecture tradeoffs between retrieval strategies visible in case studies — not just outcomes.',
-    accent: 'indigo',
+    headline: 'Architecture visible',
+    body: 'Every tradeoff is rendered as chosen, over, and because in the case study surface.',
+    accent: 'accent',
   },
   {
     label: 'ZERO-DOWNTIME DESIGN',
-    body: 'Graceful fallback, health checks, and environment-scoped boundaries built in from deployment one.',
-    accent: 'success',
+    headline: 'Graceful by default',
+    body: 'Health checks, fallback states, and environment-scoped limits are built in from deployment one.',
+    accent: 'wip',
   },
   {
     label: 'FULL OWNERSHIP',
+    headline: 'No handoffs',
     body: 'Feature engineering to production inference to the frontend. No handoffs.',
     breath: true,
-    accent: 'indigo',
+    accent: 'accent',
   },
 ];
 
@@ -51,20 +56,12 @@ export function HeroSection() {
       ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative overflow-hidden pt-[calc(var(--nav-height)+var(--space-10))] pb-16 sm:pb-20 lg:min-h-[calc(100svh-var(--nav-height))] lg:pt-[calc(var(--nav-height)+var(--space-16))]"
+      className="relative overflow-hidden pt-[calc(var(--nav-height)+var(--space-10))] pb-16 sm:pb-20 lg:min-h-[calc(92svh-var(--nav-height))] lg:pt-[calc(var(--nav-height)+var(--space-14))]"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(99,102,241,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 80% at 80% 60%, rgba(34,211,238,0.08) 0%, transparent 70%)',
-        }}
-      />
       <CursorGlow containerRef={heroRef} />
       <div className="relative z-10 container">
-        <div role="status" className="pill pill-cyan inline-flex items-center gap-3">
-          <span className="live-dot" aria-hidden="true" />
+        <div aria-label="Availability status" className="badge-live inline-flex items-center gap-3">
+          <span className="dot-live" aria-hidden="true" />
           Available — Staff+ · Co-founder · Consulting
         </div>
 
@@ -83,28 +80,31 @@ export function HeroSection() {
               must hold simultaneously — and the system has to work at 2am during a live match.
             </p>
 
-            <div className="mb-[var(--space-8)] flex flex-wrap gap-[var(--space-4)]">
+            <div className="mb-[var(--space-8)] flex flex-wrap items-center gap-[var(--space-3)]">
               <Link
                 href="#projects"
-                className="rounded-full bg-[var(--color-accent)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-px hover:bg-[var(--color-accent-hover)] hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)]"
+                data-cta="primary"
+                className="rounded-[var(--radius-sm)] border border-[var(--color-accent)] bg-[var(--color-accent)] px-5 py-3 font-mono text-xs font-medium tracking-[0.16em] text-white uppercase transition"
               >
                 View Projects
               </Link>
               <Link
                 href="#contact"
-                className="rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-white/85 transition hover:-translate-y-px hover:border-white/30 hover:text-white"
+                data-cta="secondary"
+                className="rounded-[var(--radius-sm)] border border-[color:var(--color-border)] px-5 py-3 font-mono text-xs font-medium tracking-[0.16em] text-[color:var(--color-text-secondary)] uppercase transition"
               >
                 Get in Touch
               </Link>
               <Link
                 href="/oscar-scardubu-resume.pdf"
-                className="rounded-full px-5 py-3 text-sm font-medium text-white/65 transition hover:-translate-y-px hover:text-white"
+                download
+                className="border-b border-[color:var(--color-border)] px-2 py-3 font-mono text-xs font-medium tracking-[0.16em] text-[color:var(--color-text-muted)] uppercase transition hover:text-[color:var(--color-text-primary)]"
               >
                 Resume ↓
               </Link>
             </div>
 
-            <Suspense fallback={<Skeleton width={280} height={16} />}>
+            <Suspense fallback={<Skeleton width={320} height={16} />}>
               <LiveActivityBar />
             </Suspense>
           </div>
@@ -134,6 +134,7 @@ export function HeroSection() {
             <MetricCard
               key={metric.label}
               label={metric.label}
+              headline={metric.headline}
               body={metric.body}
               breath={metric.breath}
               accent={metric.accent}

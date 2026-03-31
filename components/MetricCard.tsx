@@ -1,15 +1,16 @@
 import type { CSSProperties, ReactNode } from 'react';
 
-type MetricAccent = 'cyan' | 'indigo' | 'success';
+type MetricAccent = 'live' | 'accent' | 'wip';
 
 const accentColorMap: Record<MetricAccent, string> = {
-  cyan: 'var(--color-cyan)',
-  indigo: 'var(--color-accent-hover)',
-  success: 'var(--color-success)',
+  live: 'var(--color-live)',
+  accent: 'var(--color-accent)',
+  wip: 'var(--color-wip)',
 };
 
 interface MetricCardProps {
   label: string;
+  headline?: string;
   body: string;
   icon?: ReactNode;
   breath?: boolean;
@@ -18,6 +19,7 @@ interface MetricCardProps {
 
 export function MetricCard({
   label,
+  headline,
   body,
   icon,
   breath = false,
@@ -29,13 +31,16 @@ export function MetricCard({
 
   return (
     <article
-      className={`metric-card h-full p-6 ${breath ? 'metric-breath' : ''}`}
+      className={`glass glass-medium metric-card card-lift h-full border-t-2 p-6 ${breath ? 'metric-breath' : ''}`}
       aria-label={label}
+      data-pillar="true"
+      style={accent ? { borderTopColor: accentColorMap[accent] } : undefined}
     >
       {icon ? <div className="mb-[var(--space-4)] text-[var(--color-accent)]">{icon}</div> : null}
       <p className="label mb-[var(--space-2)]" style={labelStyle}>
         {label}
       </p>
+      {headline ? <p className="mb-2 text-base font-semibold text-white">{headline}</p> : null}
       <p className="text-sm leading-7 text-white/65">{body}</p>
     </article>
   );

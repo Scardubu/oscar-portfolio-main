@@ -3,6 +3,8 @@ import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
+import { GradientMesh } from '@/components/GradientMesh';
+import { GrainOverlay } from '@/components/GrainOverlay';
 import { Providers } from '@/app/providers';
 
 import './globals.css';
@@ -90,7 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body>
+      <body className="relative isolate">
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
@@ -114,7 +116,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </filter>
           </defs>
         </svg>
-        <Providers>{children}</Providers>
+        <Providers>
+          <GradientMesh />
+          <GrainOverlay />
+          <div className="relative z-[2]">{children}</div>
+        </Providers>
         <Analytics />
         <SpeedInsights />
       </body>
