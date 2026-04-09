@@ -33,6 +33,14 @@ interface ProjectCardProps {
   revealDelay?: string;
 }
 
+function getProjectTypeLabel(project: Project) {
+  if (project.featured) {
+    return 'FEATURED SYSTEM';
+  }
+
+  return project.status === 'live' ? 'PRODUCTION SYSTEM' : 'ACTIVE BUILD';
+}
+
 function ProjectStatusBadge({ status }: Readonly<{ status: ProjectStatus }>) {
   const badge = statusStyles[status];
 
@@ -99,7 +107,7 @@ function getCardLevel(project: Project) {
 export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCardProps>) {
   const level = getCardLevel(project);
   const primaryDecision = project.decisions?.[0];
-  const featuredLabel = project.featured ? 'Featured system' : 'Production track';
+  const typeLabel = getProjectTypeLabel(project);
 
   return (
     <div className="h-full">
@@ -114,8 +122,8 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium tracking-[0.24em] text-white/50 uppercase">
-              {featuredLabel}
+            <p className="label text-white/45">
+              {typeLabel}
             </p>
             <h3 className="mt-3 text-2xl text-white">{project.title}</h3>
           </div>
@@ -125,8 +133,8 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         <p className="text-base text-white/80">{project.tagline}</p>
         <p className="flex-1 text-sm leading-7 text-white/65">{project.description}</p>
         {project.context ? (
-          <p className="rounded-2xl border border-white/10 bg-black/10 px-4 py-3 text-sm leading-7 text-white/60">
-            {project.context}
+          <p className="text-sm leading-7 text-white/55 italic">
+            <span className="text-white/40">Constraint:</span> {project.context}
           </p>
         ) : null}
 
@@ -147,7 +155,9 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
           ))}
         </ul>
 
-        <ProjectLinks demoUrl={project.demoUrl} repoUrl={project.repoUrl} projectId={project.id} />
+        <div className="mt-auto border-t border-white/10 pt-5">
+          <ProjectLinks demoUrl={project.demoUrl} repoUrl={project.repoUrl} projectId={project.id} />
+        </div>
       </GlassCard>
     </div>
   );

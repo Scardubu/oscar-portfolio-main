@@ -43,7 +43,7 @@ function inferPipeline(project: SourceProject): readonly string[] {
   const pipelineMap: Record<string, readonly string[]> = {
     sabiscore: ['Feature Engineering', 'Ensemble Scoring', 'FastAPI', 'Redis Cache', 'Next.js UI'],
     hashablanca: ['On-chain Events', 'Kafka Stream', 'dbt Models', 'Analytics API', 'React UI'],
-    'ml-consulting': ['Discovery', 'Architecture Review', 'Delivery Plan', 'Implementation', 'Handover'],
+    taxbridge: ['OCR Intake', 'Rule Computation', 'Audit Events', 'Tenant Isolation', 'Spring Boot API'],
   };
 
   return pipelineMap[project.id] ?? project.tags;

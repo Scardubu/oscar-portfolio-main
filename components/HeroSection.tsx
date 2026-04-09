@@ -41,7 +41,7 @@ const metrics: Array<{
   {
     label: 'FULL OWNERSHIP',
     headline: 'No handoffs',
-    body: 'Feature engineering to production inference to the frontend. No handoffs.',
+    body: 'Feature engineering to production inference to the frontend. One engineer. Full stack.',
     breath: true,
     accent: 'accent',
   },
@@ -98,6 +98,7 @@ export function HeroSection() {
               <Link
                 href="/oscar-scardubu-resume.pdf"
                 download
+                data-cta="ghost"
                 className="border-b border-[color:var(--color-border)] px-2 py-3 font-mono text-xs font-medium tracking-[0.16em] text-[color:var(--color-text-muted)] uppercase transition hover:text-[color:var(--color-text-primary)]"
               >
                 Resume ↓

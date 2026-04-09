@@ -29,7 +29,7 @@ test('all required project cards render', async ({ page }) => {
 
   await expect(page.locator('[data-project-id="sabiscore"]')).toBeVisible();
   await expect(page.locator('[data-project-id="hashablanca"]')).toBeVisible();
-  await expect(page.locator('[data-project-id="ml-consulting"]')).toBeVisible();
+  await expect(page.locator('[data-project-id="taxbridge"]')).toBeVisible();
 });
 
 test('nav links scroll to matching sections', async ({ page }) => {

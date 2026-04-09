@@ -1,0 +1,23 @@
+---
+title: 'TaxBridge'
+summary: 'Offline-first tax operations architecture for OCR intake, jurisdiction-safe computation, and immutable audit history.'
+tags:
+  - 'Java 17'
+  - 'Spring Boot 3'
+  - 'PostgreSQL'
+  - 'FastAPI'
+  - 'Redis'
+  - 'Tesseract OCR'
+---
+
+## Problem shape
+
+Tax workflows fail when operational reality is treated as an edge case. Documents arrive incomplete, connectivity drops, and audit history still has to survive every correction, retry, and handoff.
+
+## Approach
+
+TaxBridge separates OCR intake from the computation engine so the document pipeline can degrade gracefully without weakening rule enforcement. The compute layer uses Java 17 and Spring Boot 3 because jurisdiction logic benefits from compile-time validation, while Postgres Row-Level Security and append-only audit events keep tenant boundaries and regulator-facing traceability anchored at the database layer.
+
+## Delivery signal
+
+The system demonstrates offline-first thinking, compliance-aware backend design, and architecture choices shaped by reliability and auditability rather than by framework convenience.

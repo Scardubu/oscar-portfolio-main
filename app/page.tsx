@@ -11,7 +11,7 @@ import { WritingSection } from '@/components/WritingSection';
 import { getWritingPosts } from '@/lib/content';
 
 export default async function Home() {
-  const posts = (await getWritingPosts()).filter((post) => post.featured).slice(0, 3);
+  const posts = (await getWritingPosts()).slice(0, 6);
 
   return (
     <>

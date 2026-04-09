@@ -26,7 +26,7 @@ function openCommandPalette() {
 
 const NAV_LINKS = [
   { label: 'Projects', href: 'projects' },
-  { label: 'Writing', href: '/writing' },
+  { label: 'Writing', href: 'writing' },
   { label: 'About', href: 'about' },
   { label: 'Contact', href: 'contact' },
 ] as const;
@@ -278,13 +278,13 @@ export function NavBar() {
 
   const isActive = useCallback(
     (href: string) => {
-      if (href === '/writing') {
-        return pathname.startsWith('/writing');
-      }
-
       const sectionId = href.split('#')[1];
 
-      if (pathname !== '/' || !sectionId) {
+      if (!sectionId) {
+        return false;
+      }
+
+      if (pathname !== '/') {
         return false;
       }
 

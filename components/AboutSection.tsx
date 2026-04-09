@@ -47,7 +47,7 @@ export function AboutSection() {
 
         <div data-reveal="" data-reveal-delay="2">
           <span className="label">Core stack</span>
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          <div className="mt-6 grid grid-cols-2 gap-4">
             {stackGroups.map((group) => (
               <div key={group.label} className="glass-no-hover rounded-[var(--radius-lg)] p-5">
                 <p className="label">{group.label}</p>

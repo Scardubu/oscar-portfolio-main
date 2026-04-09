@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: '%s · Oscar Scardubu',
   },
   description:
-    'Production AI/fintech systems — credit scoring, blockchain analytics, ML consulting. ' +
+    'Production AI/fintech systems — credit scoring, blockchain analytics, tax automation. ' +
     'Open to Staff+ roles, co-founder partnerships, and high-trust consulting engagements.',
   metadataBase: new URL('https://www.scardubu.dev'),
   openGraph: {
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Scardubu',
     title: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
-    description: 'Production AI/fintech engineer. SabiScore · Hashablanca · ML Consulting.',
+    description: 'Production AI/fintech engineer. SabiScore · Hashablanca · TaxBridge.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Scardubu portfolio' }],
   },
   twitter: {
@@ -62,7 +62,7 @@ const personJsonLd = {
   name: 'Oscar Scardubu',
   url: 'https://www.scardubu.dev',
   jobTitle: 'Staff Full-Stack ML Engineer',
-  description: 'Production AI/fintech systems engineer. SabiScore, Hashablanca, ML consulting.',
+  description: 'Production AI/fintech systems engineer. SabiScore, Hashablanca, TaxBridge.',
   sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscarscardubuu'],
 };
 

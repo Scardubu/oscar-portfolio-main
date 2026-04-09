@@ -13,7 +13,9 @@
     "test": "pnpm build && playwright test",
     "test:e2e": "pnpm build && playwright test --project=chromium",
     "test:mobile": "pnpm build && playwright test --project=mobile-chrome --project=mobile-safari",
-    "test:all": "pnpm build && playwright test"
+    "test:all": "pnpm build && playwright test",
+    "audit:copy": "node -e \"const fs=require('fs');const files=['components/HeroSection.tsx','components/ProjectsSection.tsx','components/AboutSection.tsx','components/ContactSection.tsx','data/projects.ts'];const forbidden=[/\\bI (built|created|designed|developed|made|wrote)\\b/i,/\\b(\\d+)%\\s+(accuracy|improvement|uplift|increase|reduction)\\b/i,/\\bActive users\\b/i];let ok=true;for(const f of files){const src=fs.readFileSync(f,'utf8');for(const rx of forbidden){if(rx.test(src)){console.error('AUDIT FAIL:',f,'matches',rx.toString());ok=false;}}}if(ok)console.log('audit:copy — clean');else process.exit(1);\"",
+    "lhci": "lhci autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

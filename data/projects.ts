@@ -27,8 +27,8 @@ export const projects: Project[] = [
     title: 'SabiScore',
     tagline: 'Production sports intelligence platform for live decision windows.',
     description:
-      'End-to-end ML pipeline processing alternative financial data signals through a trained ' +
-      'gradient boosting model, served via FastAPI with real-time monitoring and drift alerts.',
+      'End-to-end sports intelligence pipeline processing match, form, and market signals through ' +
+      'an ensemble scoring stack, served via FastAPI with real-time monitoring and drift alerts.',
     context:
       'Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa while ' +
       'serving a global audience through high-traffic concurrent events.',
@@ -88,27 +88,33 @@ export const projects: Project[] = [
     image: '/projects/hashablanca.webp',
   },
   {
-    id: 'ml-consulting',
-    title: 'ML Systems Consulting',
-    tagline: 'Production ML architecture and delivery for fintech clients.',
+    id: 'taxbridge',
+    title: 'TaxBridge',
+    tagline: 'Offline-first tax operations platform for OCR intake, rule-safe computation, and immutable audit trails.',
     description:
-      'Technical consulting spanning model productionization, MLOps pipeline design, and team ' +
-      'enablement across payments, lending, and fraud detection.',
+      'Multi-tenant tax workflow handling OCR extraction, jurisdiction-specific computation, and ' +
+      'append-only audit events with database-enforced tenant isolation.',
     context:
-      'Consulting covers ML debugging tooling and LLM integration where technical ' +
-      'model behavior must translate into business-readable outcomes.',
+      'Needed offline-first intake, regulator-readable traceability, and strict tenant isolation without ' +
+      'turning every request into a fragile cross-service orchestration problem.',
     decisions: [
       {
-        chosen: 'Structured discovery-first engagement with documented architecture review.',
-        rejected: 'Direct implementation without systematic codebase audit',
+        chosen: 'Java 17 and Spring Boot 3 for the tax computation engine.',
+        rejected: 'Python for the full OCR and rule-compute stack',
         reason:
-          'System-level diagnosis before code changes prevents rework and de-risks handover to internal teams.',
+          'Jurisdiction rules needed compile-time guarantees so invalid deduction states fail before deployment instead of surfacing as runtime computation defects.',
+      },
+      {
+        chosen: 'Append-only audit events enforced at the database layer.',
+        rejected: 'Application-level structured logs only',
+        reason:
+          'An immutable audit surface keeps regulator-facing history intact even when app logs rotate, fail, or are queried out of context.',
       },
     ],
-    status: 'live',
+    status: 'wip',
     featured: false,
-    tags: ['MLOps', 'Python', 'AWS', 'Terraform', 'FastAPI', 'MLflow'],
-    image: '/projects/consulting.webp',
+    tags: ['Java 17', 'Spring Boot 3', 'PostgreSQL', 'FastAPI', 'Redis', 'Tesseract OCR'],
+    image: '/projects/taxbridge.webp',
   },
 ];
 

@@ -4,7 +4,8 @@ import type { WritingPost } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
 export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
-  const [featuredPost, ...otherPosts] = posts;
+  const featuredPost = posts.find((p) => p.featured) ?? posts[0];
+  const otherPosts = posts.filter((p) => p !== featuredPost);
 
   return (
     <section id="writing" aria-labelledby="writing-heading" className="py-20 sm:py-24">

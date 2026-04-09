@@ -141,12 +141,18 @@ test.describe('Portfolio smoke tests', () => {
 
     await expect(page.locator('a[data-cta="primary"]')).toBeVisible();
     await expect(page.locator('a[data-cta="secondary"]')).toBeVisible();
-    await expect(page.getByRole('link', { name: /resume/i })).toBeVisible();
+    await expect(page.locator('a[data-cta="ghost"]')).toBeVisible();
   });
 
   test('writing page renders article list', async ({ page }) => {
     await page.goto('/writing');
-    await expect(page.locator('h1')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { level: 1, name: 'Notes on building' })).toBeVisible();
+    await expect(
+      page.getByRole('link', {
+        name: /Featured article: Building SabiScore: Architecture Decisions in a Resource-Constrained Production System/i,
+      })
+    ).toBeVisible();
   });
 
   test('sitemap returns 200', async ({ page }) => {
