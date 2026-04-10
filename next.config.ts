@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/cv/oscar-ndugbu-cv.pdf',
+        destination: '/cv/oscar-ndugbu-cv.docx',
+        permanent: true,
+      },
+      {
         source: '/blog/:path*',
         destination: '/writing',
         permanent: true,

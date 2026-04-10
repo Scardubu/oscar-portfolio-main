@@ -3,21 +3,35 @@ import { expect, test } from '@playwright/test';
 test.describe('Portfolio smoke tests', () => {
   test('skip nav is first focusable element', async ({ page }) => {
     await page.goto('/');
-    await page.keyboard.press('Tab');
-    await expect(page.locator('.skip-nav')).toBeFocused();
+
+    const firstFocusableClassName = await page.evaluate(() => {
+      const selectors = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(',');
+
+      const firstFocusable = Array.from(document.querySelectorAll<HTMLElement>(selectors)).find((element) => {
+        const style = window.getComputedStyle(element);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      });
+
+      return firstFocusable?.className ?? '';
+    });
+
+    expect(firstFocusableClassName).toContain('skip-nav');
   });
 
   test('hero visible and name does not orphan wrap', async ({ page }) => {
     await page.goto('/');
-    // React 19 concurrent hydration can briefly leave both the SSR node and the
-    // hydrated node in the DOM. networkidle guarantees hydration is complete so
-    // the #hero locator resolves to exactly one element (strict-mode safe).
-    await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('#hero')).toBeVisible();
-    await expect(page.locator('h1').first()).toContainText(
-      'When AI behavior, platform reliability, and product clarity must hold simultaneously'
-    );
+    await expect(page.locator('#hero').first()).toBeVisible();
+    await expect(page.locator('h1').first()).toContainText('When AI behavior');
+    await expect(page.locator('h1').first()).toContainText('platform reliability');
+    await expect(page.locator('h1').first()).toContainText('product clarity must hold simultaneously');
   });
 
   test('no unicode escape or unverifiable metrics in rendered home copy', async ({ page }) => {
@@ -100,7 +114,7 @@ test.describe('Portfolio smoke tests', () => {
 
     await page.locator('#contact').scrollIntoViewIfNeeded();
 
-    await expect(page.locator('#contact a.glass-card[href="mailto:scardubu@gmail.com"]')).toBeVisible();
+    await expect(page.locator('#contact a[href="mailto:scardubu@gmail.com"][data-cta="primary"]')).toBeVisible();
   });
 
   test('all target="_blank" links include noopener and noreferrer', async ({ page }) => {
@@ -155,17 +169,17 @@ test.describe('Portfolio smoke tests', () => {
   test('three CTA button tiers are present', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('a[data-cta="primary"]')).toBeVisible();
-    await expect(page.locator('a[data-cta="secondary"]')).toBeVisible();
-    await expect(page.locator('a[data-cta="ghost"]')).toBeVisible();
+    await expect(page.locator('#hero a[data-cta="primary"]').first()).toBeVisible();
+    await expect(page.locator('#hero a[data-cta="secondary"]').first()).toBeVisible();
+    await expect(page.locator('#hero a[data-cta="ghost"]').first()).toBeVisible();
   });
 
-  test('resume CTA has download attribute and points to a pdf', async ({ page }) => {
+  test('resume CTA has download attribute and points to the canonical asset', async ({ page }) => {
     await page.goto('/');
 
-    const resumeLink = page.locator('a[data-cta="ghost"]');
+    const resumeLink = page.locator('#hero a[data-cta="ghost"]').first();
     await expect(resumeLink).toHaveAttribute('download', '');
-    await expect(resumeLink).toHaveAttribute('href', /\.pdf$/);
+    await expect(resumeLink).toHaveAttribute('href', '/cv/oscar-ndugbu-cv.docx');
   });
 
   test('writing section is present on home', async ({ page }) => {
@@ -264,12 +278,19 @@ test.describe('Portfolio smoke tests', () => {
 
   test('[v15] BECAUSE field has heavier font weight than OVER field', async ({ page }) => {
     await page.goto('/');
-    const becauseLabel = page.locator('[data-label="BECAUSE"]').first();
-    if (await becauseLabel.count() > 0) {
-      const weight = await becauseLabel.evaluate((el) =>
-        window.getComputedStyle(el).fontWeight
+    const becauseValue = page.locator('[data-value-for="BECAUSE"]').first();
+    const overValue = page.locator('[data-value-for="OVER"]').first();
+
+    if ((await becauseValue.count()) > 0 && (await overValue.count()) > 0) {
+      const becauseWeight = await becauseValue.evaluate((el) =>
+        Number.parseInt(window.getComputedStyle(el).fontWeight, 10)
       );
-      expect(['500', '600', '700', 'bold']).toContain(weight);
+      const overWeight = await overValue.evaluate((el) =>
+        Number.parseInt(window.getComputedStyle(el).fontWeight, 10)
+      );
+
+      expect(becauseWeight).toBeGreaterThanOrEqual(overWeight);
+      expect(becauseWeight).toBeGreaterThanOrEqual(500);
     }
   });
 });

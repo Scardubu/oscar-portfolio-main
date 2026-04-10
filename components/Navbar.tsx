@@ -300,7 +300,7 @@ export function NavBar() {
       role="banner"
     >
       <nav
-        className="container grid h-[var(--nav-height)] grid-cols-[auto_1fr_auto] items-center gap-4"
+        className="container grid h-[var(--nav-height)] grid-cols-[auto_1fr_auto] items-center gap-5"
         aria-label="Primary"
       >
         <m.div
@@ -308,14 +308,14 @@ export function NavBar() {
         >
           <Link
             href={resolveSectionHref(pathname, 'hero')}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3.5"
             aria-label="Oscar Ndugbu home"
           >
-            <span className="text-base font-[var(--font-display)] font-bold text-white">
+            <span className="text-[1.05rem] font-[var(--font-display)] font-bold tracking-[-0.03em] text-white">
               Oscar<span className="text-[var(--color-accent)]">.</span>
             </span>
             <span
-              className="hidden text-xs text-[color:var(--color-text-muted)] xl:block"
+              className="hidden text-xs tracking-[0.08em] text-[color:var(--color-text-muted)] xl:block"
               aria-hidden="true"
             >
               Production AI systems · Full-stack execution
@@ -323,13 +323,13 @@ export function NavBar() {
           </Link>
         </m.div>
 
-        <ul className="hidden items-center justify-center gap-1 md:flex">
+        <ul className="hidden items-center justify-center gap-1.5 md:flex">
           {links.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={cn(
-                  'relative block rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150',
+                  'relative block rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-150',
                   getDesktopLinkClass(isActive(link.href))
                 )}
                 aria-current={getAriaCurrent(isActive(link.href))}
@@ -348,14 +348,14 @@ export function NavBar() {
           ))}
         </ul>
 
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-3.5">
           <div className="hidden items-center gap-2 md:flex">
             <ThemeToggle />
             <button
               type="button"
               onClick={openCommandPalette}
               aria-label="Open command palette"
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[color:var(--color-text-muted)] transition hover:text-[color:var(--color-text-primary)]"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-[color:var(--color-text-muted)] transition hover:text-[color:var(--color-text-primary)]"
             >
               {paletteShortcut}
             </button>

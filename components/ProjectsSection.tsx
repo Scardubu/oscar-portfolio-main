@@ -39,13 +39,13 @@ export function ProjectsSection() {
   }
 
   return (
-    <section id="projects" ref={ref} aria-labelledby="projects-heading" className="py-20 sm:py-24">
+    <section id="projects" ref={ref} aria-labelledby="projects-heading" className="py-24 sm:py-28">
       <div className="container">
         <motion.div
           variants={headingContainer}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mb-12 max-w-3xl"
+          className="mb-16 max-w-4xl"
         >
           <motion.span variants={header} className="label">
             Selected Work
@@ -59,7 +59,7 @@ export function ProjectsSection() {
           </motion.h2>
           <motion.p
             variants={header}
-            className="mt-4 text-[length:var(--text-lg)] text-white/65"
+            className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-white/65"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             End-to-end AI and fintech systems. Each ships with documented architecture decisions and
@@ -70,7 +70,7 @@ export function ProjectsSection() {
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
         <motion.article
           variants={featuredReveal}
-          className="glass glass-full glass-chromatic card-depth mb-6 overflow-hidden rounded-[var(--radius-xl)] p-8 sm:p-10"
+          className="glass glass-full glass-chromatic card-depth mb-8 overflow-hidden rounded-[var(--radius-xl)] p-8 sm:p-10 lg:p-12"
           data-project-id={featured.slug}
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -78,11 +78,11 @@ export function ProjectsSection() {
             <StatusBadge status={featured.status} />
           </div>
 
-          <h3 className="mt-5 text-[length:var(--text-3xl)] text-white">{featured.title}</h3>
-          <p className="mt-3 max-w-[64ch] text-[length:var(--text-lg)] text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
+          <h3 className="mt-6 text-[clamp(2rem,2vw+1rem,2.8rem)] text-white">{featured.title}</h3>
+          <p className="mt-4 max-w-[58ch] text-[length:var(--text-xl)] leading-[1.7] text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
             {featured.tagline}
           </p>
-          <p className="mt-5 max-w-[72ch] text-sm leading-7 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+          <p className="mt-6 max-w-[72ch] text-base leading-8 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
             {featured.description}
           </p>
 
@@ -93,11 +93,11 @@ export function ProjectsSection() {
             compact={false}
           />
 
-          <p className="mt-5 max-w-[72ch] text-xs italic text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
+          <p className="mt-6 max-w-[72ch] text-sm italic text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
             Constraint: {featured.constraint}
           </p>
 
-          <ul className="mt-5 flex flex-wrap gap-2" aria-label={`${featured.title} technology stack`}>
+          <ul className="mt-6 flex flex-wrap gap-2.5" aria-label={`${featured.title} technology stack`}>
             {featured.stack.map((tag) => (
               <li key={`${featured.slug}-${tag}`} className="tag">
                 {tag}
@@ -105,7 +105,7 @@ export function ProjectsSection() {
             ))}
           </ul>
 
-          <div className="mt-6 flex flex-wrap gap-6 border-t border-[color:var(--color-border)] pt-6 text-xs uppercase tracking-[0.16em]">
+          <div className="mt-8 flex flex-wrap gap-6 border-t border-[color:var(--color-border)] pt-7 text-xs uppercase tracking-[0.16em]">
             {featured.demoUrl ? (
               <a
                 href={featured.demoUrl}
@@ -140,12 +140,12 @@ export function ProjectsSection() {
           </div>
         </motion.article>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {grid.map((project, index) => (
             <motion.article
               key={project.slug}
               variants={reducedMotion ? noMotion : cardReveal(index % 2 === 0 ? 24 : -24)}
-              className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] p-8"
+              className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] p-8 sm:p-9"
               data-project-id={project.slug}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -153,9 +153,9 @@ export function ProjectsSection() {
                 <StatusBadge status={project.status} />
               </div>
 
-              <h3 className="mt-5 text-white">{project.title}</h3>
-              <p className="mt-2 flex-1 text-sm leading-7 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>{project.tagline}</p>
-              <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
+              <h3 className="mt-6 text-white">{project.title}</h3>
+              <p className="mt-3 flex-1 text-base leading-8 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>{project.tagline}</p>
+              <p className="mt-4 text-base leading-8 text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
                 {project.description}
               </p>
 
@@ -166,7 +166,7 @@ export function ProjectsSection() {
                 compact={true}
               />
 
-              <ul className="mt-5 flex flex-wrap gap-2" aria-label={`${project.title} technology stack`}>
+              <ul className="mt-6 flex flex-wrap gap-2.5" aria-label={`${project.title} technology stack`}>
                 {project.stack.map((tag) => (
                   <li key={`${project.slug}-${tag}`} className="tag">
                     {tag}
@@ -174,7 +174,7 @@ export function ProjectsSection() {
                 ))}
               </ul>
 
-              <div className="mt-6 flex flex-wrap gap-4 border-t border-[color:var(--color-border)] pt-6 text-xs uppercase tracking-[0.16em]">
+              <div className="mt-7 flex flex-wrap gap-4 border-t border-[color:var(--color-border)] pt-6 text-xs uppercase tracking-[0.16em]">
                 {project.demoUrl ? (
                   <a
                     href={project.demoUrl}

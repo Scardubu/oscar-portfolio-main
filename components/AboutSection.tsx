@@ -57,7 +57,7 @@ export function AboutSection() {
   const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
-    <section id="about" ref={ref} aria-labelledby="about-heading" className="border-t border-[color:var(--color-border)] py-20 sm:py-24">
+    <section id="about" ref={ref} aria-labelledby="about-heading" className="border-t border-[color:var(--color-border)] py-24 sm:py-28">
       <div className="container">
         <motion.div
           variants={container}
@@ -69,22 +69,22 @@ export function AboutSection() {
             <motion.span variants={child} className="label">
               Background
             </motion.span>
-            <motion.h2 variants={child} id="about-heading" className="mt-3 text-white">
+            <motion.h2 variants={child} id="about-heading" className="mt-4 text-white">
               Engineer. Architect.
             </motion.h2>
 
-            <div className="mt-6 space-y-5">
+            <div className="mt-8 space-y-6">
               {[ABOUT.opening, ABOUT.philosophy, ABOUT.ubec, ABOUT.current].map((paragraph) => (
                 <motion.p
                   key={paragraph}
                   variants={child}
-                  className="text-[length:var(--text-lg)] leading-8 text-[color:var(--color-text-secondary)]"
+                  className="max-w-[66ch] text-[length:var(--text-xl)] leading-[1.85] text-[color:var(--color-text-secondary)]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {paragraph}
                 </motion.p>
               ))}
-              <motion.p variants={child} className="label pt-2 text-[color:var(--color-live)]">
+              <motion.p variants={child} className="label pt-3 text-[color:var(--color-live)]">
                 {ABOUT.location}
               </motion.p>
             </div>
@@ -94,14 +94,14 @@ export function AboutSection() {
             <motion.span variants={child} className="label">
               Certifications
             </motion.span>
-            <div className="mt-6 space-y-1">
+            <div className="mt-8 space-y-2">
               {CERTS.map((cert) => (
                 <motion.div
                   key={cert.name}
                   variants={child}
-                  className="flex items-center justify-between gap-4 border-b border-[color:var(--color-border)] py-4"
+                  className="flex items-center justify-between gap-4 border-b border-[color:var(--color-border)] py-5"
                 >
-                  <p className="text-sm text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                  <p className="text-base text-white" style={{ fontFamily: 'var(--font-display)' }}>
                     {cert.name}
                   </p>
                   <p className="font-mono text-xs text-[color:var(--color-text-muted)]">{cert.date}</p>
@@ -115,12 +115,12 @@ export function AboutSection() {
           variants={container}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mt-16"
+          className="mt-20"
         >
           <motion.span variants={child} className="label">
             Open source
           </motion.span>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {OPEN_SOURCE.map((item) => (
               <motion.a
                 key={item.name}
@@ -136,11 +136,11 @@ export function AboutSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className="glass glass-medium block rounded-[var(--radius-lg)] p-5"
+                className="glass glass-medium block rounded-[var(--radius-lg)] p-6 sm:p-7"
               >
                 <p className="label">{item.stack}</p>
-                <h3 className="mt-3 text-white">{item.name}</h3>
-                <p className="mt-3 text-sm leading-7 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+                <h3 className="mt-4 text-white">{item.name}</h3>
+                <p className="mt-4 text-base leading-8 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
                   {item.desc}
                 </p>
               </motion.a>

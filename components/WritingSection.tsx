@@ -34,21 +34,21 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       id="writing"
       ref={ref}
       aria-labelledby="writing-heading"
-      className="border-t border-[color:var(--color-border)] py-20 sm:py-24"
+      className="border-t border-[color:var(--color-border)] py-24 sm:py-28"
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <motion.div variants={child} className="mb-[var(--space-10)]">
+          <motion.div variants={child} className="mb-12 max-w-4xl">
             <motion.span variants={child} className="label">
               THE CUT
             </motion.span>
             <motion.h2 variants={child} id="writing-heading" className="mt-[var(--space-2)] text-white">
               Thoughts on engineering, teams, and the brutal honesty of production.
             </motion.h2>
-            <motion.p variants={child} className="mt-[var(--space-4)] text-[length:var(--text-lg)]">
+            <motion.p variants={child} className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8]">
               Long-form breakdowns of shipping decisions, platform constraints, and what actually holds under load.
             </motion.p>
-            <motion.div variants={child} className="mt-4 flex flex-wrap gap-2">
+            <motion.div variants={child} className="mt-6 flex flex-wrap gap-2.5">
               <button
                 onClick={() => setActiveFilter('ALL')}
                 className={`tag${activeFilter === 'ALL' ? ' tag--active' : ''}`}
@@ -71,14 +71,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
           {featuredPost ? (
             <div className="grid gap-6">
-              <motion.article variants={card} className="glass glass-full glass-chromatic rounded-[var(--radius-xl)] p-6 sm:p-8">
+              <motion.article variants={card} className="glass glass-full glass-chromatic rounded-[var(--radius-xl)] p-7 sm:p-9 lg:p-10">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="pill pill-cyan">Featured</span>
                   <span className="badge-muted">{posts.length} published</span>
                 </div>
-                <h3 className="mt-5 max-w-[24ch] text-white">{featuredPost.title}</h3>
-                <p className="mt-4 max-w-[72ch] text-base leading-7 text-white/65">{featuredPost.summary}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-white/55">
+                <h3 className="mt-6 max-w-[20ch] text-white">{featuredPost.title}</h3>
+                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-white/65">{featuredPost.summary}</p>
+                <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-white/55">
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
                   </time>
@@ -92,7 +92,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </div>
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-8 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200 transition hover:border-cyan-300/50 hover:text-white"
+                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-cyan-400/30 px-5 py-2.5 text-sm text-cyan-200 transition hover:border-cyan-300/50 hover:text-white"
                 >
                   <span>Read article</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -100,7 +100,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               </motion.article>
 
               {otherPosts.length ? (
-                <motion.div variants={container} className="grid gap-2">
+                <motion.div variants={container} className="grid gap-3">
                   <AnimatePresence mode="popLayout">
                     {otherPosts.map((post) => (
                       <motion.div

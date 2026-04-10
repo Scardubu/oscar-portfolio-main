@@ -25,6 +25,7 @@ export const SITE_URL: string =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://scardubu.dev'
 
 export const BLOG_BASE: string = `${SITE_URL}/blog`
+export const CV_ASSET_PATH = '/cv/oscar-ndugbu-cv.docx'
 
 // ─── Blog URLs ────────────────────────────────────────────────────────────────
 

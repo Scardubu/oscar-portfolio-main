@@ -66,7 +66,7 @@ export function ContactSection() {
       id="contact"
       ref={ref}
       aria-labelledby="contact-heading"
-      className="border-t border-[color:var(--color-border)] py-20 sm:py-24"
+      className="border-t border-[color:var(--color-border)] py-24 sm:py-28"
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
@@ -75,17 +75,17 @@ export function ContactSection() {
             Open — responding within 48hrs
           </motion.div>
 
-          <div className="mt-6 max-w-2xl">
+          <div className="mt-8 max-w-3xl">
             <motion.h2 variants={child} id="contact-heading" className="gradient-text text-4xl sm:text-5xl">
               Open to the right fit.
             </motion.h2>
-            <motion.p variants={child} className="mt-4 text-lg text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+            <motion.p variants={child} className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
               Available for Staff+ roles, technical co-founding, and scoped ML consulting where
               reliability is a requirement rather than a nice-to-have.
             </motion.p>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
             {engagementModes.map((mode) => (
               <motion.div
                 key={mode.type}
@@ -100,7 +100,7 @@ export function ContactSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className="rounded-[var(--radius-lg)] border border-[var(--glass-border)] p-6"
+                className="rounded-[var(--radius-lg)] border border-[var(--glass-border)] p-6 sm:p-7"
                 style={{
                   background: 'var(--glass-bg)',
                   backdropFilter: 'blur(var(--glass-blur))',
@@ -112,10 +112,10 @@ export function ContactSection() {
                 <p className="label" style={{ color: mode.accent }}>
                   {mode.type}
                 </p>
-                <h3 className="mt-4 text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                <h3 className="mt-5 text-white" style={{ fontFamily: 'var(--font-display)' }}>
                   {mode.headline}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
+                <p className="mt-4 text-base leading-8 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
                   {mode.detail}
                 </p>
               </motion.div>
@@ -124,14 +124,14 @@ export function ContactSection() {
 
           <motion.div
             variants={child}
-            className="mt-10 flex flex-wrap items-center gap-4 border-t border-[color:var(--color-border)] pt-8"
+            className="mt-12 flex flex-wrap items-center gap-3 sm:gap-4 border-t border-[color:var(--color-border)] pt-8"
           >
             <a
               href="mailto:scardubu@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
               data-cta="primary"
-              className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-3 font-mono text-xs font-medium uppercase text-white"
+              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] bg-[var(--color-accent)] px-5 py-3.5 font-mono text-xs font-medium uppercase text-white"
             >
               scardubu@gmail.com
             </a>
@@ -142,7 +142,7 @@ export function ContactSection() {
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on LinkedIn"
               data-cta="secondary"
-              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] px-5 py-3 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
+              className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
             >
               <LinkedInIcon />
               LinkedIn
@@ -153,14 +153,14 @@ export function ContactSection() {
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on GitHub"
               data-cta="secondary"
-              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] px-5 py-3 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
+              className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
             >
               <GitHubIcon />
               GitHub
             </Link>
             <a
               href="tel:+2348033885065"
-              className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)]"
+              className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] sm:ml-1"
             >
               +234 803 388 5065
             </a>

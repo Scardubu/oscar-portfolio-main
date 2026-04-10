@@ -117,7 +117,7 @@ export const HERO_ROLE_TAGS = [
 export const HERO_CTA_PRIMARY = { label: "Let's Talk", href: "#contact" };
 export const HERO_CTA_SECONDARY = {
   label: "Download CV",
-  href: "/cv/oscar-ndugbu-cv.pdf",
+  href: "/cv/oscar-ndugbu-cv.docx",
 };
 export const HERO_CTA_TERTIARY = { label: "View Work", href: "#projects" };
 
@@ -792,5 +792,5 @@ export const PERSONAL = {
   availabilityLabel: "Open to Senior ML / Backend Roles & Consulting",
   responseTime: "Typically responds within 24 hours",
   quote: "Ship it, then iterate.",
-  cvUrl: "/cv/oscar-ndugbu-cv.pdf",
+  cvUrl: "/cv/oscar-ndugbu-cv.docx",
 };

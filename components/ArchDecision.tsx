@@ -6,9 +6,9 @@ interface ArchDecisionProps {
 }
 
 const ITEMS = [
-  { key: 'chosen', label: 'CHOSEN', color: 'var(--color-live)' },
-  { key: 'over', label: 'OVER', color: 'var(--color-text-muted)' },
-  { key: 'because', label: 'BECAUSE', color: 'var(--color-accent)' },
+  { key: 'chosen', label: 'CHOSEN', color: 'var(--color-live)', labelClassName: '', labelStyle: undefined, valueStyle: undefined },
+  { key: 'over', label: 'OVER', color: 'var(--color-text-muted)', labelClassName: '', labelStyle: undefined, valueStyle: undefined },
+  { key: 'because', label: 'BECAUSE', color: 'var(--color-accent)', labelClassName: 'text-[11px]', labelStyle: { fontWeight: 600 }, valueStyle: { fontWeight: 500 } },
 ] as const;
 
 export function ArchDecision({
@@ -44,17 +44,17 @@ export function ArchDecision({
               className={`px-4 py-3 ${compactDivider ? 'border-b border-[color:var(--color-border-subtle)]' : ''}`}
             >
               <p
-                className="arch-label font-mono text-[10px] tracking-[0.18em] uppercase"
+                className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}
                 data-label={item.label}
                 data-arch-key={item.key}
-                style={{ color: item.color }}
+                style={{ color: item.color, ...item.labelStyle }}
               >
                 {item.label}
               </p>
               <p
                 className={`mt-2 max-w-none text-sm leading-6 ${isBecause ? 'text-[color:var(--color-text-primary)] font-medium' : 'text-[color:var(--color-text-secondary)]'}`}
                 data-value-for={item.label}
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: 'var(--font-display)', ...item.valueStyle }}
               >
                 {value}
               </p>

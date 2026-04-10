@@ -4,6 +4,7 @@ import { AnimatePresence, m } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { CV_ASSET_PATH } from '@/lib/config';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { springConfig } from '@/lib/motion';
 
@@ -71,7 +72,7 @@ export function CommandPalette() {
         label: 'Open resume',
         shortcut: 'R',
         action: () => {
-          window.open('/cv/oscar-ndugbu-cv.pdf', '_blank', 'noopener,noreferrer');
+          window.open(CV_ASSET_PATH, '_blank', 'noopener,noreferrer');
         },
       },
       {
