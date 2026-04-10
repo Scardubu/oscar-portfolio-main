@@ -5,7 +5,7 @@ interface OGImageProps {
 }
 
 export function OGImage({
-  title = 'Oscar Scardubu',
+  title = 'Oscar Ndugbu (Scardubu)',
   subtitle = 'Production AI systems · Full-stack execution',
   caption = 'Shipped work, explicit tradeoffs, and interface quality that reads without explanation.',
 }: Readonly<OGImageProps>) {
@@ -104,7 +104,7 @@ export function OGImage({
         </div>
 
         <div style={{ display: 'flex', gap: 18 }}>
-          {['Work that shipped', 'How I build', "What I've owned"].map((item) => (
+          {['Work that shipped', 'How systems are built', 'Projects owned'].map((item) => (
             <div
               key={item}
               style={{

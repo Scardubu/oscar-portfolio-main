@@ -106,14 +106,14 @@ export async function submitContactForm(
 
     return {
       status:  "success",
-      message: "Message sent! I typically respond within 24 hours.",
+      message: "Message sent! Responses typically sent within 24 hours.",
     };
   } catch (err) {
     console.error("[ContactForm] Submission error:", err);
     return {
       status:  "error",
       message:
-        "Something went wrong. Please email me directly at scardubu@gmail.com",
+        "Something went wrong. Please email directly at scardubu@gmail.com",
     };
   }
 }

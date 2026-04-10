@@ -38,7 +38,7 @@ export async function GET() {
           lineHeight: 1,
           marginBottom: 28,
         }}>
-          Oscar Scardubu
+          Oscar Ndugbu (Scardubu)
         </div>
         <div style={{
           fontSize: 22,

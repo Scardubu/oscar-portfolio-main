@@ -1,63 +1,41 @@
-import Link from 'next/link';
-import { GlassCard } from '@/components/GlassCard';
+'use client';
 
-type EngagementIcon = 'briefcase' | 'spark' | 'chart';
+import Link from 'next/link';
+import { useMemo, useRef } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+
+import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 interface EngagementMode {
-  title: string;
-  description: string;
-  context: string;
-  icon: EngagementIcon;
+  type: string;
+  headline: string;
+  detail: string;
+  accent: string;
 }
 
 const engagementModes: EngagementMode[] = [
   {
-    title: 'Full-time Staff+',
-    description: 'Staff/Principal Full-Stack ML Engineering roles',
-    context: 'AI-powered fintech · Platform · Infra teams',
-    icon: 'briefcase',
+    type: 'Staff+ / Principal',
+    headline: 'Distributed systems · ML platforms · API infrastructure',
+    detail:
+      'Available for Staff+ and Principal Backend roles at AI-native fintech and product companies. Lagos/Remote.',
+    accent: 'var(--color-live)',
   },
   {
-    title: 'Co-founder',
-    description: 'Technical co-founder for AI/fintech ventures',
-    context: 'Equity-based · Pre-seed through Series A',
-    icon: 'spark',
+    type: 'Technical Co-Founder',
+    headline: 'Pre-seed to Series A · Africa/emerging markets',
+    detail:
+      'Four years shipping production platforms from zero. Infrastructure, ML, and compliance stacks.',
+    accent: 'var(--color-accent)',
   },
   {
-    title: 'ML Consulting',
-    description: 'Production ML system architecture and delivery',
-    context: 'Model deployment · MLOps · Team augmentation',
-    icon: 'chart',
+    type: 'ML Consulting',
+    headline: 'Model deployment · Observability · Performance',
+    detail:
+      'Inference serving, monitoring pipelines, and latency reduction. SabiScore approach, your stack.',
+    accent: 'var(--color-wip)',
   },
 ];
-
-function EngagementIcon({ icon }: Readonly<{ icon: 'briefcase' | 'spark' | 'chart' }>) {
-  if (icon === 'briefcase') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
-        <path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7" />
-        <path d="M4 9.5h16v8A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-8Z" />
-        <path d="M4 12h16" />
-      </svg>
-    );
-  }
-
-  if (icon === 'spark') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
-        <path d="m12 3 1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3Z" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
-      <path d="M5 17.5 10 12l3 3 6-7" />
-      <path d="M19 10V6h-4" />
-      <path d="M4 19h16" />
-    </svg>
-  );
-}
 
 function GitHubIcon() {
   return (
@@ -75,111 +53,119 @@ function LinkedInIcon() {
   );
 }
 
-function EmailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-5 w-5 fill-none stroke-current stroke-2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z" />
-    </svg>
-  );
-}
-
 export function ContactSection() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const reducedMotion = useReducedMotion();
+  const container = useMemo(() => staggerContainer(0.1, 0.05), []);
+  const child = reducedMotion ? noMotion : fadeRise;
+  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+
   return (
-    <section id="contact" aria-labelledby="contact-heading" className="py-20 sm:py-24">
+    <section
+      id="contact"
+      ref={ref}
+      aria-labelledby="contact-heading"
+      className="border-t border-[color:var(--color-border)] py-20 sm:py-24"
+    >
       <div className="container">
-        <div
-          className="pill pill-cyan inline-flex items-center gap-3"
-          role="status"
-          aria-live="polite"
-          data-reveal=""
-        >
-          <span className="dot-live" aria-hidden="true" />
-          Open — responding within 48hrs
-        </div>
+        <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <motion.div variants={child} className="pill pill-cyan inline-flex items-center gap-3" role="status">
+            <span className="dot-live" aria-hidden="true" />
+            Open — responding within 48hrs
+          </motion.div>
 
-        <div className="mt-6 max-w-2xl">
-          <h2
-            id="contact-heading"
-            className="gradient-text text-4xl sm:text-5xl"
-            data-reveal=""
-            data-reveal-delay="2"
+          <div className="mt-6 max-w-2xl">
+            <motion.h2 variants={child} id="contact-heading" className="gradient-text text-4xl sm:text-5xl">
+              Open to the right fit.
+            </motion.h2>
+            <motion.p variants={child} className="mt-4 text-lg text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+              Available for Staff+ roles, technical co-founding, and scoped ML consulting where
+              reliability is a requirement rather than a nice-to-have.
+            </motion.p>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {engagementModes.map((mode) => (
+              <motion.div
+                key={mode.type}
+                variants={card}
+                data-accent={mode.accent}
+                whileHover={
+                  reducedMotion
+                    ? undefined
+                    : {
+                        y: -3,
+                        boxShadow: 'var(--glass-shadow-hover)',
+                        transition: { type: 'spring', stiffness: 400, damping: 30 },
+                      }
+                }
+                className="rounded-[var(--radius-lg)] border border-[var(--glass-border)] p-6"
+                style={{
+                  background: 'var(--glass-bg)',
+                  backdropFilter: 'blur(var(--glass-blur))',
+                  WebkitBackdropFilter: 'blur(var(--glass-blur))',
+                  borderLeft: `3px solid ${mode.accent}`,
+                  cursor: 'default',
+                }}
+              >
+                <p className="label" style={{ color: mode.accent }}>
+                  {mode.type}
+                </p>
+                <h3 className="mt-4 text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                  {mode.headline}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
+                  {mode.detail}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            variants={child}
+            className="mt-10 flex flex-wrap items-center gap-4 border-t border-[color:var(--color-border)] pt-8"
           >
-            Available. Let&apos;s talk.
-          </h2>
-          <p className="mt-4 text-lg text-white/65" data-reveal="" data-reveal-delay="3">
-            Open to Staff+, technical co-founder, and select consulting conversations where the work
-            has to survive real traffic, real users, and real operational constraints.
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {engagementModes.map((mode, index) => (
-            <GlassCard
-              key={mode.title}
-              className="card-depth border-l-[3px] [border-left-color:var(--color-accent)] p-6"
-              data-reveal=""
-              data-reveal-delay={String(index + 1)}
-            >
-              <div className="mb-4 inline-flex rounded-full border border-[color:var(--glass-border)] bg-[color:var(--color-accent-surface)] p-3 text-[color:var(--color-accent)]">
-                <EngagementIcon icon={mode.icon} />
-              </div>
-              <h3 className="text-2xl text-white">{mode.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-white/75">{mode.description}</p>
-              <p className="mt-2 text-sm leading-7 text-white/50">{mode.context}</p>
-            </GlassCard>
-          ))}
-        </div>
-
-        <div className="mt-10 space-y-6" data-reveal="" data-reveal-delay="4">
-          <a
-            href="mailto:oscar@scardubu.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glass-card block rounded-[var(--radius-lg)] px-6 py-5 text-center text-[length:var(--text-xl)] text-white"
-          >
-            oscar@scardubu.dev
-          </a>
-
-          <nav
-            aria-label="Social links"
-            className="flex flex-wrap items-center gap-4 text-[color:var(--color-text-muted)]"
-          >
-            <Link
-              href="https://github.com/Scardubu"
+            <a
+              href="mailto:scardubu@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Oscar Scardubu on GitHub"
-              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+              data-cta="primary"
+              className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-3 font-mono text-xs font-medium uppercase text-white"
             >
-              <GitHubIcon />
-              GitHub
-            </Link>
+              scardubu@gmail.com
+            </a>
+
             <Link
               href="https://linkedin.com/in/oscardubu"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Oscar Scardubu on LinkedIn"
-              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+              aria-label="Oscar Ndugbu on LinkedIn"
+              data-cta="secondary"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] px-5 py-3 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
             >
               <LinkedInIcon />
               LinkedIn
             </Link>
-            <a
-              href="mailto:oscar@scardubu.dev"
-              aria-label="Email Oscar Scardubu"
-              className="inline-flex items-center gap-2 text-sm transition hover:text-[color:var(--color-text-primary)]"
+            <Link
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Oscar Ndugbu on GitHub"
+              data-cta="secondary"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] px-5 py-3 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
             >
-              <EmailIcon />
-              Email
+              <GitHubIcon />
+              GitHub
+            </Link>
+            <a
+              href="tel:+2348033885065"
+              className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)]"
+            >
+              +234 803 388 5065
             </a>
-          </nav>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

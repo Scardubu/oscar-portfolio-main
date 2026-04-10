@@ -2,7 +2,7 @@ export function GrainOverlay() {
   return (
     <svg aria-hidden="true" className="grain-overlay">
       <defs>
-        <filter id="grain-filter">
+        <filter id="grain">
           <feTurbulence
             type="fractalNoise"
             baseFrequency="0.65"
@@ -12,7 +12,7 @@ export function GrainOverlay() {
           <feColorMatrix type="saturate" values="0" />
         </filter>
       </defs>
-      <rect width="100%" height="100%" filter="url(#grain-filter)" />
+      <rect width="100%" height="100%" filter="url(#grain)" />
     </svg>
   );
 }

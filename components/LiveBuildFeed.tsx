@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Rocket, GitCommit, FileText, TrendingUp, Activity } from "lucide-react";
+import { Rocket, GitCommit, FileText, TrendingUp, Activity, ChevronRight } from "lucide-react";
 
 type IconType = typeof Rocket;
 
@@ -172,9 +172,10 @@ export function LiveBuildFeed() {
           href="https://github.com/scardubu"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-semibold text-accent-primary hover:text-accent-primary/80"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-accent-primary hover:text-accent-primary/80"
         >
-          View all on GitHub →
+          View all on GitHub
+          <ChevronRight className="h-3 w-3" />
         </a>
       </div>
     </div>

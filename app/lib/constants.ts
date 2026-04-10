@@ -120,12 +120,16 @@ export const PROFILE = {
     short:
       "Full-Stack ML Engineer specializing in production AI systems, ensemble models, and MLOps for real-world products.",
     medium:
-      "Transforming complex AI concepts into scalable, production-ready systems that drive real business value. From model development and deployment automation to end-to-end system architecture, I build ML solutions that ship and stay shipped.",
-    long: `I design and deploy production ML systems end-to-end—from feature engineering and model training to APIs, DevOps, and monitoring. My work spans ensemble models, real-time inference, and full-stack applications that people actually use.
+      "Transforming complex AI concepts into scalable, production-ready systems that drive real business value. From model development and deployment automation to end-to-end system architecture, production ML solutions ship and stay shipped.",
+    long: `Production ML systems designed and deployed end-to-end—from feature engineering and model training to APIs, DevOps, and monitoring. Work spans ensemble models, real-time inference, and full-stack applications that people actually use.
 
-Based in Nigeria and working with teams globally, I focus on sports analytics, fintech, and predictive systems where model performance directly impacts business outcomes. Open to consulting, technical partnerships, and high-impact ML roles.`,
+Based in Nigeria and working with teams globally, focus is on sports analytics, fintech, and predictive systems where model performance directly impacts business outcomes. Open to consulting, technical partnerships, and high-impact ML roles.`,
   },
   highlights: [
+    "Production ML Systems: Design and deploy ensemble models powering real-time prediction platforms at global scale",
+    "Performance Engineering: Optimize ML inference pipelines for low-latency, high-throughput production workloads",
+    "Full-Stack Development: Build complete AI applications from data pipelines and APIs to responsive frontends",
+    "MLOps & Automation: Implement CI/CD for ML models with monitoring and auto-retraining systems",
     "🚀 Production ML Systems: Design and deploy ensemble models powering real-time prediction platforms at global scale",
     "⚡ Performance Engineering: Optimize ML inference pipelines for low-latency, high-throughput production workloads",
     "🛠️ Full-Stack Development: Build complete AI applications from data pipelines and APIs to responsive frontends",
@@ -319,7 +323,7 @@ export const PROJECTS: Project[] = [
       {
         label: 'Time Reduction',
         value: '60%',
-        description: 'ML debugging time (10hr → 4hr)',
+        description: 'ML debugging time (10hr to 4hr)',
       },
       {
         label: 'Clients Served',
@@ -329,7 +333,7 @@ export const PROJECTS: Project[] = [
       {
         label: 'LLM Explanations',
         value: '100%',
-        description: 'Technical → business translation',
+        description: 'Technical to business translation',
       },
     ],
     links: {
@@ -723,7 +727,7 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     icon: "💼",
     title: "Consulting & Projects",
     description: "Custom ML solutions, model deployment, and MLOps implementation",
-    cta: "Discuss Your Project →",
+    cta: "Discuss Your Project",
     href: "mailto:scardubu@gmail.com?subject=Consulting%20Inquiry",
   },
   {
@@ -731,7 +735,7 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     icon: "🤝",
     title: "Technical Partnerships",
     description: "Co-founder opportunities, technical advisorship, and strategic collaboration",
-    cta: "Explore Partnership →",
+    cta: "Explore Partnership",
     href: "mailto:scardubu@gmail.com?subject=Partnership%20Opportunity",
   },
   {
@@ -739,7 +743,7 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     icon: "🎓",
     title: "Speaking & Mentorship",
     description: "Tech talks, workshops, and mentoring for ML engineers",
-    cta: "Send Invitation →",
+    cta: "Send Invitation",
     href: "mailto:scardubu@gmail.com?subject=Speaking%20Inquiry",
   },
 ];

@@ -39,6 +39,19 @@ const nextConfig: NextConfig = {
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
           { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+          // [v15 / v14.1 FIX] CSP in report-only — promote to enforced after 2 weeks clean
+          {
+            key: 'Content-Security-Policy-Report-Only',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: https://avatars.githubusercontent.com",
+              "connect-src 'self' https://api.github.com https://vitals.vercel-insights.com",
+              "frame-ancestors 'none'",
+            ].join('; '),
+          },
         ],
       },
       {

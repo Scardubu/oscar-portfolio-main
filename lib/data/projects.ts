@@ -156,7 +156,7 @@ const sabiScoreBlog: BlogArticleRef = {
   title:             'Ensemble Models in Production: How We Achieved 71% Accuracy',
   tier:              1,
   system_tag:        'sabiscore',
-  key_metric:        '64% → 71% accuracy',
+  key_metric:        '64% to 71% accuracy',
   metric_badge:      'documented',
   read_time_minutes: 11,
   published_at:      '2024-11-25',
@@ -183,7 +183,7 @@ const taxBridgeMetrics: SystemMetric[] = [
   },
   {
     value:       '< 3s',
-    label:       'OCR → structured data',
+    label:       'OCR to structured data',
     badge:       'snapshot',
     sourceLabel: 'snapshot: internal benchmark',
     sublabel:    'standard A4 tax filing at 300 DPI',
@@ -393,7 +393,7 @@ const ubecArc: ArcStage[] = [
   {
     id:          '2',
     label:       'Schema Normaliser',
-    description: 'Ministry-specific column names mapped to canonical schema. Example: "School Name" vs "SCHOOL_NM" vs "schname" → normalised to school_name.',
+    description: 'Ministry-specific column names mapped to canonical schema. Example: "School Name" vs "SCHOOL_NM" vs "schname" normalised to school_name.',
     tech:        'pandas + Pydantic v2',
   },
   {
@@ -466,7 +466,7 @@ export const PROJECTS: ProjectData[] = [
   {
     id: 'taxbridge',
     name: 'TaxBridge',
-    tagline: 'OCR → tax computation → append-only audit chain — Postgres RLS enforced',
+    tagline: 'OCR to tax computation to append-only audit chain — Postgres RLS enforced',
     featured: true,
     description:
       'Multi-tenant tax computation platform. OCR extracts structured data from scanned filings; Java 17 / Spring Boot 3 applies jurisdiction-specific rules with compile-time type safety; every mutation is appended to an immutable audit_events table before the response is returned. Row-Level Security enforces tenant isolation at the database layer — not the ORM layer.',

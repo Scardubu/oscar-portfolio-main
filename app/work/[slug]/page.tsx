@@ -6,9 +6,8 @@ import { ArchDecision } from '@/components/ArchDecision';
 import { Footer } from '@/components/Footer';
 import { NavBar } from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
-import { projects, type Project, type ProjectStatus } from '@/data/projects';
 import { getWorkCase, getWorkCases } from '@/lib/content';
-import { getProject } from '@/lib/projects';
+import { getProject, PROJECTS, type Project } from '@/lib/projects';
 
 type WorkPageProps = Readonly<{
   params: Promise<{
@@ -16,27 +15,27 @@ type WorkPageProps = Readonly<{
   }>;
 }>;
 
-function getProjectStatusLabel(status?: ProjectStatus) {
+function getProjectStatusLabel(status?: Project['status']) {
   switch (status) {
     case 'live':
       return 'Live deployment';
     case 'wip':
       return 'Active build';
-    case 'archived':
-      return 'Archived';
+    case 'case-study':
+      return 'Case study';
     default:
       return 'Case study';
   }
 }
 
-function getCompactProjectStatusLabel(status: ProjectStatus) {
+function getCompactProjectStatusLabel(status: Project['status']) {
   switch (status) {
     case 'live':
       return 'Live';
     case 'wip':
       return 'WIP';
-    case 'archived':
-      return 'Archived';
+    case 'case-study':
+      return 'Case study';
     default:
       return 'Case study';
   }
@@ -58,11 +57,11 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
       </h2>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {entries.map((entry) => (
-          <article key={entry.id} className="rounded-[var(--radius-lg)] border border-white/10 p-5">
+          <article key={entry.slug} className="rounded-[var(--radius-lg)] border border-white/10 p-5">
             <div className="flex flex-wrap gap-2">
               <span className="pill">{getCompactProjectStatusLabel(entry.status)}</span>
-              {entry.tags.slice(0, 2).map((tag) => (
-                <span key={`${entry.id}-${tag}`} className="pill">
+              {entry.stack.slice(0, 2).map((tag) => (
+                <span key={`${entry.slug}-${tag}`} className="pill">
                   {tag}
                 </span>
               ))}
@@ -70,7 +69,7 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
             <h3 className="mt-4 text-white">{entry.title}</h3>
             <p className="mt-3 text-sm leading-7 text-white/65">{entry.description}</p>
             <Link
-              href={`/work/${entry.id}`}
+              href={`/work/${entry.slug}`}
               className="mt-5 inline-flex items-center gap-2 text-sm text-cyan-200 transition hover:text-white"
             >
               Read case study →
@@ -84,12 +83,12 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
 
 function ProjectLinksCard({
   demoUrl,
-  repoUrl,
+  githubUrl,
 }: Readonly<{
   demoUrl?: string;
-  repoUrl?: string;
+  githubUrl?: string;
 }>) {
-  if (!demoUrl && !repoUrl) {
+  if (!demoUrl && !githubUrl) {
     return null;
   }
 
@@ -107,9 +106,9 @@ function ProjectLinksCard({
             View live demo
           </Link>
         ) : null}
-        {repoUrl ? (
+        {githubUrl ? (
           <Link
-            href={repoUrl}
+            href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="pill inline-flex justify-center"
@@ -130,7 +129,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   const { slug } = await params;
   const project = await getWorkCase(slug);
-  const projectMeta = projects.find((entry) => entry.id === slug);
+  const projectMeta = getProject(slug);
 
   if (!project) {
     return { title: 'Work' };
@@ -141,7 +140,7 @@ export async function generateMetadata({ params }: WorkPageProps): Promise<Metad
     description: projectMeta?.tagline ?? project.frontmatter.summary,
     alternates: { canonical: `https://www.scardubu.dev/work/${slug}` },
     openGraph: {
-      title: `${projectMeta?.title ?? project.frontmatter.title} · Oscar Scardubu`,
+      title: `${projectMeta?.title ?? project.frontmatter.title} · Oscar Ndugbu (Scardubu)`,
       description: projectMeta?.tagline ?? project.frontmatter.summary,
       url: `https://www.scardubu.dev/work/${slug}`,
       images: [`/work/${slug}/og`],
@@ -158,7 +157,7 @@ function caseStudyJsonLd(title: string, description: string, slug: string) {
     url: `https://www.scardubu.dev/work/${slug}`,
     author: {
       '@type': 'Person',
-      name: 'Oscar Scardubu',
+      name: 'Oscar Ndugbu (Scardubu)',
       url: 'https://www.scardubu.dev',
     },
   };
@@ -172,12 +171,11 @@ export default async function WorkPage({ params }: WorkPageProps) {
     notFound();
   }
 
-  const projectMeta = projects.find((entry) => entry.id === slug);
-  const relatedProjects = projects.filter((entry) => entry.id !== slug).slice(0, 2);
-  const decisionMeta = getProject(slug);
+  const projectMeta = getProject(slug);
+  const relatedProjects = PROJECTS.filter((entry) => entry.slug !== slug).slice(0, 2);
   const title = projectMeta?.title ?? project.frontmatter.title;
   const description = projectMeta?.tagline ?? project.frontmatter.summary;
-  const tags = projectMeta?.tags ?? project.frontmatter.tags ?? [];
+  const tags = projectMeta?.stack ?? project.frontmatter.tags ?? [];
   const statusLabel = getProjectStatusLabel(projectMeta?.status);
 
   return (
@@ -206,16 +204,16 @@ export default async function WorkPage({ params }: WorkPageProps) {
                   {projectMeta ? (
                     <div className="mt-[var(--space-4)] flex flex-wrap gap-[var(--space-2)]">
                       <span className="pill pill-cyan">{statusLabel}</span>
-                      {projectMeta.featured ? <span className="pill">Featured system</span> : null}
+                      {projectMeta.status === 'live' ? <span className="pill">Featured system</span> : null}
                     </div>
                   ) : null}
                 </header>
 
-                {decisionMeta ? (
+                {projectMeta ? (
                   <ArchDecision
-                    chosen={decisionMeta.chosen}
-                    over={decisionMeta.over}
-                    because={decisionMeta.because}
+                    chosen={projectMeta.chosen}
+                    over={projectMeta.over}
+                    because={projectMeta.because}
                   />
                 ) : null}
 
@@ -254,7 +252,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
                   </div>
                 ) : null}
 
-                <ProjectLinksCard demoUrl={projectMeta?.demoUrl} repoUrl={projectMeta?.repoUrl} />
+                <ProjectLinksCard demoUrl={projectMeta?.demoUrl} githubUrl={projectMeta?.githubUrl} />
               </aside>
             </div>
           </div>

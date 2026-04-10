@@ -17,7 +17,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
-const SECTION_LINKS = ['projects', 'about', 'writing', 'contact'] as const;
+const SECTION_LINKS = ['projects', 'writing', 'about', 'contact'] as const;
 const MOBILE_NAV_ID = 'mobile-navigation';
 
 function openCommandPalette() {
@@ -303,21 +303,25 @@ export function NavBar() {
         className="container grid h-[var(--nav-height)] grid-cols-[auto_1fr_auto] items-center gap-4"
         aria-label="Primary"
       >
-        <Link
-          href={resolveSectionHref(pathname, 'hero')}
-          className="flex items-center gap-3"
-          aria-label="Oscar Scardubu home"
+        <m.div
+          whileHover={prefersReduced ? undefined : { scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
         >
-          <span className="text-base font-[var(--font-display)] font-bold text-white">
-            Oscar<span className="text-[var(--color-accent)]">.</span>
-          </span>
-          <span
-            className="hidden text-xs text-[color:var(--color-text-muted)] xl:block"
-            aria-hidden="true"
+          <Link
+            href={resolveSectionHref(pathname, 'hero')}
+            className="flex items-center gap-3"
+            aria-label="Oscar Ndugbu home"
           >
-            Production AI systems · Full-stack execution
-          </span>
-        </Link>
+            <span className="text-base font-[var(--font-display)] font-bold text-white">
+              Oscar<span className="text-[var(--color-accent)]">.</span>
+            </span>
+            <span
+              className="hidden text-xs text-[color:var(--color-text-muted)] xl:block"
+              aria-hidden="true"
+            >
+              Production AI systems · Full-stack execution
+            </span>
+          </Link>
+        </m.div>
 
         <ul className="hidden items-center justify-center gap-1 md:flex">
           {links.map((link) => (

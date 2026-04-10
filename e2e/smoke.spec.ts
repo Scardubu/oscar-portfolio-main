@@ -15,7 +15,9 @@ test.describe('Portfolio smoke tests', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('#hero')).toBeVisible();
-    await expect(page.locator('h1').first()).toHaveText('Oscar Scardubu');
+    await expect(page.locator('h1').first()).toContainText(
+      'When AI behavior, platform reliability, and product clarity must hold simultaneously'
+    );
   });
 
   test('no unicode escape or unverifiable metrics in rendered home copy', async ({ page }) => {
@@ -98,7 +100,7 @@ test.describe('Portfolio smoke tests', () => {
 
     await page.locator('#contact').scrollIntoViewIfNeeded();
 
-    await expect(page.locator('#contact a.glass-card[href="mailto:oscar@scardubu.dev"]')).toBeVisible();
+    await expect(page.locator('#contact a.glass-card[href="mailto:scardubu@gmail.com"]')).toBeVisible();
   });
 
   test('all target="_blank" links include noopener and noreferrer', async ({ page }) => {
@@ -129,6 +131,20 @@ test.describe('Portfolio smoke tests', () => {
     await expect(page.getByText('BECAUSE').first()).toBeVisible();
   });
 
+  test('OVER label is muted and not red', async ({ page }) => {
+    await page.goto('/');
+
+    const overLabel = page.getByText('OVER').first();
+    await expect(overLabel).toBeVisible();
+    const color = await overLabel.evaluate((el) => window.getComputedStyle(el).color);
+    expect(color).not.toMatch(/^rgb\(239,/);
+  });
+
+  test('main landmark exists', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('main#main-content')).toBeAttached();
+  });
+
   test('conviction pillars have colored top borders', async ({ page }) => {
     await page.goto('/');
 
@@ -142,6 +158,20 @@ test.describe('Portfolio smoke tests', () => {
     await expect(page.locator('a[data-cta="primary"]')).toBeVisible();
     await expect(page.locator('a[data-cta="secondary"]')).toBeVisible();
     await expect(page.locator('a[data-cta="ghost"]')).toBeVisible();
+  });
+
+  test('resume CTA has download attribute and points to a pdf', async ({ page }) => {
+    await page.goto('/');
+
+    const resumeLink = page.locator('a[data-cta="ghost"]');
+    await expect(resumeLink).toHaveAttribute('download', '');
+    await expect(resumeLink).toHaveAttribute('href', /\.pdf$/);
+  });
+
+  test('writing section is present on home', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#writing')).toBeVisible();
+    await expect(page.locator('#writing article').first()).toBeVisible();
   });
 
   test('writing page renders article list', async ({ page }) => {
@@ -194,7 +224,7 @@ test.describe('Portfolio smoke tests', () => {
     for (let index = 0; index < count; index += 1) {
       const text = await scripts.nth(index).textContent();
       const parsed = JSON.parse(text ?? '{}') as { ['@type']?: string; name?: string };
-      if (parsed['@type'] === 'Person' && parsed.name === 'Oscar Scardubu') {
+      if (parsed['@type'] === 'Person' && parsed.name === 'Oscar Ndugbu (Scardubu)') {
         foundPerson = true;
       }
     }
@@ -207,5 +237,39 @@ test.describe('Portfolio smoke tests', () => {
     expect(response.status()).toBe(200);
     const body = (await response.json()) as { ago: string };
     expect(typeof body.ago).toBe('string');
+  });
+
+  test('[v15] ScrollProgress bar is present and z-index >= 60', async ({ page }) => {
+    await page.goto('/');
+    const bar = page.locator('[data-testid="scroll-progress"]');
+    await expect(bar).toBeAttached();
+    const zIndex = await bar.evaluate((el) =>
+      parseInt(window.getComputedStyle(el).zIndex, 10)
+    );
+    expect(zIndex).toBeGreaterThanOrEqual(60);
+  });
+
+  test('[v15] Footer contains scardubu.dev', async ({ page }) => {
+    await page.goto('/');
+    const footer = page.locator('footer');
+    await expect(footer).toBeVisible();
+    await expect(footer).toContainText('scardubu.dev');
+  });
+
+  test('[v15] Phone number is a tappable tel: link', async ({ page }) => {
+    await page.goto('/');
+    const telLink = page.locator('a[href="tel:+2348033885065"]');
+    await expect(telLink).toBeAttached();
+  });
+
+  test('[v15] BECAUSE field has heavier font weight than OVER field', async ({ page }) => {
+    await page.goto('/');
+    const becauseLabel = page.locator('[data-label="BECAUSE"]').first();
+    if (await becauseLabel.count() > 0) {
+      const weight = await becauseLabel.evaluate((el) =>
+        window.getComputedStyle(el).fontWeight
+      );
+      expect(['500', '600', '700', 'bold']).toContain(weight);
+    }
   });
 });

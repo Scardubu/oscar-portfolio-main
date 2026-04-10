@@ -68,7 +68,7 @@ export function LiveActivityBar() {
   }, []);
 
   if (loading) {
-    return <Skeleton width={280} height={16} />;
+    return <div aria-label="Loading recent activity"><Skeleton width={280} height={16} /></div>;
   }
 
   if (!activity) {
@@ -88,7 +88,7 @@ export function LiveActivityBar() {
         </span>
       ) : null}
       <span
-        className="block max-w-[18ch] overflow-hidden text-ellipsis whitespace-nowrap text-[color:var(--color-text-secondary)] sm:max-w-[28ch]"
+        className="block max-w-[min(16ch,50vw)] overflow-hidden text-ellipsis whitespace-nowrap text-[color:var(--color-text-secondary)] sm:max-w-[min(28ch,45vw)]"
         title={activity.message ?? typeLabel(activity.type)}
       >
         {activity.message ?? typeLabel(activity.type)}

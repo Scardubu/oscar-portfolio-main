@@ -96,12 +96,13 @@ export function BlogProgressWidget({
               ))}
           </div>
 
-          <div className="mt-3 border-t border-white/10 pt-3 text-right">
+          <div className="mt-3 border-t border-white/10 pt-3">
             <Link
               href="/blog"
-              className="text-xs font-semibold text-accent-primary hover:text-accent-primary/80"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-accent-primary hover:text-accent-primary/80"
             >
-              View all posts →
+              View all posts
+              <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
         </div>

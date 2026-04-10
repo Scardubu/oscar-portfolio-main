@@ -1,76 +1,75 @@
-﻿import type { Metadata } from 'next';
-import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google';
+﻿import type { Metadata, Viewport } from 'next';
+import { Crimson_Pro, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { GradientMesh } from '@/components/GradientMesh';
 import { GrainOverlay } from '@/components/GrainOverlay';
+import { ScrollProgress } from '@/components/ScrollProgress';
 import { Providers } from '@/app/providers';
 
 import './globals.css';
 
-const syne = Syne({
+const crimsonPro = Crimson_Pro({
   subsets: ['latin'],
-  variable: '--font-syne',
+  variable: '--font-crimson-pro',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['300', '400', '600', '700'],
+  style: ['normal', 'italic'],
+  adjustFontFallback: true,
 });
 
-const dmSans = DM_Sans({
+const geistMono = Geist_Mono({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-geist-mono',
   display: 'swap',
-  weight: ['300', '400', '500', '600'],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-  weight: ['400', '500'],
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
-    template: '%s · Oscar Scardubu',
+    default: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
+    template: '%s · Oscar Ndugbu (Scardubu)',
   },
   description:
-    'Production AI/fintech systems — credit scoring, blockchain analytics, tax automation. ' +
-    'Open to Staff+ roles, co-founder partnerships, and high-trust consulting engagements.',
+    'Oscar Ndugbu (Scardubu) builds production AI and fintech systems where platform reliability, model behavior, and product clarity must hold simultaneously.',
   metadataBase: new URL('https://www.scardubu.dev'),
   openGraph: {
     type: 'website',
     url: 'https://www.scardubu.dev',
-    siteName: 'Oscar Scardubu',
-    title: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
+    siteName: 'Oscar Ndugbu (Scardubu)',
+    title: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
     description: 'Production AI/fintech engineer. SabiScore · Hashablanca · TaxBridge.',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Scardubu portfolio' }],
+    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu (Scardubu) portfolio' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Oscar Scardubu — Staff Full-Stack ML Engineer',
+    title: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
     images: ['/api/og'],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://www.scardubu.dev' },
 };
 
+export const viewport: Viewport = {
+  themeColor: '#0A0A0B',
+};
+
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Oscar Scardubu',
+  name: 'Oscar Ndugbu (Scardubu)',
   url: 'https://www.scardubu.dev',
   jobTitle: 'Staff Full-Stack ML Engineer',
   description: 'Production AI/fintech systems engineer. SabiScore, Hashablanca, TaxBridge.',
-  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscarscardubuu'],
+  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      className={`${crimsonPro.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -117,8 +116,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </defs>
         </svg>
         <Providers>
-          <GradientMesh />
           <GrainOverlay />
+          <GradientMesh />
+          <ScrollProgress />
           <div className="relative z-[2]">{children}</div>
         </Providers>
         <Analytics />

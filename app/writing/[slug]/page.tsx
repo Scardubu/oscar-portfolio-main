@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: WritingPageProps): Promise<Me
     description: post.frontmatter.summary,
     alternates: { canonical: `https://www.scardubu.dev/writing/${slug}` },
     openGraph: {
-      title: `${post.frontmatter.title} · Oscar Scardubu`,
+      title: `${post.frontmatter.title} · Oscar Ndugbu (Scardubu)`,
       description: post.frontmatter.summary,
       url: `https://www.scardubu.dev/writing/${slug}`,
       type: 'article',
@@ -71,7 +71,7 @@ function articleJsonLd(title: string, summary: string, date: string, slug: strin
     url: `https://www.scardubu.dev/writing/${slug}`,
     author: {
       '@type': 'Person',
-      name: 'Oscar Scardubu',
+      name: 'Oscar Ndugbu (Scardubu)',
       url: 'https://www.scardubu.dev',
     },
   };

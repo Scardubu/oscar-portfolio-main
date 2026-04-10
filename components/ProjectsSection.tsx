@@ -1,59 +1,77 @@
+'use client';
+
 import Link from 'next/link';
- 
+import { ArrowUpRight } from 'lucide-react';
+import { useMemo, useRef } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+
 import { ArchDecision } from '@/components/ArchDecision';
 import { PROJECTS, type Project } from '@/lib/projects';
+import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
-  if (status === 'archived') {
-    return <span className="pill">ARCHIVED</span>;
+  if (status === 'case-study') {
+    return <span className="badge-muted">CASE STUDY</span>;
   }
 
   return (
     <span className={status === 'live' ? 'badge-live' : 'badge-wip'}>
       <span className={status === 'live' ? 'dot-live' : 'dot-wip'} aria-hidden="true" />
-      {status.toUpperCase()}
+      {status === 'live' ? 'LIVE' : 'WIP'}
     </span>
   );
 }
 
 export function ProjectsSection() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const reducedMotion = useReducedMotion();
   const featured = PROJECTS[0];
   const grid = PROJECTS.slice(1);
+
+  const featuredReveal = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+  const header = reducedMotion ? noMotion : fadeRise;
+  const container = useMemo(() => staggerContainer(0.12, 0.05), []);
+  const headingContainer = useMemo(() => staggerContainer(0.08), []);
 
   if (!featured) {
     return null;
   }
 
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="py-20 sm:py-24">
+    <section id="projects" ref={ref} aria-labelledby="projects-heading" className="py-20 sm:py-24">
       <div className="container">
-        <div className="mb-12 max-w-3xl">
-          <span className="label" data-reveal="" data-reveal-delay="1">
-            Selected work
-          </span>
-          <h2
+        <motion.div
+          variants={headingContainer}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          className="mb-12 max-w-3xl"
+        >
+          <motion.span variants={header} className="label">
+            Selected Work
+          </motion.span>
+          <motion.h2
+            variants={header}
             id="projects-heading"
             className="gradient-text mt-[var(--space-2)]"
-            data-reveal=""
-            data-reveal-delay="1"
           >
             Work that shipped
-          </h2>
-          <p
+          </motion.h2>
+          <motion.p
+            variants={header}
             className="mt-4 text-[length:var(--text-lg)] text-white/65"
-            data-reveal=""
-            data-reveal-delay="1"
+            style={{ fontFamily: 'var(--font-display)' }}
           >
-            End-to-end AI/fintech systems. Each ships with architecture decisions and a monitored
-            production deployment.
-          </p>
-        </div>
+            End-to-end AI and fintech systems. Each ships with documented architecture decisions and
+            a monitored production deployment.
+          </motion.p>
+        </motion.div>
 
-        <article
+        <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+        <motion.article
+          variants={featuredReveal}
           className="glass glass-full glass-chromatic card-depth mb-6 overflow-hidden rounded-[var(--radius-xl)] p-8 sm:p-10"
           data-project-id={featured.slug}
-          data-reveal=""
-          data-reveal-delay="2"
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <span className="label">{featured.type}</span>
@@ -61,10 +79,12 @@ export function ProjectsSection() {
           </div>
 
           <h3 className="mt-5 text-[length:var(--text-3xl)] text-white">{featured.title}</h3>
-          <p className="mt-3 max-w-[64ch] text-[length:var(--text-lg)] text-white/75">
+          <p className="mt-3 max-w-[64ch] text-[length:var(--text-lg)] text-white/75" style={{ fontFamily: 'var(--font-display)' }}>
             {featured.tagline}
           </p>
-          <p className="mt-5 max-w-[72ch] text-sm leading-7 text-white/65">{featured.description}</p>
+          <p className="mt-5 max-w-[72ch] text-sm leading-7 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+            {featured.description}
+          </p>
 
           <ArchDecision
             chosen={featured.chosen}
@@ -73,7 +93,7 @@ export function ProjectsSection() {
             compact={false}
           />
 
-          <p className="mt-5 max-w-[72ch] text-xs italic text-[color:var(--color-text-muted)]">
+          <p className="mt-5 max-w-[72ch] text-xs italic text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
             Constraint: {featured.constraint}
           </p>
 
@@ -91,9 +111,10 @@ export function ProjectsSection() {
                 href={featured.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-reveal font-mono text-[color:var(--color-text-secondary)]"
+                className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-text-secondary)]"
               >
-                Live demo →
+                <span>Live demo</span>
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
             ) : null}
             {featured.githubUrl ? (
@@ -101,30 +122,31 @@ export function ProjectsSection() {
                 href={featured.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-reveal font-mono text-[color:var(--color-text-secondary)]"
+                className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-text-secondary)]"
               >
-                GitHub →
+                <span>GitHub</span>
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
             ) : null}
             {featured.caseStudy ? (
               <Link
                 href={featured.caseStudy}
-                className="link-reveal font-mono text-[color:var(--color-accent)]"
+                className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-accent)]"
               >
-                Case study →
+                <span>Case study</span>
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             ) : null}
           </div>
-        </article>
+        </motion.article>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {grid.map((project, index) => (
-            <article
+            <motion.article
               key={project.slug}
+              variants={reducedMotion ? noMotion : cardReveal(index % 2 === 0 ? 24 : -24)}
               className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] p-8"
               data-project-id={project.slug}
-              data-reveal=""
-              data-reveal-delay={String(index + 3)}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <span className="label">{project.type}</span>
@@ -132,8 +154,8 @@ export function ProjectsSection() {
               </div>
 
               <h3 className="mt-5 text-white">{project.title}</h3>
-              <p className="mt-2 flex-1 text-sm leading-7 text-white/75">{project.tagline}</p>
-              <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-muted)]">
+              <p className="mt-2 flex-1 text-sm leading-7 text-white/75" style={{ fontFamily: 'var(--font-display)' }}>{project.tagline}</p>
+              <p className="mt-3 text-sm leading-7 text-[color:var(--color-text-muted)]" style={{ fontFamily: 'var(--font-display)' }}>
                 {project.description}
               </p>
 
@@ -158,23 +180,37 @@ export function ProjectsSection() {
                     href={project.demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="link-reveal font-mono text-[color:var(--color-text-secondary)]"
+                    className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-text-secondary)]"
                   >
-                    Live demo →
+                    <span>Live demo</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                ) : null}
+                {project.githubUrl ? (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-text-muted)]"
+                  >
+                    <span>GitHub</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 ) : null}
                 {project.caseStudy ? (
                   <Link
                     href={project.caseStudy}
-                    className="link-reveal font-mono text-[color:var(--color-text-muted)]"
+                    className="link-reveal inline-flex items-center gap-1 font-mono text-[color:var(--color-text-muted)]"
                   >
-                    Case study →
+                    <span>Case study</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 ) : null}
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
+        </motion.div>
       </div>
     </section>
   );

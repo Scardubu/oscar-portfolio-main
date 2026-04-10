@@ -71,7 +71,7 @@ export function CommandPalette() {
         label: 'Open resume',
         shortcut: 'R',
         action: () => {
-          window.open('/oscar-scardubu-resume.pdf', '_blank', 'noopener,noreferrer');
+          window.open('/cv/oscar-ndugbu-cv.pdf', '_blank', 'noopener,noreferrer');
         },
       },
       {
@@ -79,7 +79,7 @@ export function CommandPalette() {
         label: 'Send email',
         shortcut: 'E',
         action: () => {
-          globalThis.location.href = 'mailto:oscar@scardubu.dev';
+          globalThis.location.href = 'mailto:scardubu@gmail.com';
         },
       },
     ],

@@ -177,7 +177,7 @@ export const BLOG_POSTS: PostMeta[] = [
   {
     slug: "building-in-nigeria-shipping-globally-remote-ml-engineer",
     title:
-      "Building in Nigeria, Shipping Globally: How I Went From Lagos to Serving 350+ International Users",
+      "Building in Nigeria, Shipping Globally: From Lagos to Serving 350+ International Users",
     description:
       "An honest journey as a remote ML engineer in Nigeria: infrastructure, payments, trust, revenue milestones, and playbook for going global.",
     date: "2024-12-03",
@@ -237,7 +237,7 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: "africa-ai-infra-stack-for-founders",
-    title: "The AI Infrastructure Stack I Recommend to Every African Founder",
+    title: "The AI Infrastructure Stack Recommended for Every African Founder",
     description:
       "An opinionated, battle-tested AI infrastructure stack for African founders building reliable ML products under real-world constraints.",
     date: "2024-12-07",

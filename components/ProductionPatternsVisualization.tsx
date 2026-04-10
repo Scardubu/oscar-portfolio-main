@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Workflow, Zap, Database, Cpu } from "lucide-react";
+import { Workflow, Zap, Database, Cpu, ChevronRight } from "lucide-react";
 
 type IconType = typeof Workflow;
 
@@ -56,7 +56,7 @@ export function ProductionPatternsVisualization() {
     <div className="glass-panel rounded-2xl border border-white/10 p-6 shadow-xl">
       <h3 className="text-2xl font-bold text-white">Production ML Patterns</h3>
       <p className="mt-2 text-sm text-gray-300">
-        Common architectures I have built end-to-end. Hover to see the tech stack for each pattern.
+        Common architectures built end-to-end. Hover to see the tech stack for each pattern.
       </p>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -118,7 +118,8 @@ export function ProductionPatternsVisualization() {
           href="#projects"
           className="inline-flex items-center gap-2 text-sm font-semibold text-accent-primary hover:text-accent-primary/80"
         >
-          See these patterns in real projects →
+          See these patterns in real projects
+          <ChevronRight className="h-4 w-4" />
         </a>
       </div>
     </div>

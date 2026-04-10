@@ -1,12 +1,12 @@
 import { ImageResponse } from '@vercel/og';
 
-import { projects } from '@/data/projects';
+import { PROJECTS } from '@/lib/projects';
 
 export const runtime = 'edge';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = projects.find((entry) => entry.id === slug);
+  const project = PROJECTS.find((entry) => entry.slug === slug);
 
   return new ImageResponse(
     <div
@@ -40,7 +40,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
           marginBottom: 20,
         }}
       >
-        Oscar Scardubu · Case Study
+        Oscar Ndugbu (Scardubu) · Case Study
       </div>
       <div
         style={{
@@ -80,7 +80,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
               width: 7,
               height: 7,
               borderRadius: '50%',
-              background: project?.status === 'live' ? '#22c55e' : '#f59e0b',
+              background: project?.status === 'live' ? '#22c55e' : project?.status === 'wip' ? '#f59e0b' : '#6366f1',
             }}
           />
           <span

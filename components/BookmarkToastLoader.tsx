@@ -7,6 +7,16 @@ const BookmarkToast = dynamic(
   { ssr: false }
 );
 
+const CommandPalette = dynamic(
+  () => import('@/components/CommandPalette').then((m) => ({ default: m.CommandPalette })),
+  { ssr: false }
+);
+
 export function BookmarkToastLoader() {
-  return <BookmarkToast />;
+  return (
+    <>
+      <BookmarkToast />
+      <CommandPalette />
+    </>
+  );
 }

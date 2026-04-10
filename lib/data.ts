@@ -111,7 +111,7 @@ export const HERO_ROLE_TAGS = [
   "Full-Stack ML Engineer",
   "MLOps Architect",
   "Systems Thinker",
-  "Lagos → World",
+  "Lagos to World",
 ];
 
 export const HERO_CTA_PRIMARY = { label: "Let's Talk", href: "#contact" };
@@ -262,7 +262,7 @@ export const PROJECTS: Project[] = [
       {
         value: '60%',
         label: 'Time Saved',
-        sublabel: '10hr → 4hr debug cycles',
+        sublabel: '10hr to 4hr debug cycles',
         variant: 'documented',
       },
       {
@@ -274,7 +274,7 @@ export const PROJECTS: Project[] = [
       {
         value: '100%',
         label: 'LLM Coverage',
-        sublabel: 'Technical → business',
+        sublabel: 'Technical to business',
         variant: 'documented',
       },
     ],
@@ -456,7 +456,7 @@ export const SKILLS: Skill[] = [
     category: "devops",
     level: 4,
     icon: "⚙️",
-    description: "CI/CD pipelines: test → lint → deploy → smoke.",
+    description: "CI/CD pipelines: test to lint to deploy to smoke.",
   },
   {
     id: "prisma",

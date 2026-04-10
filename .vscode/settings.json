@@ -1,0 +1,15 @@
+{
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": [".github/workflows/*.{yml,yaml}"],
+    "https://json.schemastore.org/docker-compose.json": ["docker-compose*.{yml,yaml}"],
+    "https://json.schemastore.org/vercel.json": ["vercel.json"]
+  },
+
+  "yaml.validate": true,
+  "yaml.hover": true,
+  "yaml.completion": true,
+  "yaml.schemaStore.enable": true,
+  "yaml.format.enable": true,
+  "yaml.format.singleQuote": false,
+  "yaml.keyOrdering": false
+}

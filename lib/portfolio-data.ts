@@ -19,7 +19,7 @@ export const HERO = {
   cta: {
     primary:   { label: "Let's Talk 💬", href: "#contact" },
     secondary: { label: "Download CV",   href: "/cv/oscar-ndugbu-cv.pdf" },
-    scroll:    { label: "View My Work",  href: "#projects" },
+    scroll:    { label: "View Work",  href: "#projects" },
   },
 } as const;
 
@@ -103,7 +103,7 @@ export const PROJECTS: Project[] = [
     title:   "AI Consulting & LLM Integration",
     tagline: "Enterprise ML Debugging & Integration",
     description:
-      "ML consulting for startups and enterprises: model debugging, LLM integration (GPT-4, Ollama/Llama 3), and LangChain pipelines that translate technical outputs into stakeholder-ready business communication. Average debugging time reduced from 10hr → 4hr.",
+      "ML consulting for startups and enterprises: model debugging, LLM integration (GPT-4, Ollama/Llama 3), and LangChain pipelines that translate technical outputs into stakeholder-ready business communication. Average debugging time reduced from 10hr to 4hr.",
     stack:   ["Ollama", "GPT-4", "LangChain", "Python", "FastAPI"],
     metrics: [
       { value: "60%",  label: "Debug Time Reduction", type: "documented" },
@@ -224,7 +224,7 @@ export const PRODUCTION_PATTERNS = [
     id:      "mlops",
     title:   "MLOps Pipeline",
     caption: "Automated ML lifecycle",
-    description: "Feature engineering → model training → validation → blue-green deployment → monitoring → auto-retraining on drift detection. GitHub Actions CI/CD, MLflow experiment tracking.",
+    description: "Feature engineering to model training to validation to blue-green deployment to monitoring to auto-retraining on drift detection. GitHub Actions CI/CD, MLflow experiment tracking.",
     metrics: [{ value: "< 4hr", label: "Model retrain cycle" }, { value: "0",  label: "Manual deploys" }],
     accent: "cyan" as const,
   },

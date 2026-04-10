@@ -8,7 +8,12 @@ const sections = [
 
 test('hero is visible above the fold', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1, name: 'Oscar Scardubu' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      level: 1,
+      name: /The engineer you bring in when AI behavior, platform reliability, and product clarity/i,
+    })
+  ).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Available — Staff+ · Co-founder · Consulting');
 });
 

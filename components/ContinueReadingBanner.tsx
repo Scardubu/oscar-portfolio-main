@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { BookOpen, X } from "lucide-react";
+import { BookOpen, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface ReadingProgress {
@@ -72,7 +72,8 @@ export function ContinueReadingBanner() {
               href={`/blog/${readingProgress.slug}`}
               className="inline-flex items-center gap-2 text-sm font-bold text-white hover:underline"
             >
-              Continue reading ({Math.round(readingProgress.progress)}% complete) →
+              Continue reading ({Math.round(readingProgress.progress)}% complete)
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

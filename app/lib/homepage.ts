@@ -49,13 +49,13 @@ export const heroCopy = {
   badge: 'Nigeria NG · Remote-First',
   headline: "Hey, I'm Oscar 👋",
   position:
-    'I engineer production AI systems that turn complex intelligence into tools people trust and actually use.',
+    'Engineers production AI systems that turn complex intelligence into tools people trust and actually use.',
   bio: 'SabiScore centers on real-time delivery under uneven infrastructure conditions. The work focuses on bridging frontier research and intentional design so AI experiences remain legible when traffic rises and operating conditions get messy.',
   proofTitle:
     'The engineer you hire when product clarity, platform reliability, and AI behavior all have to hold at the same time.',
   proofBody:
     'The strongest signal here is not a claim. It is the combination of shipped work, explicit tradeoffs, and an interface disciplined enough to explain the work without asking for trust first.',
-  ctaPrimary: 'See My Work →',
+  ctaPrimary: 'See Work',
   ctaSecondary: 'Open to Staff / Senior ML · Full-Stack · Consulting',
   contactEmail: 'scardubu@gmail.com',
 } as const;
@@ -150,7 +150,7 @@ export const workProjects: WorkProject[] = [
     problem:
       'The objective was to build a surface that answers the real screening questions quickly: what has shipped, what the engineer owns, and whether the writing matches the code.',
     approach:
-      'I rebuilt the information architecture around hiring doubts, converted projects into decision artifacts, used restrained motion, and kept every strong statement tied to evidence that can be opened immediately.',
+      'The information architecture was rebuilt around hiring doubts, projects converted into decision artifacts, restrained motion used, and every strong statement tied to evidence that can be opened immediately.',
     decisions: [
       {
         label: 'Rejected decorative motion',
@@ -174,15 +174,15 @@ export const workProjects: WorkProject[] = [
 
 export const experienceCards: StoryCard[] = [
   {
-    eyebrow: 'What I have owned',
+    eyebrow: 'Ownership scope',
     title: 'Platform, model, and interface decisions in the same delivery loop.',
     body: 'SabiScore required full-stack ownership: ingestion logic, inference pathways, frontend delivery, and the operating decisions that keep the surface understandable while the system is live.',
     evidence: 'Visible in the shipped product, repository history, and case study detail.',
   },
   {
-    eyebrow: 'How I work',
+    eyebrow: 'Working method',
     title: 'Architecture language first, implementation detail second.',
-    body: 'I frame work in terms of constraints, failure modes, and handoff quality. That makes the eventual code easier to build, easier to explain, and easier to operate with other teams.',
+    body: 'Work is framed in terms of constraints, failure modes, and handoff quality. That makes the eventual code easier to build, easier to explain, and easier to operate with other teams.',
     evidence: 'Visible in the project cards, route-level work pages, and production-oriented copy.',
   },
   {
@@ -195,7 +195,7 @@ export const experienceCards: StoryCard[] = [
 
 export const thinkingCards: StoryCard[] = [
   {
-    eyebrow: 'How I think',
+    eyebrow: 'Design philosophy',
     title: 'Good AI products reduce uncertainty instead of exporting it to the user.',
     body: 'The model is only part of the system. Reliability, framing, and interface decisions determine whether intelligence is usable when someone needs to act.',
   },

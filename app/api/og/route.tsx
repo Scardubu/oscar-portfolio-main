@@ -43,7 +43,7 @@ export async function GET() {
               margin: 0,
             }}
           >
-            Oscar Scardubu
+            Oscar Ndugbu (Scardubu)
           </h1>
           <p
             style={{

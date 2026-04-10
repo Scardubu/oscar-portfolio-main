@@ -255,9 +255,9 @@ export default function ProductionPatterns() {
               deploys.
             </h3>
             <p className="text-body text-secondary">
-              I design for the second year, not just the first sprint. Every
-              system I build ships with monitoring, retraining pipelines, and
-              runbooks from day one.
+              Systems designed for the second year, not just the first sprint.
+              Production systems ship with monitoring, retraining pipelines,
+              and runbooks from day one.
             </p>
           </div>
         </div>
