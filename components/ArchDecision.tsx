@@ -53,6 +53,7 @@ export function ArchDecision({
               </p>
               <p
                 className={`mt-2 max-w-none text-sm leading-6 ${isBecause ? 'text-[color:var(--color-text-primary)] font-medium' : 'text-[color:var(--color-text-secondary)]'}`}
+                data-label={item.label}
                 data-value-for={item.label}
                 style={{ fontFamily: 'var(--font-display)', ...item.valueStyle }}
               >

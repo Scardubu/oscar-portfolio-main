@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ── Scrollbar hiding (v15 ELEVATION-5) ── */
+::-webkit-scrollbar { display: none; }
+html { scrollbar-width: none; }
+
 /* ═══════════════════════════════════════════════════════════════
    OSCAR SCARDUBU — DESIGN SYSTEM v8.0
    Liquid Glass · 8px Grid · 7-Step Fluid Type · Theme-Aware
@@ -189,6 +193,11 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: dark light;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
 }
 
 body {
@@ -455,8 +464,8 @@ section {
 
 .glass-no-hover {
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
@@ -639,6 +648,13 @@ section {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+.tag:hover {
+  border-color: var(--glass-border-hover);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .link-reveal {
@@ -661,7 +677,14 @@ section {
 }
 .writing-row:hover { transform: translateX(4px); }
 .writing-row:hover .writing-title { color: var(--color-text-primary); }
-.writing-title { color: var(--color-text-secondary); font-size: 1.05rem; line-height: 1.55; transition: color var(--dur-fast) var(--ease-out); }
+.writing-title {
+  color: var(--color-text-secondary);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.55;
+  transition: color var(--dur-fast) var(--ease-out);
+}
 
 @keyframes skeleton-sweep {
   0%   { background-position: 200% center; }
@@ -1013,6 +1036,12 @@ a[data-cta]:focus-visible,
   gap: var(--space-20);
 }
 
+/* v15 ELEVATION-5 — BECAUSE field weight guarantee */
+[data-value-for="BECAUSE"] {
+  font-weight: 500 !important;
+  color: var(--color-text-primary) !important;
+}
+
 .tag--active {
   border-color: rgba(99,102,241,0.32);
   background: rgba(99,102,241,0.12);
@@ -1026,6 +1055,12 @@ a[data-cta]:focus-visible,
 
   .arch-grid.arch-grid--full > div:not(:last-child) {
     border-right: 1px solid var(--color-border-subtle);
+  }
+}
+
+@media (min-width: 1100px) {
+  .about-grid {
+    grid-template-columns: 1.4fr 1fr 0.9fr;
   }
 }
 

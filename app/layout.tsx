@@ -3,8 +3,10 @@ import { Crimson_Pro, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
+import { Footer } from '@/components/Footer';
 import { GradientMesh } from '@/components/GradientMesh';
 import { GrainOverlay } from '@/components/GrainOverlay';
+import { NavBar } from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { Providers } from '@/app/providers';
 
@@ -91,7 +93,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body className="relative isolate">
+      <body className="relative">
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
@@ -119,7 +121,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <GrainOverlay />
           <GradientMesh />
           <ScrollProgress />
+          <NavBar />
           <div className="relative z-[2]">{children}</div>
+          <Footer />
         </Providers>
         <Analytics />
         <SpeedInsights />

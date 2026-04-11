@@ -6,7 +6,6 @@ import { ChevronDown } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
-import { CV_ASSET_PATH } from '@/lib/config';
 import {
   clipReveal,
   fadeRise,
@@ -42,7 +41,7 @@ const PILLARS = [
   {
     label: 'FULL OWNERSHIP',
     headline: 'Feature to inference',
-    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer. No handoffs. ~30% inference latency reduction via query optimisation and Redis caching.',
+    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, full stack — no handoff latency, no translation loss, no waiting.',
     accent: 'var(--color-accent)',
     dataPillar: 'ownership',
   },
@@ -69,7 +68,7 @@ export function HeroSection() {
       aria-labelledby="hero-heading"
       className="relative flex min-h-[100dvh] flex-col justify-center pt-[calc(var(--nav-height)+3.5rem)] pb-20 sm:pb-24"
     >
-      <div className="container relative z-10">
+      <div className="relative z-10 container">
         <motion.div variants={container} initial="hidden" animate={mounted ? 'visible' : 'hidden'}>
           <motion.div variants={child} className="mb-10">
             <span
@@ -85,40 +84,35 @@ export function HeroSection() {
             </span>
           </motion.div>
 
-          <motion.p variants={label} className="label mb-8 origin-left">
+          <motion.p variants={label} className="label mb-6 origin-left">
             Staff Full-Stack ML Engineer · AI/Fintech Systems
           </motion.p>
 
-          <div className="mb-5 overflow-hidden">
-            <motion.h1 variants={headline} id="hero-heading" className="text-gradient max-w-[13ch] text-balance">
+          <div className="mb-4 overflow-hidden">
+            <motion.h1
+              variants={headline}
+              id="hero-heading"
+              className="text-gradient max-w-[16ch] text-balance"
+            >
               <span className="block">When AI behavior, platform reliability,</span>
               <span className="block">and product clarity must hold simultaneously —</span>
               <span className="block">you need someone who has built all three.</span>
             </motion.h1>
           </div>
 
-          <div className="mb-10 overflow-hidden">
-            <motion.p
-              variants={child}
-              className="text-[length:var(--text-xl)] italic leading-relaxed text-[color:var(--color-live)]"
-              style={{ fontFamily: 'var(--font-display)' }}
-              transition={reducedMotion ? undefined : { delay: 0.45 }}
-            >
-              The system has to work at 2am.
-            </motion.p>
-          </div>
-
           <motion.p
             variants={child}
-            className="max-w-[64ch] text-[length:var(--text-xl)] leading-[1.8] text-[color:var(--color-text-secondary)]"
+            className="mt-3 max-w-[48ch] text-[length:var(--text-xl)] leading-relaxed text-[color:var(--color-live)] italic"
             style={{ fontFamily: 'var(--font-display)' }}
+            transition={reducedMotion ? undefined : { delay: 0.45 }}
           >
-            Four years shipping production ML platforms, tax compliance infrastructure, and encrypted
-            blockchain data systems. A decade building federal-scale data pipelines for Nigeria&apos;s
-            36-state education system.
+            The system has to work at 2am.
           </motion.p>
 
-          <motion.div variants={child} className="mt-10 mb-10 flex flex-wrap items-center gap-3 sm:gap-4">
+          <motion.div
+            variants={child}
+            className="mt-8 mb-10 flex flex-wrap items-center gap-3 sm:gap-4"
+          >
             <motion.a
               href="#projects"
               data-cta="primary"
@@ -131,22 +125,22 @@ export function HeroSection() {
                       transition: { type: 'spring', stiffness: 400, damping: 25 },
                     }
               }
-              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--color-accent)] bg-[var(--color-accent)] px-5 py-3.5 font-mono text-xs font-medium uppercase text-white transition"
+              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--color-accent)] bg-[var(--color-accent)] px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
             >
               View Projects
             </motion.a>
             <Link
               href="#contact"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium uppercase text-[color:var(--color-text-secondary)] transition"
+              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-secondary)] uppercase transition"
             >
               Get in Touch
             </Link>
             <Link
-              href={CV_ASSET_PATH}
+              href="/oscar-ndugbu-resume.pdf"
               download
               data-cta="ghost"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-4 py-3.5 font-mono text-xs font-medium uppercase text-[color:var(--color-text-muted)] transition"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-4 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-muted)] uppercase transition"
             >
               Resume
               <ChevronDown className="h-3 w-3" aria-hidden="true" />
@@ -157,10 +151,7 @@ export function HeroSection() {
             <LiveActivityBar />
           </motion.div>
 
-          <motion.div
-            variants={child}
-            className="pillar-grid"
-          >
+          <motion.div variants={child} className="pillar-grid">
             {PILLARS.map((pillar) => (
               <motion.div
                 key={pillar.label}
@@ -175,12 +166,17 @@ export function HeroSection() {
                   {pillar.label}
                 </p>
                 <p
-                  className="mb-3 text-base font-semibold leading-snug text-[color:var(--color-text-primary)] sm:text-lg"
+                  className="mb-3 text-base leading-snug font-semibold text-[color:var(--color-text-primary)] sm:text-lg"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {pillar.headline}
                 </p>
-                <p className="text-sm leading-7 sm:text-[0.95rem]" style={{ fontFamily: 'var(--font-display)' }}>{pillar.body}</p>
+                <p
+                  className="text-sm leading-7 text-[color:var(--color-text-secondary)] sm:text-[0.95rem]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  {pillar.body}
+                </p>
               </motion.div>
             ))}
           </motion.div>

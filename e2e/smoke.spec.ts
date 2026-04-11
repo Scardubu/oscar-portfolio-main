@@ -179,7 +179,7 @@ test.describe('Portfolio smoke tests', () => {
 
     const resumeLink = page.locator('#hero a[data-cta="ghost"]').first();
     await expect(resumeLink).toHaveAttribute('download', '');
-    await expect(resumeLink).toHaveAttribute('href', '/cv/oscar-ndugbu-cv.docx');
+    await expect(resumeLink).toHaveAttribute('href', '/oscar-ndugbu-resume.pdf');
   });
 
   test('writing section is present on home', async ({ page }) => {

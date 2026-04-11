@@ -43,14 +43,15 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               THE CUT
             </motion.span>
             <motion.h2 variants={child} id="writing-heading" className="mt-[var(--space-2)] text-white">
-              Thoughts on engineering, teams, and the brutal honesty of production.
+              Engineering in depth
             </motion.h2>
             <motion.p variants={child} className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8]">
-              Long-form breakdowns of shipping decisions, platform constraints, and what actually holds under load.
+              Long-form breakdowns of shipping decisions, platform constraints, and what continues to hold when production stops being polite.
             </motion.p>
             <motion.div variants={child} className="mt-6 flex flex-wrap gap-2.5">
               <button
                 onClick={() => setActiveFilter('ALL')}
+                aria-pressed={activeFilter === 'ALL'}
                 className={`tag${activeFilter === 'ALL' ? ' tag--active' : ''}`}
                 style={{ cursor: 'pointer' }}
               >
@@ -60,6 +61,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 <button
                   key={label}
                   onClick={() => setActiveFilter(label)}
+                  aria-pressed={activeFilter === label}
                   className={`tag${activeFilter === label ? ' tag--active' : ''}`}
                   style={{ cursor: 'pointer' }}
                 >

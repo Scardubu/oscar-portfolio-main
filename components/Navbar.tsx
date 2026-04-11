@@ -304,7 +304,11 @@ export function NavBar() {
         aria-label="Primary"
       >
         <m.div
-          whileHover={prefersReduced ? undefined : { scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+          whileHover={
+            prefersReduced
+              ? undefined
+              : { scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 30 } }
+          }
         >
           <Link
             href={resolveSectionHref(pathname, 'hero')}
@@ -416,7 +420,7 @@ export function NavBar() {
                       href={link.href}
                       onClick={() => setMenuOpen(false)}
                       className={cn(
-                        'flex items-center rounded-xl px-3 py-3 text-base font-medium transition-colors duration-150',
+                        'flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-colors duration-150',
                         getMobileLinkClass(isActive(link.href))
                       )}
                       aria-current={getAriaCurrent(isActive(link.href))}

@@ -29,9 +29,9 @@ const URL_PATTERNS = [
   /wa\.me/,
 ];
 
-const SCAN_DIRS = ['app', 'components', 'lib'];
-const EXTENSIONS = new Set(['.ts', '.tsx']);
-const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts'];
+const SCAN_DIRS = ['app', 'components', 'lib', 'content'];
+const EXTENSIONS = new Set(['.ts', '.tsx', '.md', '.mdx']);
+const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts', 'github.ts', 'writing.ts'];
 
 let violations = 0;
 

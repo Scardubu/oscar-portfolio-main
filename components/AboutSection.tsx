@@ -57,7 +57,12 @@ export function AboutSection() {
   const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
-    <section id="about" ref={ref} aria-labelledby="about-heading" className="border-t border-[color:var(--color-border)] py-24 sm:py-28">
+    <section
+      id="about"
+      ref={ref}
+      aria-labelledby="about-heading"
+      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
+    >
       <div className="container">
         <motion.div
           variants={container}
@@ -70,7 +75,7 @@ export function AboutSection() {
               Background
             </motion.span>
             <motion.h2 variants={child} id="about-heading" className="mt-4 text-white">
-              Engineer. Architect.
+              The engineer
             </motion.h2>
 
             <div className="mt-8 space-y-6">
@@ -79,7 +84,7 @@ export function AboutSection() {
                   key={paragraph}
                   variants={child}
                   className="max-w-[66ch] text-[length:var(--text-xl)] leading-[1.85] text-[color:var(--color-text-secondary)]"
-                  style={{ fontFamily: 'var(--font-display)' }}
+                  style={{ fontFamily: 'var(--font-display)', fontWeight: 400 }}
                 >
                   {paragraph}
                 </motion.p>
@@ -94,17 +99,22 @@ export function AboutSection() {
             <motion.span variants={child} className="label">
               Certifications
             </motion.span>
-            <div className="mt-8 space-y-2">
+            <div className="mt-8 space-y-1">
               {CERTS.map((cert) => (
                 <motion.div
                   key={cert.name}
                   variants={child}
-                  className="flex items-center justify-between gap-4 border-b border-[color:var(--color-border)] py-5"
+                  className="flex items-center justify-between gap-4 border-b border-[color:var(--color-border)] py-4 transition-colors hover:bg-white/[0.02]"
                 >
-                  <p className="text-base text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                  <p
+                    className="text-base font-medium text-white"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
                     {cert.name}
                   </p>
-                  <p className="font-mono text-xs text-[color:var(--color-text-muted)]">{cert.date}</p>
+                  <p className="font-mono text-xs text-[color:var(--color-text-muted)]">
+                    {cert.date}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -140,7 +150,10 @@ export function AboutSection() {
               >
                 <p className="label">{item.stack}</p>
                 <h3 className="mt-4 text-white">{item.name}</h3>
-                <p className="mt-4 text-base leading-8 text-white/65" style={{ fontFamily: 'var(--font-display)' }}>
+                <p
+                  className="mt-4 text-base leading-8 text-white/65"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
                   {item.desc}
                 </p>
               </motion.a>

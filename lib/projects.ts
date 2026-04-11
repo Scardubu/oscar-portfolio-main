@@ -30,7 +30,16 @@ export const PROJECTS: readonly Project[] = [
       'Sub-50ms event fan-out at sustained load with dead-letter recovery — impossible with polling under concurrent sessions',
     constraint:
       'Ensemble inference must complete in <120ms p99 at peak load with no model warmup on cold start.',
-    stack: ['FastAPI', 'XGBoost', 'LightGBM', 'CatBoost', 'Redis Pub/Sub', 'Prometheus', 'Grafana', 'Docker'],
+    stack: [
+      'FastAPI',
+      'XGBoost',
+      'LightGBM',
+      'CatBoost',
+      'Redis Pub/Sub',
+      'Prometheus',
+      'Grafana',
+      'PostgreSQL',
+    ],
     demoUrl: 'https://sabiscore.scardubu.dev',
     githubUrl: 'https://github.com/Scardubu/sabiscore',
     caseStudy: '/work/sabiscore',
@@ -60,14 +69,22 @@ export const PROJECTS: readonly Project[] = [
     status: 'case-study',
     tagline: 'Nigerian SME tax filing from 4 hours to 15 minutes — NRS-integrated, audit-ready.',
     description:
-      'Full tax compliance workflow automation for Nigerian small businesses — VAT, CIT, PIT, TIN verification, NRS 2026 e-invoicing. PostgreSQL RLS isolates each tenant at the database level. Real-time calculations under <150ms at load. Idempotent BullMQ job queue ensures no submission is ever double-processed — even through mid-request server failure. Hash-chained immutable audit trail. 95% test coverage.',
+      'Full tax compliance workflow automation for Nigerian small businesses — VAT, withholding tax, and annual returns. PostgreSQL RLS isolates each tenant at the database level. Real-time calculations under <150ms at load. Idempotent BullMQ job queue ensures no submission is ever double-processed — even through mid-request server failure. Hash-chained immutable audit trail. 95% test coverage.',
     chosen: 'PostgreSQL Row-Level Security for multi-tenancy',
     over: 'Application-layer tenant filtering',
     because:
       'NRS audit scrutiny demands proof that tenant data cannot cross-contaminate — RLS enforces this at the database engine level, not the application layer',
     constraint:
       'NRS API rate limits: 30 req/min per TIN. BullMQ queue must manage burst filing windows without client-visible failure.',
-    stack: ['Fastify 5', 'PostgreSQL 15 RLS', 'Redis 7', 'BullMQ', 'GraphQL', 'Prisma', 'Docker', 'GH Actions'],
+    stack: [
+      'Fastify 5',
+      'PostgreSQL 15 RLS',
+      'Redis 7',
+      'BullMQ',
+      'GraphQL',
+      'Prisma',
+      'TypeScript',
+    ],
     caseStudy: '/work/taxbridge',
   },
 ];

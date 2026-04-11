@@ -1,8 +1,6 @@
 import { AboutSection } from '@/components/AboutSection';
 import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
-import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/components/HeroSection';
-import { NavBar } from '@/components/Navbar';
 import { ContactSection } from '@/components/ContactSection';
 import { ProjectsSection } from '@/components/ProjectsSection';
 import { WritingSection } from '@/components/WritingSection';
@@ -13,15 +11,13 @@ export default async function Home() {
 
   return (
     <>
-      <NavBar />
       <main id="main-content" tabIndex={-1}>
         <HeroSection />
         <ProjectsSection />
         <AboutSection />
-        <ContactSection />
         {posts.length > 0 ? <WritingSection posts={posts} /> : null}
+        <ContactSection />
       </main>
-      <Footer />
       <BookmarkToastLoader />
     </>
   );
