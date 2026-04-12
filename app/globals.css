@@ -1037,9 +1037,18 @@ a[data-cta]:focus-visible,
 }
 
 /* v15 ELEVATION-5 — BECAUSE field weight guarantee */
-[data-value-for="BECAUSE"] {
+[data-label="BECAUSE"] {
   font-weight: 500 !important;
   color: var(--color-text-primary) !important;
+}
+
+/* CE-2 — BECAUSE cell hover left-border accent */
+.arch-because-cell {
+  transition: border-left var(--dur-fast) var(--ease-out);
+  border-left: 2px solid transparent;
+}
+.arch-because-cell:hover {
+  border-left-color: rgba(99, 102, 241, 0.35);
 }
 
 .tag--active {

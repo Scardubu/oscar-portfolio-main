@@ -333,7 +333,7 @@ export function NavBar() {
               <Link
                 href={link.href}
                 className={cn(
-                  'relative block rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-150',
+                  'relative block rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-200',
                   getDesktopLinkClass(isActive(link.href))
                 )}
                 aria-current={getAriaCurrent(isActive(link.href))}
@@ -420,7 +420,7 @@ export function NavBar() {
                       href={link.href}
                       onClick={() => setMenuOpen(false)}
                       className={cn(
-                        'flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-colors duration-150',
+                        'flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-colors duration-200',
                         getMobileLinkClass(isActive(link.href))
                       )}
                       aria-current={getAriaCurrent(isActive(link.href))}

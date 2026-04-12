@@ -104,7 +104,6 @@ export function HeroSection() {
             variants={child}
             className="mt-3 max-w-[48ch] text-[length:var(--text-xl)] leading-relaxed text-[color:var(--color-live)] italic"
             style={{ fontFamily: 'var(--font-display)' }}
-            transition={reducedMotion ? undefined : { delay: 0.45 }}
           >
             The system has to work at 2am.
           </motion.p>
@@ -122,7 +121,7 @@ export function HeroSection() {
                   : {
                       scale: 1.02,
                       boxShadow: '0 0 0 3px var(--color-accent-glow)',
-                      transition: { type: 'spring', stiffness: 400, damping: 25 },
+                      transition: { type: 'spring', stiffness: 400, damping: 30 },
                     }
               }
               className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--color-accent)] bg-[var(--color-accent)] px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
@@ -143,7 +142,22 @@ export function HeroSection() {
               className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-4 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-muted)] uppercase transition"
             >
               Resume
-              <ChevronDown className="h-3 w-3" aria-hidden="true" />
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
+                <path
+                  d="M5 1v8M1 6l4 3 4-3"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Link>
           </motion.div>
 

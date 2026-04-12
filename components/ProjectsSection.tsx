@@ -59,7 +59,7 @@ export function ProjectsSection() {
           </motion.h2>
           <motion.p
             variants={header}
-            className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-white/65"
+            className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-[color:var(--color-text-secondary)]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             End-to-end AI and fintech systems. Each ships with documented architecture decisions and
@@ -82,13 +82,13 @@ export function ProjectsSection() {
               {featured.title}
             </h3>
             <p
-              className="mt-4 max-w-[58ch] text-[length:var(--text-xl)] leading-[1.7] text-white/80"
+              className="mt-4 max-w-[58ch] text-[length:var(--text-xl)] leading-[1.7] text-[color:var(--color-text-secondary)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               {featured.tagline}
             </p>
             <p
-              className="mt-6 max-w-[72ch] text-base leading-8 text-white/65"
+              className="mt-6 max-w-[72ch] text-base leading-8 text-[color:var(--color-text-secondary)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               {featured.description}
@@ -169,7 +169,7 @@ export function ProjectsSection() {
 
                 <h3 className="mt-6 font-semibold text-white">{project.title}</h3>
                 <p
-                  className="mt-3 flex-1 text-base leading-8 text-white/80"
+                  className="mt-3 flex-1 text-base leading-8 text-[color:var(--color-text-secondary)]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {project.tagline}

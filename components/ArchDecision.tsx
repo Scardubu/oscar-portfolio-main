@@ -41,20 +41,18 @@ export function ArchDecision({
           return (
             <div
               key={item.key}
-              className={`px-4 py-3 ${compactDivider ? 'border-b border-[color:var(--color-border-subtle)]' : ''}`}
+              className={`px-4 py-3${isBecause ? ' arch-because-cell' : ''}${compactDivider ? ' border-b border-[color:var(--color-border-subtle)]' : ''}`}
             >
               <p
                 className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}
-                data-label={item.label}
                 data-arch-key={item.key}
                 style={{ color: item.color, ...item.labelStyle }}
               >
                 {item.label}
               </p>
               <p
-                className={`mt-2 max-w-none text-sm leading-6 ${isBecause ? 'text-[color:var(--color-text-primary)] font-medium' : 'text-[color:var(--color-text-secondary)]'}`}
+                className={`mt-2 max-w-none text-sm leading-6 ${isBecause ? 'font-medium text-[color:var(--color-text-primary)]' : 'text-[color:var(--color-text-secondary)]'}`}
                 data-label={item.label}
-                data-value-for={item.label}
                 style={{ fontFamily: 'var(--font-display)', ...item.valueStyle }}
               >
                 {value}

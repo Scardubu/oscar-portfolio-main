@@ -34,7 +34,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       id="writing"
       ref={ref}
       aria-labelledby="writing-heading"
-      className="border-t border-[color:var(--color-border)] py-24 sm:py-28"
+      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
@@ -79,8 +79,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   <span className="badge-muted">{posts.length} published</span>
                 </div>
                 <h3 className="mt-6 max-w-[20ch] text-white">{featuredPost.title}</h3>
-                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-white/65">{featuredPost.summary}</p>
-                <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-white/55">
+                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-[color:var(--color-text-secondary)]">{featuredPost.summary}</p>
+                <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-[color:var(--color-text-muted)]">
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
                   </time>

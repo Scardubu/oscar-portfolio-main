@@ -1,6 +1,6 @@
 import type { Variants } from 'framer-motion';
 
-export const staggerContainer = (stagger = 0.08, delay = 0): Variants => ({
+export const staggerContainer = (stagger = 0.1, delay = 0): Variants => ({
   hidden: {},
   visible: {
     transition: {

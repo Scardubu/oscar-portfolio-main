@@ -9,6 +9,7 @@ import { GrainOverlay } from '@/components/GrainOverlay';
 import { NavBar } from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { Providers } from '@/app/providers';
+import CursorGlow from '@/components/CursorGlow';
 
 import './globals.css';
 
@@ -54,6 +55,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: '#0A0A0B',
 };
 
@@ -89,6 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
         <script
+          id="json-ld-person"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
@@ -118,6 +122,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </defs>
         </svg>
         <Providers>
+          <CursorGlow />
           <GrainOverlay />
           <GradientMesh />
           <ScrollProgress />

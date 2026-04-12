@@ -278,8 +278,8 @@ test.describe('Portfolio smoke tests', () => {
 
   test('[v15] BECAUSE field has heavier font weight than OVER field', async ({ page }) => {
     await page.goto('/');
-    const becauseValue = page.locator('[data-value-for="BECAUSE"]').first();
-    const overValue = page.locator('[data-value-for="OVER"]').first();
+    const becauseValue = page.locator('[data-label="BECAUSE"]').first();
+    const overValue = page.locator('[data-label="OVER"]').first();
 
     if ((await becauseValue.count()) > 0 && (await overValue.count()) > 0) {
       const becauseWeight = await becauseValue.evaluate((el) =>
@@ -292,5 +292,22 @@ test.describe('Portfolio smoke tests', () => {
       expect(becauseWeight).toBeGreaterThanOrEqual(overWeight);
       expect(becauseWeight).toBeGreaterThanOrEqual(500);
     }
+  });
+
+  test('[CE-1] CursorGlow element is present in DOM', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-testid="cursor-glow"]')).toBeAttached();
+  });
+
+  test('Contact cards have distinct data-accent values', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#contact').scrollIntoViewIfNeeded();
+    const cards = page.locator('#contact [data-accent]');
+    const count = await cards.count();
+    expect(count).toBeGreaterThanOrEqual(3);
+    const accents = await Promise.all(
+      Array.from({ length: count }, (_, i) => cards.nth(i).getAttribute('data-accent'))
+    );
+    expect(new Set(accents).size).toBeGreaterThan(1);
   });
 });
