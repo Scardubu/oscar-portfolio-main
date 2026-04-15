@@ -18,21 +18,21 @@ const engagementModes: EngagementMode[] = [
     type: 'Staff+ / Principal',
     headline: 'Distributed systems · ML platforms · API infrastructure',
     detail:
-      'Available for Staff+ and Principal Backend roles at AI-native fintech and product companies. Lagos/Remote.',
+      'Available for Staff+ and Principal Backend roles at AI-native fintech and product companies. Four years of independent platform work with zero-downtime design as a baseline constraint.',
     accent: 'var(--color-live)',
   },
   {
     type: 'Technical Co-Founder',
     headline: 'Pre-seed to Series A · Africa/emerging markets',
     detail:
-      'Four years shipping production platforms from zero. Infrastructure, ML, and compliance stacks.',
+      'Four years shipping production platforms from zero. Infrastructure, ML, and compliance architecture through funding rounds. The system should outlast the seed deck.',
     accent: 'var(--color-accent)',
   },
   {
     type: 'ML Consulting',
     headline: 'Model deployment · Observability · Performance',
     detail:
-      'Inference serving, monitoring pipelines, and latency reduction. SabiScore approach, your stack.',
+      'Inference serving, monitoring pipelines, and latency reduction. SabiScore approaches 30% inference latency reduction (Redis caching + query optimisation). Engagements scoped to specific problems with measurable outcomes.',
     accent: 'var(--color-wip)',
   },
 ];

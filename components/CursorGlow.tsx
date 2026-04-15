@@ -28,7 +28,7 @@ export default function CursorGlow() {
     <motion.div
       aria-hidden="true"
       data-testid="cursor-glow"
-      className="cursor-glow pointer-events-none fixed z-0"
+      className="cursor-glow pointer-events-none fixed z-[1]"
       style={{ x, y, translateX: '-50%', translateY: '-50%' }}
     />
   );

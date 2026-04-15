@@ -31,13 +31,17 @@ const URL_PATTERNS = [
 
 const SCAN_DIRS = ['app', 'components', 'lib', 'content'];
 const EXTENSIONS = new Set(['.ts', '.tsx', '.md', '.mdx']);
-const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts', 'github.ts', 'writing.ts'];
+const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts', 'github.ts', 'writing.ts', 'blog'];
 
 let violations = 0;
 
 async function scanFile(filePath) {
   const filename = path.basename(filePath);
   if (SKIP_FILES.some((item) => filename.includes(item))) {
+    return;
+  }
+  // Skip blog directory (first-person narrative is intentional in posts)
+  if (filePath.includes('/blog/') || filePath.includes('\\blog\\')) {
     return;
   }
 

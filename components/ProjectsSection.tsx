@@ -9,6 +9,10 @@ import { ArchDecision } from '@/components/ArchDecision';
 import { PROJECTS, type Project } from '@/lib/projects';
 import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
+// Module-scope constants — never call cardReveal() inside .map() or JSX [v15 FIX-HOOK]
+const FEATURED_VARIANT = cardReveal(24);
+const GRID_VARIANTS = [cardReveal(24), cardReveal(-24)] as const;
+
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
     return <span className="badge-muted">CASE STUDY</span>;
@@ -29,7 +33,7 @@ export function ProjectsSection() {
   const featured = PROJECTS[0];
   const grid = PROJECTS.slice(1);
 
-  const featuredReveal = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+  const featuredReveal = reducedMotion ? noMotion : FEATURED_VARIANT;
   const header = reducedMotion ? noMotion : fadeRise;
   const container = useMemo(() => staggerContainer(0.12, 0.05), []);
   const headingContainer = useMemo(() => staggerContainer(0.08), []);
@@ -102,7 +106,7 @@ export function ProjectsSection() {
             />
 
             <p
-              className="mt-6 max-w-[72ch] text-sm text-[color:var(--color-text-muted)] italic"
+              className="mt-6 max-w-[72ch] border-l-2 border-[rgba(245,158,11,0.35)] pl-3 text-sm text-[color:var(--color-text-secondary)] italic"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Constraint: {featured.constraint}
@@ -158,7 +162,7 @@ export function ProjectsSection() {
             {grid.map((project, index) => (
               <motion.article
                 key={project.slug}
-                variants={reducedMotion ? noMotion : cardReveal(index % 2 === 0 ? 24 : -24)}
+                variants={reducedMotion ? noMotion : GRID_VARIANTS[index % 2]}
                 className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] p-8 sm:p-9"
                 data-project-id={project.slug}
               >

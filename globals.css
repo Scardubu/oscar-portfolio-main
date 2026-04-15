@@ -48,6 +48,8 @@
   --color-text-secondary: #8888a8;
   --color-text-tertiary: #55556a;
   --color-text-accent: #00c8e8;
+  --color-text-hero: #ffffff;
+  --color-live: #22c55e;
 
   /* Borders */
   --color-border-subtle: rgba(255, 255, 255, 0.06);
@@ -483,4 +485,53 @@ body::before {
 ::selection {
   background: rgba(0, 200, 232, 0.2);
   color: var(--color-text-primary);
+}
+
+/* ── Pillar grid (v15) ───────────────────────────────────────── */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .pillar-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+.pillar-grid-item {
+  position: relative;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--bento-radius);
+}
+
+@media (min-width: 640px) {
+  .pillar-grid-item:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* ── Nav links (v15) ─────────────────────────────────────────── */
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* ── Commit message (v15) ─────────────────────────────────────── */
+.commit-message {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Pulse keyframe (v15) ─────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
