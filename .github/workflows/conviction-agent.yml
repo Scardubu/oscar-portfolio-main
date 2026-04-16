@@ -1,0 +1,40 @@
+name: Conviction Agent
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch:
+
+jobs:
+  heal:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: pnpm install
+
+      - name: Scan
+        run: pnpm tsx scripts/conviction-scan.ts
+
+      - name: Auto-fix
+        run: |
+          for file in $(git ls-files '*.tsx'); do
+            pnpm tsx scripts/conviction-fix.ts $file
+          done
+
+      - name: Commit changes
+        run: |
+          git config user.name "conviction-agent"
+          git config user.email "agent@bot.com"
+          git checkout -b conviction/fixes
+          git commit -am "chore: auto-fix conviction violations" || echo "No changes"
+          git push origin conviction/fixes

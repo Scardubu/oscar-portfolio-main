@@ -42,28 +42,36 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             <motion.span variants={child} className="label">
               THE CUT
             </motion.span>
-            <motion.h2 variants={child} id="writing-heading" className="mt-[var(--space-2)] text-white">
+            <motion.h2
+              variants={child}
+              id="writing-heading"
+              className="mt-[var(--space-2)] text-white"
+            >
               Engineering in depth
             </motion.h2>
-            <motion.p variants={child} className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8]">
-              Long-form breakdowns of shipping decisions, platform constraints, and what continues to hold when production stops being polite.
+            <motion.p
+              variants={child}
+              className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8]"
+            >
+              Long-form breakdowns of shipping decisions, platform constraints, and what continues
+              to hold when production stops being polite.
             </motion.p>
             <motion.div variants={child} className="mt-6 flex flex-wrap gap-2.5">
               <button
+                type="button"
                 onClick={() => setActiveFilter('ALL')}
-                aria-pressed={activeFilter === 'ALL'}
-                className={`tag${activeFilter === 'ALL' ? ' tag--active' : ''}`}
-                style={{ cursor: 'pointer' }}
+                aria-pressed={activeFilter === 'ALL' ? 'true' : 'false'}
+                className={`tag cursor-pointer${activeFilter === 'ALL' ? 'tag--active' : ''}`}
               >
                 ALL
               </button>
               {FILTER_LABELS.map((label) => (
                 <button
                   key={label}
+                  type="button"
                   onClick={() => setActiveFilter(label)}
-                  aria-pressed={activeFilter === label}
-                  className={`tag${activeFilter === label ? ' tag--active' : ''}`}
-                  style={{ cursor: 'pointer' }}
+                  aria-pressed={activeFilter === label ? 'true' : 'false'}
+                  className={`tag cursor-pointer${activeFilter === label ? 'tag--active' : ''}`}
                 >
                   {label}
                 </button>
@@ -73,13 +81,18 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
           {featuredPost ? (
             <div className="grid gap-6">
-              <motion.article variants={card} className="glass glass-full glass-chromatic rounded-[var(--radius-xl)] p-7 sm:p-9 lg:p-10">
+              <motion.article
+                variants={card}
+                className="glass glass-full glass-chromatic rounded-[var(--radius-xl)] p-7 sm:p-9 lg:p-10"
+              >
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="pill pill-cyan">Featured</span>
                   <span className="badge-muted">{posts.length} published</span>
                 </div>
                 <h3 className="mt-6 max-w-[20ch] text-white">{featuredPost.title}</h3>
-                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-[color:var(--color-text-secondary)]">{featuredPost.summary}</p>
+                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-[color:var(--color-text-secondary)]">
+                  {featuredPost.summary}
+                </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-[color:var(--color-text-muted)]">
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
@@ -94,7 +107,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </div>
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-cyan-400/30 px-5 py-2.5 text-sm text-cyan-200 transition hover:border-cyan-300/50 hover:text-white"
+                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--color-cyan-surface)] px-5 py-2.5 text-sm text-[color:var(--color-cyan)] transition hover:border-[color:var(--color-cyan)] hover:text-white"
                 >
                   <span>Read article</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -116,12 +129,18 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                             whileHover={
                               reducedMotion
                                 ? undefined
-                                : { x: 4, transition: { type: 'spring', stiffness: 320, damping: 28 } }
+                                : {
+                                    x: 4,
+                                    transition: { type: 'spring', stiffness: 320, damping: 28 },
+                                  }
                             }
                             whileFocus={
                               reducedMotion
                                 ? undefined
-                                : { x: 4, transition: { type: 'spring', stiffness: 320, damping: 28 } }
+                                : {
+                                    x: 4,
+                                    transition: { type: 'spring', stiffness: 320, damping: 28 },
+                                  }
                             }
                             className="writing-row"
                           >

@@ -65,9 +65,9 @@ const ICONS: Record<string, React.FC<{ color: string }>> = {
 };
 
 const ACCENT_STYLES = {
-  cyan:   { color: "var(--accent-primary)",   dim: "var(--accent-primary-dim)",   cardClass: "liquid-glass-cyan"   },
-  teal:   { color: "var(--accent-fintech)",   dim: "var(--accent-fintech-dim)",   cardClass: "liquid-glass-teal"   },
-  violet: { color: "var(--accent-secondary)", dim: "var(--accent-secondary-dim)", cardClass: "liquid-glass-violet" },
+  cyan:   { color: 'var(--color-cyan)',   dim: 'var(--color-cyan-surface)'   },
+  teal:   { color: 'var(--color-live)',   dim: 'var(--color-live-glow)'      },
+  violet: { color: 'var(--color-accent)', dim: 'var(--color-accent-surface)' },
 };
 
 // ── Pattern card ──────────────────────────────────────────────────────────────
@@ -85,24 +85,21 @@ function PatternCard({
   return (
     <motion.div
       className={cn(
-        "col-span-12 sm:col-span-6",
-        "liquid-glass",
-        accent.cardClass,
-        "bento-cell flex flex-col gap-5 cursor-pointer"
+        'glass glass-medium col-span-12 flex flex-col gap-5 cursor-pointer rounded-[var(--radius-lg)] p-6 sm:p-7 sm:col-span-6'
       )}
       variants={liquidCard}
       whileHover={
-        prefersReduced ? {} : { y: -4, boxShadow: "var(--shadow-liquid-3d-hover)" }
+        prefersReduced ? {} : { y: -4, boxShadow: 'var(--glass-shadow-hover)' }
       }
       whileTap={prefersReduced ? {} : { scale: 0.99 }}
-      transition={springs.liquid}
+      transition={springs.smooth}
       layout
       onClick={() => setExpanded((v) => !v)}
       role="button"
       aria-expanded={expanded}
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+        if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           setExpanded((v) => !v);
         }
@@ -120,8 +117,8 @@ function PatternCard({
         </motion.div>
 
         <div className="flex-1 text-left">
-          <p className="text-caption text-muted mb-0.5">{pattern.caption}</p>
-          <h3 className="text-headline text-primary">{pattern.title}</h3>
+          <p className="label mb-0.5">{pattern.caption}</p>
+          <h3 className="text-base font-semibold text-white">{pattern.title}</h3>
         </div>
 
         {/* Chevron */}
@@ -152,10 +149,10 @@ function PatternCard({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ ...springs.liquid, duration: 0.4 }}
-            style={{ overflow: "hidden" }}
+            transition={{ ...springs.smooth, duration: 0.32 }}
+            style={{ overflow: 'hidden' }}
           >
-            <p className="text-body text-secondary">{pattern.description}</p>
+            <p className="text-base leading-7 text-[color:var(--color-text-secondary)]">{pattern.description}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -165,17 +162,14 @@ function PatternCard({
         {pattern.metrics.map((m) => (
           <div key={m.label} className="flex flex-col gap-0.5">
             <motion.span
-              className="font-mono font-extrabold leading-none"
-              style={{
-                color: accent.color,
-                fontSize: "clamp(1.25rem, 2vw, 1.75rem)",
-              }}
+              className="font-mono font-extrabold leading-none text-[clamp(1.25rem,2vw,1.75rem)]"
+              style={{ color: accent.color }}
               whileHover={prefersReduced ? {} : { scale: 1.06 }}
               transition={springs.bouncy}
             >
               {m.value}
             </motion.span>
-            <span className="text-caption text-muted">{m.label}</span>
+            <span className="label">{m.label}</span>
           </div>
         ))}
       </div>
@@ -189,9 +183,10 @@ export default function ProductionPatterns() {
   return (
     <section
       id="architecture"
-      className="section-gap max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
       aria-labelledby="architecture-heading"
     >
+      <div className="container">
       <motion.div
         className="mb-12"
         variants={staggerContainer}
@@ -199,18 +194,18 @@ export default function ProductionPatterns() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <motion.p className="text-caption text-muted mb-2" variants={fadeUp}>
+        <motion.span className="label" variants={fadeUp}>
           Architecture Depth
-        </motion.p>
+        </motion.span>
         <motion.h2
           id="architecture-heading"
-          className="text-headline text-gradient-kinetic"
+          className="gradient-text mt-[var(--space-2)]"
           variants={fadeUp}
         >
           Production Patterns
         </motion.h2>
         <motion.p
-          className="text-subhead text-secondary mt-3 max-w-2xl"
+          className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-[color:var(--color-text-secondary)]"
           variants={fadeUp}
         >
           The architecture decisions behind systems that stay in production.
@@ -219,7 +214,7 @@ export default function ProductionPatterns() {
       </motion.div>
 
       <motion.div
-        className="bento-grid"
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2"
         variants={staggerSlow}
         initial="hidden"
         whileInView="visible"
@@ -232,29 +227,26 @@ export default function ProductionPatterns() {
 
       {/* Philosophy callout */}
       <motion.div
-        className="mt-8 liquid-glass liquid-glass-cyan bento-cell noise-overlay"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        className="glass glass-medium mt-8 rounded-[var(--radius-lg)] p-6 sm:p-8"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true, amount: 0.4 }}
-        transition={springs.liquid}
       >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <motion.div
-            className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
-            style={{ background: "var(--accent-primary-dim)" }}
-            whileHover={{ rotate: 8, scale: 1.1 }}
-            transition={springs.bouncy}
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+          <div
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl"
+            style={{ background: 'var(--color-accent-surface)' }}
             aria-hidden="true"
           >
             🏗️
-          </motion.div>
+          </div>
           <div>
-            <p className="text-caption text-muted mb-1">Engineering Philosophy</p>
-            <h3 className="text-headline text-primary mb-2">
-              Systems over features. Observability by default. Zero manual
-              deploys.
+            <span className="label">Engineering Philosophy</span>
+            <h3 className="mt-3 font-semibold text-white">
+              Systems over features. Observability by default. Zero manual deploys.
             </h3>
-            <p className="text-body text-secondary">
+            <p className="mt-4 text-base leading-7 text-[color:var(--color-text-secondary)]">
               Systems designed for the second year, not just the first sprint.
               Production systems ship with monitoring, retraining pipelines,
               and runbooks from day one.
@@ -262,6 +254,7 @@ export default function ProductionPatterns() {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   );
 }

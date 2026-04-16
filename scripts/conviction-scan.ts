@@ -1,0 +1,103 @@
+/// <reference types="node" />
+
+import fs from 'fs';
+import path from 'path';
+
+const ROOT = process.cwd();
+const INCLUDED_DIRECTORIES = ['app', 'components', 'data', 'e2e', 'hooks', 'lib', 'scripts', 'src', 'tests'];
+const IGNORED_DIRECTORIES = new Set<string>([
+  '.git',
+  '.next',
+  '.turbo',
+  'coverage',
+  'dist',
+  'node_modules',
+  'playwright-report',
+  'test-results',
+]);
+const SUPPORTED_EXTENSIONS = new Set<string>(['.ts', '.tsx', '.mjs']);
+
+function isSupportedFile(filePath: string): boolean {
+  return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
+}
+
+function normalizeFilePath(filePath: string): string {
+  return path.isAbsolute(filePath) ? filePath : path.resolve(ROOT, filePath);
+}
+
+function scanFile(filePath: string): string[] {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const issues: string[] = [];
+
+  if (content.includes('style={{')) {
+    issues.push('Inline styles detected');
+  }
+
+  if (/\[[^\]]+\]/.test(content)) {
+    issues.push('Arbitrary Tailwind values detected');
+  }
+
+  if (content.includes('initial={{') || content.includes('animate={{') || content.includes('exit={{')) {
+    issues.push('Inline motion detected');
+  }
+
+  return issues;
+}
+
+function walk(dir: string): string[] {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry: fs.Dirent): string[] => {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      if (IGNORED_DIRECTORIES.has(entry.name)) {
+        return [];
+      }
+
+      return walk(fullPath);
+    }
+
+    return isSupportedFile(fullPath) ? [fullPath] : [];
+  });
+}
+
+function collectCandidateFiles(): string[] {
+  const providedFiles = process.argv
+    .slice(2)
+    .map(normalizeFilePath)
+    .filter((filePath: string): boolean => {
+      return fs.existsSync(filePath) && fs.statSync(filePath).isFile() && isSupportedFile(filePath);
+    });
+
+  if (providedFiles.length > 0) {
+    return providedFiles;
+  }
+
+  return INCLUDED_DIRECTORIES
+    .map((directory: string): string => path.join(ROOT, directory))
+    .filter((directory: string): boolean => fs.existsSync(directory) && fs.statSync(directory).isDirectory())
+    .flatMap((directory: string): string[] => walk(directory));
+}
+
+const files = Array.from(new Set<string>(collectCandidateFiles()));
+let hasIssues = false;
+
+for (const file of files) {
+  const issues = scanFile(file);
+
+  if (issues.length === 0) {
+    continue;
+  }
+
+  hasIssues = true;
+  console.log(`\n❌ ${path.relative(ROOT, file)}`);
+
+  for (const issue of issues) {
+    console.log(`  - ${issue}`);
+  }
+}
+
+if (hasIssues) {
+  process.exit(1);
+}
+
+console.log(`✅ No conviction violations in ${files.length} file${files.length === 1 ? '' : 's'}`);
