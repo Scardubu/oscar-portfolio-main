@@ -73,7 +73,7 @@ function getAriaCurrent(isCurrent: boolean) {
 
 function getDesktopLinkClass(isCurrent: boolean) {
   if (isCurrent) {
-    return 'text-white border-b border-[var(--color-accent)]';
+    return 'text-white border-b border-(--color-accent)';
   }
 
   return 'text-white/55 border-b border-transparent hover:text-white';
@@ -316,10 +316,10 @@ export function NavBar() {
             aria-label="Oscar Ndugbu home"
           >
             <span className="text-[1.05rem] font-[var(--font-display)] font-bold tracking-[-0.03em] text-white">
-              Oscar<span className="text-[var(--color-accent)]">.</span>
+              Oscar<span className="text-(--color-accent)">.</span>
             </span>
             <span
-              className="hidden text-xs tracking-[0.08em] text-[color:var(--color-text-muted)] xl:block"
+              className="hidden text-xs tracking-[0.08em] text-(--color-text-muted) xl:block"
               aria-hidden="true"
             >
               Production AI systems · Full-stack execution
@@ -342,7 +342,7 @@ export function NavBar() {
                 {isActive(link.href) && !prefersReduced && (
                   <m.span
                     layoutId="nav-underline"
-                    className="absolute inset-x-3 -bottom-px block h-[1.5px] rounded-full bg-[var(--color-accent)]"
+                    className="absolute inset-x-3 -bottom-px block h-[1.5px] rounded-full bg-(--color-accent)"
                     transition={springs.layout}
                     aria-hidden="true"
                   />
@@ -359,7 +359,7 @@ export function NavBar() {
               type="button"
               onClick={openCommandPalette}
               aria-label="Open command palette"
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-[color:var(--color-text-muted)] transition hover:text-[color:var(--color-text-primary)]"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-(--color-text-muted) transition hover:text-(--color-text-primary)"
             >
               {paletteShortcut}
             </button>

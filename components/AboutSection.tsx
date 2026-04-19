@@ -61,7 +61,7 @@ export function AboutSection() {
       id="about"
       ref={ref}
       aria-labelledby="about-heading"
-      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
+      className="border-t border-(--color-border) py-28 sm:py-32"
     >
       <div className="container">
         <motion.div
@@ -83,13 +83,12 @@ export function AboutSection() {
                 <motion.p
                   key={paragraph}
                   variants={child}
-                  className="max-w-[66ch] text-[length:var(--text-xl)] leading-[1.85] text-[color:var(--color-text-secondary)]"
-                  style={{ fontFamily: 'var(--font-display)', fontWeight: 400 }}
+                  className="font-display max-w-[66ch] text-(length:--text-xl) leading-[1.85] font-normal text-(--color-text-secondary)"
                 >
                   {paragraph}
                 </motion.p>
               ))}
-              <motion.p variants={child} className="label pt-3 text-[color:var(--color-live)]">
+              <motion.p variants={child} className="label pt-3 text-(--color-live)">
                 {ABOUT.location}
               </motion.p>
             </div>
@@ -104,17 +103,10 @@ export function AboutSection() {
                 <motion.div
                   key={cert.name}
                   variants={child}
-                  className="flex items-center justify-between gap-4 border-b border-[color:var(--color-border)] py-4 transition-colors hover:bg-white/[0.02]"
+                  className="flex items-center justify-between gap-4 border-b border-(--color-border) py-4 transition-colors hover:bg-white/[0.02]"
                 >
-                  <p
-                    className="text-base font-medium text-white"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    {cert.name}
-                  </p>
-                  <p className="font-mono text-xs text-[color:var(--color-text-muted)]">
-                    {cert.date}
-                  </p>
+                  <p className="font-display text-base font-medium text-white">{cert.name}</p>
+                  <p className="font-mono text-xs text-(--color-text-muted)">{cert.date}</p>
                 </motion.div>
               ))}
             </div>
@@ -146,16 +138,11 @@ export function AboutSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className="glass glass-medium block rounded-[var(--radius-lg)] p-6 sm:p-7"
+                className="glass glass-medium block rounded-(--radius-lg) p-6 sm:p-7"
               >
                 <p className="label">{item.stack}</p>
                 <h3 className="mt-4 text-white">{item.name}</h3>
-                <p
-                  className="mt-4 text-base leading-8 text-white/65"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  {item.desc}
-                </p>
+                <p className="font-display mt-4 text-base leading-8 text-white/65">{item.desc}</p>
               </motion.a>
             ))}
           </div>

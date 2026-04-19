@@ -14,7 +14,7 @@ export function SectionSkeleton({ id, label, height }: SectionSkeletonProps) {
   return (
     <section
       id={id}
-      className="section-gap max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+      className="section-gap mx-auto w-full max-w-screen-xl px-4 sm:px-6 lg:px-8"
       aria-busy="true"
       aria-label={`Loading ${label}`}
     >
@@ -26,10 +26,7 @@ export function SectionSkeleton({ id, label, height }: SectionSkeletonProps) {
       </div>
 
       {/* Body skeleton */}
-      <div
-        className="skeleton rounded-[var(--radius-3xl)] w-full"
-        style={{ height }}
-      />
+      <div className="skeleton w-full rounded-(--radius-3xl)" style={{ height }} />
     </section>
   );
 }

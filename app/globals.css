@@ -267,6 +267,11 @@ p {
   color:          var(--color-text-muted);
 }
 
+/* Utility: apply display font without inline style */
+.font-display {
+  font-family: var(--font-display);
+}
+
 .gradient-text {
   background: linear-gradient(135deg, var(--color-accent-hover) 0%, var(--color-cyan) 100%);
   -webkit-background-clip: text;
@@ -901,6 +906,38 @@ section {
     border-right: 1px solid var(--color-border);
   }
 }
+
+/* ── PILLAR ACCENT OVERRIDES (data-attribute driven, no inline styles) ─── */
+[data-pillar="live"]      { border-top: 2px solid var(--color-live); }
+[data-pillar="live"]      .label { color: var(--color-live); }
+[data-pillar="decisions"] { border-top: 2px solid var(--color-accent); }
+[data-pillar="decisions"] .label { color: var(--color-accent); }
+[data-pillar="downtime"]  { border-top: 2px solid var(--color-wip); }
+[data-pillar="downtime"]  .label { color: var(--color-wip); }
+[data-pillar="ownership"] { border-top: 2px solid var(--color-accent); }
+[data-pillar="ownership"] .label { color: var(--color-accent); }
+
+/* ── PATTERN CARD ACCENT OVERRIDES (data-attribute driven) ─────────────── */
+[data-accent="cyan"]   .pattern-icon    { background: var(--color-cyan-surface); }
+[data-accent="cyan"]   .pattern-chevron { background: var(--color-cyan-surface); color: var(--color-cyan); }
+[data-accent="cyan"]   .pattern-metric  { color: var(--color-cyan); }
+[data-accent="teal"]   .pattern-icon    { background: var(--color-live-glow); }
+[data-accent="teal"]   .pattern-chevron { background: var(--color-live-glow); color: var(--color-live); }
+[data-accent="teal"]   .pattern-metric  { color: var(--color-live); }
+[data-accent="violet"] .pattern-icon    { background: var(--color-accent-surface); }
+[data-accent="violet"] .pattern-chevron { background: var(--color-accent-surface); color: var(--color-accent); }
+[data-accent="violet"] .pattern-metric  { color: var(--color-accent); }
+
+[data-accent="live"]   { border-left: 3px solid var(--color-live); }
+[data-accent="live"]   .label { color: var(--color-live); }
+[data-accent="accent"] { border-left: 3px solid var(--color-accent); }
+[data-accent="accent"] .label { color: var(--color-accent); }
+[data-accent="wip"]    { border-left: 3px solid var(--color-wip); }
+[data-accent="wip"]    .label { color: var(--color-wip); }
+
+[data-arch-key="chosen"]  { color: var(--color-live); }
+[data-arch-key="over"]    { color: var(--color-text-muted); }
+[data-arch-key="because"] { color: var(--color-accent); font-weight: 600; }
 
 /* ── ARCH DECISION TABLE ────────────────────────────────── */
 .arch-grid {

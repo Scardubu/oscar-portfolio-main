@@ -10,7 +10,7 @@ interface EngagementMode {
   type: string;
   headline: string;
   detail: string;
-  accent: string;
+  accent: 'live' | 'accent' | 'wip';
 }
 
 const engagementModes: EngagementMode[] = [
@@ -19,21 +19,21 @@ const engagementModes: EngagementMode[] = [
     headline: 'Distributed systems · ML platforms · API infrastructure',
     detail:
       'Available for Staff+ and Principal Backend roles at AI-native fintech and product companies. Four years of independent platform work with zero-downtime design as a baseline constraint.',
-    accent: 'var(--color-live)',
+    accent: 'live',
   },
   {
     type: 'Technical Co-Founder',
     headline: 'Pre-seed to Series A · Africa/emerging markets',
     detail:
       'Four years shipping production platforms from zero. Infrastructure, ML, and compliance architecture through funding rounds. The system should outlast the seed deck.',
-    accent: 'var(--color-accent)',
+    accent: 'accent',
   },
   {
     type: 'ML Consulting',
     headline: 'Model deployment · Observability · Performance',
     detail:
       'Inference serving, monitoring pipelines, and latency reduction. SabiScore approaches 30% inference latency reduction (Redis caching + query optimisation). Engagements scoped to specific problems with measurable outcomes.',
-    accent: 'var(--color-wip)',
+    accent: 'wip',
   },
 ];
 
@@ -66,7 +66,7 @@ export function ContactSection() {
       id="contact"
       ref={ref}
       aria-labelledby="contact-heading"
-      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
+      className="border-t border-(--color-border) py-28 sm:py-32"
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
@@ -89,8 +89,7 @@ export function ContactSection() {
             </motion.h2>
             <motion.p
               variants={child}
-              className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-white/70"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="font-display mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8] text-white/70"
             >
               Available for Staff+ roles, technical co-founding, and scoped ML consulting where
               reliability is a requirement rather than a nice-to-have.
@@ -112,44 +111,25 @@ export function ContactSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className="rounded-[var(--radius-lg)] border border-[var(--glass-border)] p-6 sm:p-7"
-                style={{
-                  background: 'var(--glass-bg)',
-                  backdropFilter: 'blur(var(--glass-blur))',
-                  WebkitBackdropFilter: 'blur(var(--glass-blur))',
-                  borderLeft: `3px solid ${mode.accent}`,
-                  cursor: 'default',
-                }}
+                className="glass glass-medium cursor-default rounded-(--radius-lg) border border-(--glass-border) p-6 sm:p-7"
               >
-                <p className="label" style={{ color: mode.accent }}>
-                  {mode.type}
-                </p>
-                <h3
-                  className="mt-5 font-semibold text-white"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  {mode.headline}
-                </h3>
-                <p
-                  className="mt-4 text-base leading-8 text-white/75"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  {mode.detail}
-                </p>
+                <p className="label">{mode.type}</p>
+                <h3 className="font-display mt-5 font-semibold text-white">{mode.headline}</h3>
+                <p className="font-display mt-4 text-base leading-8 text-white/75">{mode.detail}</p>
               </motion.div>
             ))}
           </div>
 
           <motion.div
             variants={child}
-            className="mt-12 flex flex-wrap items-center gap-3 border-t border-[color:var(--color-border)] pt-8 sm:gap-4"
+            className="mt-12 flex flex-wrap items-center gap-3 border-t border-(--color-border) pt-8 sm:gap-4"
           >
             <a
               href="mailto:scardubu@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
               data-cta="primary"
-              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] bg-[var(--color-accent)] px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition hover:bg-[var(--color-accent-hover)]"
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) bg-(--color-accent) px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition hover:bg-(--color-accent-hover)"
             >
               scardubu@gmail.com
             </a>
@@ -160,7 +140,7 @@ export function ContactSection() {
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on LinkedIn"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-secondary)] uppercase transition"
+              className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
             >
               <LinkedInIcon />
               LinkedIn
@@ -171,14 +151,14 @@ export function ContactSection() {
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on GitHub"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-secondary)] uppercase transition"
+              className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
             >
               <GitHubIcon />
               GitHub
             </Link>
             <a
               href="tel:+2348033885065"
-              className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] transition-colors hover:text-[color:var(--color-text-primary)] sm:ml-1"
+              className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) transition-colors hover:text-(--color-text-primary) sm:ml-1"
             >
               +234 803 388 5065
             </a>

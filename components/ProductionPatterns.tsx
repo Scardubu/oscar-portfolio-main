@@ -13,8 +13,7 @@ import {
   AnimatePresence,
   useReducedMotion,
 } from "framer-motion";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
 import { PRODUCTION_PATTERNS } from "@/lib/portfolio-data";
 import {
   staggerContainer,
@@ -74,23 +73,20 @@ const ACCENT_STYLES = {
 
 function PatternCard({
   pattern,
-}: {
+}: Readonly<{
   pattern: (typeof PRODUCTION_PATTERNS)[number];
-}) {
+}>) {
   const prefersReduced = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
-  const accent = ACCENT_STYLES[pattern.accent];
+  const accent = ACCENT_STYLES[pattern.accent as keyof typeof ACCENT_STYLES];
   const Icon = ICONS[pattern.id];
 
   return (
     <motion.div
-      className={cn(
-        'glass glass-medium col-span-12 flex flex-col gap-5 cursor-pointer rounded-[var(--radius-lg)] p-6 sm:p-7 sm:col-span-6'
-      )}
+      className="glass glass-medium flex cursor-pointer flex-col gap-5 rounded-(--radius-lg) p-6 sm:p-7"
+      data-accent={pattern.accent}
       variants={liquidCard}
-      whileHover={
-        prefersReduced ? {} : { y: -4, boxShadow: 'var(--glass-shadow-hover)' }
-      }
+      whileHover={prefersReduced ? {} : { y: -4, boxShadow: 'var(--glass-shadow-hover)' }}
       whileTap={prefersReduced ? {} : { scale: 0.99 }}
       transition={springs.smooth}
       layout
@@ -108,8 +104,7 @@ function PatternCard({
       {/* Icon + header */}
       <div className="flex items-start gap-4">
         <motion.div
-          className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center"
-          style={{ background: accent.dim }}
+          className="pattern-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
           whileHover={prefersReduced ? {} : { rotate: 5, scale: 1.1 }}
           transition={springs.bouncy}
         >
@@ -123,8 +118,7 @@ function PatternCard({
 
         {/* Chevron */}
         <motion.div
-          className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-          style={{ background: accent.dim, color: accent.color }}
+          className="pattern-chevron flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={springs.snappy}
           aria-hidden="true"
@@ -147,31 +141,34 @@ function PatternCard({
           <motion.div
             key="desc"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ ...springs.smooth, duration: 0.32 }}
-            style={{ overflow: 'hidden' }}
+            className="overflow-hidden"
           >
-            <p className="text-base leading-7 text-[color:var(--color-text-secondary)]">{pattern.description}</p>
+            <p className="text-base leading-7 text-(--color-text-secondary)">
+              {pattern.description}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Metrics */}
-      <div className="flex gap-6 mt-auto">
-        {pattern.metrics.map((m) => (
-          <div key={m.label} className="flex flex-col gap-0.5">
-            <motion.span
-              className="font-mono font-extrabold leading-none text-[clamp(1.25rem,2vw,1.75rem)]"
-              style={{ color: accent.color }}
-              whileHover={prefersReduced ? {} : { scale: 1.06 }}
-              transition={springs.bouncy}
-            >
-              {m.value}
-            </motion.span>
-            <span className="label">{m.label}</span>
-          </div>
-        ))}
+      <div className="mt-auto flex gap-6">
+        {(pattern.metrics as ReadonlyArray<{ readonly value: string; readonly label: string }>).map(
+          (m) => (
+            <div key={m.label} className="flex flex-col gap-0.5">
+              <motion.span
+                className="pattern-metric font-mono text-(length:--text-2xl) leading-none font-extrabold"
+                whileHover={prefersReduced ? {} : { scale: 1.06 }}
+                transition={springs.bouncy}
+              >
+                {m.value}
+              </motion.span>
+              <span className="label">{m.label}</span>
+            </div>
+          )
+        )}
       </div>
     </motion.div>
   );
@@ -183,77 +180,75 @@ export default function ProductionPatterns() {
   return (
     <section
       id="architecture"
-      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
+      className="border-t border-(--color-border) py-28 sm:py-32"
       aria-labelledby="architecture-heading"
     >
       <div className="container">
-      <motion.div
-        className="mb-12"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-      >
-        <motion.span className="label" variants={fadeUp}>
-          Architecture Depth
-        </motion.span>
-        <motion.h2
-          id="architecture-heading"
-          className="gradient-text mt-[var(--space-2)]"
-          variants={fadeUp}
+        <motion.div
+          className="mb-12"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
         >
-          Production Patterns
-        </motion.h2>
-        <motion.p
-          className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-[color:var(--color-text-secondary)]"
-          variants={fadeUp}
-        >
-          The architecture decisions behind systems that stay in production.
-          Click any card to see the design rationale.
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 gap-5 sm:grid-cols-2"
-        variants={staggerSlow}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-      >
-        {PRODUCTION_PATTERNS.map((pattern) => (
-          <PatternCard key={pattern.id} pattern={pattern} />
-        ))}
-      </motion.div>
-
-      {/* Philosophy callout */}
-      <motion.div
-        className="glass glass-medium mt-8 rounded-[var(--radius-lg)] p-6 sm:p-8"
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.4 }}
-      >
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-          <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl"
-            style={{ background: 'var(--color-accent-surface)' }}
-            aria-hidden="true"
+          <motion.span className="label" variants={fadeUp}>
+            Architecture Depth
+          </motion.span>
+          <motion.h2
+            id="architecture-heading"
+            className="gradient-text mt-(--space-2)"
+            variants={fadeUp}
           >
-            🏗️
+            Production Patterns
+          </motion.h2>
+          <motion.p
+            className="mt-5 max-w-prose text-(length:--text-xl) leading-[1.8] text-(--color-text-secondary)"
+            variants={fadeUp}
+          >
+            The architecture decisions behind systems that stay in production. Click any card to see
+            the design rationale.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+          variants={staggerSlow}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
+          {PRODUCTION_PATTERNS.map((pattern) => (
+            <PatternCard key={pattern.id} pattern={pattern} />
+          ))}
+        </motion.div>
+
+        {/* Philosophy callout */}
+        <motion.div
+          className="glass glass-medium mt-8 rounded-(--radius-lg) p-6 sm:p-8"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.4 }}
+        >
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-(--color-accent-surface) text-2xl"
+              aria-hidden="true"
+            >
+              🏗️
+            </div>
+            <div>
+              <span className="label">Engineering Philosophy</span>
+              <h3 className="mt-3 font-semibold text-white">
+                Systems over features. Observability by default. Zero manual deploys.
+              </h3>
+              <p className="mt-4 text-base leading-7 text-(--color-text-secondary)">
+                Systems designed for the second year, not just the first sprint. Production systems
+                ship with monitoring, retraining pipelines, and runbooks from day one.
+              </p>
+            </div>
           </div>
-          <div>
-            <span className="label">Engineering Philosophy</span>
-            <h3 className="mt-3 font-semibold text-white">
-              Systems over features. Observability by default. Zero manual deploys.
-            </h3>
-            <p className="mt-4 text-base leading-7 text-[color:var(--color-text-secondary)]">
-              Systems designed for the second year, not just the first sprint.
-              Production systems ship with monitoring, retraining pipelines,
-              and runbooks from day one.
-            </p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
       </div>
     </section>
   );

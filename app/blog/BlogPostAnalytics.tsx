@@ -92,21 +92,19 @@ export default function BlogListClient({
       <input
         type="text"
         placeholder="Search articles..."
-        className="w-full mb-6 p-3 rounded-lg border"
+        className="mb-6 w-full rounded-lg border p-3"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-10">
+      <div className="mb-10 flex flex-wrap gap-2">
         {tags.map((tag) => (
           <button
             key={tag}
-            onClick={() =>
-              setActiveTag(activeTag === tag ? null : tag)
-            }
-            className={`px-3 py-1 text-xs rounded-full border ${
-              activeTag === tag ? "bg-black text-white" : ""
+            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              activeTag === tag ? 'bg-black text-white' : ''
             }`}
           >
             #{tag}
@@ -117,27 +115,21 @@ export default function BlogListClient({
       {/* Tier 1 */}
       {tier1.length > 0 && (
         <section className="mb-16">
-          <h2 className="font-bold mb-4">Implementation Deep Dives</h2>
-          <div className="grid md:grid-cols-2 gap-4">
+          <h2 className="mb-4 font-bold">Implementation Deep Dives</h2>
+          <div className="grid gap-4 md:grid-cols-2">
             {tier1.map((p) => (
               <a
                 key={p.slug}
                 href={blogUrl(p.slug)}
                 onClick={() => trackClick(p.slug)}
-                className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 transition-colors hover:border-[color:var(--accent-primary)]"
+                className="rounded-xl border border-(--border-default) bg-(--bg-surface) p-5 transition-colors hover:border-(--accent-primary)"
               >
-                <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-primary)]">
+                <div className="mb-2 text-[10px] font-semibold tracking-[0.24em] text-(--accent-primary) uppercase">
                   Deep Dive
                 </div>
-                <h3 className="text-base font-semibold text-[color:var(--text-primary)]">
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-[color:var(--text-secondary)]">
-                  {p.excerpt}
-                </p>
-                <div className="mt-4 text-xs text-[color:var(--text-muted)]">
-                  {p.readMin} min read
-                </div>
+                <h3 className="text-base font-semibold text-(--text-primary)">{p.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-(--text-secondary)">{p.excerpt}</p>
+                <div className="mt-4 text-xs text-(--text-muted)">{p.readMin} min read</div>
               </a>
             ))}
           </div>
@@ -147,7 +139,7 @@ export default function BlogListClient({
       {/* Tier 2 */}
       {tier2.length > 0 && (
         <section className="mb-16">
-          <h2 className="font-bold mb-4">Architecture & Context</h2>
+          <h2 className="mb-4 font-bold">Architecture & Context</h2>
           <div className="flex flex-col gap-3">
             {tier2.map((p) => (
               <a key={p.slug} href={blogUrl(p.slug)}>
@@ -161,7 +153,7 @@ export default function BlogListClient({
       {/* Tier 3 */}
       {tier3.length > 0 && (
         <section>
-          <h2 className="font-bold opacity-60 mb-4">Other Posts</h2>
+          <h2 className="mb-4 font-bold opacity-60">Other Posts</h2>
           <div className="flex flex-col gap-2 opacity-70">
             {tier3.map((p) => (
               <a key={p.slug} href={blogUrl(p.slug)}>
@@ -175,7 +167,7 @@ export default function BlogListClient({
       {/* Related (context-aware suggestion) */}
       {firstFiltered && filtered.length === 1 && (
         <div className="mt-16">
-          <h3 className="font-semibold mb-3">Related Articles</h3>
+          <h3 className="mb-3 font-semibold">Related Articles</h3>
           {relatedMap[firstFiltered.slug]?.map((p) => (
             <a key={p.slug} href={blogUrl(p.slug)}>
               {p.title}

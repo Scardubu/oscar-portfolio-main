@@ -25,18 +25,14 @@ export function SectionHeader({
   return (
     <div className={`mb-10 max-w-2xl ${alignClass} ${className}`}>
       {tag && (
-        <p className="text-xs font-bold tracking-widest uppercase mb-3 text-[color:var(--accent-primary)]">
+        <p className="mb-3 text-xs font-bold tracking-widest text-(--accent-primary) uppercase">
           {tag}
         </p>
       )}
-      <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight text-[color:var(--text-primary)]">
+      <h1 className="text-4xl leading-tight font-extrabold tracking-tight text-(--text-primary) sm:text-5xl">
         {title}
       </h1>
-      {subtitle && (
-        <p className="mt-4 text-base leading-relaxed text-[color:var(--text-muted)]">
-          {subtitle}
-        </p>
-      )}
+      {subtitle && <p className="mt-4 text-base leading-relaxed text-(--text-muted)">{subtitle}</p>}
     </div>
-  )
+  );
 }

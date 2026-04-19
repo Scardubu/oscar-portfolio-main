@@ -88,7 +88,7 @@ function ProjectLinks({
       ) : null}
       <Link
         href={`/work/${projectId}`}
-        className="link-reveal inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] text-[color:var(--color-accent)] uppercase"
+        className="link-reveal inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] text-(--color-accent) uppercase"
       >
         Case study →
       </Link>

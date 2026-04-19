@@ -31,7 +31,7 @@ export default function BlogPostClient({
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   return (
-    <main id="main-content" tabIndex={-1} className="pb-24 pt-20 outline-none">
+    <main id="main-content" tabIndex={-1} className="pt-20 pb-24 outline-none">
       {/* Reading progress bar */}
       {!prefersReduced && (
         <motion.div
@@ -54,7 +54,7 @@ export default function BlogPostClient({
         >
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-1.5 font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] uppercase transition-colors hover:text-[color:var(--color-text-primary)]"
+            className="group inline-flex items-center gap-1.5 font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
             <motion.span
               className="inline-block"
@@ -96,7 +96,7 @@ export default function BlogPostClient({
 
           {/* Description */}
           <motion.p
-            className="mb-6 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8] text-[color:var(--color-text-secondary)]"
+            className="mb-6 max-w-[62ch] text-(length:--text-xl) leading-[1.8] text-(--color-text-secondary)"
             variants={fadeUp}
           >
             {description}
@@ -104,13 +104,11 @@ export default function BlogPostClient({
 
           {/* Meta */}
           <motion.div
-            className="flex flex-wrap items-center gap-4 border-t border-[color:var(--color-border)] pt-4 font-mono text-xs text-[color:var(--color-text-muted)]"
+            className="flex flex-wrap items-center gap-4 border-t border-(--color-border) pt-4 font-mono text-xs text-(--color-text-muted)"
             variants={fadeUp}
           >
             <time dateTime={date}>{formatDate(date)}</time>
-            {updated && updated !== date && (
-              <span>Updated {formatDate(updated)}</span>
-            )}
+            {updated && updated !== date && <span>Updated {formatDate(updated)}</span>}
             <span>{readingTime}</span>
           </motion.div>
         </motion.header>
@@ -127,7 +125,7 @@ export default function BlogPostClient({
 
         {/* Footer */}
         <motion.footer
-          className="mt-16 border-t border-[color:var(--color-border)] pt-8"
+          className="mt-16 border-t border-(--color-border) pt-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -142,13 +140,13 @@ export default function BlogPostClient({
             <div className="flex gap-3">
               <Link
                 href="/blog"
-                className="inline-flex min-h-10 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-4 py-2 font-mono text-xs text-[color:var(--color-text-secondary)] uppercase transition hover:border-[color:var(--color-border-subtle)] hover:text-[color:var(--color-text-primary)]"
+                className="inline-flex min-h-10 items-center rounded-(--radius-md) border border-(--color-border) px-4 py-2 font-mono text-xs text-(--color-text-secondary) uppercase transition hover:border-(--color-border-subtle) hover:text-(--color-text-primary)"
               >
                 ← More posts
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex min-h-10 items-center rounded-[var(--radius-md)] border border-[color:var(--color-accent)] bg-[color:var(--color-accent)] px-4 py-2 font-mono text-xs font-semibold text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
+                className="inline-flex min-h-10 items-center rounded-(--radius-md) border border-(--color-accent) bg-(--color-accent) px-4 py-2 font-mono text-xs font-semibold text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
               >
                 Work together →
               </Link>

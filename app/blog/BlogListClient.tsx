@@ -217,32 +217,27 @@ function BlogCard({
 
   const badgeTone =
     post.tier === 1
-      ? "text-[color:var(--accent-primary)] bg-cyan-950/40 border-cyan-800/40"
+      ? 'text-(--accent-primary) bg-cyan-950/40 border-cyan-800/40'
       : post.tier === 2
-        ? "text-[color:var(--text-primary)] bg-[color:var(--bg-elevated)] border-[color:var(--border-default)]"
-        : "text-[color:var(--text-muted)] bg-transparent border-[color:var(--border-subtle)]";
+        ? 'text-(--text-primary) bg-(--bg-elevated) border-(--border-default)'
+        : 'text-(--text-muted) bg-transparent border-(--border-subtle)';
 
   const cardTone = featured
-    ? "border-[color:var(--border-strong)] bg-[color:var(--bg-surface)] shadow-sm"
-    : "border-[color:var(--border-default)] bg-[color:var(--bg-surface)]";
+    ? 'border-(--border-strong) bg-(--bg-surface) shadow-sm'
+    : 'border-(--border-default) bg-(--bg-surface)';
 
   return (
     <article
       ref={ref}
-      className={`
-        group rounded-2xl border transition-all duration-200
-        hover:border-[color:var(--border-strong)]
-        ${cardTone}
-        ${highlight ? "ring-1 ring-cyan-500/20" : ""}
-      `}
+      className={`group rounded-2xl border transition-all duration-200 hover:border-(--border-strong) ${cardTone} ${highlight ? 'ring-1 ring-cyan-500/20' : ''} `}
     >
       <Link
         href={blogUrl(post.slug)}
-        className="block p-5 focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)] rounded-2xl"
+        className="block rounded-2xl p-5 focus:ring-2 focus:ring-(--accent-primary) focus:outline-none"
         onClick={() => {
           sendAnalytics({
-            event: "click",
-            path: "/blog",
+            event: 'click',
+            path: '/blog',
             slug: post.slug,
             tier: post.tier ?? 3,
             mode,
@@ -254,58 +249,45 @@ function BlogCard({
         }}
         aria-label={`Read ${post.title}`}
       >
-        <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span
-              className={`
-                inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider
-                ${badgeTone}
-              `}
+              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase ${badgeTone} `}
             >
               {tierLabel}
             </span>
 
             {scoreLabel ? (
-              <span className="text-[10px] uppercase tracking-wider text-[color:var(--text-muted)]">
+              <span className="text-[10px] tracking-wider text-(--text-muted) uppercase">
                 {scoreLabel}
               </span>
             ) : null}
           </div>
 
-          <span className="text-[10px] text-[color:var(--text-muted)]">
-            {formatArticleDate(post.date)}
-          </span>
+          <span className="text-[10px] text-(--text-muted)">{formatArticleDate(post.date)}</span>
         </div>
 
         <h3
-          className={`
-            font-semibold leading-snug transition-colors
-            group-hover:text-[color:var(--accent-primary)]
-            ${featured ? "text-base sm:text-lg" : "text-sm sm:text-[15px]"}
-          `}
+          className={`leading-snug font-semibold transition-colors group-hover:text-(--accent-primary) ${featured ? 'text-base sm:text-lg' : 'text-sm sm:text-[15px]'} `}
         >
           {post.title}
         </h3>
 
-        <p className="mt-2 text-xs leading-relaxed text-[color:var(--text-muted)]">
-          {post.excerpt}
-        </p>
+        <p className="mt-2 text-xs leading-relaxed text-(--text-muted)">{post.excerpt}</p>
 
         {reason ? (
-          <p className="mt-2 text-[11px] text-[color:var(--text-muted)] opacity-80">
+          <p className="mt-2 text-[11px] text-(--text-muted) opacity-80">
             Why it matched: {reason}
           </p>
         ) : null}
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] text-[color:var(--text-muted)]">
-            {post.readMin} min read
-          </span>
+          <span className="text-[10px] text-(--text-muted)">{post.readMin} min read</span>
 
           {post.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-[color:var(--border-subtle)] px-2 py-0.5 text-[10px] text-[color:var(--text-muted)]"
+              className="rounded-full border border-(--border-subtle) px-2 py-0.5 text-[10px] text-(--text-muted)"
             >
               #{tag}
             </span>
@@ -500,12 +482,12 @@ export default function BlogListClient({
 
   return (
     <div className="mt-10 space-y-8">
-      <section className="rounded-2xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5">
+      <section className="rounded-2xl border border-(--border-default) bg-(--bg-surface) p-5">
         <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <label
               htmlFor="blog-search"
-              className="block text-xs font-semibold uppercase tracking-widest text-[color:var(--text-muted)] mb-2"
+              className="mb-2 block text-xs font-semibold tracking-widest text-(--text-muted) uppercase"
             >
               Search the archive
             </label>
@@ -515,46 +497,32 @@ export default function BlogListClient({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search by topic, system, failure mode, or tag"
-              className="
-                w-full rounded-xl border border-[color:var(--border-default)]
-                bg-[color:var(--bg-base)] px-4 py-3 text-sm
-                text-[color:var(--text-primary)] outline-none
-                focus:border-[color:var(--accent-primary)]
-                focus:ring-2 focus:ring-[color:var(--accent-primary)]/20
-              "
+              className="w-full rounded-xl border border-(--border-default) bg-(--bg-base) px-4 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/20"
             />
-            <p className="mt-2 text-xs text-[color:var(--text-muted)]">
+            <p className="mt-2 text-xs text-(--text-muted)">
               AI ranking turns on automatically once you type at least two words.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <span
-              className={`
-                inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest
-                ${
-                  isSearchActive
-                    ? "border-cyan-800/50 bg-cyan-950/40 text-[color:var(--accent-primary)]"
-                    : "border-[color:var(--border-default)] bg-[color:var(--bg-elevated)] text-[color:var(--text-muted)]"
-                }
-              `}
+              className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold tracking-widest uppercase ${
+                isSearchActive
+                  ? 'border-cyan-800/50 bg-cyan-950/40 text-(--accent-primary)'
+                  : 'border-(--border-default) bg-(--bg-elevated) text-(--text-muted)'
+              } `}
             >
-              {searchMode === "semantic"
-                ? "Semantic AI"
-                : searchMode === "keyword"
-                  ? "Keyword fallback"
-                  : "Local filter"}
+              {searchMode === 'semantic'
+                ? 'Semantic AI'
+                : searchMode === 'keyword'
+                  ? 'Keyword fallback'
+                  : 'Local filter'}
             </span>
 
             <button
               type="button"
               onClick={clearFilters}
-              className="
-                rounded-full border border-[color:var(--border-default)]
-                px-3 py-1 text-[10px] font-semibold uppercase tracking-widest
-                text-[color:var(--text-muted)]
-                hover:border-[color:var(--border-strong)]
-              "
+              className="rounded-full border border-(--border-default) px-3 py-1 text-[10px] font-semibold tracking-widest text-(--text-muted) uppercase hover:border-(--border-strong)"
             >
               Clear
             </button>
@@ -570,14 +538,11 @@ export default function BlogListClient({
                 key={tag}
                 type="button"
                 onClick={() => setActiveTag(isActive ? null : tag)}
-                className={`
-                  inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition
-                  ${
-                    isActive
-                      ? "border-[color:var(--accent-primary)] bg-cyan-950/30 text-[color:var(--accent-primary)]"
-                      : "border-[color:var(--border-default)] bg-[color:var(--bg-elevated)] text-[color:var(--text-muted)] hover:border-[color:var(--border-strong)]"
-                  }
-                `}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
+                  isActive
+                    ? 'border-(--accent-primary) bg-cyan-950/30 text-(--accent-primary)'
+                    : 'border-(--border-default) bg-(--bg-elevated) text-(--text-muted) hover:border-(--border-strong)'
+                } `}
               >
                 <span>#{tag}</span>
                 <span className="opacity-70">{count}</span>
@@ -587,37 +552,23 @@ export default function BlogListClient({
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-[color:var(--border-subtle)] bg-[color:var(--bg-base)] p-3">
-            <p className="text-[10px] uppercase tracking-widest text-[color:var(--text-muted)]">
-              Articles
-            </p>
-            <p className="mt-1 text-lg font-semibold text-[color:var(--text-primary)]">
-              {posts.length}
-            </p>
+          <div className="rounded-xl border border-(--border-subtle) bg-(--bg-base) p-3">
+            <p className="text-[10px] tracking-widest text-(--text-muted) uppercase">Articles</p>
+            <p className="mt-1 text-lg font-semibold text-(--text-primary)">{posts.length}</p>
           </div>
-          <div className="rounded-xl border border-[color:var(--border-subtle)] bg-[color:var(--bg-base)] p-3">
-            <p className="text-[10px] uppercase tracking-widest text-[color:var(--text-muted)]">
-              Staff-level
-            </p>
-            <p className="mt-1 text-lg font-semibold text-[color:var(--text-primary)]">
-              {featuredCount}
-            </p>
+          <div className="rounded-xl border border-(--border-subtle) bg-(--bg-base) p-3">
+            <p className="text-[10px] tracking-widest text-(--text-muted) uppercase">Staff-level</p>
+            <p className="mt-1 text-lg font-semibold text-(--text-primary)">{featuredCount}</p>
           </div>
-          <div className="rounded-xl border border-[color:var(--border-subtle)] bg-[color:var(--bg-base)] p-3">
-            <p className="text-[10px] uppercase tracking-widest text-[color:var(--text-muted)]">
-              Active tags
-            </p>
-            <p className="mt-1 text-lg font-semibold text-[color:var(--text-primary)]">
+          <div className="rounded-xl border border-(--border-subtle) bg-(--bg-base) p-3">
+            <p className="text-[10px] tracking-widest text-(--text-muted) uppercase">Active tags</p>
+            <p className="mt-1 text-lg font-semibold text-(--text-primary)">
               {activeTag ? activeTagCount : tagCount}
             </p>
           </div>
         </div>
 
-        {searchError ? (
-          <p className="mt-4 text-xs text-[color:var(--text-muted)]">
-            {searchError}
-          </p>
-        ) : null}
+        {searchError ? <p className="mt-4 text-xs text-(--text-muted)">{searchError}</p> : null}
       </section>
 
       {isSearchActive ? (
@@ -625,21 +576,17 @@ export default function BlogListClient({
           <div className="flex items-center gap-3">
             <h2
               id="semantic-results-heading"
-              className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-muted)]"
+              className="text-sm font-bold tracking-widest text-(--text-muted) uppercase"
             >
               AI semantic matches
             </h2>
-            <div className="flex-1 h-px bg-[color:var(--border-subtle)]" aria-hidden="true" />
-            <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full text-[color:var(--accent-primary)] bg-cyan-950/40 border border-cyan-800/30">
+            <div className="h-px flex-1 bg-(--border-subtle)" aria-hidden="true" />
+            <span className="rounded-full border border-cyan-800/30 bg-cyan-950/40 px-2 py-0.5 text-[10px] font-bold tracking-wider text-(--accent-primary) uppercase">
               Ranked by relevance
             </span>
           </div>
 
-          {isSearching ? (
-            <p className="text-xs text-[color:var(--text-muted)]">
-              Ranking articles…
-            </p>
-          ) : null}
+          {isSearching ? <p className="text-xs text-(--text-muted)">Ranking articles…</p> : null}
 
           {displayResults.length > 0 ? (
             <div className="flex flex-col gap-3">
@@ -658,13 +605,11 @@ export default function BlogListClient({
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-6">
-              <p className="text-sm font-medium text-[color:var(--text-primary)]">
-                No direct matches.
-              </p>
-              <p className="mt-1 text-xs text-[color:var(--text-muted)]">
-                Broaden the query, remove the tag filter, or try a system name,
-                failure mode, or technology keyword.
+            <div className="rounded-2xl border border-(--border-default) bg-(--bg-surface) p-6">
+              <p className="text-sm font-medium text-(--text-primary)">No direct matches.</p>
+              <p className="mt-1 text-xs text-(--text-muted)">
+                Broaden the query, remove the tag filter, or try a system name, failure mode, or
+                technology keyword.
               </p>
             </div>
           )}
@@ -676,12 +621,12 @@ export default function BlogListClient({
               <div className="flex items-center gap-3">
                 <h2
                   id="tier-1-heading"
-                  className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-muted)]"
+                  className="text-sm font-bold tracking-widest text-(--text-muted) uppercase"
                 >
                   Implementation Deep Dives
                 </h2>
-                <div className="flex-1 h-px bg-[color:var(--border-subtle)]" aria-hidden="true" />
-                <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full text-[color:var(--accent-primary)] bg-cyan-950/40 border border-cyan-800/30">
+                <div className="h-px flex-1 bg-(--border-subtle)" aria-hidden="true" />
+                <span className="rounded-full border border-cyan-800/30 bg-cyan-950/40 px-2 py-0.5 text-[10px] font-bold tracking-wider text-(--accent-primary) uppercase">
                   Staff-level
                 </span>
               </div>
@@ -708,11 +653,11 @@ export default function BlogListClient({
               <div className="flex items-center gap-3">
                 <h2
                   id="tier-2-heading"
-                  className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-muted)]"
+                  className="text-sm font-bold tracking-widest text-(--text-muted) uppercase"
                 >
                   Architecture & Context
                 </h2>
-                <div className="flex-1 h-px bg-[color:var(--border-subtle)]" aria-hidden="true" />
+                <div className="h-px flex-1 bg-(--border-subtle)" aria-hidden="true" />
               </div>
 
               <div className="flex flex-col gap-3">
@@ -735,11 +680,11 @@ export default function BlogListClient({
               <div className="flex items-center gap-3">
                 <h2
                   id="tier-3-heading"
-                  className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-muted)] opacity-60"
+                  className="text-sm font-bold tracking-widest text-(--text-muted) uppercase opacity-60"
                 >
                   Other Posts
                 </h2>
-                <div className="flex-1 h-px bg-[color:var(--border-subtle)]" aria-hidden="true" />
+                <div className="h-px flex-1 bg-(--border-subtle)" aria-hidden="true" />
               </div>
 
               <div className="flex flex-col gap-2">

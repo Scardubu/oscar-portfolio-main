@@ -235,6 +235,12 @@ export const staggerContainer: Variants = {
  * Child reveal with upward motion + blur clear.
  * Pair with staggerContainer or stagger.
  */
+export const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: springs.smooth },
+  exit: { opacity: 0, transition: springs.gentle },
+};
+
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 14, filter: 'blur(3px)' },
   visible: {

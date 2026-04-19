@@ -34,37 +34,37 @@ interface BadgeConfig {
 const BADGE_CONFIG: Record<BadgeType, BadgeConfig> = {
   live: {
     label: 'LIVE',
-    color: 'text-[color:var(--metric-live)]',
-    dot: 'bg-[color:var(--metric-live)]',
+    color: 'text-(--metric-live)',
+    dot: 'bg-(--metric-live)',
     bg: 'bg-green-950/40',
     border: 'border-green-800/40',
     pulse: true,
   },
   documented: {
     label: 'DOCUMENTED',
-    color: 'text-[color:var(--metric-documented)]',
-    dot: 'bg-[color:var(--metric-documented)]',
+    color: 'text-(--metric-documented)',
+    dot: 'bg-(--metric-documented)',
     bg: 'bg-blue-950/40',
     border: 'border-blue-800/40',
     pulse: false,
   },
   backtested: {
     label: 'BACKTESTED',
-    color: 'text-[color:var(--metric-backtested)]',
-    dot: 'bg-[color:var(--metric-backtested)]',
+    color: 'text-(--metric-backtested)',
+    dot: 'bg-(--metric-backtested)',
     bg: 'bg-amber-950/40',
     border: 'border-amber-800/40',
     pulse: false,
   },
   snapshot: {
     label: 'SNAPSHOT',
-    color: 'text-[color:var(--metric-snapshot)]',
-    dot: 'bg-[color:var(--metric-snapshot)]',
+    color: 'text-(--metric-snapshot)',
+    dot: 'bg-(--metric-snapshot)',
     bg: 'bg-zinc-900/40',
     border: 'border-zinc-700/40',
     pulse: false,
   },
-}
+};
 
 // ─── Size Config ───────────────────────────────────────────────────────
 
@@ -113,41 +113,41 @@ export function MetricBadge({
       role="group"
       aria-label={`${data.value} ${data.label} — ${cfg.label} metric sourced from ${data.sourceLabel}`}
     >
-      <span className={cn(
-        sizes.value,
-        'font-extrabold tracking-tight leading-none',
-        'font-mono tabular-nums'
-      )}>
+      <span
+        className={cn(
+          sizes.value,
+          'leading-none font-extrabold tracking-tight',
+          'font-mono tabular-nums'
+        )}
+      >
         {prefix && <span className="opacity-70">{prefix}</span>}
         {rest}
       </span>
 
-      <span className="sr-only">{data.value} {data.label}</span>
-
-      <span className={cn(sizes.label, 'text-[color:var(--text-secondary)]')}>
-        {data.label}
+      <span className="sr-only">
+        {data.value} {data.label}
       </span>
 
+      <span className={cn(sizes.label, 'text-(--text-secondary)')}>{data.label}</span>
+
       {data.sublabel && (
-        <span className={cn(sizes.sublabel, 'text-[color:var(--text-muted)]')}>
-          {data.sublabel}
-        </span>
+        <span className={cn(sizes.sublabel, 'text-(--text-muted)')}>{data.sublabel}</span>
       )}
 
       <div className="mt-1.5">
-        <div className={cn(
-          'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold',
-          cfg.bg, cfg.border, cfg.color
-        )}>
-          <span className={cn(
-            'w-1.5 h-1.5 rounded-full',
-            cfg.dot,
-            cfg.pulse && 'animate-pulse'
-          )} />
+        <div
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-bold',
+            cfg.bg,
+            cfg.border,
+            cfg.color
+          )}
+        >
+          <span className={cn('h-1.5 w-1.5 rounded-full', cfg.dot, cfg.pulse && 'animate-pulse')} />
           {cfg.label}
           <span className="opacity-60">· {data.sourceLabel}</span>
         </div>
       </div>
     </motion.div>
-  )
+  );
 }

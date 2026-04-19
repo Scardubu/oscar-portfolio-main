@@ -6,9 +6,14 @@ interface ArchDecisionProps {
 }
 
 const ITEMS = [
-  { key: 'chosen', label: 'CHOSEN', color: 'var(--color-live)', labelClassName: '', labelStyle: undefined, valueStyle: undefined },
-  { key: 'over', label: 'OVER', color: 'var(--color-text-muted)', labelClassName: '', labelStyle: undefined, valueStyle: undefined },
-  { key: 'because', label: 'BECAUSE', color: 'var(--color-accent)', labelClassName: 'text-[11px]', labelStyle: { fontWeight: 600 }, valueStyle: { fontWeight: 500 } },
+  { key: 'chosen', label: 'CHOSEN', labelClassName: '', valueClassName: '' },
+  { key: 'over', label: 'OVER', labelClassName: '', valueClassName: '' },
+  {
+    key: 'because',
+    label: 'BECAUSE',
+    labelClassName: 'text-[11px]',
+    valueClassName: 'font-medium',
+  },
 ] as const;
 
 export function ArchDecision({
@@ -22,17 +27,17 @@ export function ArchDecision({
   return (
     <section
       aria-label="Architecture decision"
-      className="arch-decision mt-5 overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-bg)]"
+      className="arch-decision mt-5 overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-bg)"
     >
-      <header className="flex items-center gap-2 border-b border-[color:var(--color-border)] px-4 py-3">
+      <header className="flex items-center gap-2 border-b border-(--color-border) px-4 py-3">
         <span
           aria-hidden="true"
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]"
+          className="inline-block h-1.5 w-1.5 rounded-full bg-(--color-accent)"
         />
         <span className="label text-[10px]">Architecture Decision</span>
       </header>
 
-      <div className={`arch-grid${compact ? '' : ' arch-grid--full'}`}>
+      <div className={`arch-grid${compact ? '' : 'arch-grid--full'}`}>
         {ITEMS.map((item, index) => {
           const value = values[item.key];
           const compactDivider = compact && index < ITEMS.length - 1;
@@ -41,19 +46,17 @@ export function ArchDecision({
           return (
             <div
               key={item.key}
-              className={`px-4 py-3${isBecause ? ' arch-because-cell' : ''}${compactDivider ? ' border-b border-[color:var(--color-border-subtle)]' : ''}`}
+              className={`px-4 py-3${isBecause ? 'arch-because-cell' : ''}${compactDivider ? 'border-b border-(--color-border-subtle)' : ''}`}
             >
               <p
                 className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}
                 data-arch-key={item.key}
-                style={{ color: item.color, ...item.labelStyle }}
               >
                 {item.label}
               </p>
               <p
-                className={`mt-2 max-w-none text-sm leading-6 ${isBecause ? 'font-medium text-[color:var(--color-text-primary)]' : 'text-[color:var(--color-text-secondary)]'}`}
+                className={`font-display mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'font-medium text-(--color-text-primary)' : 'text-(--color-text-secondary)'}`}
                 data-label={item.label}
-                style={{ fontFamily: 'var(--font-display)', ...item.valueStyle }}
               >
                 {value}
               </p>

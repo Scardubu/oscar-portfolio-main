@@ -26,11 +26,11 @@ interface FeaturedArticleProps {
 // ─── Badge configuration ──────────────────────────────────────────────────────
 
 const BADGE_COLOR: Record<BadgeType, string> = {
-  live:        'text-[color:var(--metric-live)] bg-green-950/40 border-green-800/40',
-  documented:  'text-[color:var(--metric-documented)] bg-blue-950/40 border-blue-800/40',
-  backtested:  'text-[color:var(--metric-backtested)] bg-amber-950/40 border-amber-800/40',
-  snapshot:    'text-[color:var(--metric-snapshot)] bg-zinc-900/40 border-zinc-700/40',
-}
+  live: 'text-(--metric-live) bg-green-950/40 border-green-800/40',
+  documented: 'text-(--metric-documented) bg-blue-950/40 border-blue-800/40',
+  backtested: 'text-(--metric-backtested) bg-amber-950/40 border-amber-800/40',
+  snapshot: 'text-(--metric-snapshot) bg-zinc-900/40 border-zinc-700/40',
+};
 
 const BADGE_LABEL: Record<BadgeType, string> = {
   live:        'LIVE',
@@ -56,73 +56,49 @@ export function FeaturedArticle({ post, className = '' }: FeaturedArticleProps):
   return (
     <a
       href={href}
-      className={`
-        group block rounded-xl
-        border border-[color:var(--border-default)]
-        bg-[color:var(--bg-surface)] p-6
-        hover:border-[color:var(--accent-primary)]
-        transition-all duration-300
-        focus:outline-none
-        focus:ring-2 focus:ring-[color:var(--accent-primary)]
-        focus:ring-offset-2 focus:ring-offset-[color:var(--bg-base)]
-        ${className}
-      `}
+      className={`group block rounded-xl border border-(--border-default) bg-(--bg-surface) p-6 transition-all duration-300 hover:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary) focus:ring-offset-2 focus:ring-offset-(--bg-base) focus:outline-none ${className} `}
       aria-label={`Featured implementation article: ${post.title}`}
     >
       {/* Header badges */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <span className="
-          text-[10px] font-bold tracking-widest uppercase
-          px-2 py-0.5 rounded-full
-          text-[color:var(--accent-primary)] bg-cyan-950/40 border border-cyan-800/40
-        ">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-cyan-800/40 bg-cyan-950/40 px-2 py-0.5 text-[10px] font-bold tracking-widest text-(--accent-primary) uppercase">
           DEEP DIVE
         </span>
 
-        <span className={`
-          text-[10px] font-bold tracking-widest uppercase
-          px-2 py-0.5 rounded-full border
-          ${badgeClass}
-        `}>
+        <span
+          className={`rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase ${badgeClass} `}
+        >
           {post.key_metric} · {badgeLabel}
         </span>
 
         {post.system_tag && (
-          <span className="ml-auto text-[10px] text-[color:var(--text-muted)] font-medium tracking-wide">
+          <span className="ml-auto text-[10px] font-medium tracking-wide text-(--text-muted)">
             {post.system_tag.toUpperCase()}
           </span>
         )}
       </div>
 
       {/* Title */}
-      <h3 className="
-        text-base font-bold leading-snug mb-3
-        text-[color:var(--text-primary)]
-        group-hover:text-[color:var(--accent-primary)]
-        transition-colors duration-200
-      ">
+      <h3 className="mb-3 text-base leading-snug font-bold text-(--text-primary) transition-colors duration-200 group-hover:text-(--accent-primary)">
         {post.title}
       </h3>
 
       {/* Excerpt */}
-      <p className="text-sm text-[color:var(--text-secondary)] leading-relaxed mb-4 line-clamp-3">
+      <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-(--text-secondary)">
         {post.excerpt}
       </p>
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-[color:var(--text-muted)]">
+      <div className="flex items-center justify-between text-xs text-(--text-muted)">
         <div className="flex items-center gap-3">
           <span>{dateLabel}</span>
           <span aria-hidden="true">·</span>
           <span>{post.read_time_minutes} min read</span>
         </div>
-        <span className="
-          font-semibold text-[color:var(--accent-primary)]
-          group-hover:underline underline-offset-2
-        ">
+        <span className="font-semibold text-(--accent-primary) underline-offset-2 group-hover:underline">
           Read the implementation →
         </span>
       </div>
     </a>
-  )
+  );
 }

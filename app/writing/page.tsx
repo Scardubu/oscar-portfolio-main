@@ -34,7 +34,7 @@ export default async function WritingIndexPage() {
           <div className="container">
             <span className="label">Writing</span>
             <h1 className="gradient-text mt-2">Notes on building</h1>
-            <p className="mt-4 max-w-2xl text-lg text-[color:var(--color-text-muted)]">
+            <p className="mt-4 max-w-2xl text-lg text-(--color-text-muted)">
               ML systems, fintech architecture, and the decisions that don&apos;t show up in the
               commit history.
             </p>
@@ -43,17 +43,17 @@ export default async function WritingIndexPage() {
             {featured && (
               <Link
                 href={`/writing/${featured.slug}`}
-                className="glass glass-full glass-chromatic group mt-10 block rounded-[var(--radius-xl)] p-6 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 sm:p-8"
+                className="glass glass-full glass-chromatic group mt-10 block rounded-(--radius-xl) p-6 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 sm:p-8"
                 aria-label={`Featured article: ${featured.title}`}
               >
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-[color:var(--color-text-primary)] uppercase">
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-(--color-text-primary) uppercase">
                     Featured
                   </span>
                   {featured.tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[color:var(--color-text-muted)]"
+                      className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-(--color-text-muted)"
                     >
                       #{tag}
                     </span>
@@ -62,15 +62,15 @@ export default async function WritingIndexPage() {
                 <h2 className="text-xl leading-snug font-semibold transition-colors group-hover:text-white/90">
                   {featured.title}
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[color:var(--color-text-muted)]">
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-(--color-text-muted)">
                   {featured.summary}
                 </p>
-                <div className="mt-4 flex items-center gap-4 text-xs text-[color:var(--color-text-muted)]">
+                <div className="mt-4 flex items-center gap-4 text-xs text-(--color-text-muted)">
                   <time dateTime={featured.date} className="font-mono">
                     {formatDate(featured.date)}
                   </time>
                   <span>{featured.readingTime} min read</span>
-                  <span className="ml-auto text-xs font-semibold text-[color:var(--color-text-primary)]">
+                  <span className="ml-auto text-xs font-semibold text-(--color-text-primary)">
                     Read article →
                   </span>
                 </div>
@@ -80,7 +80,7 @@ export default async function WritingIndexPage() {
             {/* Year-bucketed archive */}
             <div className="mt-12 grid gap-12 pb-20">
               <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
-                <p className="text-sm text-[color:var(--color-text-muted)]">
+                <p className="text-sm text-(--color-text-muted)">
                   {sorted.length} published notes on production systems, fintech architecture, and
                   ML delivery.
                 </p>
@@ -97,7 +97,7 @@ export default async function WritingIndexPage() {
                         <article key={post.slug} className="writing-row">
                           <time
                             dateTime={post.date}
-                            className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]"
+                            className="min-w-28 shrink-0 font-mono text-xs text-(--color-text-muted)"
                           >
                             {formatDate(post.date)}
                           </time>
@@ -108,7 +108,7 @@ export default async function WritingIndexPage() {
                             >
                               {post.title}
                             </Link>
-                            <p className="mt-1 max-w-[64ch] text-sm text-[color:var(--color-text-muted)]">
+                            <p className="mt-1 max-w-[64ch] text-sm text-(--color-text-muted)">
                               {post.summary}
                             </p>
                             {post.tags.length > 0 && (
@@ -116,7 +116,7 @@ export default async function WritingIndexPage() {
                                 {post.tags.slice(0, 4).map((tag) => (
                                   <span
                                     key={tag}
-                                    className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-[color:var(--color-text-muted)]"
+                                    className="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-(--color-text-muted)"
                                   >
                                     #{tag}
                                   </span>
@@ -124,7 +124,7 @@ export default async function WritingIndexPage() {
                               </div>
                             )}
                           </div>
-                          <span className="text-xs whitespace-nowrap text-[color:var(--color-text-muted)]">
+                          <span className="text-xs whitespace-nowrap text-(--color-text-muted)">
                             {post.readingTime} min
                           </span>
                         </article>

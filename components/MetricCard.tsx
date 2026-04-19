@@ -36,8 +36,8 @@ export function MetricCard({
       data-pillar="true"
       style={accent ? { borderTopColor: accentColorMap[accent] } : undefined}
     >
-      {icon ? <div className="mb-[var(--space-4)] text-[var(--color-accent)]">{icon}</div> : null}
-      <p className="label mb-[var(--space-2)]" style={labelStyle}>
+      {icon ? <div className="mb-(--space-4) text-(--color-accent)">{icon}</div> : null}
+      <p className="label mb-(--space-2)" style={labelStyle}>
         {label}
       </p>
       {headline ? <p className="mb-2 text-base font-semibold text-white">{headline}</p> : null}

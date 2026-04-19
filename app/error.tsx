@@ -16,15 +16,13 @@ export default function ErrorPage({
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="text-center">
-        <h2 className="mb-4 text-2xl font-bold text-[var(--color-cyan)]">
-          Something went wrong
-        </h2>
-        <p className="mb-6 text-[var(--color-text-secondary)]">
+        <h2 className="mb-4 text-2xl font-bold text-(--color-cyan)">Something went wrong</h2>
+        <p className="mb-6 text-(--color-text-secondary)">
           An error occurred while loading this page.
         </p>
         <button
           onClick={reset}
-          className="rounded bg-[var(--color-cyan)] px-6 py-3 font-medium text-black transition-colors hover:bg-[var(--color-cyan-hover)]"
+          className="rounded bg-(--color-cyan) px-6 py-3 font-medium text-black transition-colors hover:bg-(--color-cyan-hover)"
         >
           Try again
         </button>

@@ -34,7 +34,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       id="writing"
       ref={ref}
       aria-labelledby="writing-heading"
-      className="border-t border-[color:var(--color-border)] py-28 sm:py-32"
+      className="border-t border-(--color-border) py-28 sm:py-32"
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
@@ -42,16 +42,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             <motion.span variants={child} className="label">
               THE CUT
             </motion.span>
-            <motion.h2
-              variants={child}
-              id="writing-heading"
-              className="mt-[var(--space-2)] text-white"
-            >
+            <motion.h2 variants={child} id="writing-heading" className="mt-(--space-2) text-white">
               Engineering in depth
             </motion.h2>
             <motion.p
               variants={child}
-              className="mt-5 max-w-[62ch] text-[length:var(--text-xl)] leading-[1.8]"
+              className="mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8]"
             >
               Long-form breakdowns of shipping decisions, platform constraints, and what continues
               to hold when production stops being polite.
@@ -60,8 +56,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <button
                 type="button"
                 onClick={() => setActiveFilter('ALL')}
-                aria-pressed={activeFilter === 'ALL' ? 'true' : 'false'}
-                className={`tag cursor-pointer${activeFilter === 'ALL' ? 'tag--active' : ''}`}
+                aria-pressed={activeFilter === 'ALL'}
+                className={`tag cursor-pointer ${activeFilter === 'ALL' ? 'tag--active' : ''}`}
               >
                 ALL
               </button>
@@ -70,8 +66,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   key={label}
                   type="button"
                   onClick={() => setActiveFilter(label)}
-                  aria-pressed={activeFilter === label ? 'true' : 'false'}
-                  className={`tag cursor-pointer${activeFilter === label ? 'tag--active' : ''}`}
+                  aria-pressed={activeFilter === label}
+                  className={`tag cursor-pointer ${activeFilter === label ? 'tag--active' : ''}`}
                 >
                   {label}
                 </button>
@@ -83,17 +79,17 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             <div className="grid gap-6">
               <motion.article
                 variants={card}
-                className="glass glass-full glass-chromatic rounded-[var(--radius-xl)] p-7 sm:p-9 lg:p-10"
+                className="glass glass-full glass-chromatic rounded-(--radius-xl) p-7 sm:p-9 lg:p-10"
               >
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="pill pill-cyan">Featured</span>
                   <span className="badge-muted">{posts.length} published</span>
                 </div>
                 <h3 className="mt-6 max-w-[20ch] text-white">{featuredPost.title}</h3>
-                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-[color:var(--color-text-secondary)]">
+                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-(--color-text-secondary)">
                   {featuredPost.summary}
                 </p>
-                <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-[color:var(--color-text-muted)]">
+                <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-(--color-text-muted)">
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
                   </time>
@@ -107,7 +103,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </div>
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--color-cyan-surface)] px-5 py-2.5 text-sm text-[color:var(--color-cyan)] transition hover:border-[color:var(--color-cyan)] hover:text-white"
+                  className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--color-cyan-surface) px-5 py-2.5 text-sm text-(--color-cyan) transition hover:border-(--color-cyan) hover:text-white"
                 >
                   <span>Read article</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -146,14 +142,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                           >
                             <time
                               dateTime={post.date}
-                              className="min-w-28 shrink-0 font-mono text-xs text-[color:var(--color-text-muted)]"
+                              className="min-w-28 shrink-0 font-mono text-xs text-(--color-text-muted)"
                             >
                               {formatDate(post.date)}
                             </time>
                             <div className="flex-1">
                               <span className="writing-title block">{post.title}</span>
                             </div>
-                            <span className="text-xs whitespace-nowrap text-[color:var(--color-text-muted)]">
+                            <span className="text-xs whitespace-nowrap text-(--color-text-muted)">
                               {post.readingTime} min read
                             </span>
                           </motion.article>
@@ -166,7 +162,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             </div>
           ) : null}
 
-          <motion.div variants={child} className="mt-[var(--space-8)]">
+          <motion.div variants={child} className="mt-(--space-8)">
             <Link
               href="/writing"
               className="pill pill-cyan inline-flex items-center gap-2 transition hover:-translate-y-px"

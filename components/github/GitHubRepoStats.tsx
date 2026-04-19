@@ -38,12 +38,12 @@ interface GitHubRepoStatsProps {
 
 function StatSkeleton(): React.ReactElement {
   return (
-    <div className="animate-pulse flex flex-col gap-2" aria-hidden="true">
-      <div className="h-8 w-14 rounded-md bg-[color:var(--bg-elevated)]" />
-      <div className="h-3 w-20 rounded    bg-[color:var(--bg-elevated)]" />
-      <div className="h-4 w-24 rounded-full bg-[color:var(--bg-elevated)]" />
+    <div className="flex animate-pulse flex-col gap-2" aria-hidden="true">
+      <div className="h-8 w-14 rounded-md bg-(--bg-elevated)" />
+      <div className="h-3 w-20 rounded bg-(--bg-elevated)" />
+      <div className="h-4 w-24 rounded-full bg-(--bg-elevated)" />
     </div>
-  )
+  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -92,34 +92,20 @@ export function GitHubRepoStats({
 
   return (
     <div
-      className={`
-        rounded-xl p-5
-        border border-[color:var(--border-default)]
-        bg-[color:var(--bg-surface)]
-        ${className}
-      `}
+      className={`rounded-xl border border-(--border-default) bg-(--bg-surface) p-5 ${className} `}
       aria-label={`GitHub repository stats for ${name}`}
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-5">
+      <div className="mb-5 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[color:var(--text-primary)] truncate">
-            {name}
-          </p>
-          <p className="text-xs text-[color:var(--text-muted)] mt-0.5 leading-relaxed">
-            {description}
-          </p>
+          <p className="truncate text-sm font-semibold text-(--text-primary)">{name}</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-(--text-muted)">{description}</p>
         </div>
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="
-            flex-shrink-0 text-xs font-semibold
-            text-[color:var(--accent-primary)]
-            hover:underline underline-offset-2
-            focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)]
-          "
+          className="flex-shrink-0 text-xs font-semibold text-(--accent-primary) underline-offset-2 hover:underline focus:ring-2 focus:ring-(--accent-primary) focus:outline-none"
           aria-label={`Open ${name} on GitHub`}
         >
           GitHub →
@@ -128,16 +114,13 @@ export function GitHubRepoStats({
 
       {/* Stats */}
       {error && (
-        <p className="text-xs text-[color:var(--text-muted)]" role="alert">
+        <p className="text-xs text-(--text-muted)" role="alert">
           {error}
         </p>
       )}
 
       {!error && (
-        <div
-          className="grid grid-cols-3 gap-4"
-          aria-label="Live repository statistics"
-        >
+        <div className="grid grid-cols-3 gap-4" aria-label="Live repository statistics">
           {loading ? (
             <>
               <StatSkeleton />
@@ -174,5 +157,5 @@ export function GitHubRepoStats({
         </div>
       )}
     </div>
-  )
+  );
 }

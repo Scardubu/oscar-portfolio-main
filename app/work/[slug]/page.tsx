@@ -49,15 +49,15 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
   return (
     <aside
       aria-labelledby="related-case-studies-heading"
-      className="glass-no-hover mb-[var(--space-20)] rounded-[var(--radius-xl)] border border-white/10 p-6"
+      className="glass-no-hover mb-(--space-20) rounded-(--radius-xl) border border-white/10 p-6"
     >
       <span className="label">More work</span>
-      <h2 id="related-case-studies-heading" className="mt-[var(--space-2)]">
+      <h2 id="related-case-studies-heading" className="mt-(--space-2)">
         Other case studies
       </h2>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {entries.map((entry) => (
-          <article key={entry.slug} className="rounded-[var(--radius-lg)] border border-white/10 p-5">
+          <article key={entry.slug} className="rounded-(--radius-lg) border border-white/10 p-5">
             <div className="flex flex-wrap gap-2">
               <span className="pill">{getCompactProjectStatusLabel(entry.status)}</span>
               {entry.stack.slice(0, 2).map((tag) => (
@@ -93,7 +93,7 @@ function ProjectLinksCard({
   }
 
   return (
-    <div className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-5">
+    <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
       <span className="label">Links</span>
       <div className="mt-4 flex flex-col gap-3">
         {demoUrl ? (
@@ -197,14 +197,16 @@ export default async function WorkPage({ params }: WorkPageProps) {
             </Link>
             <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
               <div className="min-w-0">
-                <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
+                <header className="mt-(--space-8) mb-(--space-10) max-w-[60ch]">
                   <span className="label">Case Study</span>
-                  <h1 className="mt-[var(--space-2)]">{title}</h1>
-                  <p className="mt-[var(--space-4)] text-[length:var(--text-lg)]">{description}</p>
+                  <h1 className="mt-(--space-2)">{title}</h1>
+                  <p className="mt-(--space-4) text-(length:--text-lg)">{description}</p>
                   {projectMeta ? (
-                    <div className="mt-[var(--space-4)] flex flex-wrap gap-[var(--space-2)]">
+                    <div className="mt-(--space-4) flex flex-wrap gap-(--space-2)">
                       <span className="pill pill-cyan">{statusLabel}</span>
-                      {projectMeta.status === 'live' ? <span className="pill">Featured system</span> : null}
+                      {projectMeta.status === 'live' ? (
+                        <span className="pill">Featured system</span>
+                      ) : null}
                     </div>
                   ) : null}
                 </header>
@@ -217,15 +219,13 @@ export default async function WorkPage({ params }: WorkPageProps) {
                   />
                 ) : null}
 
-                <article className="prose max-w-none pb-[var(--space-20)]">
-                  {project.content}
-                </article>
+                <article className="prose max-w-none pb-(--space-20)">{project.content}</article>
 
                 <RelatedCaseStudies entries={relatedProjects} />
               </div>
 
               <aside className="space-y-4 xl:sticky xl:top-[calc(var(--nav-height)+var(--space-8))]">
-                <div className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-5">
+                <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
                   <span className="label">Snapshot</span>
                   <div className="mt-4 space-y-4">
                     <div className="space-y-1">
@@ -240,7 +240,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 </div>
 
                 {tags.length ? (
-                  <div className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-5">
+                  <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
                     <span className="label">Stack</span>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {tags.map((tag) => (
@@ -252,7 +252,10 @@ export default async function WorkPage({ params }: WorkPageProps) {
                   </div>
                 ) : null}
 
-                <ProjectLinksCard demoUrl={projectMeta?.demoUrl} githubUrl={projectMeta?.githubUrl} />
+                <ProjectLinksCard
+                  demoUrl={projectMeta?.demoUrl}
+                  githubUrl={projectMeta?.githubUrl}
+                />
               </aside>
             </div>
           </div>

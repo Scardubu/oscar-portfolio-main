@@ -4,9 +4,9 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative z-[2] border-t border-[color:var(--color-border)] py-8">
+    <footer className="relative z-[2] border-t border-(--color-border) py-8">
       <div className="container flex flex-wrap items-center justify-between gap-4">
-        <span className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)]">
+        <span className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted)">
           scardubu.dev &middot; {year}
         </span>
 
@@ -16,7 +16,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Oscar Ndugbu on GitHub"
-            className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] uppercase transition-colors hover:text-[color:var(--color-text-primary)]"
+            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
             GitHub
           </a>
@@ -25,14 +25,14 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Oscar Ndugbu on LinkedIn"
-            className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] uppercase transition-colors hover:text-[color:var(--color-text-primary)]"
+            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
             LinkedIn
           </a>
           <a
             href="mailto:scardubu@gmail.com"
             aria-label="Email Oscar Ndugbu"
-            className="font-mono text-xs tracking-[var(--tracking-wide)] text-[color:var(--color-text-muted)] uppercase transition-colors hover:text-[color:var(--color-text-primary)]"
+            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
             Email
           </a>

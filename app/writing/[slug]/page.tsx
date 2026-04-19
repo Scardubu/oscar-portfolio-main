@@ -118,13 +118,13 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
             </Link>
             <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start">
               <div className="min-w-0">
-                <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
+                <header className="mt-(--space-8) mb-(--space-10) max-w-[60ch]">
                   <span className="label">Writing</span>
-                  <h1 className="mt-[var(--space-2)]">{post.frontmatter.title}</h1>
-                  <p className="mt-[var(--space-4)] text-[length:var(--text-lg)]">
+                  <h1 className="mt-(--space-2)">{post.frontmatter.title}</h1>
+                  <p className="mt-(--space-4) text-(length:--text-lg)">
                     {post.frontmatter.summary}
                   </p>
-                  <div className="mt-[var(--space-6)] flex flex-wrap gap-[var(--space-3)] text-[color:var(--color-text-muted)]">
+                  <div className="mt-(--space-6) flex flex-wrap gap-(--space-3) text-(--color-text-muted)">
                     <time dateTime={post.frontmatter.date}>
                       {formatDate(post.frontmatter.date)}
                     </time>
@@ -133,22 +133,22 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
                   </div>
                 </header>
 
-                <article className="prose max-w-none pb-[var(--space-20)]">{post.content}</article>
+                <article className="prose max-w-none pb-(--space-20)">{post.content}</article>
 
                 {relatedPosts.length ? (
                   <aside
                     aria-labelledby="related-writing-heading"
-                    className="glass-no-hover mb-[var(--space-20)] rounded-[var(--radius-xl)] border border-white/10 p-6"
+                    className="glass-no-hover mb-(--space-20) rounded-(--radius-xl) border border-white/10 p-6"
                   >
                     <span className="label">Continue reading</span>
-                    <h2 id="related-writing-heading" className="mt-[var(--space-2)]">
+                    <h2 id="related-writing-heading" className="mt-(--space-2)">
                       Related articles
                     </h2>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                       {relatedPosts.map((entry) => (
                         <article
                           key={entry.slug}
-                          className="rounded-[var(--radius-lg)] border border-white/10 p-5"
+                          className="rounded-(--radius-lg) border border-white/10 p-5"
                         >
                           <div className="flex flex-wrap items-center gap-3 text-sm text-white/50">
                             <time dateTime={entry.date}>{formatDate(entry.date)}</time>
@@ -171,7 +171,7 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
               </div>
 
               <aside className="space-y-4 xl:sticky xl:top-[calc(var(--nav-height)+var(--space-8))]">
-                <div className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-5">
+                <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
                   <span className="label">At a glance</span>
                   <div className="mt-4 space-y-4">
                     {articleMeta.map((item) => (
@@ -186,7 +186,7 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
                 </div>
 
                 {(post.frontmatter.tags ?? []).length ? (
-                  <div className="glass-no-hover rounded-[var(--radius-xl)] border border-white/10 p-5">
+                  <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
                     <span className="label">Topics</span>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {(post.frontmatter.tags ?? []).map((tag) => (

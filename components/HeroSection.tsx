@@ -66,7 +66,7 @@ export function HeroSection() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100dvh] flex-col justify-center pt-[calc(var(--nav-height)+3.5rem)] pb-20 sm:pb-24"
+      className="relative flex min-h-dvh flex-col justify-center pt-[calc(var(--nav-height)+3.5rem)] pb-20 sm:pb-24"
     >
       <div className="relative z-10 container">
         <motion.div variants={container} initial="hidden" animate={mounted ? 'visible' : 'hidden'}>
@@ -102,8 +102,7 @@ export function HeroSection() {
 
           <motion.p
             variants={child}
-            className="mt-3 max-w-[48ch] text-[length:var(--text-xl)] leading-relaxed text-[color:var(--color-live)] italic"
-            style={{ fontFamily: 'var(--font-display)' }}
+            className="font-display mt-3 max-w-[48ch] text-(length:--text-xl) leading-relaxed text-(--color-live) italic"
           >
             The system has to work at 2am.
           </motion.p>
@@ -124,14 +123,14 @@ export function HeroSection() {
                       transition: { type: 'spring', stiffness: 400, damping: 30 },
                     }
               }
-              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--color-accent)] bg-[var(--color-accent)] px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-accent) bg-(--color-accent) px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
             >
               View Projects
             </motion.a>
             <Link
               href="#contact"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-5 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-secondary)] uppercase transition"
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
             >
               Get in Touch
             </Link>
@@ -139,7 +138,7 @@ export function HeroSection() {
               href="/oscar-ndugbu-resume.pdf"
               download
               data-cta="ghost"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--radius-md)] border border-[color:var(--color-border)] px-4 py-3.5 font-mono text-xs font-medium text-[color:var(--color-text-muted)] uppercase transition"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-(--radius-md) border border-(--color-border) px-4 py-3.5 font-mono text-xs font-medium text-(--color-text-muted) uppercase transition"
             >
               Resume
               <svg
@@ -148,7 +147,7 @@ export function HeroSection() {
                 viewBox="0 0 10 10"
                 fill="none"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className="shrink-0"
               >
                 <path
                   d="M5 1v8M1 6l4 3 4-3"
@@ -172,23 +171,12 @@ export function HeroSection() {
                 data-pillar={pillar.dataPillar}
                 whileHover={reducedMotion ? undefined : pillarHover}
                 className="glass pillar-grid-item p-6 sm:p-7"
-                style={{
-                  borderTop: `2px solid ${pillar.accent}`,
-                }}
               >
-                <p className="label mb-2" style={{ color: pillar.accent }}>
-                  {pillar.label}
-                </p>
-                <p
-                  className="mb-3 text-base leading-snug font-semibold text-[color:var(--color-text-primary)] sm:text-lg"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
+                <p className="label mb-2">{pillar.label}</p>
+                <p className="font-display mb-3 text-base leading-snug font-semibold text-(--color-text-primary) sm:text-lg">
                   {pillar.headline}
                 </p>
-                <p
-                  className="text-sm leading-7 text-[color:var(--color-text-secondary)] sm:text-[0.95rem]"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
+                <p className="font-display text-sm leading-7 text-(--color-text-secondary) sm:text-[0.95rem]">
                   {pillar.body}
                 </p>
               </motion.div>
@@ -199,10 +187,11 @@ export function HeroSection() {
         <motion.div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center sm:bottom-4"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ opacity: indicatorOpacity }}
           animate={reducedMotion ? undefined : scrollIndicatorBounce}
         >
-          <div className="flex flex-col items-center gap-2 text-[color:var(--color-text-muted)]">
+          <div className="flex flex-col items-center gap-2 text-(--color-text-muted)">
             <ChevronDown className="h-4 w-4" />
           </div>
         </motion.div>

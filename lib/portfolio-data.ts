@@ -26,10 +26,10 @@ export const HERO = {
 // ── Hero Metrics ──────────────────────────────────────────────────────────────
 
 export const HERO_METRICS = [
-  { value: 0,   suffix: "",  label: "Global Impact",          type: "live"       as const },
-  { value: 0,   suffix: "",  label: "AI Precision",           type: "live"       as const },
-  { value: 0,   suffix: "",  label: "Unwavering Reliability", type: "documented" as const },
-  { value: 0,   suffix: "",  label: "Built for Scale",        type: "snapshot"   as const },
+  { value: 99.9, suffix: '%', label: 'System Uptime', type: 'documented' as const },
+  { value: 87, suffix: 'ms', label: 'API p50 Latency', type: 'documented' as const },
+  { value: 4, suffix: '+', label: 'Years Shipping', type: 'snapshot' as const },
+  { value: 3, suffix: '', label: 'Live Systems', type: 'live' as const },
 ] as const;
 
 // ── Projects ─────────────────────────────────────────────────────────────────

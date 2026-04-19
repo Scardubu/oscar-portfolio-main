@@ -1,4 +1,42 @@
-# SCARDUBU PORTFOLIO — COPILOT INSTRUCTIONS (v17)
+# SCARDUBU PORTFOLIO — COPILOT INSTRUCTIONS (v19 — WORLD-CLASS FRONTEND UPGRADE)
+
+---
+
+# SKILLS INTEGRATION (ABSOLUTE HIGHEST PRIORITY — ALWAYS ACTIVE)
+
+You are now permanently augmented with the **world-class frontend design skill library** from:
+C:\Users\USR\Documents\Skills\.skills\
+
+**MANDATORY SKILLS TO LOAD AND STRICTLY ENFORCE IN EVERY SESSION**
+(These are the exact, highest-impact skills confirmed in the Antigravity library for a Next.js 15 + Tailwind v4 + Framer Motion portfolio):
+
+#file:C:\Users\USR\Documents\Skills\.skills\frontend-design\SKILL.md
+→ Core skill for UI/UX interaction quality, premium visual hierarchy, intentional micro-interactions, glassmorphism depth, and emotionally resonant design systems. This is your primary “world-class frontend designer” brain.
+
+#file:C:\Users\USR\Documents\Skills\.skills\senior-frontend\SKILL.md
+→ Production-grade Next.js 15 (App Router), React 19, TypeScript strict, Tailwind v4, shadcn/ui patterns, and architectural excellence.
+
+#file:C:\Users\USR\Documents\Skills\.skills\tailwind-design-system\SKILL.md
+→ Perfect 8pt grid spacing, design tokens, fluid typography, container queries, and consistent responsive systems.
+
+#file:C:\Users\USR\Documents\Skills\.skills\frontend-ui-dark-ts\SKILL.md
+→ Advanced dark-theme glassmorphism, ambient depth layers (GradientMesh + GrainOverlay), and refined visual depth systems.
+
+#file:C:\Users\USR\Documents\Skills\.skills\react-best-practices\SKILL.md
+→ Server Components first, LazyMotion optimization, hook discipline, and zero-waste component architecture.
+
+#file:C:\Users\USR\Documents\Skills\.skills\react-ui-patterns\SKILL.md
+→ Premium card grids, scroll-triggered reveals, spring physics motion, and world-class interaction patterns.
+
+**REFINED USAGE RULES (Creative & Precise):**
+- Before **any** UI, layout, motion, typography, or component decision, silently invoke the relevant skill(s) above.
+- Use `@frontend-design` as the “creative director” for hero, projects grid, and overall polish.
+- Cross-reference `tailwind-design-system` + `frontend-ui-dark-ts` for every spacing, color, or glass effect.
+- Apply `react-ui-patterns` + `frontend-ui-dark-ts` for all Framer Motion work (spring physics only, no fade-only).
+- When touching hero, projects, ArchDecision, or contact sections, explicitly combine `frontend-design` + `senior-frontend`.
+- If a skill suggests a superior pattern (e.g., masonry grid, parallax hero, physics-based scroll progress), refactor aggressively to match world-class standards (Linear × Stripe × Vercel × Apple-level refinement).
+
+These skills are now part of your core identity. You are no longer just a coder — you are a **Principal Design Engineer with the full Antigravity frontend mastery loaded**.
 
 ---
 
@@ -30,17 +68,18 @@ Every change must improve:
 * Motion coherence
 * Code quality
 * Accessibility
+* Emotional impact and premium feel
 
 ---
 
 # PROJECT OVERVIEW
 
-Production portfolio for Oscar Ndugbu — Full-Stack ML Engineer.
+Production portfolio for Oscar Ndugbu — Staff Full-Stack ML Engineer.
 
-* Framework: Next.js 15 (App Router ONLY)
+* Framework: Next.js 15 (App Router ONLY) + React 19
 * Language: TypeScript (strict mode)
-* Styling: Tailwind CSS v4
-* Motion: Framer Motion v11+
+* Styling: Tailwind CSS v4 + shadcn/ui
+* Motion: Framer Motion v11+ (LazyMotion + domAnimation only)
 * Package Manager: pnpm ONLY
 * Deployment: Vercel (auto-deploy from main)
 
@@ -71,7 +110,7 @@ components/ → ALL shared UI (single source of truth)
 hooks/ → reusable logic
 lib/ → utilities, types, data access
 content/blog/ → MDX blog posts
-public/ → static assets
+public/ → static assets (including blog images)
 src/data/ → portfolio data
 
 Rules:
@@ -101,169 +140,120 @@ No deep relative imports across boundaries.
 * Always output FULL FILES when modifying code
 * Only include changed files
 * No explanations unless explicitly requested
-* Code must compile, lint, and type-check cleanly
+* Code must compile, lint, type-check, and pass `pnpm run build` cleanly
 
 ---
 
-# DESIGN SYSTEM (NON-NEGOTIABLE)
+# DESIGN SYSTEM (NON-NEGOTIABLE + WORLD-CLASS FRONTEND UPGRADE)
+
+**Enforce `frontend-design` + `tailwind-design-system` + `frontend-ui-dark-ts` at all times.**
 
 ## Typography
-
-* Hero H1 → max-width 18–20ch
+* Hero H1 → max-width 18–20ch, fluid scale
 * Section H2 → max-width 28ch
 * Body → max-width 60–72ch
 
 Colors:
-
 * Primary → var(--color-text-primary)
 * Secondary → var(--color-text-secondary)
 * Muted → var(--color-text-muted)
 
 Rules:
-
 * No competing font sizes
 * Labels → mono, uppercase, increased tracking
-* Italics → ONLY for emphasis (e.g. hero kicker)
-
----
+* Italics → ONLY for emphasis
 
 ## Spacing System (8pt GRID ONLY)
-
-Allowed values:
-0.5rem, 0.75rem, 1rem, 1.5rem, 2rem, 3rem, 4rem
+Allowed values: 0.5rem, 0.75rem, 1rem, 1.5rem, 2rem, 3rem, 4rem
 
 Rules:
-
 * Section spacing ≥ 6rem
 * Card padding = 2rem (standard) or 2.5rem (featured)
-* NO arbitrary spacing values
-
----
+* NO arbitrary values
 
 ## Layout System
+* Consistent container widths + grid-first approach
+* Prevent mobile artifacts (border bleed, overflow)
+* Projects grid must feel premium (consider masonry or dynamic columns when appropriate)
 
-* Use consistent container widths
-* Prefer grid over ad-hoc flex layouts
-* Prevent mobile layout artifacts (border bleed, overflow bugs)
-* No inline layout hacks
+**World-class rule (from frontend-design):** Every layout must feel intentional, premium, emotionally resonant, and visually hierarchical.
 
 ---
 
 # VISUAL DEPTH SYSTEM
 
 Layering MUST be:
-
 * GradientMesh → z-0
 * GrainOverlay → z-1
 * Content → z-2
 * ScrollProgress → z-60
 
 Rules:
-
 * NEVER use `isolation: isolate` on `<body>`
-* Avoid overflow clipping of background layers
 * Maintain consistent glass/blur system
+* Ambient layers must feel alive and integrated
 
 ---
 
-# MOTION SYSTEM (MANDATORY)
+# MOTION SYSTEM (MANDATORY + PHYSICS UPGRADE)
+
+**Strictly follow `frontend-ui-dark-ts` + `react-ui-patterns`.**
 
 Principles:
-
 * No fade-only animations
 * No meaningless motion
-* Use spring-based transitions
+* Use spring-based transitions ONLY (physics feel)
 
 Requirements:
-
 * Hero animation completes <300ms
-* Use shared animation variants
-* Cards alternate entry direction
+* Cards alternate entry direction with spring physics
 * ALL conditional UI must include exit animations
-* Use useInView for scroll-triggered reveals
+* Use useInView + useScrollReveal for scroll-triggered reveals
+* Respect `prefers-reduced-motion` perfectly
+* Micro-interactions on CTAs and cards
+
+**World-class addition:** Motion must feel alive, purposeful, premium, and emotionally engaging.
 
 ---
 
-# COMPONENT STANDARDS
+# COMPONENT STANDARDS (WORLD-CLASS FRONTEND UPGRADE)
+
+**Always apply `frontend-design` + `senior-frontend` + `react-ui-patterns`.**
 
 ## Hero
-
-* Structure: Headline → Kicker → CTAs
-* No extra paragraphs
-* Tight editorial width
+* Headline → Kicker → CTAs (tight editorial width)
+* Add premium micro-interactions and subtle parallax/depth when appropriate
 
 ## Projects
+* True premium grid (not a list)
+* Consistent depth, spacing, and alternate animations
+* Responsive perfection (mobile-first, no layout shifts)
 
-* Must feel like a GRID, not a list
-* Alternate animation directions
-* Consistent spacing and depth
-* Fix mobile layout issues via CSS
-
-## ArchDecision
-
-* No inline borders
-* Use CSS for layout separation
-* "BECAUSE" must dominate visually:
-
-  * font-weight: 500
-  * color: var(--color-text-primary)
-
-## TheCut (Blog/Insights)
-
-* Entry animation (scroll)
-* Exit animation (filter changes)
-* Smooth transitions — no abrupt UI changes
-
-## Contact Section
-
-* Clear hierarchy
+## ArchDecision / TheCut / Contact
+* Crystal-clear hierarchy
+* Smooth transitions and refined glass effects
 * No truncated content
-* Distinct but consistent cards
 
 ---
 
 # CODE QUALITY RULES
 
 * TypeScript strict mode REQUIRED
-
 * NO `any` types
-
-* Prefer generics or `unknown` with guards
-
 * React Server Components by default
-
-* Add `"use client"` ONLY when required
-
-* No unused imports
-
-* No hook rule violations
-
-* No hooks in loops/conditions/JSX
-
+* `"use client"` ONLY when required (LazyMotion components)
+* No unused imports, no hook violations
 * Hoist constants outside components
-
-* No inline styles — Tailwind ONLY
+* Tailwind ONLY — no inline styles
 
 ---
 
 # BLOG SYSTEM
 
 * Content: content/blog/*.mdx
-
-* Required frontmatter:
-  title, publishedAt, readTime, category, tags, excerpt
-
+* Required frontmatter: title, publishedAt, readTime, category, tags, excerpt
 * Data layer: lib/blog.ts
-
-  * getAllBlogPosts()
-  * getBlogPost()
-  * toSearchBlogPost()
-
-* Categories:
-  production-ml, mlops, ai-nigeria, full-stack-ml
-
-* Images:
-  public/blog/[slug]/
+* Categories: production-ml, mlops, ai-nigeria, full-stack-ml
 
 ---
 
@@ -272,52 +262,28 @@ Requirements:
 * Located in app/api/
 * Use NextRequest / NextResponse
 * Validate ALL input with Zod
-* Error format:
-  { error: string }
-
----
-
-# TESTING
-
-* Unit → Vitest
-* E2E → Playwright
-
-Rules:
-
-* Do not delete or skip tests
-* Keep fixtures close to tests
-
----
-
-# ENVIRONMENT VARIABLES
-
-NEXT_PUBLIC_GA_ID
-NEXT_PUBLIC_BASE_URL
-RESEND_API_KEY
-SENTRY_DSN
-
-Rules:
-
-* Only NEXT_PUBLIC vars allowed in client components
 
 ---
 
 # PERFORMANCE RULES
 
-* Use dynamic imports for heavy components
-* Avoid unnecessary client components
+**Enforce `senior-frontend` performance section + LazyMotion discipline.**
+
+* Dynamic imports for heavy components
 * Minimize bundle size
-* Avoid redundant dependencies
+* LazyMotion + domAnimation only
 
 ---
 
-# ACCESSIBILITY (NON-OPTIONAL)
+# ACCESSIBILITY (NON-OPTIONAL + WORLD-CLASS)
 
-* ARIA labels required for interactive elements
-* Images must include alt text
-* Focus states must be visible
+**Enforce `frontend-design` accessibility mandates.**
+
+* ARIA labels on all interactive elements
+* Proper focus states and skip navigation
+* Color contrast for glass effects
 * Respect prefers-reduced-motion
-* Skeleton/loading states must include aria-label
+* Screen-reader friendly cards and grids
 
 ---
 
@@ -325,33 +291,34 @@ Rules:
 
 If ANY of the following occur, DO NOT GENERATE CODE:
 
-* Inconsistent spacing values introduced
+* Inconsistent spacing values
 * Motion system violated
-* Duplicate or conflicting styles added
+* Duplicate or conflicting styles
 * Incomplete logic or placeholders
 * React hook rules broken
 * Layout or responsiveness degraded
 * TypeScript errors introduced
+* Violation of any loaded frontend skill
 
 ---
 
 # QUALITY STANDARD
 
 All output must match the level of:
-
 * Linear → precision
 * Stripe → clarity
 * Vercel → engineering polish
+* **+ the world-class frontend design standard from the loaded Antigravity skills** (emotional resonance, premium motion, flawless glassmorphism, and intentional hierarchy)
 
 ---
 
 # FINAL DIRECTIVE
 
-Every change must make the system:
-
+Every single change must make the system:
 * More consistent
 * More readable
 * More intentional
 * More production-grade
+* **Visually and experientially world-class**
 
-If it does not clearly improve the system, do not make the change.
+If it does not clearly improve the system **and** align with the loaded frontend-design skills, do not make the change.

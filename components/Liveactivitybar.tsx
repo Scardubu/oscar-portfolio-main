@@ -79,16 +79,16 @@ export function LiveActivityBar() {
     <p
       role="status"
       aria-live="polite"
-      className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[color:var(--color-text-muted)]"
+      className="mt-2 flex flex-wrap items-center gap-2 text-sm text-(--color-text-muted)"
     >
       <span aria-hidden="true" className="dot-live h-[6px] w-[6px]" />
       {activity.sha && activity.sha !== 'unknown' ? (
-        <span className="font-mono text-[11px] text-[color:var(--color-text-secondary)] uppercase">
+        <span className="font-mono text-[11px] text-(--color-text-secondary) uppercase">
           {activity.sha}
         </span>
       ) : null}
       <span
-        className="block max-w-[min(16ch,50vw)] overflow-hidden text-ellipsis whitespace-nowrap text-[color:var(--color-text-secondary)] sm:max-w-[min(28ch,45vw)]"
+        className="block max-w-[min(16ch,50vw)] overflow-hidden text-ellipsis whitespace-nowrap text-(--color-text-secondary) sm:max-w-[min(28ch,45vw)]"
         title={activity.message ?? typeLabel(activity.type)}
       >
         {activity.message ?? typeLabel(activity.type)}
