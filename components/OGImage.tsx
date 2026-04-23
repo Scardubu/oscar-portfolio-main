@@ -6,8 +6,8 @@ interface OGImageProps {
 
 export function OGImage({
   title = 'Oscar Ndugbu (Scardubu)',
-  subtitle = 'Production AI systems · Full-stack execution',
-  caption = 'Shipped work, explicit tradeoffs, and interface quality that reads without explanation.',
+  subtitle = 'Fullstack engineering · AI infrastructure at scale',
+  caption = 'Shipped work, explicit tradeoffs, and fullstack product execution from interface to infrastructure.',
 }: Readonly<OGImageProps>) {
   return (
     <div

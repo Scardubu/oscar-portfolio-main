@@ -103,8 +103,8 @@ export const PORTFOLIO_METRICS: PortfolioMetric[] = [
 // Profile data for consistent use across the site
 export const PROFILE = {
   name: "Oscar Ndugbu",
-  title: "Full-Stack ML Engineer",
-  tagline: "Building Production AI Systems",
+  title: "Fullstack Engineer",
+  tagline: "Fullstack Engineer · Backend Infrastructure & AI Systems",
   location: "Nigeria",
   locationDisplay: "Lagos, Nigeria 🇳🇬",
   timezone: "WAT (UTC+1)",
@@ -118,9 +118,9 @@ export const PROFILE = {
   },
   bio: {
     short:
-      "Full-Stack ML Engineer specializing in production AI systems, ensemble models, and MLOps for real-world products.",
+      "Fullstack engineer building production-grade backend systems, AI pipelines, and product interfaces that stay fast and reliable.",
     medium:
-      "Transforming complex AI concepts into scalable, production-ready systems that drive real business value. From model development and deployment automation to end-to-end system architecture, production ML solutions ship and stay shipped.",
+      "Platform architect and fullstack engineer delivering compliant, observable fintech systems end-to-end — from PostgreSQL RLS data models and FastAPI services to React/Next.js product surfaces. Consulting across West Africa and Europe.",
     long: `Production ML systems designed and deployed end-to-end—from feature engineering and model training to APIs, DevOps, and monitoring. Work spans ensemble models, real-time inference, and full-stack applications that people actually use.
 
 Based in Nigeria and working with teams globally, focus is on sports analytics, fintech, and predictive systems where model performance directly impacts business outcomes. Open to consulting, technical partnerships, and high-impact ML roles.`,

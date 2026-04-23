@@ -322,7 +322,7 @@ export function NavBar() {
               className="hidden text-xs tracking-[0.08em] text-(--color-text-muted) xl:block"
               aria-hidden="true"
             >
-              Backend infrastructure · Reliability at scale
+              Fullstack engineering · AI infrastructure at scale
             </span>
           </Link>
         </m.div>

@@ -22,7 +22,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/cv/oscar-ndugbu-cv.pdf',
-        destination: '/cv/oscar-ndugbu-cv.docx',
+        destination: '/cv/oscar-ndugbu-resume.pdf',
+        permanent: true,
+      },
+      {
+        source: '/cv/oscar-ndugbu-cv.docx',
+        destination: '/cv/oscar-ndugbu-resume.pdf',
         permanent: true,
       },
       {

@@ -37,26 +37,26 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: {
     default:
-      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
+      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
     template: '%s · Oscar Ndugbu',
   },
   description:
-    'Oscar Ndugbu (Scardubu) builds backend systems that keep fintech products alive, compliant, and fast — sub-150ms APIs, 99.9%+ uptime, NRS-compliant audit trails.',
+    'Oscar Ndugbu (Scardubu) builds fullstack fintech systems that stay fast, compliant, and reliable in production — sub-150ms APIs, 99.9%+ uptime, NRS-compliant audit trails.',
   metadataBase: new URL('https://www.scardubu.dev'),
   openGraph: {
     type: 'website',
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Ndugbu',
     title:
-      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
+      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
     description:
-      'Backend systems engineer. TaxBridge · SabiScore · Hashablanca. sub-150ms · 99.9%+ uptime.',
+      'Fullstack systems engineer. TaxBridge · SabiScore · Hashablanca. sub-150ms · 99.9%+ uptime.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
     card: 'summary_large_image',
     title:
-      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
+      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
     images: ['/api/og'],
   },
   robots: { index: true, follow: true },
@@ -74,9 +74,9 @@ const personJsonLd = {
   '@type': 'Person',
   name: 'Oscar Ndugbu',
   url: 'https://www.scardubu.dev',
-  jobTitle: 'Principal Backend Engineer',
+  jobTitle: 'Fullstack Engineer',
   description:
-    'Backend systems engineer specialising in infrastructure, SRE, and AI systems. TaxBridge, SabiScore, Hashablanca.',
+    'Fullstack engineer specialising in infrastructure, SRE, and AI systems. TaxBridge, SabiScore, Hashablanca.',
   sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 

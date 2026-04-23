@@ -59,14 +59,15 @@ export function ProjectsSection() {
             id="projects-heading"
             className="gradient-text mt-(--space-2)"
           >
-            Work that shipped
+            Fullstack systems that shipped
           </motion.h2>
           <motion.p
             variants={header}
             className="font-display mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8] text-(--color-text-secondary)"
           >
-            End-to-end AI and fintech systems. Each ships with documented architecture decisions and
-            a monitored production deployment.
+            Product interfaces, backend platforms, and production operations delivered as one
+            system. Each case study includes decision rationale, constraints, and measurable
+            outcomes.
           </motion.p>
         </motion.div>
 
@@ -101,6 +102,14 @@ export function ProjectsSection() {
             <p className="font-display mt-6 max-w-[72ch] border-l-2 border-[rgba(245,158,11,0.35)] pl-3 text-sm text-(--color-text-secondary) italic">
               Constraint: {featured.constraint}
             </p>
+
+            <ul className="mt-5 flex flex-wrap gap-2.5" aria-label={`${featured.title} outcomes`}>
+              {featured.outcomes.map((outcome) => (
+                <li key={`${featured.slug}-${outcome}`} className="pill-cyan font-mono text-[11px] tracking-widest uppercase">
+                  {outcome}
+                </li>
+              ))}
+            </ul>
 
             <ul
               className="mt-6 flex flex-wrap gap-2.5"
@@ -168,6 +177,17 @@ export function ProjectsSection() {
                 <p className="font-display mt-4 text-base leading-8 text-(--color-text-muted)">
                   {project.description}
                 </p>
+
+                <ul className="mt-5 flex flex-wrap gap-2.5" aria-label={`${project.title} outcomes`}>
+                  {project.outcomes.slice(0, 3).map((outcome) => (
+                    <li
+                      key={`${project.slug}-${outcome}`}
+                      className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
+                    >
+                      {outcome}
+                    </li>
+                  ))}
+                </ul>
 
                 <ArchDecision
                   chosen={project.chosen}

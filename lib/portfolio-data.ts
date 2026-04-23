@@ -18,7 +18,7 @@ export const HERO = {
   availability: "Open to Senior ML / Full-Stack Roles & Consulting",
   cta: {
     primary:   { label: "Let's Talk 💬", href: "#contact" },
-    secondary: { label: "Download CV",   href: "/cv/oscar-ndugbu-cv.docx" },
+    secondary: { label: "Download CV",   href: "/cv/oscar-ndugbu-resume.pdf" },
     scroll:    { label: "View Work",  href: "#projects" },
   },
 } as const;

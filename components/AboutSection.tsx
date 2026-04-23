@@ -7,13 +7,13 @@ import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 const ABOUT = {
   opening:
-    "Backend engineer and platform architect with four years of independent product and consulting work — and over a decade building critical data infrastructure within Nigeria's federal public sector.",
+    "Fullstack engineer and platform architect with four years of independent product and consulting work — and over a decade building critical data infrastructure within Nigeria's federal public sector.",
   philosophy:
     'Non-CS degree, FUTO Environmental Technology 2011. Credibility built through production engineering, four cloud certifications (AWS, GCP, OpenJS Node.js, PostgreSQL), and 15+ merged upstream contributions to XGBoost and scikit-learn — third-party, verifiable signals.',
   ubec:
     'At UBEC — the Universal Basic Education Commission — working in the Planning, Research and Statistics department. Building the ETL pipelines and dashboards that consolidate national education data from all 36 state offices and feed federal budget allocation decisions.',
   current:
-    'Currently consulting across fintech and SaaS teams in West Africa and Europe — auditing backend systems, resolving reliability issues, and building internal tooling alongside CTOs and senior engineers.',
+    'Currently consulting across fintech and SaaS teams in West Africa and Europe — shipping fullstack features, resolving reliability issues, and building internal tooling alongside CTOs and senior engineers.',
   location: 'Lagos, Nigeria — open to remote.',
 } as const;
 
@@ -95,11 +95,12 @@ export function AboutSection() {
                       2021 – Present · West Africa &amp; Europe
                     </p>
                     <p className="mb-2 text-base leading-snug font-medium text-white">
-                      Independent Consulting — Backend Systems &amp; Reliability
+                      Independent Consulting — Fullstack Systems &amp; Reliability
                     </p>
                     <p className="max-w-[56ch] text-sm leading-7 text-(--color-text-secondary)">
-                      Auditing backend systems, resolving reliability issues, and building internal
-                      tooling alongside CTOs and senior engineers across fintech and SaaS teams.
+                      Shipping fullstack features, resolving reliability issues, and building
+                      internal tooling alongside CTOs and senior engineers across fintech and SaaS
+                      teams.
                     </p>
                   </motion.div>
                 </div>

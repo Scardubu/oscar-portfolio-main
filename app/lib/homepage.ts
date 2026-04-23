@@ -49,14 +49,14 @@ export const heroCopy = {
   badge: 'Nigeria NG · Remote-First',
   headline: "Hey, I'm Oscar 👋",
   position:
-    'Engineers production AI systems that turn complex intelligence into tools people trust and actually use.',
-  bio: 'SabiScore centers on real-time delivery under uneven infrastructure conditions. The work focuses on bridging frontier research and intentional design so AI experiences remain legible when traffic rises and operating conditions get messy.',
+    'Fullstack engineer building production-grade backend systems, AI pipelines, and product interfaces that stay fast, compliant, and reliable.',
+  bio: 'TaxBridge and SabiScore are live systems built under real infrastructure constraints. The work focuses on backend reliability, multi-tenant data isolation, and AI pipelines that hold at scale.',
   proofTitle:
     'The engineer you hire when product clarity, platform reliability, and AI behavior all have to hold at the same time.',
   proofBody:
     'The strongest signal here is not a claim. It is the combination of shipped work, explicit tradeoffs, and an interface disciplined enough to explain the work without asking for trust first.',
   ctaPrimary: 'See Work',
-  ctaSecondary: 'Open to Staff / Senior ML · Full-Stack · Consulting',
+  ctaSecondary: 'Open to Staff+ · Fullstack · Co-founder · Consulting',
   contactEmail: 'scardubu@gmail.com',
 } as const;
 

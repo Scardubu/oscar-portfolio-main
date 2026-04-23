@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import {
@@ -49,13 +49,8 @@ const PILLARS = [
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
   const { scrollYProgress } = useScroll();
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const child = reducedMotion ? noMotion : fadeRise;
   const headline = reducedMotion ? noMotion : clipReveal;
@@ -69,11 +64,11 @@ export function HeroSection() {
       className="relative flex min-h-dvh flex-col justify-center pt-[calc(var(--nav-height)+3.5rem)] pb-20 sm:pb-24"
     >
       <div className="relative z-10 container">
-        <motion.div variants={container} initial="hidden" animate={mounted ? 'visible' : 'hidden'}>
+        <motion.div variants={container} initial="hidden" animate="visible">
           <motion.div variants={child} className="mb-10">
             <span
               role="status"
-              aria-label="Available for Staff+ roles, co-founding, and ML consulting"
+              aria-label="Available for Staff+ fullstack roles, co-founding, and consulting"
               className="badge-live inline-flex items-center gap-3 whitespace-nowrap"
             >
               <span className="dot-live" aria-hidden="true" />
@@ -85,7 +80,7 @@ export function HeroSection() {
           </motion.div>
 
           <motion.p variants={label} className="label mb-6 origin-left">
-            Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems
+            Fullstack Engineer · Infrastructure, AI Systems & Product Delivery
           </motion.p>
 
           <div className="mb-4 overflow-hidden">
@@ -102,9 +97,9 @@ export function HeroSection() {
             variants={child}
             className="mt-4 max-w-[60ch] text-base leading-relaxed text-(--color-text-secondary)"
           >
-            I build the backend systems that keep fintech products alive, compliant, and fast —
-            idempotent job queues, PostgreSQL RLS multi-tenancy, real-time inference pipelines, and
-            SRE tooling that prevents incidents before they happen.
+            End-to-end fintech systems built to stay compliant, fast, and reliable in
+            production — resilient backend services, clean product interfaces, PostgreSQL RLS
+            multi-tenancy, and AI pipelines with SRE-grade observability.
           </motion.p>
 
           <motion.div

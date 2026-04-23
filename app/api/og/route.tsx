@@ -20,7 +20,7 @@ export async function GET() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E' }} />
           <span style={{ color: '#22C55E', fontSize: 14, letterSpacing: '0.1em' }}>
-            AVAILABLE - STAFF+ · CO-FOUNDER · CONSULTING
+            AVAILABLE - FULLSTACK · STAFF+ · CONSULTING
           </span>
         </div>
         <div>
@@ -32,7 +32,7 @@ export async function GET() {
               marginBottom: 16,
             }}
           >
-            STAFF ML ENGINEER · AI/FINTECH SYSTEMS
+            FULLSTACK ENGINEER · AI INFRASTRUCTURE · FINTECH SYSTEMS
           </p>
           <h1
             style={{
@@ -54,7 +54,7 @@ export async function GET() {
               lineHeight: 1.4,
             }}
           >
-            Production AI systems. Full-stack execution. Clear operating decisions.
+            Fullstack systems that ship. Reliable infrastructure. Clear operating decisions.
           </p>
         </div>
         <div
@@ -69,7 +69,7 @@ export async function GET() {
             scardubu.dev
           </span>
           <span style={{ color: '#6366F1', fontSize: 13, fontFamily: 'monospace' }}>
-            SabiScore · Hashablanca · ML Systems Consulting
+            TaxBridge · SabiScore · Fullstack Systems
           </span>
         </div>
       </div>

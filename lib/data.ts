@@ -117,7 +117,7 @@ export const HERO_ROLE_TAGS = [
 export const HERO_CTA_PRIMARY = { label: "Let's Talk", href: "#contact" };
 export const HERO_CTA_SECONDARY = {
   label: "Download CV",
-  href: "/cv/oscar-ndugbu-cv.docx",
+  href: "/cv/oscar-ndugbu-resume.pdf",
 };
 export const HERO_CTA_TERTIARY = { label: "View Work", href: "#projects" };
 
@@ -781,7 +781,7 @@ export const PERF_METRICS = {
 export const PERSONAL = {
   name: "Oscar Ndugbu",
   shortName: "Oscar.",
-  tagline: "Production ML Engineer",
+  tagline: "Fullstack Engineer",
   location: "Lagos, Nigeria 🇳🇬",
   locationShort: "Nigeria 🇳🇬 • Remote-First",
   email: "scardubu@gmail.com",
@@ -789,8 +789,8 @@ export const PERSONAL = {
   linkedin: "https://linkedin.com/in/oscardubu",
   kaggle: "https://www.kaggle.com/scardubu",
   availableForWork: true,
-  availabilityLabel: "Open to Senior ML / Backend Roles & Consulting",
+  availabilityLabel: "Open to Senior Fullstack Roles & Consulting",
   responseTime: "Typically responds within 24 hours",
   quote: "Ship it, then iterate.",
-  cvUrl: "/cv/oscar-ndugbu-cv.docx",
+  cvUrl: "/cv/oscar-ndugbu-resume.pdf",
 };

@@ -15,10 +15,10 @@ interface EngagementMode {
 
 const engagementModes: EngagementMode[] = [
   {
-    type: 'Staff+ / Principal Backend',
-    headline: 'Distributed systems · PostgreSQL · API infrastructure',
+    type: 'Staff+ / Fullstack',
+    headline: 'Product delivery · APIs · data infrastructure',
     detail:
-      'Available for Staff+ and Principal Backend roles at fintech and product companies. Four years of independent platform work — multi-tenant PostgreSQL RLS, idempotent BullMQ queues, sub-150ms APIs, and zero-downtime deployments as a baseline constraint.',
+      'Available for Staff+ fullstack roles at fintech and product companies. Four years of independent platform work — user-facing product surfaces, multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
     accent: 'live',
   },
   {

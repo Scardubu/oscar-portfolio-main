@@ -20,7 +20,7 @@ test.describe('Nav', () => {
   test.beforeEach(async ({ page }) => { await goto(page); });
 
   test('tagline is correct', async ({ page }) => {
-    await expect(page.getByText('Production AI systems · Full-stack execution')).toBeVisible();
+    await expect(page.getByText('Fullstack engineering · AI infrastructure at scale')).toBeVisible();
   });
 
   test('does not contain "Portfolio •" prefix', async ({ page }) => {
@@ -102,13 +102,13 @@ test.describe('Hero', () => {
 
   test('hero bio: evidence-first opening line', async ({ page }) => {
     await expect(page.getByText(
-      /Production AI systems shipped for real users — not prototypes, not notebooks/
+      /End-to-end fintech systems built to stay compliant/
     )).toBeVisible();
   });
 
   test('positioning card contains correct copy', async ({ page }) => {
     await expect(page.getByText(
-      /The engineer you bring in when AI behavior/
+      /The system has to work at 2am/
     )).toBeVisible();
   });
 
@@ -130,7 +130,7 @@ test.describe('Hero', () => {
   });
 
   test('See my work CTA is visible', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /see my work/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /view projects/i })).toBeVisible();
   });
 
   test('email contact link is correct', async ({ page }) => {
@@ -243,14 +243,14 @@ test.describe('About', () => {
 
   test('section heading is correct', async ({ page }) => {
     await expect(page.getByRole('heading', {
-      name: /Full-Stack ML Engineer — Production AI Systems/i,
+      name: /The system has to work at 2am/i,
       level: 2,
     })).toBeVisible();
   });
 
   test('differentiator copy is present', async ({ page }) => {
-    await expect(page.getByText(/sub-Saharan Africa/)).toBeVisible();
-    await expect(page.getByText(/The constraints are not a liability/)).toBeVisible();
+    await expect(page.getByText(/federal public sector/)).toBeVisible();
+    await expect(page.getByText(/XGBoost and scikit-learn/)).toBeVisible();
   });
 
   test('skills are rendered (not cut by glass-light artifact)', async ({ page }) => {
@@ -370,7 +370,7 @@ test.describe('Accessibility — WCAG AA', () => {
   test.beforeEach(async ({ page }) => { await goto(page); });
 
   test('page title matches Phase 1 positioning', async ({ page }) => {
-    await expect(page).toHaveTitle(/Production AI Systems/);
+    await expect(page).toHaveTitle(/Fullstack Engineer/);
   });
 
   test('page has exactly one h1', async ({ page }) => {

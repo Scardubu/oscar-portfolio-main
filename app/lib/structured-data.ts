@@ -27,7 +27,7 @@ export function generateProjectSchema(project: ProjectData) {
       "@type": "Person",
       name: "Oscar Ndugbu",
       url: "https://www.scardubu.dev",
-      jobTitle: "Full-Stack ML Engineer",
+      jobTitle: "Fullstack Engineer",
       sameAs: [
         "https://github.com/scardubu",
         "https://linkedin.com/in/oscardubu",
@@ -72,9 +72,9 @@ export function generatePersonSchema() {
     "@id": "https://www.scardubu.dev/#person",
     name: "Oscar Ndugbu",
     alternateName: "scardubu",
-    jobTitle: "Full-Stack ML Engineer",
+    jobTitle: "Fullstack Engineer",
     description:
-      "Production ML Engineer architecting AI systems that distill frontier intelligence into elegant, trusted tools. Based in Nigeria, building for audiences worldwide.",
+      "Fullstack engineer and platform architect building production-grade fintech systems, backend infrastructure, and AI pipelines. Based in Nigeria, shipping for teams worldwide.",
     url: "https://www.scardubu.dev",
     image: "https://www.scardubu.dev/headshot.webp",
     sameAs: [
@@ -91,8 +91,8 @@ export function generatePersonSchema() {
       "MLOps",
       "FastAPI",
       "XGBoost",
-      "Production AI Systems",
-      "Ensemble Models",
+      "Production ML Systems",
+      "Fullstack Engineering",
       "Next.js",
       "TypeScript",
       "Python",
