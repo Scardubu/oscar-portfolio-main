@@ -72,12 +72,16 @@ pnpm lhci         # Lighthouse CI
 1. Push to `main`
 2. Vercel auto-builds with `pnpm build`
 3. Verify production routes:
-	- `/`
-	- `/work/[slug]`
-	- `/writing`
-	- `/api/og`
+
+- `/`
+- `/work/[slug]`
+- `/writing`
+- `/api/og`
+
 4. Confirm resume download path:
-	- `/cv/oscar-ndugbu-resume.pdf`
+
+- `/cv/oscar-ndugbu-resume.pdf`
+
 5. Verify Skills section at `/#skills` renders all pillars (AI/ML, Backend, Frontend, Mobile, Infrastructure, Data)
 
 ## v10.0 Changelog
