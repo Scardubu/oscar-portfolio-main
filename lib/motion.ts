@@ -296,3 +296,14 @@ export const liquidCard: Variants = {
     transition: springs.gentle,
   },
 };
+
+/**
+ * FILTER TRANSITION
+ * Used by SkillsMap tab panel swap — snappy spring feel.
+ */
+export const filterTransition: Transition = {
+  type: 'spring',
+  stiffness: 320,
+  damping: 26,
+  mass: 0.8,
+};

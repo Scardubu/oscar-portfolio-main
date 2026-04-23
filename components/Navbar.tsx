@@ -14,10 +14,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SystemStatus } from '@/components/SystemStatus';
 import { cn } from '@/lib/utils';
 import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
-const SECTION_LINKS = ['projects', 'writing', 'about', 'contact'] as const;
+const SECTION_LINKS = ['projects', 'writing', 'skills', 'about', 'contact'] as const;
 const MOBILE_NAV_ID = 'mobile-navigation';
 
 function openCommandPalette() {
@@ -27,6 +28,7 @@ function openCommandPalette() {
 const NAV_LINKS = [
   { label: 'Projects', href: 'projects' },
   { label: 'Writing', href: 'writing' },
+  { label: 'Skills', href: 'skills' },
   { label: 'About', href: 'about' },
   { label: 'Contact', href: 'contact' },
 ] as const;
@@ -365,9 +367,12 @@ export function NavBar() {
             </button>
           </div>
 
-          <div className="pill pill-cyan hidden items-center gap-2 sm:inline-flex">
-            <span className="live-dot h-[6px] w-[6px]" aria-hidden="true" />
-            <span>Open to Work</span>
+          <div className="hidden items-center gap-3 sm:flex">
+            <SystemStatus />
+            <div className="pill pill-cyan inline-flex items-center gap-2">
+              <span className="live-dot h-[6px] w-[6px]" aria-hidden="true" />
+              <span>Open to Work</span>
+            </div>
           </div>
 
           <div className="md:hidden">

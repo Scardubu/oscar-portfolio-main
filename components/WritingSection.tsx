@@ -40,6 +40,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <motion.div variants={child} className="mb-12 max-w-4xl">
             <motion.span variants={child} className="label">
+              <span
+                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+                aria-hidden="true"
+              >
+                03 —
+              </span>
               THE CUT
             </motion.span>
             <motion.h2 variants={child} id="writing-heading" className="mt-(--space-2) text-white">

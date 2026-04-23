@@ -4,6 +4,7 @@ import { HeroSection } from '@/components/HeroSection';
 import { ContactSection } from '@/components/ContactSection';
 import { OpenSourceSection } from '@/components/OpenSourceSection';
 import { ProjectsSection } from '@/components/ProjectsSection';
+import { SkillsMap } from '@/components/skills/SkillsMap';
 import { WritingSection } from '@/components/WritingSection';
 import { getWritingPosts } from '@/lib/content';
 
@@ -16,6 +17,9 @@ export default async function Home() {
         <HeroSection />
         <ProjectsSection />
         <OpenSourceSection />
+        <section id="skills" aria-labelledby="skills-heading">
+          <SkillsMap />
+        </section>
         <AboutSection />
         {posts.length > 0 ? <WritingSection posts={posts} /> : null}
         <ContactSection />

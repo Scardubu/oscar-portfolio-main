@@ -36,8 +36,8 @@ function SkillCard({ skill }: { skill: SkillNode }): React.ReactElement {
   const lvl = LEVEL_CONFIG[skill.level]
 
   const systemTags = skill.tags
-    .filter((t): t is `used-in:${string}` => t.startsWith('used-in:'))
-    .map(t => t.replace('used-in:', ''))
+    .filter((t): t is Extract<typeof t, `used-in:${string}`> => t.startsWith('used-in:'))
+    .map((t) => t.replace('used-in:', ''));
 
   const metaTags = skill.tags.filter(t => !t.startsWith('used-in:'))
 
@@ -167,8 +167,8 @@ export function SkillsMap(): React.ReactElement {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={prefersReduced ? { duration: 0 } : filterTransition}
-          className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         >
+          <div role="list" className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((skill, i) => (
             <motion.div
               key={skill.id}
@@ -187,6 +187,7 @@ export function SkillsMap(): React.ReactElement {
               <SkillCard skill={skill} />
             </motion.div>
           ))}
+          </div>
         </motion.div>
       </AnimatePresence>
 

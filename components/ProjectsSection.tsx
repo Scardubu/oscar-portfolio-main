@@ -52,6 +52,12 @@ export function ProjectsSection() {
           className="mb-16 max-w-4xl"
         >
           <motion.span variants={header} className="label">
+            <span
+              className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+              aria-hidden="true"
+            >
+              01 —
+            </span>
             Selected Work
           </motion.span>
           <motion.h2
@@ -105,7 +111,10 @@ export function ProjectsSection() {
 
             <ul className="mt-5 flex flex-wrap gap-2.5" aria-label={`${featured.title} outcomes`}>
               {featured.outcomes.map((outcome) => (
-                <li key={`${featured.slug}-${outcome}`} className="pill-cyan font-mono text-[11px] tracking-widest uppercase">
+                <li
+                  key={`${featured.slug}-${outcome}`}
+                  className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
+                >
                   {outcome}
                 </li>
               ))}
@@ -178,7 +187,10 @@ export function ProjectsSection() {
                   {project.description}
                 </p>
 
-                <ul className="mt-5 flex flex-wrap gap-2.5" aria-label={`${project.title} outcomes`}>
+                <ul
+                  className="mt-5 flex flex-wrap gap-2.5"
+                  aria-label={`${project.title} outcomes`}
+                >
                   {project.outcomes.slice(0, 3).map((outcome) => (
                     <li
                       key={`${project.slug}-${outcome}`}

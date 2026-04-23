@@ -5,6 +5,7 @@ import { useMemo, useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 
 import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { CopyEmail } from '@/components/CopyEmail';
 
 interface EngagementMode {
   type: string;
@@ -15,10 +16,10 @@ interface EngagementMode {
 
 const engagementModes: EngagementMode[] = [
   {
-    type: 'Staff+ / Fullstack',
+    type: 'Staff+ / Principal',
     headline: 'Product delivery · APIs · data infrastructure',
     detail:
-      'Available for Staff+ fullstack roles at fintech and product companies. Four years of independent platform work — user-facing product surfaces, multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
+      'Available for Staff+ principal backend engineering roles at fintech and product companies. Four years of independent platform work — multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
     accent: 'live',
   },
   {
@@ -70,6 +71,17 @@ export function ContactSection() {
     >
       <div className="container">
         <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <motion.div variants={child} className="mb-2 flex items-center gap-3">
+            <span className="label">
+              <span
+                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+                aria-hidden="true"
+              >
+                05 —
+              </span>
+              Contact
+            </span>
+          </motion.div>
           <motion.div
             variants={child}
             className="pill pill-cyan inline-flex items-center gap-3"
@@ -124,15 +136,10 @@ export function ContactSection() {
             variants={child}
             className="mt-12 flex flex-wrap items-center gap-3 border-t border-(--color-border) pt-8 sm:gap-4"
           >
-            <a
-              href="mailto:scardubu@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cta="primary"
-              className="inline-flex min-h-11 items-center rounded-(--radius-md) bg-(--color-accent) px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition hover:bg-(--color-accent-hover)"
-            >
-              scardubu@gmail.com
-            </a>
+            <CopyEmail
+              email="scardubu@gmail.com"
+              className="min-h-11 rounded-(--radius-md) bg-(--color-accent) px-6 py-3.5 text-xs font-semibold tracking-wider uppercase shadow-[0_0_20px_var(--color-accent-glow)] hover:bg-(--color-accent-hover) hover:text-white"
+            />
 
             <Link
               href="https://linkedin.com/in/oscardubu"

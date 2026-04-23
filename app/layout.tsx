@@ -36,37 +36,71 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default:
-      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
+    default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     template: '%s · Oscar Ndugbu',
   },
   description:
-    'Oscar Ndugbu (Scardubu) builds fullstack fintech systems that stay fast, compliant, and reliable in production — sub-150ms APIs, 99.9%+ uptime, NRS-compliant audit trails.',
+    'Oscar Ndugbu (Scardubu) builds production-grade full-stack fintech platforms — React Native, Next.js 15, Java/Spring Boot, FastAPI, Effect-TS, Turborepo monorepos, sub-150ms APIs, 99.9%+ uptime, PostgreSQL RLS multi-tenancy, and NRS-compliant audit trails.',
   metadataBase: new URL('https://www.scardubu.dev'),
+  keywords: [
+    'Full-Stack Engineer',
+    'Backend Engineer',
+    'AI Infrastructure',
+    'SRE',
+    'Next.js 15',
+    'React Native',
+    'Expo SDK 54',
+    'TypeScript',
+    'Java',
+    'Spring Boot',
+    'FastAPI',
+    'Python',
+    'Effect-TS',
+    'Turborepo',
+    'PostgreSQL',
+    'Redis',
+    'Fintech',
+    'Nigerian fintech',
+    'TaxBridge',
+    'SabiScore',
+    'NRS DigiTax',
+    'Multi-tenant',
+    'Audit trail',
+    'ML Engineer',
+    'Oscar Ndugbu',
+    'scardubu',
+  ],
   openGraph: {
     type: 'website',
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Ndugbu',
-    title:
-      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
+    title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     description:
-      'Fullstack systems engineer. TaxBridge · SabiScore · Hashablanca. sub-150ms · 99.9%+ uptime.',
+      'Principal full-stack engineer. TaxBridge · SabiScore · Hashablanca. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title:
-      'Oscar Ndugbu — Fullstack Engineer · AI Infrastructure · SRE Systems',
+    title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     images: ['/api/og'],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://www.scardubu.dev' },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'scardubu.dev',
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  minimumScale: 1,
+  viewportFit: 'cover',
   themeColor: '#0A0A0B',
+  colorScheme: 'dark',
 };
 
 const personJsonLd = {
@@ -74,9 +108,27 @@ const personJsonLd = {
   '@type': 'Person',
   name: 'Oscar Ndugbu',
   url: 'https://www.scardubu.dev',
-  jobTitle: 'Fullstack Engineer',
+  jobTitle: 'Principal Full-Stack Engineer',
   description:
-    'Fullstack engineer specialising in infrastructure, SRE, and AI systems. TaxBridge, SabiScore, Hashablanca.',
+    'Principal full-stack engineer specialising in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, Hashablanca.',
+  knowsAbout: [
+    'Next.js',
+    'React Native',
+    'Expo',
+    'TypeScript',
+    'Java',
+    'Spring Boot',
+    'FastAPI',
+    'Python',
+    'Effect-TS',
+    'Turborepo',
+    'PostgreSQL',
+    'Redis',
+    'Machine Learning',
+    'Fintech',
+    'SRE',
+    'AI Infrastructure',
+  ],
   sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 
@@ -88,6 +140,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <head>
+        <meta name="color-scheme" content="dark" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
@@ -137,7 +190,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <GradientMesh />
           <ScrollProgress />
           <NavBar />
-          <div className="relative z-[2]">{children}</div>
+          <div className="relative z-2">{children}</div>
           <Footer />
         </Providers>
         <Analytics />

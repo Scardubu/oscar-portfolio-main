@@ -37,7 +37,7 @@ export function ArchDecision({
         <span className="label text-[10px]">Architecture Decision</span>
       </header>
 
-      <div className={`arch-grid${compact ? '' : 'arch-grid--full'}`}>
+      <div className={`arch-grid ${compact ? '' : 'arch-grid--full'}`}>
         {ITEMS.map((item, index) => {
           const value = values[item.key];
           const compactDivider = compact && index < ITEMS.length - 1;
@@ -46,7 +46,7 @@ export function ArchDecision({
           return (
             <div
               key={item.key}
-              className={`px-4 py-3${isBecause ? 'arch-because-cell' : ''}${compactDivider ? 'border-b border-(--color-border-subtle)' : ''}`}
+              className={`px-4 py-3 ${isBecause ? 'arch-because-cell' : ''} ${compactDivider ? 'border-b border-(--color-border-subtle)' : ''}`}
             >
               <p
                 className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}

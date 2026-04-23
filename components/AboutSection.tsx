@@ -47,6 +47,12 @@ export function AboutSection() {
         >
           <div>
             <motion.span variants={child} className="label">
+              <span
+                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+                aria-hidden="true"
+              >
+                04 —
+              </span>
               Background
             </motion.span>
             <motion.h2 variants={child} id="about-heading" className="mt-4 text-white">

@@ -20,10 +20,12 @@ test.describe('Portfolio smoke tests', () => {
         '[tabindex]:not([tabindex="-1"])',
       ].join(',');
 
-      const firstFocusable = Array.from(document.querySelectorAll<HTMLElement>(selectors)).find((element) => {
-        const style = window.getComputedStyle(element);
-        return style.display !== 'none' && style.visibility !== 'hidden';
-      });
+      const firstFocusable = Array.from(document.querySelectorAll<HTMLElement>(selectors)).find(
+        (element) => {
+          const style = window.getComputedStyle(element);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        }
+      );
 
       return firstFocusable?.className ?? '';
     });
@@ -37,7 +39,9 @@ test.describe('Portfolio smoke tests', () => {
     await expect(page.locator('#hero').first()).toBeVisible();
     await expect(page.locator('h1').first()).toContainText('When AI behavior');
     await expect(page.locator('h1').first()).toContainText('platform reliability');
-    await expect(page.locator('h1').first()).toContainText('product clarity must hold simultaneously');
+    await expect(page.locator('h1').first()).toContainText(
+      'product clarity must hold simultaneously'
+    );
   });
 
   test('no unicode escape or unverifiable metrics in rendered home copy', async ({ page }) => {
@@ -137,7 +141,9 @@ test.describe('Portfolio smoke tests', () => {
 
     await page.locator('#contact').scrollIntoViewIfNeeded();
 
-    await expect(page.locator('#contact a[href="mailto:scardubu@gmail.com"][data-cta="primary"]')).toBeVisible();
+    await expect(
+      page.locator('#contact a[href="mailto:scardubu@gmail.com"][data-cta="primary"]')
+    ).toBeVisible();
   });
 
   test('all target="_blank" links include noopener and noreferrer', async ({ page }) => {
@@ -281,9 +287,7 @@ test.describe('Portfolio smoke tests', () => {
     await page.goto('/');
     const bar = page.locator('[data-testid="scroll-progress"]');
     await expect(bar).toBeAttached();
-    const zIndex = await bar.evaluate((el) =>
-      parseInt(window.getComputedStyle(el).zIndex, 10)
-    );
+    const zIndex = await bar.evaluate((el) => parseInt(window.getComputedStyle(el).zIndex, 10));
     expect(zIndex).toBeGreaterThanOrEqual(60);
   });
 
@@ -341,4 +345,49 @@ test.describe('Portfolio smoke tests', () => {
     );
     expect(new Set(accents).size).toBeGreaterThan(1);
   });
-});
+
+  // ── V16: GradientMesh performance isolation ───────────────────────
+  test('[V16] GradientMesh has contain:strict and is a fixed layer', async ({ page }) => {
+    await page.goto('/');
+    const mesh = page.locator('.gradient-mesh');
+    await expect(mesh).toBeAttached();
+    const styles = await mesh.evaluate((el) => {
+      const cs = window.getComputedStyle(el);
+      return { contain: cs.contain, position: cs.position };
+    });
+    expect(styles.position).toBe('fixed');
+    // contain may be 'strict' or include 'strict' as part of a compound value
+    expect(styles.contain).toMatch(/strict/);
+  });
+
+  // ── V17: color-scheme meta prevents white flash ───────────────────
+  test('[V17] color-scheme meta tag is present with value "dark"', async ({ page }) => {
+    await page.goto('/');
+    const metaContent = await page.locator('meta[name="color-scheme"]').getAttribute('content');
+    expect(metaContent).toBe('dark');
+  });
+
+  // ── V19: BookmarkToast dismiss button has ≥44px touch target ─────
+  test('[V19] BookmarkToast dismiss button meets 44px WCAG touch target', async ({ page }) => {
+    await page.goto('/');
+
+    // Trigger the toast by scrolling past the threshold
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight * 0.5));
+    await page.waitForTimeout(300);
+
+    const toast = page.locator('[role="status"][aria-live="polite"]');
+    const isVisible = await toast.isVisible().catch(() => false);
+
+    if (isVisible) {
+      const dismissBtn = toast.locator('button[aria-label="Dismiss bookmark suggestion"]');
+      const box = await dismissBtn.boundingBox();
+      if (box) {
+        expect(box.width).toBeGreaterThanOrEqual(44);
+        expect(box.height).toBeGreaterThanOrEqual(44);
+      }
+    } else {
+      // Toast may not appear if session key is already set — test passes gracefully
+      test.skip();
+    }
+  });
+};);

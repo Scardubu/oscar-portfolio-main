@@ -1,5 +1,7 @@
 ﻿import type React from 'react';
 
+import { CopyEmail } from '@/components/CopyEmail';
+
 export function Footer() {
   const year = new Date().getFullYear();
 
@@ -7,10 +9,11 @@ export function Footer() {
     <footer className="relative z-[2] border-t border-(--color-border) py-8">
       <div className="container flex flex-wrap items-center justify-between gap-4">
         <span className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted)">
-          scardubu.dev &middot; {year}
+          scardubu.dev &middot; {year} &middot; Built with Next.js 15 &middot; Conviction Engine
+          v10.0
         </span>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           <a
             href="https://github.com/Scardubu"
             target="_blank"
@@ -29,12 +32,16 @@ export function Footer() {
           >
             LinkedIn
           </a>
+          <CopyEmail
+            email="scardubu@gmail.com"
+            className="text-(--color-text-muted) hover:text-(--color-text-primary)"
+          />
           <a
-            href="mailto:scardubu@gmail.com"
-            aria-label="Email Oscar Ndugbu"
+            href="#hero"
+            aria-label="Back to top"
             className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
-            Email
+            ↑ Top
           </a>
         </div>
       </div>

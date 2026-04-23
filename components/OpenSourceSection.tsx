@@ -47,6 +47,12 @@ export function OpenSourceSection() {
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.span variants={child} className="label">
+            <span
+              className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+              aria-hidden="true"
+            >
+              02 —
+            </span>
             Open source
           </m.span>
           <m.h2 variants={child} id="oss-heading" className="mt-4 max-w-[28ch] text-white">

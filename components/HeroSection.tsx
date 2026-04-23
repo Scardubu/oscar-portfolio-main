@@ -1,11 +1,12 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { useMemo } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
+import { useMagnetic } from '@/hooks/useMagnetic';
 import {
   clipReveal,
   fadeRise,
@@ -51,6 +52,7 @@ export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+  const magnetic = useMagnetic();
 
   const child = reducedMotion ? noMotion : fadeRise;
   const headline = reducedMotion ? noMotion : clipReveal;
@@ -66,21 +68,22 @@ export function HeroSection() {
       <div className="relative z-10 container">
         <motion.div variants={container} initial="hidden" animate="visible">
           <motion.div variants={child} className="mb-10">
-            <span
-              role="status"
-              aria-label="Available for Staff+ fullstack roles, co-founding, and consulting"
+            <output
+              aria-label="Available for Staff+ principal full-stack engineering roles and infrastructure consulting"
               className="badge-live inline-flex items-center gap-3 whitespace-nowrap"
             >
               <span className="dot-live" aria-hidden="true" />
-              <span className="pill-full">Available · Staff+ · Co-founder · ML Consulting</span>
+              <span className="pill-full">
+                Available · Staff+ · Principal · Full-Stack & Infrastructure
+              </span>
               <span className="pill-short" aria-hidden="true">
                 Available · Staff+
               </span>
-            </span>
+            </output>
           </motion.div>
 
           <motion.p variants={label} className="label mb-6 origin-left">
-            Fullstack Engineer · Infrastructure, AI Systems & Product Delivery
+            Principal Full-Stack Engineer · Backend & Infrastructure · AI Systems
           </motion.p>
 
           <div className="mb-4 overflow-hidden">
@@ -97,9 +100,9 @@ export function HeroSection() {
             variants={child}
             className="mt-4 max-w-[60ch] text-base leading-relaxed text-(--color-text-secondary)"
           >
-            End-to-end fintech systems built to stay compliant, fast, and reliable in
-            production — resilient backend services, clean product interfaces, PostgreSQL RLS
-            multi-tenancy, and AI pipelines with SRE-grade observability.
+            End-to-end full-stack fintech systems built to stay compliant, fast, and reliable in
+            production — React Native mobile, Spring Boot rule engines, Next.js 15 interfaces,
+            PostgreSQL RLS multi-tenancy, and AI pipelines with SRE-grade observability.
           </motion.p>
 
           <motion.div
@@ -124,8 +127,12 @@ export function HeroSection() {
             className="mt-8 mb-10 flex flex-wrap items-center gap-3 sm:gap-4"
           >
             <motion.a
+              ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
               href="mailto:oscar@scardubu.dev"
               data-cta="primary"
+              style={{ x: magnetic.x, y: magnetic.y }}
+              onMouseMove={magnetic.onMouseMove as React.MouseEventHandler<HTMLAnchorElement>}
+              onMouseLeave={magnetic.onMouseLeave}
               whileHover={
                 reducedMotion
                   ? undefined

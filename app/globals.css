@@ -252,7 +252,7 @@ h5, h6 {
   color: var(--color-text-muted);
 }
 p {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.72;
   color:       var(--color-text-secondary);
@@ -802,6 +802,8 @@ section {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  contain: strict;
+  transform: translateZ(0);
 }
 
 .gradient-mesh-wrap {

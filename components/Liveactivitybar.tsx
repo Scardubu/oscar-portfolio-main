@@ -88,7 +88,7 @@ export function LiveActivityBar() {
         </span>
       ) : null}
       <span
-        className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-(--color-text-secondary)"
+        className="[display:-webkit-box] min-w-0 flex-1 overflow-hidden leading-snug text-(--color-text-secondary) [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
         title={activity.message ?? typeLabel(activity.type)}
       >
         {activity.message ?? typeLabel(activity.type)}

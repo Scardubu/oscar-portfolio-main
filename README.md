@@ -1,16 +1,18 @@
 # Oscar Ndugbu Portfolio
 
-Production portfolio for Oscar Ndugbu, positioned as a Fullstack Engineer focused on AI infrastructure, fintech systems, and reliability engineering.
+Production portfolio for Oscar Ndugbu — Principal Full-Stack Engineer focused on AI infrastructure, fintech systems, backend reliability, and cross-platform mobile.
 
 Live site: [https://scardubu.dev](https://scardubu.dev)
 
+**Conviction Engine v10.0** — Full-stack identity, SkillsMap, multi-platform positioning, SEO hardening.
+
 ## Tech Stack
 
-- Next.js 15 (App Router)
-- React 19
+- Next.js 15 (App Router, Partial Prerendering)
+- React 19 (Server Components, use(), Compiler)
 - TypeScript (strict)
 - Tailwind CSS v4
-- Framer Motion 11
+- Framer Motion 11 (LazyMotion + domAnimations)
 - MDX content system
 - Playwright E2E tests
 - Vercel deployment
@@ -57,7 +59,8 @@ pnpm lhci         # Lighthouse CI
 
 ## Core Sections
 
-- Hero: clear fullstack positioning, proof metrics, CTAs
+- Hero: clear full-stack positioning, proof metrics, CTAs
+- Skills: interactive SkillsMap filtered by pillar (AI/ML, Backend, Frontend, Mobile, Infrastructure, Data)
 - Projects: case studies with architecture decisions and measurable outcomes
 - Open Source: selected production-focused packages
 - About: background, experience, certifications
@@ -75,6 +78,16 @@ pnpm lhci         # Lighthouse CI
 	- `/api/og`
 4. Confirm resume download path:
 	- `/cv/oscar-ndugbu-resume.pdf`
+5. Verify Skills section at `/#skills` renders all pillars (AI/ML, Backend, Frontend, Mobile, Infrastructure, Data)
+
+## v10.0 Changelog
+
+- **Full-stack identity**: Hero, layout metadata, OG, and SEO keywords updated to Principal Full-Stack Engineer positioning
+- **SkillsMap**: Interactive filterable skills grid at `/#skills` — 6 pillars, proficiency bars, system context tags
+- **New skills**: React Native / Expo SDK 54, Turborepo 2, Effect-TS (all tagged `used-in:taxbridge`)
+- **SEO hardening**: 24-keyword array, `knowsAbout` JSON-LD, updated `jobTitle`
+- **ARIA fixes**: `role="list"` added to SkillsMap grid, `<output>` replaces `role="status"` span in Hero
+- **Navbar**: Skills link added to section navigation
 
 ## Quality Gates
 

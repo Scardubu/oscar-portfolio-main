@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Project, ProjectStatus } from '@/data/projects';
 import { ArchDecision } from '@/components/ArchDecision';
 import { GlassCard } from '@/components/GlassCard';
+import { useSpotlight } from '@/hooks/useSpotlight';
 
 const statusStyles: Record<
   ProjectStatus,
@@ -108,9 +109,10 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
   const level = getCardLevel(project);
   const primaryDecision = project.decisions?.[0];
   const typeLabel = getProjectTypeLabel(project);
+  const { ref, onMouseMove, onMouseLeave, spotlightStyle } = useSpotlight();
 
   return (
-    <div className="h-full">
+    <div className="h-full" ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
       <GlassCard
         as="article"
         className={`card-depth flex h-full flex-col gap-4 ${project.featured ? 'p-8' : 'p-6'}`}
@@ -119,12 +121,11 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         data-project-id={project.id}
         data-reveal=""
         data-reveal-delay={revealDelay}
+        style={spotlightStyle}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="label text-white/45">
-              {typeLabel}
-            </p>
+            <p className="label text-white/45">{typeLabel}</p>
             <h3 className="mt-3 text-2xl text-white">{project.title}</h3>
           </div>
           <ProjectStatusBadge status={project.status} />
@@ -156,7 +157,11 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         </ul>
 
         <div className="mt-auto border-t border-white/10 pt-5">
-          <ProjectLinks demoUrl={project.demoUrl} repoUrl={project.repoUrl} projectId={project.id} />
+          <ProjectLinks
+            demoUrl={project.demoUrl}
+            repoUrl={project.repoUrl}
+            projectId={project.id}
+          />
         </div>
       </GlassCard>
     </div>
