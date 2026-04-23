@@ -15,24 +15,24 @@ interface EngagementMode {
 
 const engagementModes: EngagementMode[] = [
   {
-    type: 'Staff+ / Principal',
-    headline: 'Distributed systems · ML platforms · API infrastructure',
+    type: 'Staff+ / Principal Backend',
+    headline: 'Distributed systems · PostgreSQL · API infrastructure',
     detail:
-      'Available for Staff+ and Principal Backend roles at AI-native fintech and product companies. Four years of independent platform work with zero-downtime design as a baseline constraint.',
+      'Available for Staff+ and Principal Backend roles at fintech and product companies. Four years of independent platform work — multi-tenant PostgreSQL RLS, idempotent BullMQ queues, sub-150ms APIs, and zero-downtime deployments as a baseline constraint.',
     accent: 'live',
   },
   {
     type: 'Technical Co-Founder',
-    headline: 'Pre-seed to Series A · Africa/emerging markets',
+    headline: 'Pre-seed to Series A · Africa / emerging markets',
     detail:
-      'Four years shipping production platforms from zero. Infrastructure, ML, and compliance architecture through funding rounds. The system should outlast the seed deck.',
+      'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds. The system should outlast the seed deck.',
     accent: 'accent',
   },
   {
-    type: 'ML Consulting',
-    headline: 'Model deployment · Observability · Performance',
+    type: 'Infrastructure Consulting',
+    headline: 'SRE · Reliability · Performance engineering',
     detail:
-      'Inference serving, monitoring pipelines, and latency reduction. SabiScore approaches 30% inference latency reduction (Redis caching + query optimisation). Engagements scoped to specific problems with measurable outcomes.',
+      'Incident reduction, Prometheus/Grafana observability stacks, and latency optimisation. SabiScore achieved 45% MTTD improvement and 30% inference latency reduction. Engagements scoped to specific reliability problems with measurable outcomes.',
     accent: 'wip',
   },
 ];

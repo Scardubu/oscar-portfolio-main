@@ -3,7 +3,7 @@
 import { useMemo, useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 
-import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 const ABOUT = {
   opening:
@@ -16,30 +16,6 @@ const ABOUT = {
     'Currently consulting across fintech and SaaS teams in West Africa and Europe — auditing backend systems, resolving reliability issues, and building internal tooling alongside CTOs and senior engineers.',
   location: 'Lagos, Nigeria — open to remote.',
 } as const;
-
-const OPEN_SOURCE = [
-  {
-    name: 'pg-tenant',
-    stack: 'Node.js · PostgreSQL',
-    desc:
-      "Enforces strict database-level data separation between clients. One tenant's records are completely invisible to another even when application-layer bugs exist. Used in production by fintech teams.",
-    href: 'https://github.com/Scardubu/pg-tenant',
-  },
-  {
-    name: 'audit-chain',
-    stack: 'Fintech · Compliance',
-    desc:
-      'Generates a cryptographically linked audit log where every entry is mathematically bound to the previous one. Makes retroactive edits or tampering instantly detectable. Built for NRS and GDPR trails.',
-    href: 'https://github.com/Scardubu/audit-chain',
-  },
-  {
-    name: 'node-debug-llm',
-    stack: 'AI · DevOps',
-    desc:
-      'Streams live system logs and traces to an AI model, which returns a ranked plain-English list of likely root causes — compressing hours of manual incident investigation into minutes.',
-    href: 'https://github.com/Scardubu/node-debug-llm',
-  },
-] as const;
 
 const CERTS = [
   { name: 'AWS Certified Developer', date: 'Dec 2023' },
@@ -54,7 +30,6 @@ export function AboutSection() {
   const reducedMotion = useReducedMotion();
   const container = useMemo(() => staggerContainer(0.09, 0.05), []);
   const child = reducedMotion ? noMotion : fadeRise;
-  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
     <section
@@ -75,8 +50,14 @@ export function AboutSection() {
               Background
             </motion.span>
             <motion.h2 variants={child} id="about-heading" className="mt-4 text-white">
-              The engineer
+              The system has to work at 2am.
             </motion.h2>
+            <motion.p
+              variants={child}
+              className="mt-3 font-mono text-xs tracking-widest text-(--color-text-muted) uppercase"
+            >
+              {"That's not a slogan. It's a design constraint."}
+            </motion.p>
 
             <div className="mt-8 space-y-6">
               {[ABOUT.opening, ABOUT.philosophy, ABOUT.ubec, ABOUT.current].map((paragraph) => (
@@ -91,6 +72,38 @@ export function AboutSection() {
               <motion.p variants={child} className="label pt-3 text-(--color-live)">
                 {ABOUT.location}
               </motion.p>
+
+              <div className="mt-12">
+                <motion.span variants={child} className="label">
+                  Experience
+                </motion.span>
+                <div className="mt-6 space-y-8">
+                  <motion.div variants={child}>
+                    <p className="mb-1 font-mono text-xs tracking-widest text-(--color-accent) uppercase">
+                      Federal Civil Service · UBEC
+                    </p>
+                    <p className="mb-2 text-base leading-snug font-medium text-white">
+                      Planning, Research &amp; Statistics — ETL &amp; Data Infrastructure
+                    </p>
+                    <p className="max-w-[56ch] text-sm leading-7 text-(--color-text-secondary)">
+                      Building the pipelines that consolidate national education data from all 36
+                      state offices, feeding federal budget allocation decisions.
+                    </p>
+                  </motion.div>
+                  <motion.div variants={child}>
+                    <p className="mb-1 font-mono text-xs tracking-widest text-(--color-accent) uppercase">
+                      2021 – Present · West Africa &amp; Europe
+                    </p>
+                    <p className="mb-2 text-base leading-snug font-medium text-white">
+                      Independent Consulting — Backend Systems &amp; Reliability
+                    </p>
+                    <p className="max-w-[56ch] text-sm leading-7 text-(--color-text-secondary)">
+                      Auditing backend systems, resolving reliability issues, and building internal
+                      tooling alongside CTOs and senior engineers across fintech and SaaS teams.
+                    </p>
+                  </motion.div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -110,41 +123,6 @@ export function AboutSection() {
                 </motion.div>
               ))}
             </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          className="mt-20"
-        >
-          <motion.span variants={child} className="label">
-            Open source
-          </motion.span>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {OPEN_SOURCE.map((item) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variants={card}
-                whileHover={
-                  reducedMotion
-                    ? undefined
-                    : {
-                        y: -2,
-                        transition: { type: 'spring', stiffness: 400, damping: 30 },
-                      }
-                }
-                className="glass glass-medium block rounded-(--radius-lg) p-6 sm:p-7"
-              >
-                <p className="label">{item.stack}</p>
-                <h3 className="mt-4 text-white">{item.name}</h3>
-                <p className="font-display mt-4 text-base leading-8 text-white/65">{item.desc}</p>
-              </motion.a>
-            ))}
           </div>
         </motion.div>
       </div>

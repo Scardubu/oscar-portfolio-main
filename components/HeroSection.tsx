@@ -19,29 +19,29 @@ import {
 const PILLARS = [
   {
     label: 'LIVE IN PRODUCTION',
-    headline: 'End-to-end ML systems',
-    body: 'SabiScore sustains 99.9%+ uptime (Prometheus · 90-day window) — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement over reactive alerting baseline.',
+    headline: '99.9%+ uptime, monitored',
+    body: 'TaxBridge and SabiScore run on Prometheus alerting with a 45% improvement in MTTD over reactive baselines. Health checks, graceful shutdowns, and environment-scoped limits are built in from day one — not bolted on after an incident.',
     accent: 'var(--color-live)',
     dataPillar: 'live',
   },
   {
     label: 'DECISIONS DOCUMENTED',
     headline: 'Architecture visible',
-    body: 'Every tradeoff — Chosen, Over, Because — is in the case study. Not just outcomes. Reasoning at every level, legible without clicking.',
+    body: 'Every tradeoff — Chosen, Over, Because — lives in the case study alongside the outcome. Not just what shipped, but why it was built that way. Reasoning at every level, legible without a call.',
     accent: 'var(--color-accent)',
     dataPillar: 'decisions',
   },
   {
-    label: 'ZERO-DOWNTIME DESIGN',
-    headline: 'Graceful by default',
-    body: 'Health checks, idempotent job queues, circuit breakers, and environment-scoped limits built in from deployment one — not bolted on after an incident.',
+    label: 'MULTI-TENANT BY DEFAULT',
+    headline: 'PostgreSQL RLS as a baseline',
+    body: 'TaxBridge enforces tenant isolation at the database engine — not the application layer. Row-Level Security means a bug in business logic cannot expose another tenant\'s data. NRS audit-ready from day one.',
     accent: 'var(--color-wip)',
-    dataPillar: 'downtime',
+    dataPillar: 'multitenant',
   },
   {
     label: 'FULL OWNERSHIP',
-    headline: 'Feature to inference',
-    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, full stack — no handoff latency, no translation loss, no waiting.',
+    headline: 'Infrastructure to user interface',
+    body: 'From BullMQ idempotent queues and PostgreSQL migrations to the Next.js frontend. One engineer, complete stack — no translation loss, no handoff latency, no gap between intent and deployment.',
     accent: 'var(--color-accent)',
     dataPillar: 'ownership',
   },
@@ -85,34 +85,51 @@ export function HeroSection() {
           </motion.div>
 
           <motion.p variants={label} className="label mb-6 origin-left">
-            Staff Full-Stack ML Engineer · AI/Fintech Systems
+            Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems
           </motion.p>
 
           <div className="mb-4 overflow-hidden">
             <motion.h1
               variants={headline}
               id="hero-heading"
-              className="text-gradient max-w-[16ch] text-balance"
+              className="text-gradient max-w-[var(--max-width-hero)] text-balance"
             >
-              <span className="block">When AI behavior, platform reliability,</span>
-              <span className="block">and product clarity must hold simultaneously —</span>
-              <span className="block">you need someone who has built all three.</span>
+              The system has to work at 2am.
             </motion.h1>
           </div>
 
           <motion.p
             variants={child}
-            className="font-display mt-3 max-w-[48ch] text-(length:--text-xl) leading-relaxed text-(--color-live) italic"
+            className="mt-4 max-w-[60ch] text-base leading-relaxed text-(--color-text-secondary)"
           >
-            The system has to work at 2am.
+            I build the backend systems that keep fintech products alive, compliant, and fast —
+            idempotent job queues, PostgreSQL RLS multi-tenancy, real-time inference pipelines, and
+            SRE tooling that prevents incidents before they happen.
           </motion.p>
+
+          <motion.div
+            variants={child}
+            className="mt-5 flex flex-wrap items-center gap-2"
+            aria-label="Key engineering metrics"
+          >
+            {(
+              ['sub-150ms API', '99.9%+ uptime', '40% ops reduction', '95% test coverage'] as const
+            ).map((metric) => (
+              <span
+                key={metric}
+                className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
+              >
+                {metric}
+              </span>
+            ))}
+          </motion.div>
 
           <motion.div
             variants={child}
             className="mt-8 mb-10 flex flex-wrap items-center gap-3 sm:gap-4"
           >
             <motion.a
-              href="#projects"
+              href="mailto:oscar@scardubu.dev"
               data-cta="primary"
               whileHover={
                 reducedMotion
@@ -125,17 +142,17 @@ export function HeroSection() {
               }
               className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-accent) bg-(--color-accent) px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
             >
-              View Projects
+              Book a Call
             </motion.a>
             <Link
-              href="#contact"
+              href="#projects"
               data-cta="secondary"
               className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
             >
-              Get in Touch
+              View Projects
             </Link>
             <Link
-              href="/oscar-ndugbu-resume.pdf"
+              href="/cv/oscar-ndugbu-resume.pdf"
               download
               data-cta="ghost"
               className="inline-flex min-h-11 items-center gap-1.5 rounded-(--radius-md) border border-(--color-border) px-4 py-3.5 font-mono text-xs font-medium text-(--color-text-muted) uppercase transition"

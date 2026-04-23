@@ -1,5 +1,5 @@
 ﻿import type { Metadata, Viewport } from 'next';
-import { Crimson_Pro, Geist_Mono } from 'next/font/google';
+import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -13,41 +13,50 @@ import CursorGlow from '@/components/CursorGlow';
 
 import './globals.css';
 
-const crimsonPro = Crimson_Pro({
+const syne = Syne({
   subsets: ['latin'],
-  variable: '--font-crimson-pro',
+  variable: '--font-syne',
   display: 'swap',
-  weight: ['300', '400', '600', '700'],
-  style: ['normal', 'italic'],
-  adjustFontFallback: true,
+  weight: ['400', '500', '600', '700', '800'],
 });
 
-const geistMono = Geist_Mono({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-geist-mono',
+  variable: '--font-dm-sans',
   display: 'swap',
-  adjustFontFallback: true,
+  weight: ['400', '500', '600', '700'],
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
-    template: '%s · Oscar Ndugbu (Scardubu)',
+    default:
+      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
+    template: '%s · Oscar Ndugbu',
   },
   description:
-    'Oscar Ndugbu (Scardubu) builds production AI and fintech systems where platform reliability, model behavior, and product clarity must hold simultaneously.',
+    'Oscar Ndugbu (Scardubu) builds backend systems that keep fintech products alive, compliant, and fast — sub-150ms APIs, 99.9%+ uptime, NRS-compliant audit trails.',
   metadataBase: new URL('https://www.scardubu.dev'),
   openGraph: {
     type: 'website',
     url: 'https://www.scardubu.dev',
-    siteName: 'Oscar Ndugbu (Scardubu)',
-    title: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
-    description: 'Production AI/fintech engineer. SabiScore · Hashablanca · TaxBridge.',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu (Scardubu) portfolio' }],
+    siteName: 'Oscar Ndugbu',
+    title:
+      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
+    description:
+      'Backend systems engineer. TaxBridge · SabiScore · Hashablanca. sub-150ms · 99.9%+ uptime.',
+    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Oscar Ndugbu (Scardubu) — Staff Full-Stack ML Engineer',
+    title:
+      'Oscar Ndugbu — Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems',
     images: ['/api/og'],
   },
   robots: { index: true, follow: true },
@@ -63,10 +72,11 @@ export const viewport: Viewport = {
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Oscar Ndugbu (Scardubu)',
+  name: 'Oscar Ndugbu',
   url: 'https://www.scardubu.dev',
-  jobTitle: 'Staff Full-Stack ML Engineer',
-  description: 'Production AI/fintech systems engineer. SabiScore, Hashablanca, TaxBridge.',
+  jobTitle: 'Principal Backend Engineer',
+  description:
+    'Backend systems engineer specialising in infrastructure, SRE, and AI systems. TaxBridge, SabiScore, Hashablanca.',
   sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 
@@ -74,7 +84,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${crimsonPro.variable} ${geistMono.variable}`}
+      className={`${syne.variable} ${dmSans.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>

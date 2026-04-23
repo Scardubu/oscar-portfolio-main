@@ -11,9 +11,11 @@ html { scrollbar-width: none; }
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --font-display: var(--font-crimson-pro), "Times New Roman", serif;
-  --font-mono:    var(--font-geist-mono), "Courier New", monospace;
-  --font-sans:    var(--font-mono), "Courier New", monospace;
+  --font-display: var(--font-syne), "Arial Black", sans-serif;
+  --font-body:    var(--font-dm-sans), "Arial", sans-serif;
+  --font-mono:    var(--font-jetbrains-mono), "Courier New", monospace;
+  --font-sans:    var(--font-body), "Arial", sans-serif;
+  --max-width-hero: 52ch;
 
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
