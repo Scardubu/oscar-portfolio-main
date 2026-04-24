@@ -307,3 +307,21 @@ export const filterTransition: Transition = {
   damping: 26,
   mass: 0.8,
 };
+
+/**
+ * PAGE TRANSITION
+ * Spring-based page-level enter/exit. Used by PageWrapper AnimatePresence.
+ */
+export const pageTransition: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 300, damping: 30, mass: 0.8 },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, duration: 0.15 },
+  },
+};

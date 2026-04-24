@@ -1,23 +1,28 @@
 'use client'
 
-import { fadeIn, viewportOnce } from '@/lib/motion'
-import { cn } from '@/lib/utils'
+import { fadeIn, viewportOnce } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
 import { trackMetricView } from '@/lib/metrics/analytics';
-import { assertMetricIntegrity } from '@/lib/metrics/assert'
+import { assertMetricIntegrity } from '@/lib/metrics/assert';
 import { METRICS } from '@/lib/metrics/registry';
 
-import type { BadgeType } from '@/lib/types'
+import type { BadgeType } from '@/lib/types';
 
 // ─── Types ─────────────────────────────────────────────────────────────
 
 export interface MetricBadgeProps {
-  metric: string
-  size?: 'sm' | 'md' | 'lg'
-  animate?: boolean
-  className?: string
+  metric?: string;
+  value?: string;
+  label?: string;
+  badge?: BadgeType;
+  sourceLabel?: string;
+  sublabel?: string;
+  size?: 'sm' | 'md' | 'lg';
+  animate?: boolean;
+  className?: string;
 }
 
 // ─── Badge Config (unchanged) ──────────────────────────────────────────
@@ -78,30 +83,53 @@ const SIZE_CONFIG = {
 
 export function MetricBadge({
   metric,
+  value,
+  label,
+  badge,
+  sourceLabel,
+  sublabel,
   size = 'md',
   animate = true,
   className,
 }: MetricBadgeProps) {
-  const prefersReduced = useReducedMotion()
-  const shouldAnimate = animate && !prefersReduced
+  const prefersReduced = useReducedMotion();
+  const shouldAnimate = animate && !prefersReduced;
 
-  const data = METRICS[metric]
+  const data = metric
+    ? METRICS[metric]
+    : value && label && badge && sourceLabel
+      ? {
+          value,
+          label,
+          badge,
+          sourceLabel,
+          sublabel,
+        }
+      : null;
 
   if (!data) {
-    throw new Error(`[MetricBadge] Unknown metric: ${metric}`)
+    throw new Error(
+      metric
+        ? `[MetricBadge] Unknown metric: ${metric}`
+        : '[MetricBadge] Provide either a metric key or direct metric props'
+    );
   }
 
-  assertMetricIntegrity(data)
+  if (metric) {
+    assertMetricIntegrity(data);
+  }
 
   React.useEffect(() => {
-    trackMetricView(metric)
-  }, [metric])
+    if (metric) {
+      trackMetricView(metric);
+    }
+  }, [metric]);
 
-  const cfg = BADGE_CONFIG[data.badge]
-  const sizes = SIZE_CONFIG[size]
+  const cfg = BADGE_CONFIG[data.badge];
+  const sizes = SIZE_CONFIG[size];
 
-  const prefix = data.value.startsWith('+') ? '+' : ''
-  const rest = prefix ? data.value.slice(1) : data.value
+  const prefix = data.value.startsWith('+') ? '+' : '';
+  const rest = prefix ? data.value.slice(1) : data.value;
 
   return (
     <m.div

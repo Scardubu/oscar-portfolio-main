@@ -8,8 +8,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { pageTransition } from '@/lib/motion';
-import { AnimatePresence, m, useEffect, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

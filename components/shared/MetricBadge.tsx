@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import type { ProjectStatus } from "@/data/portfolio";
+
+type ProjectStatus = 'live' | 'documented' | 'backtested' | 'snapshot';
 
 const statusConfig: Record<ProjectStatus, { label: string; className: string; pulse: boolean }> = {
   live: {
