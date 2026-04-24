@@ -73,7 +73,7 @@ export function AboutSection() {
 
             <m.div
               variants={child}
-              className="glass-surface mt-8 rounded-(--radius-lg) border-l-2 border-l-cyan-400"
+              className="glass-surface mt-8 rounded-(--radius-lg) border-l-2 border-l-cyan-400 p-4 sm:p-6"
             >
               <p className="text-sm leading-7 text-white/78">
                 During my time at Nigeria&apos;s Universal Basic Education Commission, I built the
@@ -99,7 +99,7 @@ export function AboutSection() {
                 <m.article
                   key={cert.name}
                   variants={child}
-                  className="glass-surface rounded-(--radius-md)"
+                  className="glass-surface rounded-(--radius-md) p-4"
                 >
                   <p className="text-sm font-medium text-white">{cert.name}</p>
                   <p className="mt-1 font-mono text-[11px] text-white/55">{cert.date}</p>

@@ -1,13 +1,13 @@
 'use client'
 
-import * as React from 'react'
-import { m, useReducedMotion } from 'framer-motion'
 import { fadeIn, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { m, useReducedMotion } from 'framer-motion';
+import * as React from 'react';
 
-import { METRICS } from '@/lib/metrics/registry'
+import { trackMetricView } from '@/lib/metrics/analytics';
 import { assertMetricIntegrity } from '@/lib/metrics/assert'
-import { trackMetricView } from '@/lib/metrics/analytics'
+import { METRICS } from '@/lib/metrics/registry';
 
 import type { BadgeType } from '@/lib/types'
 

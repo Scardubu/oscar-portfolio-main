@@ -97,7 +97,7 @@ export function ContactSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className={`glass-surface rounded-(--radius-lg) border border-l-2 border-(--glass-border) ${mode.border}`}
+                className={`glass-surface rounded-(--radius-lg) border border-l-2 border-(--glass-border) p-6 sm:p-8 ${mode.border}`}
               >
                 <p className="font-mono text-[11px] tracking-widest text-white/65 uppercase">
                   {mode.title}

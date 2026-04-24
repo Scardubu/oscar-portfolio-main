@@ -9,8 +9,8 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { m, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { m, useReducedMotion } from 'framer-motion';
 
 interface KineticHeadlineProps {
   /** The text to animate character by character */

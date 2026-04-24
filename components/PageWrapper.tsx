@@ -7,9 +7,9 @@
 //   3. Reduced-motion guard at React level
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { m, AnimatePresence, useEffect, useReducedMotion } from "framer-motion";
-import { usePathname } from "next/navigation";
-import { pageTransition } from "@/lib/motion";
+import { pageTransition } from '@/lib/motion';
+import { AnimatePresence, m, useEffect, useReducedMotion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

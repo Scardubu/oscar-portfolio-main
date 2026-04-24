@@ -1,8 +1,13 @@
-// CONVICTION ENGINE v7.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 // constants/z-index.ts
 // Single source of truth for all z-index values.
 // Every layer comment maps to a real element in the codebase.
 // NEVER use raw z-index numbers in TSX or CSS — import from here.
+//
+// Stacking order (bottom → top):
+//   AMBIENT (0) → GRAIN (1) → CONTENT (2) → SHARE_SIDEBAR (40)
+//   → TOAST/PROGRESS_BAR (50) → SCROLL_PROGRESS (60) → SKIP_NAV (150)
+//   → NAV (200) → COMMAND_PALETTE (500) → MODAL (9000)
 
 export const Z = {
   /** Ambient background orbs (GradientMesh) */
@@ -11,7 +16,7 @@ export const Z = {
   GRAIN: 1,
   /** Cursor glow following pointer */
   CURSOR: 1,
-  /** Main page content */
+  /** Main page content (isolation: isolate applied — Safari bleed fix) */
   CONTENT: 2,
   /** Sticky footer */
   FOOTER: 2,

@@ -8,20 +8,10 @@
 //   • layout animation for smooth height changes
 // ─────────────────────────────────────────────────────────────────────────────
 
-import {
-  m,
-  AnimatePresence,
-  useReducedMotion,
-} from "framer-motion";
+import { fadeUp, liquidCard, springs, staggerContainer, staggerSlow } from '@/lib/motion';
+import { PRODUCTION_PATTERNS } from '@/lib/portfolio-data';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
-import { PRODUCTION_PATTERNS } from "@/lib/portfolio-data";
-import {
-  staggerContainer,
-  staggerSlow,
-  fadeUp,
-  liquidCard,
-  springs,
-} from "@/lib/motion";
 
 // ── Pattern icons (inline SVG) ────────────────────────────────────────────────
 

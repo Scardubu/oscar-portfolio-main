@@ -1,15 +1,15 @@
-﻿import type { Metadata, Viewport } from 'next';
-import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/react';
+﻿import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata, Viewport } from 'next';
+import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
 
+import { Providers } from '@/app/providers';
+import CursorGlow from '@/components/CursorGlow';
 import { Footer } from '@/components/Footer';
 import { GradientMesh } from '@/components/GradientMesh';
 import { GrainOverlay } from '@/components/GrainOverlay';
 import { NavBar } from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
-import { Providers } from '@/app/providers';
-import CursorGlow from '@/components/CursorGlow';
 
 import './globals.css';
 
@@ -190,7 +190,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <GradientMesh />
           <ScrollProgress />
           <NavBar />
-          <div className="relative z-2">{children}</div>
+          <div className="relative isolate z-2">{children}</div>
           <Footer />
         </Providers>
         <Analytics />

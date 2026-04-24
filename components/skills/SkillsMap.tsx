@@ -16,11 +16,11 @@
  * All types imported from lib/types. SKILLS and ALL_PILLARS from lib/data/skills.
  */
 
-import * as React        from 'react'
-import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { filterTransition } from '@/lib/motion'
-import { SKILLS, ALL_PILLARS } from '@/lib/data/skills'
+import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
+import { filterTransition } from '@/lib/motion';
 import type { SkillNode, SkillPillar } from '@/lib/types'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import * as React from 'react';
 
 // ─── Level configuration ──────────────────────────────────────────────────────
 

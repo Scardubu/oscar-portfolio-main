@@ -111,7 +111,7 @@ export function ProjectsSection() {
               Constraint: {featured.constraint}
             </p>
 
-            <ul className="mt-5 flex flex-wrap gap-2.5" aria-label={`${featured.title} outcomes`}>
+            <ul className="mt-5 flex flex-wrap gap-3" aria-label={`${featured.title} outcomes`}>
               {featured.outcomes.map((outcome) => (
                 <li
                   key={`${featured.slug}-${outcome}`}
@@ -123,7 +123,7 @@ export function ProjectsSection() {
             </ul>
 
             <ul
-              className="mt-6 flex flex-wrap gap-2.5"
+              className="mt-6 flex flex-wrap gap-3"
               aria-label={`${featured.title} technology stack`}
             >
               {featured.stack.map((tag) => (
@@ -173,7 +173,7 @@ export function ProjectsSection() {
               <m.article
                 key={project.slug}
                 variants={reducedMotion ? noMotion : GRID_VARIANTS[index % 2]}
-                className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-(--radius-xl) p-8 sm:p-9"
+                className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-(--radius-xl) p-8 sm:p-10"
                 data-project-id={project.slug}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -189,10 +189,7 @@ export function ProjectsSection() {
                   {project.description}
                 </p>
 
-                <ul
-                  className="mt-5 flex flex-wrap gap-2.5"
-                  aria-label={`${project.title} outcomes`}
-                >
+                <ul className="mt-5 flex flex-wrap gap-3" aria-label={`${project.title} outcomes`}>
                   {project.outcomes.slice(0, 3).map((outcome) => (
                     <li
                       key={`${project.slug}-${outcome}`}
@@ -211,7 +208,7 @@ export function ProjectsSection() {
                 />
 
                 <ul
-                  className="mt-6 flex flex-wrap gap-2.5"
+                  className="mt-6 flex flex-wrap gap-3"
                   aria-label={`${project.title} technology stack`}
                 >
                   {project.stack.map((tag) => (

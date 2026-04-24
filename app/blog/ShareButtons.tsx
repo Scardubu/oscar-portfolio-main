@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { m, AnimatePresence } from "framer-motion";
+import { trackEvent } from '@/app/lib/analytics';
+import { AnimatePresence, m } from 'framer-motion';
 import {
-  Share2,
-  Twitter,
+  Check,
+  ExternalLink,
+  Link2,
   Linkedin,
   Mail,
   MessageCircle,
-  Link2,
-  Check,
-  ExternalLink,
-} from "lucide-react";
-import { trackEvent } from "@/app/lib/analytics";
+  Share2,
+  Twitter,
+} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface ShareButtonsProps {
   url: string;

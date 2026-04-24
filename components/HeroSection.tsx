@@ -92,7 +92,7 @@ export function HeroSection() {
 
           <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PROOF_COLUMNS.map((column) => (
-              <article key={column.label} className="glass-surface h-full rounded-(--radius-lg)">
+              <article key={column.label} className="glass-surface h-full rounded-(--radius-lg) p-4 sm:p-6">
                 <p className="font-mono text-[11px] tracking-widest text-cyan-400 uppercase">
                   {column.label}
                 </p>

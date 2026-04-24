@@ -15,11 +15,11 @@
  * BlogArticleRef type imported from lib/types — not redefined here.
  */
 
-import * as React from 'react'
+import { blogUrl } from '@/lib/config';
+import { fadeUp, viewportOnce } from '@/lib/motion';
+import type { BadgeType, BlogArticleRef } from '@/lib/types';
 import { m, useReducedMotion } from 'framer-motion'
-import { fadeUp, viewportOnce }     from '@/lib/motion'
-import { blogUrl }                  from '@/lib/config'
-import type { BlogArticleRef, BadgeType } from '@/lib/types'
+import * as React from 'react';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
