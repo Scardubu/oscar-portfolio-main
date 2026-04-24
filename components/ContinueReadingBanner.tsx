@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { BookOpen, X, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { BookOpen, ChevronRight, X } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface ReadingProgress {
   slug: string;
@@ -17,7 +17,7 @@ export function ContinueReadingBanner() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("blog_reading_progress");
+      const stored = localStorage.getItem('blog_reading_progress');
       if (stored) {
         const progress: ReadingProgress = JSON.parse(stored);
         const daysSince = (Date.now() - progress.timestamp) / (1000 * 60 * 60 * 24);
@@ -36,7 +36,7 @@ export function ContinueReadingBanner() {
   const handleDismiss = () => {
     setIsVisible(false);
     try {
-      localStorage.removeItem("blog_reading_progress");
+      localStorage.removeItem('blog_reading_progress');
     } catch {
       // Ignore
     }
@@ -45,11 +45,11 @@ export function ContinueReadingBanner() {
   if (!isVisible || !readingProgress) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 z-50 md:left-auto md:right-6 md:w-96">
-      <div className="rounded-2xl border border-white/20 bg-gradient-to-r from-accent-primary to-blue-600 p-4 shadow-2xl shadow-accent-primary/30">
+    <div className="fixed right-6 bottom-6 left-6 z-50 md:right-6 md:left-auto md:w-96">
+      <div className="from-accent-primary shadow-accent-primary/30 rounded-2xl border border-white/20 bg-gradient-to-r to-blue-600 p-4 shadow-2xl">
         <button
           onClick={handleDismiss}
-          className="absolute right-3 top-3 text-white/80 transition hover:text-white"
+          className="absolute top-3 right-3 text-white/80 transition hover:text-white"
           aria-label="Dismiss"
         >
           <X className="h-4 w-4" />
@@ -64,6 +64,7 @@ export function ContinueReadingBanner() {
             <div className="mb-3 h-2 rounded-full bg-white/20">
               <div
                 className="h-full rounded-full bg-white transition-all duration-500"
+                // eslint-disable-next-line no-restricted-syntax
                 style={{ width: `${readingProgress.progress}%` }}
               />
             </div>

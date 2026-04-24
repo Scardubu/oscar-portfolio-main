@@ -1,219 +1,106 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
-import React, { useMemo } from 'react';
+import { m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
-import { useMagnetic } from '@/hooks/useMagnetic';
-import {
-  clipReveal,
-  fadeRise,
-  noMotion,
-  pillarHover,
-  scaleXReveal,
-  scrollIndicatorBounce,
-  staggerContainer,
-} from '@/lib/motionVariants';
 
-const PILLARS = [
+const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
-    headline: '99.9%+ uptime, monitored',
-    body: 'TaxBridge and SabiScore run on Prometheus alerting with a 45% improvement in MTTD over reactive baselines. Health checks, graceful shutdowns, and environment-scoped limits are built in from day one — not bolted on after an incident.',
-    accent: 'var(--color-live)',
-    dataPillar: 'live',
+    body: 'SabiScore sustains 99.9%+ uptime on a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement.',
   },
   {
     label: 'DECISIONS DOCUMENTED',
-    headline: 'Architecture visible',
-    body: 'Every tradeoff — Chosen, Over, Because — lives in the case study alongside the outcome. Not just what shipped, but why it was built that way. Reasoning at every level, legible without a call.',
-    accent: 'var(--color-accent)',
-    dataPillar: 'decisions',
+    body: 'Every tradeoff — Chosen, Over, Because — is written out, not summarised. Architecture reasoning at every level, legible without clicking a link.',
   },
   {
-    label: 'MULTI-TENANT BY DEFAULT',
-    headline: 'PostgreSQL RLS as a baseline',
-    body: 'TaxBridge enforces tenant isolation at the database engine — not the application layer. Row-Level Security means a bug in business logic cannot expose another tenant\'s data. NRS audit-ready from day one.',
-    accent: 'var(--color-wip)',
-    dataPillar: 'multitenant',
+    label: 'ZERO-DOWNTIME DESIGN',
+    body: 'Health checks, idempotent job queues, circuit breakers, and environment-scoped rate limits — in the baseline, not added after an incident.',
   },
   {
-    label: 'FULL OWNERSHIP',
-    headline: 'Infrastructure to user interface',
-    body: 'From BullMQ idempotent queues and PostgreSQL migrations to the Next.js frontend. One engineer, complete stack — no translation loss, no handoff latency, no gap between intent and deployment.',
-    accent: 'var(--color-accent)',
-    dataPillar: 'ownership',
+    label: 'FULL STACK OWNERSHIP',
+    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, complete ownership — no handoff latency, no translation loss.',
   },
 ] as const;
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll();
-  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
-  const magnetic = useMagnetic();
 
-  const child = reducedMotion ? noMotion : fadeRise;
-  const headline = reducedMotion ? noMotion : clipReveal;
-  const label = reducedMotion ? noMotion : scaleXReveal;
-  const container = useMemo(() => staggerContainer(0.055, 0.05), []);
+  const reveal = reducedMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 280, damping: 24 } };
 
   return (
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-dvh flex-col justify-center pt-[calc(var(--nav-height)+3.5rem)] pb-20 sm:pb-24"
+      className="relative flex min-h-dvh flex-col justify-center pt-28 pb-20 sm:pt-32 sm:pb-24"
     >
       <div className="relative z-10 container">
-        <motion.div variants={container} initial="hidden" animate="visible">
-          <motion.div variants={child} className="mb-10">
-            <output
-              aria-label="Available for Staff+ principal full-stack engineering roles and infrastructure consulting"
-              className="badge-live inline-flex items-center gap-3 whitespace-nowrap"
-            >
-              <span className="dot-live" aria-hidden="true" />
-              <span className="pill-full">
-                Available · Staff+ · Principal · Full-Stack & Infrastructure
-              </span>
-              <span className="pill-short" aria-hidden="true">
-                Available · Staff+
-              </span>
-            </output>
-          </motion.div>
-
-          <motion.p variants={label} className="label mb-6 origin-left">
-            Principal Full-Stack Engineer · Backend & Infrastructure · AI Systems
-          </motion.p>
-
-          <div className="mb-4 overflow-hidden">
-            <motion.h1
-              variants={headline}
-              id="hero-heading"
-              className="text-gradient max-w-[var(--max-width-hero)] text-balance"
-            >
-              The system has to work at 2am.
-            </motion.h1>
+        <m.div initial={{ opacity: 0, y: reducedMotion ? 0 : 16 }} animate={reveal}>
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+            <span className="font-mono text-[11px] tracking-widest text-white uppercase">
+              AVAILABLE · STAFF+ / PRINCIPAL · BACKEND & INFRASTRUCTURE
+            </span>
           </div>
 
-          <motion.p
-            variants={child}
-            className="mt-4 max-w-[60ch] text-base leading-relaxed text-(--color-text-secondary)"
-          >
-            End-to-end full-stack fintech systems built to stay compliant, fast, and reliable in
-            production — React Native mobile, Spring Boot rule engines, Next.js 15 interfaces,
-            PostgreSQL RLS multi-tenancy, and AI pipelines with SRE-grade observability.
-          </motion.p>
+          <p className="font-body mb-4 text-xs tracking-[0.12em] text-cyan-400 uppercase sm:text-sm">
+            PRINCIPAL BACKEND ENGINEER · INFRASTRUCTURE & SRE ARCHITECT · AI SYSTEMS
+          </p>
 
-          <motion.div
-            variants={child}
-            className="mt-5 flex flex-wrap items-center gap-2"
-            aria-label="Key engineering metrics"
-          >
-            {(
-              ['sub-150ms API', '99.9%+ uptime', '40% ops reduction', '95% test coverage'] as const
-            ).map((metric) => (
-              <span
-                key={metric}
-                className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
-              >
-                {metric}
-              </span>
-            ))}
-          </motion.div>
+          <h1 id="hero-heading" className="max-w-[20ch] text-balance text-white">
+            The system has to work at 2am.
+          </h1>
 
-          <motion.div
-            variants={child}
-            className="mt-8 mb-10 flex flex-wrap items-center gap-3 sm:gap-4"
-          >
-            <motion.a
-              ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
-              href="mailto:oscar@scardubu.dev"
-              data-cta="primary"
-              style={{ x: magnetic.x, y: magnetic.y }}
-              onMouseMove={magnetic.onMouseMove as React.MouseEventHandler<HTMLAnchorElement>}
-              onMouseLeave={magnetic.onMouseLeave}
-              whileHover={
-                reducedMotion
-                  ? undefined
-                  : {
-                      scale: 1.02,
-                      boxShadow: '0 0 0 3px var(--color-accent-glow)',
-                      transition: { type: 'spring', stiffness: 400, damping: 30 },
-                    }
-              }
-              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-accent) bg-(--color-accent) px-6 py-3.5 font-mono text-xs font-semibold tracking-wider text-white uppercase shadow-[0_0_20px_var(--color-accent-glow)] transition"
+          <p className="font-display mt-4 max-w-[30ch] text-2xl text-white/72 sm:text-3xl">
+            {"That's not a slogan. It's a design constraint."}
+          </p>
+
+          <p className="mt-5 font-mono text-xs tracking-widest text-white/70 uppercase">
+            Sub-150ms API · 99.9%+ uptime · 40% ops reduction · 95% test coverage
+          </p>
+
+          <p className="mt-6 max-w-(--max-width-hero) text-base leading-relaxed text-white/78 sm:text-lg">
+            I build backend systems that keep fintech products alive, compliant, and fast — whether
+            it&apos;s a quiet Tuesday or a FIRS audit season.
+          </p>
+
+          <p className="mt-4 max-w-(--max-width-hero) text-sm leading-relaxed text-white/65">
+            Tax filing time: 4 hours → 15 minutes. Zero data-loss record across three production
+            systems.
+          </p>
+
+          <div className="mt-8 mb-8 flex flex-wrap items-center gap-3 sm:gap-4">
+            <a
+              href="mailto:scardubu@gmail.com"
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/20 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
             >
               Book a Call
-            </motion.a>
+            </a>
             <Link
               href="#projects"
-              data-cta="secondary"
-              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/20 px-5 py-3 text-sm font-medium text-white/80 transition hover:border-white/40 hover:text-white"
             >
-              View Projects
+              View Projects →
             </Link>
-            <Link
-              href="/cv/oscar-ndugbu-resume.pdf"
-              download
-              data-cta="ghost"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-(--radius-md) border border-(--color-border) px-4 py-3.5 font-mono text-xs font-medium text-(--color-text-muted) uppercase transition"
-            >
-              Resume
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                aria-hidden="true"
-                className="shrink-0"
-              >
-                <path
-                  d="M5 1v8M1 6l4 3 4-3"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          </motion.div>
-
-          <motion.div variants={child} className="mb-20">
-            <LiveActivityBar />
-          </motion.div>
-
-          <motion.div variants={child} className="pillar-grid">
-            {PILLARS.map((pillar) => (
-              <motion.div
-                key={pillar.label}
-                data-pillar={pillar.dataPillar}
-                whileHover={reducedMotion ? undefined : pillarHover}
-                className="glass pillar-grid-item p-6 sm:p-7"
-              >
-                <p className="label mb-2">{pillar.label}</p>
-                <p className="font-display mb-3 text-base leading-snug font-semibold text-(--color-text-primary) sm:text-lg">
-                  {pillar.headline}
-                </p>
-                <p className="font-display text-sm leading-7 text-(--color-text-secondary) sm:text-[0.95rem]">
-                  {pillar.body}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center sm:bottom-4"
-          // eslint-disable-next-line no-restricted-syntax
-          style={{ opacity: indicatorOpacity }}
-          animate={reducedMotion ? undefined : scrollIndicatorBounce}
-        >
-          <div className="flex flex-col items-center gap-2 text-(--color-text-muted)">
-            <ChevronDown className="h-4 w-4" />
           </div>
-        </motion.div>
+
+          <LiveActivityBar />
+
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PROOF_COLUMNS.map((column) => (
+              <article key={column.label} className="glass-surface h-full rounded-(--radius-lg)">
+                <p className="font-mono text-[11px] tracking-widest text-cyan-400 uppercase">
+                  {column.label}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/72">{column.body}</p>
+              </article>
+            ))}
+          </div>
+        </m.div>
       </div>
     </section>
   );

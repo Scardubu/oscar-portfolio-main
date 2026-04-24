@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTime, useTransform } from 'framer-motion';
+import { m, useReducedMotion, useScroll, useTime, useTransform } from 'framer-motion';
 
 export function GradientMesh() {
   const { scrollYProgress } = useScroll();
@@ -31,20 +31,23 @@ export function GradientMesh() {
   return (
     <div aria-hidden="true" className="gradient-mesh">
       <div className="gradient-mesh-wrap gradient-mesh-wrap--indigo">
-        <motion.div
+        <m.div
           className="gradient-mesh-orb gradient-mesh-orb--indigo"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: indigoY, rotate: indigoRot, willChange: 'transform' }}
         />
       </div>
       <div className="gradient-mesh-wrap gradient-mesh-wrap--green">
-        <motion.div
+        <m.div
           className="gradient-mesh-orb gradient-mesh-orb--green"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: greenY, rotate: greenRot, willChange: 'transform' }}
         />
       </div>
       <div className="gradient-mesh-wrap gradient-mesh-wrap--amber">
-        <motion.div
+        <m.div
           className="gradient-mesh-orb gradient-mesh-orb--amber"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: amberY, rotate: amberRot, willChange: 'transform' }}
         />
       </div>

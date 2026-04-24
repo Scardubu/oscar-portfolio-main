@@ -1,12 +1,13 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 // lib/monitoring.ts - Web Vitals monitoring
 
 // Web Vitals metric type (compatible with Next.js built-in types)
 interface WebVitalMetric {
-  id: string
-  name: 'CLS' | 'FCP' | 'FID' | 'INP' | 'LCP' | 'TTFB'
-  value: number
-  rating: 'good' | 'needs-improvement' | 'poor'
-  delta: number
+  id: string;
+  name: 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
 }
 
 /**
@@ -20,12 +21,8 @@ export function reportWebVitals(metric: WebVitalMetric) {
   // Send to Google Analytics if configured
   if (typeof window !== 'undefined') {
     const win = window as Window & {
-      gtag?: (
-        command: string,
-        action: string,
-        params: Record<string, unknown>
-      ) => void
-    }
+      gtag?: (command: string, action: string, params: Record<string, unknown>) => void;
+    };
 
     if (win.gtag) {
       win.gtag('event', metric.name, {
@@ -35,7 +32,7 @@ export function reportWebVitals(metric: WebVitalMetric) {
         // Custom dimensions for better analysis
         metric_rating: metric.rating,
         metric_delta: Math.round(metric.delta),
-      })
+      });
     }
   }
 }
@@ -47,10 +44,6 @@ export const PERFORMANCE_THRESHOLDS = {
   LCP: {
     good: 2500,
     needsImprovement: 4000,
-  },
-  FID: {
-    good: 100,
-    needsImprovement: 300,
   },
   CLS: {
     good: 0.1,
@@ -68,7 +61,7 @@ export const PERFORMANCE_THRESHOLDS = {
     good: 200,
     needsImprovement: 500,
   },
-} as const
+} as const;
 
 /**
  * Get performance rating based on metric value
@@ -77,9 +70,9 @@ export function getPerformanceRating(
   metricName: keyof typeof PERFORMANCE_THRESHOLDS,
   value: number
 ): 'good' | 'needs-improvement' | 'poor' {
-  const thresholds = PERFORMANCE_THRESHOLDS[metricName]
+  const thresholds = PERFORMANCE_THRESHOLDS[metricName];
 
-  if (value <= thresholds.good) return 'good'
-  if (value <= thresholds.needsImprovement) return 'needs-improvement'
-  return 'poor'
+  if (value <= thresholds.good) return 'good';
+  if (value <= thresholds.needsImprovement) return 'needs-improvement';
+  return 'poor';
 }

@@ -46,7 +46,7 @@ export function ArchDecision({
           return (
             <div
               key={item.key}
-              className={`px-4 py-3 ${isBecause ? 'arch-because-cell' : ''} ${compactDivider ? 'border-b border-(--color-border-subtle)' : ''}`}
+              className={`px-4 py-3 ${isBecause ? 'arch-because-cell' : ''} ${compactDivider ? 'border-border-subtle border-b' : ''}`}
             >
               <p
                 className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}
@@ -55,7 +55,7 @@ export function ArchDecision({
                 {item.label}
               </p>
               <p
-                className={`font-display mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'font-medium text-(--color-text-primary)' : 'text-(--color-text-secondary)'}`}
+                className={`font-display mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'text-text-primary font-medium' : 'text-text-secondary'}`}
                 data-label={item.label}
               >
                 {value}

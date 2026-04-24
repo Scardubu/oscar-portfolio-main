@@ -9,8 +9,8 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
+import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useRef, type ReactNode } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 interface SubtleParallaxWrapperProps {
   children:    ReactNode;
@@ -45,12 +45,13 @@ export default function SubtleParallaxWrapper({
   );
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
+      // eslint-disable-next-line no-restricted-syntax
       style={{ y, willChange: 'transform' }}
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

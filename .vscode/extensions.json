@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "anthropic.claude-vscode",
+    "yzhang.markdown-all-in-one",
+    "redhat.vscode-yaml",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "Prisma.prisma",
+    "humao.rest-client",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense"
+  ]
+}

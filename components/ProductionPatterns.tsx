@@ -9,7 +9,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import {
-  motion,
+  m,
   AnimatePresence,
   useReducedMotion,
 } from "framer-motion";
@@ -82,7 +82,7 @@ function PatternCard({
   const Icon = ICONS[pattern.id];
 
   return (
-    <motion.div
+    <m.div
       className="glass glass-medium flex cursor-pointer flex-col gap-5 rounded-(--radius-lg) p-6 sm:p-7"
       data-accent={pattern.accent}
       variants={liquidCard}
@@ -103,13 +103,13 @@ function PatternCard({
     >
       {/* Icon + header */}
       <div className="flex items-start gap-4">
-        <motion.div
+        <m.div
           className="pattern-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
           whileHover={prefersReduced ? {} : { rotate: 5, scale: 1.1 }}
           transition={springs.bouncy}
         >
           {Icon && <Icon color={accent.color} />}
-        </motion.div>
+          </m.div>
 
         <div className="flex-1 text-left">
           <p className="label mb-0.5">{pattern.caption}</p>
@@ -117,7 +117,7 @@ function PatternCard({
         </div>
 
         {/* Chevron */}
-        <motion.div
+        <m.div
           className="pattern-chevron flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={springs.snappy}
@@ -132,13 +132,13 @@ function PatternCard({
               strokeLinejoin="round"
             />
           </svg>
-        </motion.div>
+          </m.div>
       </div>
 
       {/* Expandable description */}
       <AnimatePresence initial={false}>
         {expanded && (
-          <motion.div
+          <m.div
             key="desc"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -149,28 +149,28 @@ function PatternCard({
             <p className="text-base leading-7 text-(--color-text-secondary)">
               {pattern.description}
             </p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Metrics */}
       <div className="mt-auto flex gap-6">
         {(pattern.metrics as ReadonlyArray<{ readonly value: string; readonly label: string }>).map(
-          (m) => (
-            <div key={m.label} className="flex flex-col gap-0.5">
-              <motion.span
+          (metric) => (
+            <div key={metric.label} className="flex flex-col gap-0.5">
+              <m.span
                 className="pattern-metric font-mono text-(length:--text-2xl) leading-none font-extrabold"
                 whileHover={prefersReduced ? {} : { scale: 1.06 }}
                 transition={springs.bouncy}
               >
-                {m.value}
-              </motion.span>
-              <span className="label">{m.label}</span>
+                {metric.value}
+              </m.span>
+              <span className="label">{metric.label}</span>
             </div>
           )
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -184,33 +184,33 @@ export default function ProductionPatterns() {
       aria-labelledby="architecture-heading"
     >
       <div className="container">
-        <motion.div
+        <m.div
           className="mb-12"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <motion.span className="label" variants={fadeUp}>
+          <m.span className="label" variants={fadeUp}>
             Architecture Depth
-          </motion.span>
-          <motion.h2
+          </m.span>
+          <m.h2
             id="architecture-heading"
             className="gradient-text mt-(--space-2)"
             variants={fadeUp}
           >
             Production Patterns
-          </motion.h2>
-          <motion.p
+          </m.h2>
+          <m.p
             className="mt-5 max-w-prose text-(length:--text-xl) leading-[1.8] text-(--color-text-secondary)"
             variants={fadeUp}
           >
             The architecture decisions behind systems that stay in production. Click any card to see
             the design rationale.
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
 
-        <motion.div
+        <m.div
           className="grid grid-cols-1 gap-5 sm:grid-cols-2"
           variants={staggerSlow}
           initial="hidden"
@@ -220,10 +220,10 @@ export default function ProductionPatterns() {
           {PRODUCTION_PATTERNS.map((pattern) => (
             <PatternCard key={pattern.id} pattern={pattern} />
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Philosophy callout */}
-        <motion.div
+        <m.div
           className="glass glass-medium mt-8 rounded-(--radius-lg) p-6 sm:p-8"
           variants={fadeUp}
           initial="hidden"
@@ -248,7 +248,7 @@ export default function ProductionPatterns() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

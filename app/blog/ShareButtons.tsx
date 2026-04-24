@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   Share2,
   Twitter,
@@ -134,7 +134,7 @@ export function ShareButtons({
 
   if (variant === "floating") {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         className="fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 rounded-xl border border-white/10 bg-bg-primary/90 p-2 shadow-xl backdrop-blur-sm xl:flex"
@@ -161,27 +161,27 @@ export function ShareButtons({
         >
           <AnimatePresence mode="wait">
             {copied ? (
-              <motion.span
+              <m.span
                 key="check"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
               >
                 <Check className="h-4 w-4 text-green-400" />
-              </motion.span>
+              </m.span>
             ) : (
-              <motion.span
+              <m.span
                 key="link"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
               >
                 <Link2 className="h-4 w-4" />
-              </motion.span>
+              </m.span>
             )}
           </AnimatePresence>
         </button>
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -231,7 +231,7 @@ export function ShareButtons({
         >
           <AnimatePresence mode="wait">
             {copied ? (
-              <motion.span
+              <m.span
                 key="copied"
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -240,9 +240,9 @@ export function ShareButtons({
               >
                 <Check className="h-4 w-4" />
                 Copied!
-              </motion.span>
+              </m.span>
             ) : (
-              <motion.span
+              <m.span
                 key="copy"
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -251,7 +251,7 @@ export function ShareButtons({
               >
                 <Link2 className="h-4 w-4" />
                 Copy Link
-              </motion.span>
+              </m.span>
             )}
           </AnimatePresence>
         </button>

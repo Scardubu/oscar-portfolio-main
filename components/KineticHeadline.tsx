@@ -15,8 +15,8 @@
 
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from 'react';
 
 interface KineticHeadlineProps {
   text:       string;
@@ -82,24 +82,19 @@ export function KineticHeadline({
       className={cn(
         sizeClass[size],
         gradient && gradientClass[gradient],
-        "overflow-hidden",
+        'overflow-hidden',
         className
       )}
       aria-label={text}
     >
       {words.map((word, i) => (
-        <span
-          key={i}
-          className="inline-block mr-[0.2em] overflow-hidden"
-          aria-hidden="true"
-        >
+        <span key={i} className="mr-[0.2em] inline-block overflow-hidden" aria-hidden="true">
           <span
             className={cn(
-              "inline-block",
-              started
-                ? "animate-kinetic-in"
-                : "opacity-0 translate-y-[0.6em]"
+              'inline-block',
+              started ? 'animate-kinetic-in' : 'translate-y-[0.6em] opacity-0'
             )}
+            // eslint-disable-next-line no-restricted-syntax
             style={{
               animationDelay: started ? `${i * delay}ms` : undefined,
             }}

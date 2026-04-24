@@ -17,7 +17,7 @@
  */
 
 import * as React        from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { filterTransition } from '@/lib/motion'
 import { SKILLS, ALL_PILLARS } from '@/lib/data/skills'
 import type { SkillNode, SkillPillar } from '@/lib/types'
@@ -25,51 +25,50 @@ import type { SkillNode, SkillPillar } from '@/lib/types'
 // ─── Level configuration ──────────────────────────────────────────────────────
 
 const LEVEL_CONFIG = {
-  expert: { width: 'w-full', label: 'Expert', barColor: 'bg-(--accent-primary)' },
-  proficient: { width: 'w-2/3', label: 'Proficient', barColor: 'bg-(--accent-secondary)' },
-  foundational: { width: 'w-1/3', label: 'Foundational', barColor: 'bg-(--text-muted)' },
+  expert: { label: 'Expert' },
+  proficient: { label: 'Proficient' },
+  foundational: { label: 'Foundational' },
 } as const;
 
 // ─── SkillCard ────────────────────────────────────────────────────────────────
 
-function SkillCard({ skill }: { skill: SkillNode }): React.ReactElement {
-  const lvl = LEVEL_CONFIG[skill.level]
+function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement {
+  const lvl = LEVEL_CONFIG[skill.level];
 
   const systemTags = skill.tags
     .filter((t): t is Extract<typeof t, `used-in:${string}`> => t.startsWith('used-in:'))
     .map((t) => t.replace('used-in:', ''));
 
-  const metaTags = skill.tags.filter(t => !t.startsWith('used-in:'))
+  const metaTags = skill.tags.filter((t) => !t.startsWith('used-in:'));
 
-  const progressValue = skill.level === 'expert' ? 100 : skill.level === 'proficient' ? 66 : 33
+  let progressValue: number;
+  if (skill.level === 'expert') progressValue = 100;
+  else if (skill.level === 'proficient') progressValue = 66;
+  else progressValue = 33;
+
+  const usedInLabel = systemTags.length ? ` — used in: ${systemTags.join(', ')}` : '';
+  const cardLabel = `${skill.name} — ${lvl.label}${usedInLabel}`;
 
   return (
     <div
-      className="h-full rounded-lg border border-(--border-subtle) bg-(--bg-elevated) p-3 transition-colors duration-200 hover:border-(--border-default)"
-      role="listitem"
-      aria-label={`${skill.name} — ${lvl.label}${systemTags.length ? ` — used in: ${systemTags.join(', ')}` : ''}`}
+      className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-3 transition-colors duration-200"
+      aria-label={cardLabel}
     >
       {/* Name and level label */}
       <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="truncate text-sm leading-snug font-semibold text-(--text-primary)">
+        <span className="text-text-primary truncate text-sm leading-snug font-semibold">
           {skill.name}
         </span>
-        <span className="flex-shrink-0 text-[10px] font-medium text-(--text-muted)">
-          {lvl.label}
-        </span>
+        <span className="text-text-muted shrink-0 text-[10px] font-medium">{lvl.label}</span>
       </div>
 
       {/* Proficiency bar */}
-      <div
-        className="mb-2.5 h-1 w-full rounded-full bg-(--border-subtle)"
-        role="progressbar"
-        aria-valuenow={progressValue}
-        aria-valuemin={0}
-        aria-valuemax={100}
+      <progress
+        className="[&::-webkit-progress-bar]:bg-border-subtle [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent mb-2.5 h-1 w-full rounded-full [&::-moz-progress-bar]:rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:rounded-full"
+        value={progressValue}
+        max={100}
         aria-label={`${skill.name} proficiency: ${lvl.label}`}
-      >
-        <div className={`h-full rounded-full ${lvl.width} ${lvl.barColor}`} />
-      </div>
+      />
 
       {/* Context tags */}
       {(systemTags.length > 0 || metaTags.length > 0) && (
@@ -77,7 +76,7 @@ function SkillCard({ skill }: { skill: SkillNode }): React.ReactElement {
           {systemTags.map((tag) => (
             <span
               key={`sys-${tag}`}
-              className="rounded border border-(--border-subtle) bg-(--bg-surface) px-1.5 py-0.5 text-[9px] font-semibold text-(--accent-fintech)"
+              className="border-border-subtle bg-surface text-cyan rounded border px-1.5 py-0.5 text-[9px] font-semibold"
               aria-label={`Used in ${tag}`}
             >
               {tag}
@@ -86,7 +85,7 @@ function SkillCard({ skill }: { skill: SkillNode }): React.ReactElement {
           {metaTags.map((tag) => (
             <span
               key={`meta-${tag}`}
-              className="rounded border border-(--border-subtle) bg-(--bg-surface) px-1.5 py-0.5 text-[9px] font-medium text-(--text-muted)"
+              className="border-border-subtle bg-surface text-text-muted rounded border px-1.5 py-0.5 text-[9px] font-medium"
             >
               {tag}
             </span>
@@ -110,11 +109,7 @@ export function SkillsMap(): React.ReactElement {
   const tabs: Array<'All' | SkillPillar> = ['All', ...ALL_PILLARS]
 
   return (
-    <section className="space-y-6" aria-labelledby="skills-heading">
-      <h2 id="skills-heading" className="sr-only">
-        Technical skills by pillar
-      </h2>
-
+    <div className="space-y-6">
       {/* Filter tabs */}
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter skills by pillar">
         {tabs.map((tab) => {
@@ -126,13 +121,13 @@ export function SkillsMap(): React.ReactElement {
             <button
               key={tab}
               role="tab"
-              aria-selected={isActive}
+              aria-selected={isActive ? 'true' : 'false'}
               aria-controls="skills-grid"
               onClick={() => setActive(tab)}
-              className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-(--accent-primary) focus:ring-offset-1 focus:ring-offset-(--bg-base) focus:outline-none ${
+              className={`focus:ring-accent focus:ring-offset-bg rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                 isActive
-                  ? 'border-transparent bg-(--accent-primary) text-(--bg-base) shadow-sm'
-                  : 'border-(--border-default) bg-transparent text-(--text-secondary) hover:border-(--border-strong) hover:text-(--text-primary)'
+                  ? 'bg-accent text-bg border-transparent shadow-sm'
+                  : 'border-border text-text-secondary hover:border-border/60 hover:text-text-primary bg-transparent'
               } `}
             >
               {tab}
@@ -158,7 +153,7 @@ export function SkillsMap(): React.ReactElement {
         The element animates immediately on mount, not on scroll.
       */}
       <AnimatePresence mode="wait">
-        <motion.div
+          <m.div
           key={active}
           id="skills-grid"
           role="tabpanel"
@@ -168,34 +163,34 @@ export function SkillsMap(): React.ReactElement {
           exit={{ opacity: 0, y: -4 }}
           transition={prefersReduced ? { duration: 0 } : filterTransition}
         >
-          <div role="list" className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {filtered.map((skill, i) => (
-            <motion.div
-              key={skill.id}
-              initial={prefersReduced ? false : { opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={
-                prefersReduced
-                  ? { duration: 0 }
-                  : {
-                      delay: i * 0.02,
-                      duration: 0.2,
-                      ease: [0.16, 1, 0.3, 1],
-                    }
-              }
-            >
-              <SkillCard skill={skill} />
-            </motion.div>
-          ))}
-          </div>
-        </motion.div>
+          <ul className="grid list-none grid-cols-2 gap-2 p-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {filtered.map((skill, i) => (
+              <m.li
+                key={skill.id}
+                initial={prefersReduced ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={
+                  prefersReduced
+                    ? { duration: 0 }
+                    : {
+                        delay: i * 0.02,
+                        duration: 0.2,
+                        ease: [0.16, 1, 0.3, 1],
+                      }
+                }
+              >
+                <SkillCard skill={skill} />
+              </m.li>
+            ))}
+          </ul>
+</m.div>
       </AnimatePresence>
 
       {/* Live count */}
-      <p className="text-xs text-(--text-muted)" aria-live="polite" aria-atomic="true">
+      <p className="text-text-muted text-xs" aria-live="polite" aria-atomic="true">
         Showing {filtered.length} of {SKILLS.length} skills
         {active !== 'All' && ` in ${active}`}
       </p>
-    </section>
+    </div>
   );
 }

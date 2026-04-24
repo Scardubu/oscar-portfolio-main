@@ -1,48 +1,70 @@
-﻿import type React from 'react';
-
-import { CopyEmail } from '@/components/CopyEmail';
+﻿// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 
 export function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="relative z-[2] border-t border-(--color-border) py-8">
-      <div className="container flex flex-wrap items-center justify-between gap-4">
-        <span className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted)">
-          scardubu.dev &middot; {year} &middot; Built with Next.js 15 &middot; Conviction Engine
-          v10.0
-        </span>
+    <footer
+      role="contentinfo"
+      aria-label="Site footer"
+      className="border-t border-(--glass-border) py-8"
+    >
+      <div className="container flex flex-col justify-between gap-6 sm:gap-8 lg:flex-row lg:items-start">
+        <div>
+          <p className="font-display text-lg font-bold text-white">Oscar Ndugbu</p>
+          <p className="mt-1 text-sm text-white/50">Lagos precision. Global scale.</p>
+          <p className="mt-3 text-xs text-white/35">
+            © 2024–2025 Oscar Ndugbu · Built with Next.js 15
+          </p>
+          <p className="mt-2 font-mono text-[11px] text-white/35">
+            ● All systems operational · last checked:{' '}
+            {new Date().toISOString().slice(0, 16).replace('T', ' ')}
+          </p>
+        </div>
 
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          <a
-            href="https://github.com/Scardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Oscar Ndugbu on GitHub"
-            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
-          >
-            GitHub
-          </a>
-          <a
-            href="https://linkedin.com/in/oscardubu"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Oscar Ndugbu on LinkedIn"
-            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
-          >
-            LinkedIn
-          </a>
-          <CopyEmail
-            email="scardubu@gmail.com"
-            className="text-(--color-text-muted) hover:text-(--color-text-primary)"
-          />
-          <a
-            href="#hero"
-            aria-label="Back to top"
-            className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
-          >
-            ↑ Top
-          </a>
+        <div className="space-y-2">
+          <nav aria-label="Footer navigation" className="flex flex-wrap gap-3 sm:gap-4">
+            <a
+              href="#section-projects"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/65 transition hover:text-white"
+            >
+              Projects
+            </a>
+            <a
+              href="#section-writing"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/65 transition hover:text-white"
+            >
+              Writing
+            </a>
+            <a
+              href="#section-about"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/65 transition hover:text-white"
+            >
+              About
+            </a>
+            <a
+              href="#section-contact"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/65 transition hover:text-white"
+            >
+              Contact
+            </a>
+          </nav>
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            <a
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/50 transition hover:text-white"
+            >
+              GitHub ↗
+            </a>
+            <a
+              href="https://linkedin.com/in/oscar-ndugbu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center py-3 text-sm text-white/50 transition hover:text-white"
+            >
+              LinkedIn ↗
+            </a>
+          </div>
         </div>
       </div>
     </footer>

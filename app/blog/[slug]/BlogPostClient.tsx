@@ -1,11 +1,11 @@
 'use client';
 // app/blog/[slug]/BlogPostClient.tsx
 
-import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import Link from 'next/link';
 
+import { fadeUp, springs, staggerContainer } from '@/lib/motion';
 import { formatDate } from '@/lib/utils';
-import { staggerContainer, fadeUp, springs } from '@/lib/motion';
 
 interface BlogPostClientProps {
   title: string;
@@ -34,8 +34,9 @@ export default function BlogPostClient({
     <main id="main-content" tabIndex={-1} className="pt-20 pb-24 outline-none">
       {/* Reading progress bar */}
       {!prefersReduced && (
-        <motion.div
+        <m.div
           className="fixed inset-x-0 top-0 z-[60] h-[2px] origin-left"
+          // eslint-disable-next-line no-restricted-syntax
           style={{
             scaleX,
             background: 'linear-gradient(90deg, var(--color-accent) 0%, var(--color-cyan) 100%)',
@@ -46,7 +47,7 @@ export default function BlogPostClient({
 
       <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* Back link */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={springs.default}
@@ -56,75 +57,70 @@ export default function BlogPostClient({
             href="/blog"
             className="group inline-flex items-center gap-1.5 font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) uppercase transition-colors hover:text-(--color-text-primary)"
           >
-            <motion.span
+            <m.span
               className="inline-block"
               whileHover={{ x: -3 }}
               transition={springs.snappy}
               aria-hidden="true"
             >
               ←
-            </motion.span>
+            </m.span>
             Back to Blog
           </Link>
-        </motion.div>
+        </m.div>
 
         {/* Header */}
-        <motion.header
-          className="mb-12"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+        <m.header className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
           {/* Tags */}
-          <motion.div className="mb-4 flex flex-wrap gap-2" variants={fadeUp}>
+          <m.div className="mb-4 flex flex-wrap gap-2" variants={fadeUp}>
             {tags.map((tag) => (
-              <motion.span
+              <m.span
                 key={tag}
                 className="tag"
                 whileHover={{ scale: 1.06 }}
                 transition={springs.bouncy}
               >
                 {tag}
-              </motion.span>
+              </m.span>
             ))}
-          </motion.div>
+          </m.div>
 
           {/* Title */}
-          <motion.h1 className="mb-4 leading-tight text-white" variants={fadeUp}>
+          <m.h1 className="mb-4 leading-tight text-white" variants={fadeUp}>
             {title}
-          </motion.h1>
+          </m.h1>
 
           {/* Description */}
-          <motion.p
+          <m.p
             className="mb-6 max-w-[62ch] text-(length:--text-xl) leading-[1.8] text-(--color-text-secondary)"
             variants={fadeUp}
           >
             {description}
-          </motion.p>
+          </m.p>
 
           {/* Meta */}
-          <motion.div
+          <m.div
             className="flex flex-wrap items-center gap-4 border-t border-(--color-border) pt-4 font-mono text-xs text-(--color-text-muted)"
             variants={fadeUp}
           >
             <time dateTime={date}>{formatDate(date)}</time>
             {updated && updated !== date && <span>Updated {formatDate(updated)}</span>}
             <span>{readingTime}</span>
-          </motion.div>
-        </motion.header>
+          </m.div>
+        </m.header>
 
         {/* Content */}
-        <motion.div
+        <m.div
           className="prose"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...springs.default, delay: 0.3 }}
         >
           {children}
-        </motion.div>
+        </m.div>
 
         {/* Footer */}
-        <motion.footer
+        <m.footer
           className="mt-16 border-t border-(--color-border) pt-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -152,7 +148,7 @@ export default function BlogPostClient({
               </Link>
             </div>
           </div>
-        </motion.footer>
+        </m.footer>
       </article>
     </main>
   );

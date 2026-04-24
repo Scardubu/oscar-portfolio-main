@@ -1,15 +1,301 @@
 {
-  "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": [".github/workflows/*.{yml,yaml}"],
-    "https://json.schemastore.org/docker-compose.json": ["docker-compose*.{yml,yaml}"],
-    "https://json.schemastore.org/vercel.json": ["vercel.json"]
+  "//": "=================================================================",
+  "//": "OscarForge v3.2-apex — Unified Elite Workspace Configuration",
+  "//": "Now with MCP Integration",
+  "//": "=================================================================",
+
+  // ─────────────────────────────────────────────────────────────
+  // 🤖 Claude / OscarForge Agent
+  // ─────────────────────────────────────────────────────────────
+  "claude.agentFile": "./agents/oscarforge.agent.md",
+  "claude.skillsDirectory": "./agents/skills",
+  "claude.mcpConfigFile": "./agents/mcp.config.json",
+
+  "claude.contextFiles": [
+    "./agents/oscarforge.agent.md",
+    "./agents/skills/01-api-design-SKILL.md",
+    "./agents/skills/02-database-design-SKILL.md",
+    "./agents/skills/03-frontend-design-SKILL.md",
+    "./agents/skills/04-technical-writing-SKILL.md",
+    "./agents/skills/05-code-review-SKILL.md",
+    "./agents/skills/06-animation-SKILL.md",
+    "./agents/skills/07-seo-structured-data-SKILL.md"
+  ],
+
+  "claude.includeWorkspaceContext": true,
+  "claude.maxContextFiles": 12,
+  "claude.enableCaching": true,
+  "claude.model": "claude-sonnet-4-20250514",
+
+  // ─────────────────────────────────────────────────────────────
+  // ✏️ Editor Core
+  // ─────────────────────────────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.rulers": [100],
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 100,
+
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.guides.indentation": true,
+
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+  "editor.quickSuggestions": {
+    "strings": true,
+    "comments": false,
+    "other": true
   },
 
-  "yaml.validate": true,
-  "yaml.hover": true,
-  "yaml.completion": true,
-  "yaml.schemaStore.enable": true,
-  "yaml.format.enable": true,
-  "yaml.format.singleQuote": false,
-  "yaml.keyOrdering": false
+  "editor.linkedEditing": true,
+  "editor.stickyScroll.enabled": true,
+  "editor.minimap.enabled": false,
+  "editor.scrollBeyondLastLine": false,
+  "editor.suggest.insertMode": "replace",
+  "editor.acceptSuggestionOnCommitCharacter": false,
+
+  "editor.fontFamily": "'Geist Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 13,
+  "editor.lineHeight": 1.65,
+
+  // ─────────────────────────────────────────────────────────────
+  // 🟦 TypeScript
+  // ─────────────────────────────────────────────────────────────
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.tsserver.maxTsServerMemory": 4096,
+
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🟨 JavaScript
+  // ─────────────────────────────────────────────────────────────
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🎨 CSS / Tailwind
+  // ─────────────────────────────────────────────────────────────
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.suggest.insertMode": "replace"
+  },
+  "css.validate": false,
+  "scss.validate": false,
+
+  "tailwindCSS.experimental.configFile": "./tailwind.config.ts",
+  "tailwindCSS.validate": true,
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "class:list"],
+
+  // ─────────────────────────────────────────────────────────────
+  // 🧬 Prisma
+  // ─────────────────────────────────────────────────────────────
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 📝 Markdown / MDX
+  // ─────────────────────────────────────────────────────────────
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  "[mdx]": {
+    "editor.wordWrap": "on"
+  },
+  "markdown.preview.fontSize": 14,
+  "markdown.preview.lineHeight": 1.6,
+
+  // ─────────────────────────────────────────────────────────────
+  // 📦 JSON
+  // ─────────────────────────────────────────────────────────────
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🎨 Prettier
+  // ─────────────────────────────────────────────────────────────
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 100,
+  "prettier.tabWidth": 2,
+  "prettier.semi": true,
+  "prettier.arrowParens": "always",
+  "prettier.bracketSameLine": false,
+  "prettier.bracketSpacing": true,
+
+  // ─────────────────────────────────────────────────────────────
+  // 🧹 ESLint
+  // ─────────────────────────────────────────────────────────────
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.run": "onSave",
+  "eslint.alwaysShowStatus": true,
+
+  // ─────────────────────────────────────────────────────────────
+  // 📁 Files
+  // ─────────────────────────────────────────────────────────────
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.autoSave": "onFocusChange",
+
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true,
+    "**/.turbo": true,
+    "**/.vercel": true,
+    "**/.cache": true
+  },
+
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true,
+    "**/.pnpm-store": true
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🌿 Git
+  // ─────────────────────────────────────────────────────────────
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.autorefresh": true,
+  "git.decorations.enabled": true,
+
+  "gitlens.codeLens.enabled": true,
+  "gitlens.hovers.currentLine.over": "line",
+
+  // ─────────────────────────────────────────────────────────────
+  // 🖥️ Terminal
+  // ─────────────────────────────────────────────────────────────
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell",
+      "args": ["-NoLogo"]
+    },
+    "WSL": {
+      "path": "C:\\Windows\\System32\\wsl.exe",
+      "args": ["-d", "Ubuntu"]
+    }
+  },
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.lineHeight": 1.4,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.scrollback": 5000,
+  "terminal.integrated.fontFamily": "'Geist Mono', 'Cascadia Code', Consolas, monospace",
+
+  "terminal.integrated.env.windows": {
+    "PNPM_HOME": "${env:APPDATA}\\npm"
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🎛️ Workbench
+  // ─────────────────────────────────────────────────────────────
+  "workbench.colorTheme": "Dark Modern",
+  "workbench.iconTheme": "vs-seti",
+  "workbench.tree.indent": 16,
+  "workbench.editor.tabCloseButton": "right",
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.startupEditor": "none",
+  "workbench.editor.enablePreview": false,
+  "workbench.sideBar.location": "left",
+
+  // ─────────────────────────────────────────────────────────────
+  // 📂 Explorer
+  // ─────────────────────────────────────────────────────────────
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts, ${capture}.d.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
+    "package.json": "pnpm-lock.yaml, .npmrc, .nvmrc",
+    "tailwind.config.*": "postcss.config.*",
+    "tsconfig.json": "tsconfig.*.json"
+  },
+  "explorer.compactFolders": false,
+  "explorer.sortOrder": "type",
+
+  // ─────────────────────────────────────────────────────────────
+  // 🧪 REST Client
+  // ─────────────────────────────────────────────────────────────
+  "rest-client.environmentVariables": {
+    "development": {
+      "baseUrl": "http://localhost:3000",
+      "apiBase": "http://localhost:3000/api/v1"
+    },
+    "production": {
+      "baseUrl": "https://scardubu.dev",
+      "apiBase": "https://api.taxbridge.app/v1"
+    }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 🚨 Error Lens
+  // ─────────────────────────────────────────────────────────────
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "errorLens.followCursor": "activeLine",
+  "errorLens.delay": 300,
+  "workbench.editor.tabActionLocation": "right"
 }

@@ -71,11 +71,13 @@ function MetricCard({ item, index }: { item: MetricItem; index: number }) {
     <div
       ref={ref}
       role="listitem"
-      className={`glass-surface glass-chromatic-fringe metric-card-glass relative overflow-hidden ${item.pulse ? "breath-pulse" : ""}`}
+      className={`glass-surface glass-chromatic-fringe metric-card-glass relative overflow-hidden ${item.pulse ? 'breath-pulse' : ''}`}
+      // eslint-disable-next-line no-restricted-syntax
       style={{
-        padding: "var(--bento-pad)", borderRadius: "var(--bento-radius)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "transform 200ms ease-out",
+        padding: 'var(--bento-pad)',
+        borderRadius: 'var(--bento-radius)',
+        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'transform 200ms ease-out',
         animationDelay: `${index * 80}ms`,
       }}
       onMouseEnter={() => setHovered(true)}

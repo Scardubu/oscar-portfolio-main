@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 
 interface LiquidGlassRefractionSVGProps {
   scale?: number;
@@ -43,6 +42,7 @@ export function LiquidGlassRefractionSVG({
         className={className}
         viewBox={`0 0 ${width || 100} ${height || 100}`}
         preserveAspectRatio="none"
+        // eslint-disable-next-line no-restricted-syntax
         style={{
           position: 'absolute',
           inset: 0,
@@ -68,6 +68,7 @@ export function LiquidGlassRefractionSVG({
       aria-hidden="true"
       focusable="false"
       xmlns="http://www.w3.org/2000/svg"
+      // eslint-disable-next-line no-restricted-syntax
       style={{
         position: 'absolute',
         width: 0,

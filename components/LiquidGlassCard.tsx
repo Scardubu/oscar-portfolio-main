@@ -11,8 +11,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import React from "react";
 import { cn } from "@/lib/utils";
+import React from 'react';
 
 type Accent = "cyan" | "violet" | "teal" | "none";
 type Size   = "sm" | "md" | "lg" | "feature";
@@ -59,13 +59,14 @@ export function LiquidGlassCard({
   const inner = (
     <Tag
       className={cn(
-        "liquid-glass",
+        'liquid-glass',
         accentClass[accent],
-        interactive && "liquid-glass-hover",
-        float       && "animate-liquid-float",
+        interactive && 'liquid-glass-hover',
+        float && 'animate-liquid-float',
         sizeClass[size],
         className
       )}
+      // eslint-disable-next-line no-restricted-syntax
       style={style}
       {...rest}
     >

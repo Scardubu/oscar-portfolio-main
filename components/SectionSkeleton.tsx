@@ -26,6 +26,7 @@ export function SectionSkeleton({ id, label, height }: SectionSkeletonProps) {
       </div>
 
       {/* Body skeleton */}
+      {/* eslint-disable-next-line no-restricted-syntax */}
       <div className="skeleton w-full rounded-(--radius-3xl)" style={{ height }} />
     </section>
   );

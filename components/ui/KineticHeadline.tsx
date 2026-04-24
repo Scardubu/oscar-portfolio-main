@@ -9,7 +9,7 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface KineticHeadlineProps {
@@ -83,46 +83,36 @@ export default function KineticHeadline({
   const words = text.split(' ');
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      aria-label={text}
-    >
+    <m.div variants={containerVariants} initial="hidden" animate="visible" aria-label={text}>
       <Tag
-        className={cn(
-          'inline',
-          gradient && 'text-gradient-kinetic',
-          className
-        )}
+        className={cn('inline', gradient && 'text-gradient-kinetic', className)}
         aria-hidden="true"
       >
         {words.map((word, wi) => (
           <span key={wi} className="inline-block whitespace-nowrap">
             {word.split('').map((char, ci) => (
-              <motion.span
+              <m.span
                 key={ci}
                 variants={charVariant}
                 transition={charTransition}
-                className="inline-block"
-                style={{ transformOrigin: 'bottom center' }}
+                className="inline-block origin-bottom"
               >
                 {char}
-              </motion.span>
+              </m.span>
             ))}
             {/* Non-breaking space between words */}
             {wi < words.length - 1 && (
-              <motion.span
+              <m.span
                 variants={charVariant}
                 transition={charTransition}
                 className="inline-block"
               >
                 &nbsp;
-              </motion.span>
+              </m.span>
             )}
           </span>
         ))}
       </Tag>
-    </motion.div>
+    </m.div>
   );
 }

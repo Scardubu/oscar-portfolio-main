@@ -1,42 +1,33 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
+import { m, useInView, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useMemo, useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
 
-import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { CopyEmail } from '@/components/CopyEmail';
+import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
-interface EngagementMode {
-  type: string;
-  headline: string;
-  detail: string;
-  accent: 'live' | 'accent' | 'wip';
-}
-
-const engagementModes: EngagementMode[] = [
+const CONTACT_CARDS = [
   {
-    type: 'Staff+ / Principal',
+    title: 'STAFF+ / PRINCIPAL',
     headline: 'Product delivery · APIs · data infrastructure',
-    detail:
-      'Available for Staff+ principal backend engineering roles at fintech and product companies. Four years of independent platform work — multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
-    accent: 'live',
+    body: 'Available for Staff+ and Principal Backend roles at fintech and AI-native product companies. Four years of independent platform work — user-facing product surfaces, multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
+    border: 'border-l-emerald-400',
   },
   {
-    type: 'Technical Co-Founder',
+    title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
-    detail:
-      'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds. The system should outlast the seed deck.',
-    accent: 'accent',
+    body: 'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds. The system should outlast the seed deck.',
+    border: 'border-l-blue-500',
   },
   {
-    type: 'Infrastructure Consulting',
-    headline: 'SRE · Reliability · Performance engineering',
-    detail:
-      'Incident reduction, Prometheus/Grafana observability stacks, and latency optimisation. SabiScore achieved 45% MTTD improvement and 30% inference latency reduction. Engagements scoped to specific reliability problems with measurable outcomes.',
-    accent: 'wip',
+    title: 'INFRASTRUCTURE CONSULTING',
+    headline: 'Production reliability · compliance systems · ML backends',
+    body: 'Scoped engagements: production incident remediation, architecture review, Nigerian tax compliance integration (NTA 2025 / NRS 2026), and ML inference pipeline optimisation. Deliverable-led, not hourly.',
+    border: 'border-l-violet-500',
   },
-];
+] as const;
 
 function GitHubIcon() {
   return (
@@ -63,57 +54,40 @@ export function ContactSection() {
   const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      aria-labelledby="contact-heading"
-      className="border-t border-(--color-border) py-28 sm:py-32"
-    >
+    <section id="contact" ref={ref} className="border-t border-(--color-border) py-28 sm:py-32">
       <div className="container">
-        <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <motion.div variants={child} className="mb-2 flex items-center gap-3">
-            <span className="label">
-              <span
-                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
-                aria-hidden="true"
-              >
-                05 —
-              </span>
-              Contact
-            </span>
-          </motion.div>
-          <motion.div
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <m.div
             variants={child}
             className="pill pill-cyan inline-flex items-center gap-3"
             role="status"
           >
             <span className="dot-live" aria-hidden="true" />
             Open — responding within 48hrs
-          </motion.div>
+          </m.div>
 
           <div className="mt-8 max-w-3xl">
-            <motion.h2
+            <m.h2
               variants={child}
-              id="contact-heading"
+              id="section-contact"
               className="gradient-text text-4xl sm:text-5xl"
             >
-              Start a conversation
-            </motion.h2>
-            <motion.p
+              Start a conversation.
+            </m.h2>
+            <m.p
               variants={child}
-              className="font-display mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8] text-white/70"
+              className="mt-5 max-w-[62ch] text-base leading-8 text-white/72 sm:text-lg"
             >
-              Available for Staff+ roles, technical co-founding, and scoped ML consulting where
-              reliability is a requirement rather than a nice-to-have.
-            </motion.p>
+              Available for both sides: technical co-founders and hiring managers.
+            </m.p>
           </div>
 
           <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {engagementModes.map((mode) => (
-              <motion.div
-                key={mode.type}
+            {CONTACT_CARDS.map((mode) => (
+              <m.article
+                key={mode.title}
                 variants={card}
-                data-accent={mode.accent}
+                data-accent={mode.title.toLowerCase()}
                 whileHover={
                   reducedMotion
                     ? undefined
@@ -123,16 +97,18 @@ export function ContactSection() {
                         transition: { type: 'spring', stiffness: 400, damping: 30 },
                       }
                 }
-                className="glass glass-medium cursor-default rounded-(--radius-lg) border border-(--glass-border) p-6 sm:p-7"
+                className={`glass-surface rounded-(--radius-lg) border border-l-2 border-(--glass-border) ${mode.border}`}
               >
-                <p className="label">{mode.type}</p>
-                <h3 className="font-display mt-5 font-semibold text-white">{mode.headline}</h3>
-                <p className="font-display mt-4 text-base leading-8 text-white/75">{mode.detail}</p>
-              </motion.div>
+                <p className="font-mono text-[11px] tracking-widest text-white/65 uppercase">
+                  {mode.title}
+                </p>
+                <h3 className="mt-4 text-xl font-semibold text-white">{mode.headline}</h3>
+                <p className="mt-4 text-sm leading-7 text-white/75">{mode.body}</p>
+              </m.article>
             ))}
           </div>
 
-          <motion.div
+          <m.div
             variants={child}
             className="mt-12 flex flex-wrap items-center gap-3 border-t border-(--color-border) pt-8 sm:gap-4"
           >
@@ -142,12 +118,12 @@ export function ContactSection() {
             />
 
             <Link
-              href="https://linkedin.com/in/oscardubu"
+              href="https://linkedin.com/in/oscar-ndugbu"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on LinkedIn"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
+              className="border-border text-text-secondary inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border px-5 py-3.5 font-mono text-xs font-medium uppercase transition"
             >
               <LinkedInIcon />
               LinkedIn
@@ -158,19 +134,19 @@ export function ContactSection() {
               rel="noopener noreferrer"
               aria-label="Oscar Ndugbu on GitHub"
               data-cta="secondary"
-              className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border border-(--color-border) px-5 py-3.5 font-mono text-xs font-medium text-(--color-text-secondary) uppercase transition"
+              className="border-border text-text-secondary inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border px-5 py-3.5 font-mono text-xs font-medium uppercase transition"
             >
               <GitHubIcon />
               GitHub
             </Link>
             <a
               href="tel:+2348033885065"
-              className="font-mono text-xs tracking-(--tracking-wide) text-(--color-text-muted) transition-colors hover:text-(--color-text-primary) sm:ml-1"
+              className="text-text-muted hover:text-text-primary font-body text-sm transition-colors sm:ml-1"
             >
               +234 803 388 5065
             </a>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </div>
     </section>
   );

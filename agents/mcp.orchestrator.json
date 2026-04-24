@@ -1,0 +1,23 @@
+{
+  "routing": {
+    "search": ["brave-search"],
+    "web": ["brave-search"],
+    "research": ["brave-search"],
+
+    "read_file": ["filesystem"],
+    "write_file": ["filesystem"],
+    "list_files": ["filesystem"]
+  },
+
+  "fallbacks": {
+    "search": [],
+    "read_file": [],
+    "write_file": []
+  },
+
+  "policies": {
+    "preferLocal": true,
+    "maxRetries": 2,
+    "timeoutStrategy": "adaptive"
+  }
+}

@@ -1,13 +1,23 @@
 import js from '@eslint/js';
-import next from 'eslint-config-next';
+import nextPlugin from '@next/eslint-plugin-next';
 import tseslint from 'typescript-eslint';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default [
+  // Ignore auto-generated and OG image files (Satori requires inline styles)
+  {
+    ignores: [
+      'next-env.d.ts',
+      '.next/**',
+      '**/og/route.tsx',
+      '**/og/route.ts',
+      'components/OGImage.tsx',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  ...next,
+  nextPlugin.flatConfig.recommended,
   {
     plugins: {
       'react-hooks': pluginReactHooks,
@@ -17,9 +27,11 @@ export default [
     rules: {
       /**
        * CORE SAFETY
+       * Note: base no-unused-vars is turned off in favour of the TypeScript-aware
+       * version which correctly handles interface parameter names, overloads, etc.
        */
-      'no-unused-vars': 'error',
-      '@typescript-eslint/no-unused-vars': ['error'],
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'error',
 
       /**
@@ -41,14 +53,8 @@ export default [
         },
       ],
 
-      // ❌ Prevent arbitrary spacing values (Tailwind drift)
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: ['../*', '../../*', '../../../*'],
-          message: 'Use path aliases instead of relative imports.',
-        },
-      ],
+      // ❌ Prevent arbitrary relative imports and enforce path aliases.
+      'no-restricted-imports': ['error', { patterns: ['../*', '../../*', '../../../*'] }],
 
       /**
        * ACCESSIBILITY

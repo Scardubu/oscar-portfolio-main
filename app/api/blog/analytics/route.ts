@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         cache: "no-store",
       });
     } else if (process.env.NODE_ENV !== "production") {
-      console.info("[blog analytics]", record);
+      console.warn('[blog analytics]', JSON.stringify(record));
     }
 
     return NextResponse.json({ ok: true });

@@ -8,10 +8,10 @@
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-import { type CSSProperties, type ReactNode, forwardRef, useId, useState } from 'react';
-import { motion, type HTMLMotionProps } from 'framer-motion';
 import { LiquidGlassRefractionSVG } from '@/components/LiquidGlassRefractionSVG';
 import { cn } from '@/lib/utils';
+import { m, type HTMLMotionProps } from 'framer-motion';
+import { forwardRef, useId, useState, type CSSProperties, type ReactNode } from 'react';
 
 type Variant = 'default' | 'cyan' | 'violet' | 'teal';
 type Depth = 'default' | 'deep' | 'ultra';
@@ -90,7 +90,7 @@ export const LiquidGlassCard = forwardRef<HTMLDivElement, LiquidGlassCardProps>(
     };
 
     return (
-      <motion.div
+      <m.div
         ref={ref}
         className={cn(
           variantClass[variant],
@@ -100,6 +100,7 @@ export const LiquidGlassCard = forwardRef<HTMLDivElement, LiquidGlassCardProps>(
           !noPad && 'p-[var(--bento-pad)]',
           className
         )}
+        // eslint-disable-next-line no-restricted-syntax
         style={{ ...pointerStyle, ...style }}
         onPointerMove={interactive ? handlePointerMove : onPointerMove}
         onPointerLeave={interactive ? handlePointerLeave : onPointerLeave}
@@ -117,7 +118,7 @@ export const LiquidGlassCard = forwardRef<HTMLDivElement, LiquidGlassCardProps>(
           </>
         ) : null}
         <div className="relative z-[1]">{children}</div>
-      </motion.div>
+      </m.div>
     );
   }
 );

@@ -1,26 +1,15 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
+import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
 
 import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
-
-const ABOUT = {
-  opening:
-    "Fullstack engineer and platform architect with four years of independent product and consulting work — and over a decade building critical data infrastructure within Nigeria's federal public sector.",
-  philosophy:
-    'Non-CS degree, FUTO Environmental Technology 2011. Credibility built through production engineering, four cloud certifications (AWS, GCP, OpenJS Node.js, PostgreSQL), and 15+ merged upstream contributions to XGBoost and scikit-learn — third-party, verifiable signals.',
-  ubec:
-    'At UBEC — the Universal Basic Education Commission — working in the Planning, Research and Statistics department. Building the ETL pipelines and dashboards that consolidate national education data from all 36 state offices and feed federal budget allocation decisions.',
-  current:
-    'Currently consulting across fintech and SaaS teams in West Africa and Europe — shipping fullstack features, resolving reliability issues, and building internal tooling alongside CTOs and senior engineers.',
-  location: 'Lagos, Nigeria — open to remote.',
-} as const;
 
 const CERTS = [
   { name: 'AWS Certified Developer', date: 'Dec 2023' },
   { name: 'GCP Associate Cloud Engineer', date: 'Aug 2023' },
-  { name: 'OpenJS Node.js Services (JSNSD)', date: 'May 2024' },
+  { name: 'OpenJS Node.js Services Developer (JSNSD)', date: 'May 2024' },
   { name: 'PostgreSQL 14 Associate', date: 'Mar 2024' },
 ] as const;
 
@@ -32,106 +21,93 @@ export function AboutSection() {
   const child = reducedMotion ? noMotion : fadeRise;
 
   return (
-    <section
-      id="about"
-      ref={ref}
-      aria-labelledby="about-heading"
-      className="border-t border-(--color-border) py-28 sm:py-32"
-    >
+    <section id="about" ref={ref} className="border-t border-(--color-border) py-24 sm:py-28">
       <div className="container">
-        <motion.div
+        <m.div
           variants={container}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="about-grid grid gap-16 lg:items-start"
+          className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start"
         >
           <div>
-            <motion.span variants={child} className="label">
-              <span
-                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
-                aria-hidden="true"
-              >
-                04 —
-              </span>
-              Background
-            </motion.span>
-            <motion.h2 variants={child} id="about-heading" className="mt-4 text-white">
-              The system has to work at 2am.
-            </motion.h2>
-            <motion.p
+            <m.p
               variants={child}
-              className="mt-3 font-mono text-xs tracking-widest text-(--color-text-muted) uppercase"
+              className="font-mono text-[11px] tracking-widest text-cyan-400 uppercase"
             >
+              BACKGROUND
+            </m.p>
+            <m.h2 variants={child} id="section-about" className="mt-4 text-white">
+              The system has to work at 2am.
+            </m.h2>
+            <m.p variants={child} className="mt-3 text-xl text-white/72">
               {"That's not a slogan. It's a design constraint."}
-            </motion.p>
+            </m.p>
 
-            <div className="mt-8 space-y-6">
-              {[ABOUT.opening, ABOUT.philosophy, ABOUT.ubec, ABOUT.current].map((paragraph) => (
-                <motion.p
-                  key={paragraph}
-                  variants={child}
-                  className="font-display max-w-[66ch] text-(length:--text-xl) leading-[1.85] font-normal text-(--color-text-secondary)"
-                >
-                  {paragraph}
-                </motion.p>
-              ))}
-              <motion.p variants={child} className="label pt-3 text-(--color-live)">
-                {ABOUT.location}
-              </motion.p>
+            <m.p
+              variants={child}
+              className="mt-6 max-w-(--max-width-prose) text-base leading-8 text-white/78"
+            >
+              Fullstack engineer and platform architect with four years of independent product and
+              consulting work — shipping a tax compliance platform, an AI-powered observability
+              tool, and an encrypted blockchain data system.
+            </m.p>
 
-              <div className="mt-12">
-                <motion.span variants={child} className="label">
-                  Experience
-                </motion.span>
-                <div className="mt-6 space-y-8">
-                  <motion.div variants={child}>
-                    <p className="mb-1 font-mono text-xs tracking-widest text-(--color-accent) uppercase">
-                      Federal Civil Service · UBEC
-                    </p>
-                    <p className="mb-2 text-base leading-snug font-medium text-white">
-                      Planning, Research &amp; Statistics — ETL &amp; Data Infrastructure
-                    </p>
-                    <p className="max-w-[56ch] text-sm leading-7 text-(--color-text-secondary)">
-                      Building the pipelines that consolidate national education data from all 36
-                      state offices, feeding federal budget allocation decisions.
-                    </p>
-                  </motion.div>
-                  <motion.div variants={child}>
-                    <p className="mb-1 font-mono text-xs tracking-widest text-(--color-accent) uppercase">
-                      2021 – Present · West Africa &amp; Europe
-                    </p>
-                    <p className="mb-2 text-base leading-snug font-medium text-white">
-                      Independent Consulting — Fullstack Systems &amp; Reliability
-                    </p>
-                    <p className="max-w-[56ch] text-sm leading-7 text-(--color-text-secondary)">
-                      Shipping fullstack features, resolving reliability issues, and building
-                      internal tooling alongside CTOs and senior engineers across fintech and SaaS
-                      teams.
-                    </p>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
+            <m.p
+              variants={child}
+              className="mt-5 max-w-(--max-width-prose) text-base leading-8 text-white/72"
+            >
+              Before that, over a decade building and maintaining critical data infrastructure
+              within Nigeria&apos;s federal public sector — UBEC — managing ETL pipelines,
+              dashboards, and state-level federal budget allocation systems touching every state in
+              the country, and West Africa and Europe.
+            </m.p>
+
+            <m.p
+              variants={child}
+              className="mt-5 max-w-(--max-width-prose) text-base leading-8 text-white/72"
+            >
+              Non-CS academic background (B.Tech Environmental Technology, FUTO, 2006–2011).
+              Technical credibility built through a decade of production-grade engineering, four
+              active cloud certifications, and 15+ merged upstream contributions.
+            </m.p>
+
+            <m.div
+              variants={child}
+              className="glass-surface mt-8 rounded-(--radius-lg) border-l-2 border-l-cyan-400"
+            >
+              <p className="text-sm leading-7 text-white/78">
+                During my time at Nigeria&apos;s Universal Basic Education Commission, I built the
+                data systems that tracked school funding across every Nigerian state — federal-scale
+                infrastructure, not side projects.
+              </p>
+            </m.div>
+
+            <m.p variants={child} className="mt-8 text-lg text-white/78">
+              Lagos precision. Global scale.
+            </m.p>
           </div>
 
           <div>
-            <motion.span variants={child} className="label">
+            <m.h3
+              variants={child}
+              className="font-body text-sm tracking-widest text-white/80 uppercase"
+            >
               Certifications
-            </motion.span>
-            <div className="mt-8 space-y-1">
+            </m.h3>
+            <div className="mt-6 space-y-3">
               {CERTS.map((cert) => (
-                <motion.div
+                <m.article
                   key={cert.name}
                   variants={child}
-                  className="flex items-center justify-between gap-4 border-b border-(--color-border) py-4 transition-colors hover:bg-white/[0.02]"
+                  className="glass-surface rounded-(--radius-md)"
                 >
-                  <p className="font-display text-base font-medium text-white">{cert.name}</p>
-                  <p className="font-mono text-xs text-(--color-text-muted)">{cert.date}</p>
-                </motion.div>
+                  <p className="text-sm font-medium text-white">{cert.name}</p>
+                  <p className="mt-1 font-mono text-[11px] text-white/55">{cert.date}</p>
+                </m.article>
               ))}
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

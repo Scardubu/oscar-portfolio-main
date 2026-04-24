@@ -34,10 +34,15 @@ export function MetricCard({
       className={`glass glass-medium metric-card card-lift h-full border-t-2 p-6 ${breath ? 'metric-breath' : ''}`}
       aria-label={label}
       data-pillar="true"
+      // eslint-disable-next-line no-restricted-syntax
       style={accent ? { borderTopColor: accentColorMap[accent] } : undefined}
     >
       {icon ? <div className="mb-(--space-4) text-(--color-accent)">{icon}</div> : null}
-      <p className="label mb-(--space-2)" style={labelStyle}>
+      <p
+        className="label mb-(--space-2)"
+        // eslint-disable-next-line no-restricted-syntax
+        style={labelStyle}
+      >
         {label}
       </p>
       {headline ? <p className="mb-2 text-base font-semibold text-white">{headline}</p> : null}

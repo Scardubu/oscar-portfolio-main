@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import { fadeIn, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
@@ -104,7 +104,7 @@ export function MetricBadge({
   const rest = prefix ? data.value.slice(1) : data.value
 
   return (
-    <motion.div
+    <m.div
       variants={shouldAnimate ? fadeIn : {}}
       initial={shouldAnimate ? 'hidden' : false}
       whileInView={shouldAnimate ? 'visible' : undefined}
@@ -148,6 +148,6 @@ export function MetricBadge({
           <span className="opacity-60">· {data.sourceLabel}</span>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

@@ -39,19 +39,18 @@ export function KineticHeadline({
 
   return (
     <span
-      className={cn("inline-block overflow-hidden align-bottom", className)}
+      className={cn('inline-block overflow-hidden align-bottom', className)}
       aria-live="polite"
       aria-atomic="true"
     >
       <span
         key={current}
         className={cn(
-          "inline-block text-gradient-kinetic",
-          !reduced && "transition-all duration-350",
-          animating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0",
+          'font-display text-gradient-kinetic inline-block',
+          !reduced && 'transition-all duration-350',
+          animating ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100',
           wordClassName
         )}
-        style={{ fontFamily: "var(--font-syne, sans-serif)" }}
       >
         {word}
       </span>

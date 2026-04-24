@@ -1,4 +1,5 @@
-﻿'use client';
+﻿// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+'use client';
 // components/NavBar.tsx
 //
 // Conviction-engine nav:
@@ -9,16 +10,22 @@
 //   - WCAG AA: aria-expanded, aria-controls, aria-current, aria-label
 //
 
+import { SystemStatus } from '@/components/SystemStatus';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { mobileMenu, mobileMenuItem, mobileMenuItems, springs } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { SystemStatus } from '@/components/SystemStatus';
-import { cn } from '@/lib/utils';
-import { mobileMenu, mobileMenuItems, mobileMenuItem, springs } from '@/lib/motion';
 
-const SECTION_LINKS = ['projects', 'writing', 'skills', 'about', 'contact'] as const;
+const SECTION_LINKS = [
+  'section-projects',
+  'section-writing',
+  'skills',
+  'section-about',
+  'section-contact',
+] as const;
 const MOBILE_NAV_ID = 'mobile-navigation';
 
 function openCommandPalette() {
@@ -26,11 +33,11 @@ function openCommandPalette() {
 }
 
 const NAV_LINKS = [
-  { label: 'Projects', href: 'projects' },
-  { label: 'Writing', href: 'writing' },
+  { label: 'Projects', href: 'section-projects' },
+  { label: 'Writing', href: 'section-writing' },
   { label: 'Skills', href: 'skills' },
-  { label: 'About', href: 'about' },
-  { label: 'Contact', href: 'contact' },
+  { label: 'About', href: 'section-about' },
+  { label: 'Contact', href: 'section-contact' },
 ] as const;
 
 function resolveSectionHref(pathname: string, section: string) {
@@ -302,7 +309,7 @@ export function NavBar() {
       role="banner"
     >
       <nav
-        className="container grid h-[var(--nav-height)] grid-cols-[auto_1fr_auto] items-center gap-5"
+        className="container grid h-(--nav-height) grid-cols-[auto_1fr_auto] items-center gap-5"
         aria-label="Primary"
       >
         <m.div
@@ -317,7 +324,7 @@ export function NavBar() {
             className="flex items-center gap-3.5"
             aria-label="Oscar Ndugbu home"
           >
-            <span className="text-[1.05rem] font-[var(--font-display)] font-bold tracking-[-0.03em] text-white">
+            <span className="text-[1.05rem] font-(--font-display) font-bold tracking-[-0.03em] text-white">
               Oscar<span className="text-(--color-accent)">.</span>
             </span>
             <span
@@ -361,7 +368,7 @@ export function NavBar() {
               type="button"
               onClick={openCommandPalette}
               aria-label="Open command palette"
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-(--color-text-muted) transition hover:text-(--color-text-primary)"
+              className="text-text-muted hover:text-text-primary inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition"
             >
               {paletteShortcut}
             </button>
@@ -392,7 +399,7 @@ export function NavBar() {
             <m.button
               type="button"
               aria-label="Close navigation overlay"
-              className="fixed inset-0 top-[var(--nav-height)] z-[-1] bg-black/40 md:hidden"
+              className="fixed inset-0 top-(--nav-height) z-[-1] bg-black/40 md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

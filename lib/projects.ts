@@ -39,9 +39,13 @@ export const PROJECTS: readonly Project[] = [
     ],
     stack: [
       'Fastify 5',
+      'Java 17',
+      'Spring Boot 3',
       'PostgreSQL 15 RLS',
       'Redis 7',
       'BullMQ',
+      'React Native',
+      'Turborepo',
       'GraphQL',
       'Prisma',
       'TypeScript',

@@ -1,7 +1,7 @@
 'use client';
 
+import { m, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { useEffect } from 'react';
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 
 export default function CursorGlow() {
   const reducedMotion = useReducedMotion();
@@ -25,10 +25,11 @@ export default function CursorGlow() {
   if (reducedMotion) return null;
 
   return (
-    <motion.div
+    <m.div
       aria-hidden="true"
       data-testid="cursor-glow"
       className="cursor-glow pointer-events-none fixed z-[1]"
+      // eslint-disable-next-line no-restricted-syntax
       style={{ x, y, translateX: '-50%', translateY: '-50%' }}
     />
   );

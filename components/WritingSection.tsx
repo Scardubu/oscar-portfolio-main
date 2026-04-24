@@ -1,8 +1,9 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
-import Link from 'next/link';
+import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
+import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 
 import type { WritingPost } from '@/lib/content';
@@ -31,38 +32,38 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
   return (
     <section
-      id="writing"
+      id="section-writing"
       ref={ref}
       aria-labelledby="writing-heading"
       className="border-t border-(--color-border) py-28 sm:py-32"
     >
       <div className="container">
-        <motion.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <motion.div variants={child} className="mb-12 max-w-4xl">
-            <motion.span variants={child} className="label">
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+          <m.div variants={child} className="mb-12 max-w-4xl">
+            <m.span variants={child} className="label">
               <span
                 className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
                 aria-hidden="true"
               >
-                03 —
+                05 —
               </span>
               THE CUT
-            </motion.span>
-            <motion.h2 variants={child} id="writing-heading" className="mt-(--space-2) text-white">
+            </m.span>
+            <m.h2 variants={child} id="writing-heading" className="mt-(--space-2) text-white">
               Engineering in depth
-            </motion.h2>
-            <motion.p
+            </m.h2>
+            <m.p
               variants={child}
               className="mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8]"
             >
               Long-form breakdowns of shipping decisions, platform constraints, and what continues
               to hold when production stops being polite.
-            </motion.p>
-            <motion.div variants={child} className="mt-6 flex flex-wrap gap-2.5">
+            </m.p>
+            <m.div variants={child} className="mt-6 flex flex-wrap gap-2.5">
               <button
                 type="button"
                 onClick={() => setActiveFilter('ALL')}
-                aria-pressed={activeFilter === 'ALL'}
+                aria-pressed={activeFilter === 'ALL' ? 'true' : 'false'}
                 className={`tag cursor-pointer ${activeFilter === 'ALL' ? 'tag--active' : ''}`}
               >
                 ALL
@@ -72,18 +73,18 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   key={label}
                   type="button"
                   onClick={() => setActiveFilter(label)}
-                  aria-pressed={activeFilter === label}
+                  aria-pressed={activeFilter === label ? 'true' : 'false'}
                   className={`tag cursor-pointer ${activeFilter === label ? 'tag--active' : ''}`}
                 >
                   {label}
                 </button>
               ))}
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {featuredPost ? (
             <div className="grid gap-6">
-              <motion.article
+              <m.article
                 variants={card}
                 className="glass glass-full glass-chromatic rounded-(--radius-xl) p-7 sm:p-9 lg:p-10"
               >
@@ -92,7 +93,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   <span className="badge-muted">{posts.length} published</span>
                 </div>
                 <h3 className="mt-6 max-w-[20ch] text-white">{featuredPost.title}</h3>
-                <p className="mt-5 max-w-[68ch] text-lg leading-8 text-(--color-text-secondary)">
+                <p className="text-text-secondary mt-5 max-w-[68ch] text-lg leading-8">
                   {featuredPost.summary}
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-(--color-text-muted)">
@@ -114,20 +115,20 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   <span>Read article</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-              </motion.article>
+              </m.article>
 
               {otherPosts.length ? (
-                <motion.div variants={container} className="grid gap-3">
+                <m.div variants={container} className="grid gap-3">
                   <AnimatePresence mode="popLayout">
                     {otherPosts.map((post) => (
-                      <motion.div
+                      <m.div
                         key={post.slug}
                         variants={card}
                         exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                         layout
                       >
                         <Link href={`/writing/${post.slug}`} className="block">
-                          <motion.article
+                          <m.article
                             whileHover={
                               reducedMotion
                                 ? undefined
@@ -158,17 +159,17 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                             <span className="text-xs whitespace-nowrap text-(--color-text-muted)">
                               {post.readingTime} min read
                             </span>
-                          </motion.article>
+                          </m.article>
                         </Link>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </AnimatePresence>
-                </motion.div>
+                </m.div>
               ) : null}
             </div>
           ) : null}
 
-          <motion.div variants={child} className="mt-(--space-8)">
+          <m.div variants={child} className="mt-(--space-8)">
             <Link
               href="/writing"
               className="pill pill-cyan inline-flex items-center gap-2 transition hover:-translate-y-px"
@@ -176,8 +177,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <span>View all writing ({posts.length})</span>
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </div>
     </section>
   );

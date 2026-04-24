@@ -7,8 +7,7 @@
 //   3. Reduced-motion guard at React level
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useReducedMotion } from "framer-motion";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence, useEffect, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { pageTransition } from "@/lib/motion";
 
@@ -44,7 +43,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <m.div
         key={pathname}
         variants={prefersReduced ? undefined : pageTransition}
         initial="hidden"
@@ -52,7 +51,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         exit="exit"
       >
         {children}
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

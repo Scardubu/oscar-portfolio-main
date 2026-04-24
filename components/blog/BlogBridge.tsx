@@ -16,7 +16,7 @@
  */
 
 import * as React from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import { fadeUp, viewportOnce }     from '@/lib/motion'
 import { blogUrl }                  from '@/lib/config'
 import type { BlogArticleRef, BadgeType } from '@/lib/types'
@@ -69,7 +69,7 @@ export function BlogBridge({
   })
 
   return (
-    <motion.a
+    <m.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
@@ -127,6 +127,6 @@ export function BlogBridge({
           Read the implementation →
         </span>
       </div>
-    </motion.a>
+    </m.a>
   );
 }

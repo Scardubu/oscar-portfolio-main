@@ -1,0 +1,67 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema.json",
+
+  "global": {
+    "timeout": 30000,
+    "retries": 2,
+    "logLevel": "info"
+  },
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\USR\\Documents\\oscar-portfolio-main.github"
+      ],
+
+      "env": {
+        "MCP_FILESYSTEM_MODE": "workspace",
+        "MCP_FILESYSTEM_READONLY": "false"
+      },
+
+      "timeout": 20000,
+      "restart": "on-failure",
+
+      "meta": {
+        "capabilities": ["read", "write", "list", "search"],
+        "priority": 1,
+        "domain": "local"
+      }
+    },
+
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+
+      "env": {
+        "BRAVE_API_KEY": "${env:BRAVE_API_KEY}",
+        "MCP_CACHE_TTL": "300"
+      },
+
+      "timeout": 15000,
+      "restart": "on-failure",
+
+      "meta": {
+        "capabilities": ["search", "web", "news"],
+        "priority": 2,
+        "domain": "external"
+      }
+    },
+
+    "local-exec": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-command"],
+
+      "timeout": 20000,
+      "restart": "on-failure",
+
+      "meta": {
+        "capabilities": ["exec", "run", "build"],
+        "priority": 1,
+        "domain": "local"
+      }
+    }
+  }
+}

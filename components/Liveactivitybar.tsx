@@ -1,3 +1,4 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -68,7 +69,11 @@ export function LiveActivityBar() {
   }, []);
 
   if (loading) {
-    return <div aria-label="Loading recent activity"><Skeleton width={280} height={16} /></div>;
+    return (
+      <div aria-label="Loading recent activity">
+        <Skeleton width={280} height={16} />
+      </div>
+    );
   }
 
   if (!activity) {
@@ -79,16 +84,16 @@ export function LiveActivityBar() {
     <p
       role="status"
       aria-live="polite"
-      className="mt-2 flex items-center gap-2 overflow-hidden text-sm text-(--color-text-muted)"
+      aria-atomic="false"
+      aria-label="Latest commit activity"
+      className="text-text-muted mt-2 flex items-center gap-2 overflow-hidden text-sm"
     >
       <span aria-hidden="true" className="dot-live h-[6px] w-[6px]" />
       {activity.sha && activity.sha !== 'unknown' ? (
-        <span className="font-mono text-[11px] text-(--color-text-secondary) uppercase">
-          {activity.sha}
-        </span>
+        <span className="text-text-secondary font-mono text-[11px] uppercase">{activity.sha}</span>
       ) : null}
       <span
-        className="[display:-webkit-box] min-w-0 flex-1 overflow-hidden leading-snug text-(--color-text-secondary) [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+        className="text-text-secondary min-w-0 flex-1 overflow-hidden leading-snug text-ellipsis whitespace-nowrap"
         title={activity.message ?? typeLabel(activity.type)}
       >
         {activity.message ?? typeLabel(activity.type)}

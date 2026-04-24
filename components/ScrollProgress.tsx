@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion';
+import { m, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { useState } from 'react';
 
 export function ScrollProgress() {
@@ -23,7 +23,7 @@ export function ScrollProgress() {
   });
 
   return (
-    <motion.div
+    <m.div
       role="progressbar"
       aria-label="Page reading progress"
       aria-valuemin={0}
@@ -31,6 +31,7 @@ export function ScrollProgress() {
       aria-valuenow={progressValue}
       data-testid="scroll-progress"
       className="fixed top-0 right-0 left-0 z-[60] h-[2px] origin-left bg-(--color-accent)"
+      // eslint-disable-next-line no-restricted-syntax
       style={{ scaleX: reducedMotion ? 0 : springProgress }}
     />
   );

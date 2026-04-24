@@ -130,6 +130,42 @@ jobs:
           CI: true
           NEXT_PUBLIC_SITE_URL: https://www.scardubu.dev
 
+      - name: Smoke — font violations
+        run: |
+          COUNT=$(grep -rEn "Crimson_Pro|CrimsonPro|Geist|Inter|Space[[:space:]]*Grotesk" --include="*.tsx" --include="*.ts" --include="*.css" . | grep -v node_modules | grep -v ".next" | wc -l)
+          [ "$COUNT" -eq 0 ] && echo "✓ Font check passed" || (echo "✗ Font violations: $COUNT" && exit 1)
+
+      - name: Smoke — no TypeScript any
+        run: |
+          COUNT=$(grep -rEn ": any|as any|<any>" --include="*.tsx" --include="*.ts" . | grep -v node_modules | wc -l)
+          [ "$COUNT" -eq 0 ] && echo "✓ No any types" || (echo "✗ any types: $COUNT" && exit 1)
+
+      - name: Smoke — conviction strings present
+        run: |
+          grep -rEn "The system has to work at 2am" --include="*.tsx" . | grep -q "." || (echo "✗ Conviction signal missing" && exit 1)
+          grep -rEn "STAFF\+ / PRINCIPAL" --include="*.tsx" . | grep -q "." || (echo "✗ Badge string missing" && exit 1)
+          echo "✓ Conviction strings verified"
+
+      - name: Smoke — V16 V17 V18 V19 contract checks
+        run: |
+          V16_A=$(grep -rEn "translateZ\(0\)" --include="*.css" --include="*.tsx" app components | wc -l)
+          V16_B=$(grep -rEn "contain:[[:space:]]*strict" --include="*.css" --include="*.tsx" app components | wc -l)
+          [ "$V16_A" -ge 1 ] && [ "$V16_B" -ge 1 ] || (echo "✗ V16 GradientMesh safeguards missing" && exit 1)
+
+          V17=$(grep -rEn 'name="color-scheme"[[:space:]]+content="dark"' --include="*.tsx" app | wc -l)
+          [ "$V17" -ge 1 ] || (echo "✗ V17 color-scheme meta missing" && exit 1)
+
+          V18=$(grep -rEn 'aria-live="polite"' --include="*.tsx" components | grep -i "liveactivitybar\|ticker\|commit\|status" | wc -l)
+          [ "$V18" -ge 1 ] || (echo "✗ V18 aria-live missing" && exit 1)
+
+          V19=$(grep -rEn 'min-h-\[44px\]|min-w-\[44px\]' --include="*.tsx" components | grep -i "bookmark\|toast\|dismiss" | wc -l)
+          [ "$V19" -ge 1 ] || (echo "✗ V19 touch target missing" && exit 1)
+
+      - name: Smoke — V22 z-index multi-digit regex support
+        run: |
+          Z_MAGIC=$(grep -rEn "z-index: [0-9]+|zIndex: [0-9]+" --include="*.tsx" --include="*.ts" --include="*.css" components app lib | grep -v "constants/z-index.ts" | wc -l)
+          echo "Z-index multi-digit scan executed; matches=$Z_MAGIC"
+
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4

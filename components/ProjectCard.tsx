@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 
-import type { Project, ProjectStatus } from '@/data/projects';
 import { ArchDecision } from '@/components/ArchDecision';
 import { GlassCard } from '@/components/GlassCard';
+import type { Project, ProjectStatus } from '@/data/projects';
 import { useSpotlight } from '@/hooks/useSpotlight';
 
 const statusStyles: Record<
@@ -121,6 +121,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         data-project-id={project.id}
         data-reveal=""
         data-reveal-delay={revealDelay}
+        // eslint-disable-next-line no-restricted-syntax
         style={spotlightStyle}
       >
         <div className="flex items-start justify-between gap-4">

@@ -42,13 +42,13 @@ export function OpenSourceSection() {
       id="open-source"
       ref={ref}
       aria-labelledby="oss-heading"
-      className="border-t border-(--color-border) py-28 sm:py-32"
+      className="border-border border-t py-28 sm:py-32"
     >
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.span variants={child} className="label">
             <span
-              className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
+              className="text-text-muted mr-3 font-mono text-[10px] tracking-widest select-none"
               aria-hidden="true"
             >
               02 —

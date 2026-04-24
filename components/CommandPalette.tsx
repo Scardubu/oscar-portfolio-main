@@ -4,8 +4,8 @@ import { AnimatePresence, m } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CV_ASSET_PATH } from '@/lib/config';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { CV_ASSET_PATH } from '@/lib/config';
 import { springConfig } from '@/lib/motion';
 
 interface CommandItem {
@@ -53,9 +53,20 @@ export function CommandPalette() {
   const commands = useMemo<CommandItem[]>(
     () => [
       { id: 'projects', label: 'Go to Projects', action: () => scrollToSection('projects') },
+      { id: 'skills', label: 'Go to Skills', action: () => scrollToSection('skills') },
+      {
+        id: 'open-source',
+        label: 'Go to Open Source',
+        action: () => scrollToSection('open-source'),
+      },
       { id: 'about', label: 'Go to About', action: () => scrollToSection('about') },
       { id: 'writing', label: 'Go to Writing', action: () => scrollToSection('writing') },
       { id: 'contact', label: 'Go to Contact', action: () => scrollToSection('contact') },
+      {
+        id: 'taxbridge',
+        label: 'Open TaxBridge case study',
+        action: () => router.push('/work/taxbridge'),
+      },
       {
         id: 'sabiscore',
         label: 'Open SabiScore case study',
@@ -80,7 +91,7 @@ export function CommandPalette() {
         label: 'Send email',
         shortcut: 'E',
         action: () => {
-          globalThis.location.href = 'mailto:scardubu@gmail.com';
+          globalThis.location.href = 'mailto:oscar@scardubu.dev';
         },
       },
     ],
@@ -161,11 +172,11 @@ export function CommandPalette() {
   }, [close, executeCommand]);
 
   useEffect(() => {
-    const paletteWindow = window as CommandPaletteWindow;
+    const paletteGlobal = globalThis as unknown as unknown as CommandPaletteWindow;
 
-    if (paletteWindow.__commandPaletteRequested) {
+    if (paletteGlobal.__commandPaletteRequested) {
       setOpen(true);
-      paletteWindow.__commandPaletteRequested = false;
+      paletteGlobal.__commandPaletteRequested = false;
     }
   }, []);
 

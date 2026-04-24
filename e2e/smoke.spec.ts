@@ -1,3 +1,4 @@
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 import { expect, test } from '@playwright/test';
 
 test.describe('Portfolio smoke tests', () => {
@@ -33,15 +34,11 @@ test.describe('Portfolio smoke tests', () => {
     expect(firstFocusableClassName).toContain('skip-nav');
   });
 
-  test('hero visible and name does not orphan wrap', async ({ page }) => {
+  test('hero visible and conviction headline present', async ({ page }) => {
     await page.goto('/');
 
     await expect(page.locator('#hero').first()).toBeVisible();
-    await expect(page.locator('h1').first()).toContainText('When AI behavior');
-    await expect(page.locator('h1').first()).toContainText('platform reliability');
-    await expect(page.locator('h1').first()).toContainText(
-      'product clarity must hold simultaneously'
-    );
+    await expect(page.locator('h1').first()).toContainText('The system has to work at 2am.');
   });
 
   test('no unicode escape or unverifiable metrics in rendered home copy', async ({ page }) => {
@@ -70,7 +67,7 @@ test.describe('Portfolio smoke tests', () => {
   test('exactly three projects render', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('#projects [data-project-id]')).toHaveCount(3);
+    await expect(page.locator('#section-projects [data-project-id]')).toHaveCount(3);
   });
 
   test('nav link scrolls to projects section', async ({ page }) => {
@@ -86,7 +83,12 @@ test.describe('Portfolio smoke tests', () => {
     await projectsLink.waitFor({ state: 'visible' });
     await projectsLink.click();
 
-    await expect(page.locator('#projects')).toBeInViewport();
+    await expect(page.locator('#section-projects')).toBeInViewport();
+  });
+
+  test('[V18] commit ticker is announced via aria-live', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('p[role="status"][aria-live="polite"]').first()).toBeVisible();
   });
 
   test('command palette opens and closes from keyboard', async ({ page }) => {
@@ -390,4 +392,4 @@ test.describe('Portfolio smoke tests', () => {
       test.skip();
     }
   });
-};);
+});

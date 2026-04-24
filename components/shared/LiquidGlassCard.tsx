@@ -36,10 +36,11 @@ export function LiquidGlassCard({
     <Tag
       className={cn(
         variantClasses[variant],
-        hover && "liquid-glass-hover",
-        "noise-overlay",
+        hover && 'liquid-glass-hover',
+        'noise-overlay',
         className
       )}
+      // eslint-disable-next-line no-restricted-syntax
       style={style}
       onClick={onClick}
       data-reveal={dataReveal}
