@@ -70,7 +70,7 @@ export function ContactSection() {
             <m.h2
               variants={child}
               id="section-contact"
-              className="gradient-text text-4xl sm:text-5xl"
+              className="font-display text-4xl font-bold text-white sm:text-5xl"
             >
               Start a conversation.
             </m.h2>

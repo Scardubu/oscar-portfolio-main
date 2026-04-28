@@ -25,7 +25,7 @@ export default async function Home() {
                   className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
                   aria-hidden="true"
                 >
-                  03 —
+                  03
                 </span>
                 Skills
               </span>

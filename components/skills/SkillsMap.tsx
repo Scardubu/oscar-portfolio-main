@@ -18,7 +18,7 @@
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import { filterTransition } from '@/lib/motion';
-import type { SkillNode, SkillPillar } from '@/lib/types'
+import type { SkillNode, SkillPillar } from '@/lib/types';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
@@ -42,9 +42,13 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
   const metaTags = skill.tags.filter((t) => !t.startsWith('used-in:'));
 
   let progressValue: number;
-  if (skill.level === 'expert') progressValue = 100;
-  else if (skill.level === 'proficient') progressValue = 66;
-  else progressValue = 33;
+  if (skill.level === 'expert') {
+    progressValue = 95;
+  } else if (skill.level === 'proficient') {
+    progressValue = 70;
+  } else {
+    progressValue = 35;
+  }
 
   const usedInLabel = systemTags.length ? ` — used in: ${systemTags.join(', ')}` : '';
   const cardLabel = `${skill.name} — ${lvl.label}${usedInLabel}`;
@@ -64,7 +68,8 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
 
       {/* Proficiency bar */}
       <progress
-        className="[&::-webkit-progress-bar]:bg-border-subtle [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent mb-2.5 h-1 w-full rounded-full [&::-moz-progress-bar]:rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:rounded-full"
+        className="[&::-webkit-progress-bar]:bg-border-subtle mb-2.5 h-1 w-full rounded-full [&::-moz-progress-bar]:rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:rounded-full"
+        data-level={skill.level}
         value={progressValue}
         max={100}
         aria-label={`${skill.name} proficiency: ${lvl.label}`}
@@ -153,7 +158,7 @@ export function SkillsMap(): React.ReactElement {
         The element animates immediately on mount, not on scroll.
       */}
       <AnimatePresence mode="wait">
-          <m.div
+        <m.div
           key={active}
           id="skills-grid"
           role="tabpanel"
@@ -183,14 +188,8 @@ export function SkillsMap(): React.ReactElement {
               </m.li>
             ))}
           </ul>
-</m.div>
+        </m.div>
       </AnimatePresence>
-
-      {/* Live count */}
-      <p className="text-text-muted text-xs" aria-live="polite" aria-atomic="true">
-        Showing {filtered.length} of {SKILLS.length} skills
-        {active !== 'All' && ` in ${active}`}
-      </p>
     </div>
   );
 }

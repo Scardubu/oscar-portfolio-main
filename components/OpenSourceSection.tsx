@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
 import { m, useInView, useReducedMotion } from 'framer-motion';
+import { useMemo, useRef } from 'react';
 
 import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
@@ -51,7 +51,7 @@ export function OpenSourceSection() {
               className="text-text-muted mr-3 font-mono text-[10px] tracking-widest select-none"
               aria-hidden="true"
             >
-              02 —
+              02
             </span>
             Open source
           </m.span>

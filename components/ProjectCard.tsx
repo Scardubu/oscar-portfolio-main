@@ -133,7 +133,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         </div>
 
         <p className="text-base text-white/80">{project.tagline}</p>
-        <p className="flex-1 text-sm leading-7 text-white/65">{project.description}</p>
+        <p className={`flex-1 text-sm leading-7 text-white/65 ${project.featured ? 'line-clamp-6' : 'line-clamp-4'}`}>{project.description}</p>
         {project.context ? (
           <p className="text-sm leading-7 text-white/55 italic">
             <span className="text-white/40">Constraint:</span> {project.context}

@@ -4,9 +4,6 @@
 ::-webkit-scrollbar {
   display: none;
 }
-html {
-  scrollbar-width: none;
-}
 
 /* ═══════════════════════════════════════════════════════════════
    OSCAR SCARDUBU — DESIGN SYSTEM v8.0
@@ -65,7 +62,7 @@ html {
 
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-bg-hover: rgba(255, 255, 255, 0.07);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --glass-border-hover: rgba(255, 255, 255, 0.12);
   --glass-blur: 12px;
   --glass-sat: 180%;
@@ -134,6 +131,18 @@ html {
   --max-width: 1280px;
   --max-width-prose: 72ch;
   --nav-height: 72px;
+
+  /* ── Hero 2-col layout (V33) ─────────────────────────────── */
+  --hero-left-width: 52%;
+  --hero-right-width: 48%;
+  --hero-col-gap: clamp(32px, 5vw, 80px);
+
+  /* ── Skill bar tokens (V37) ──────────────────────────────── */
+  --skill-bar-height: 3px;
+  --skill-bar-track: rgba(255, 255, 255, 0.08);
+  --skill-expert: #06b6d4;
+  --skill-proficient: #4ade80;
+  --skill-found: rgba(255, 255, 255, 0.3);
 }
 
 @media (prefers-color-scheme: light) {
@@ -195,12 +204,12 @@ html {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none;
   font-feature-settings:
     'kern' 1,
     'liga' 1,
     'calt' 1;
   -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1296,12 +1305,31 @@ a[data-cta='ghost']:hover {
   }
 }
 
-.arch-grid.arch-grid--full {
-  grid-template-columns: 1fr;
+/* kept — overridden below by V41 rule */
+
+/* ── Proof card (V44) — always-visible glass border ────────── */
+.proof-card {
+  border: 1px solid var(--glass-border) !important;
+  background: var(--glass-bg) !important;
 }
 
-.arch-grid.arch-grid--full > div:not(:last-child) {
-  border-right: none;
+/* ── Hero proof callout (V43) ───────────────────────────────── */
+.hero-proof-callout {
+  border-left: 2px solid var(--color-cyan);
+  padding-left: 1rem;
+  margin-top: 1rem;
+}
+
+/* ── Writing section inner (V35) ────────────────────────────── */
+.writing-section-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.writing-view-all {
+  margin-top: 2rem;
+  align-self: flex-start;
 }
 
 .pill-short {
@@ -1331,14 +1359,14 @@ a[data-cta='ghost']:hover {
   color: var(--color-text-primary);
 }
 
-@media (min-width: 600px) {
-  .arch-grid.arch-grid--full {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
+/* V41 — arch-grid always vertical stack, never 3-col */
+.arch-grid.arch-grid--full {
+  grid-template-columns: 1fr;
+}
 
-  .arch-grid.arch-grid--full > div:not(:last-child) {
-    border-right: 1px solid var(--color-border-subtle);
-  }
+.arch-grid.arch-grid--full > div:not(:last-child) {
+  border-right: none;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 /* about-grid: responsive columns — 1→2→3 col */
@@ -1434,4 +1462,26 @@ a[data-cta='ghost']:hover {
   .glass-light {
     background: rgba(10, 10, 20, 0.92);
   }
+}
+
+/* ── Terminal ambient glow (HeroVisual) ────────────────────────────────────────── */
+.terminal-ambient-glow {
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    rgba(34, 211, 238, 0.07) 0%,
+    transparent 70%
+  );
+}
+
+/* ── SkillsMap progress accent colours (data-level attr) ──────────────────── */
+progress[data-level='expert'] {
+  accent-color: var(--skill-expert);
+}
+
+progress[data-level='proficient'] {
+  accent-color: var(--skill-proficient);
+}
+
+progress[data-level='foundational'] {
+  accent-color: var(--skill-found);
 }

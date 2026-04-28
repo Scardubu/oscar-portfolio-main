@@ -45,7 +45,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
                 aria-hidden="true"
               >
-                05 —
+                05
               </span>
               THE CUT
             </m.span>
@@ -169,7 +169,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             </div>
           ) : null}
 
-          <m.div variants={child} className="mt-(--space-8)">
+          <m.div variants={child} className="writing-view-all">
             <Link
               href="/writing"
               className="pill pill-cyan inline-flex items-center gap-2 transition hover:-translate-y-px"

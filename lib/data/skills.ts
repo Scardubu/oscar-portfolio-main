@@ -11,7 +11,7 @@
  *   foundational — used in a project; understand it well enough to extend
  */
 
-import type { SkillNode, SkillPillar } from '@/lib/types'
+import type { SkillNode, SkillPillar } from '@/lib/types';
 
 // ─── Skill data ───────────────────────────────────────────────────────────────
 
@@ -102,6 +102,27 @@ export const SKILLS: SkillNode[] = [
     pillar: 'Backend & APIs',
     level: 'proficient',
     tags: ['used-in:taxbridge'],
+  },
+  {
+    id: 'go',
+    name: 'Go 1.22',
+    pillar: 'Backend & APIs',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'rust',
+    name: 'Rust',
+    pillar: 'Backend & APIs',
+    level: 'foundational',
+    tags: ['used-in:hashablanca'],
+  },
+  {
+    id: 'grpc',
+    name: 'gRPC / Protobuf',
+    pillar: 'Backend & APIs',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'used-in:taxbridge'],
   },
 
   // ── Fintech & Compliance ──────────────────────────────────────────────────
@@ -295,6 +316,91 @@ export const SKILLS: SkillNode[] = [
     level: 'proficient',
     tags: ['used-in:hashablanca'],
   },
+
+  // ── ML & AI (extended) ─────────────────────────────────────────────────────
+  {
+    id: 'pytorch',
+    name: 'PyTorch',
+    pillar: 'ML & AI',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'onnx-runtime',
+    name: 'ONNX Runtime',
+    pillar: 'ML & AI',
+    level: 'proficient',
+    tags: ['used-in:sabiscore'],
+  },
+  {
+    id: 'huggingface',
+    name: 'Hugging Face',
+    pillar: 'ML & AI',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'langchain',
+    name: 'LangChain / LangGraph',
+    pillar: 'ML & AI',
+    level: 'foundational',
+    tags: ['used-in:sabiscore'],
+  },
+  {
+    id: 'mlflow',
+    name: 'MLflow',
+    pillar: 'ML & AI',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'documented'],
+  },
+
+  // ── DevOps & SRE (extended) ────────────────────────────────────────────────
+  {
+    id: 'kubernetes',
+    name: 'Kubernetes / K8s',
+    pillar: 'DevOps & SRE',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'used-in:taxbridge'],
+  },
+  {
+    id: 'opentelemetry',
+    name: 'OpenTelemetry',
+    pillar: 'DevOps & SRE',
+    level: 'proficient',
+    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'documented'],
+  },
+  {
+    id: 'terraform',
+    name: 'Terraform',
+    pillar: 'DevOps & SRE',
+    level: 'foundational',
+    tags: ['used-in:sabiscore'],
+  },
+
+  // ── Backend & APIs (extended) ──────────────────────────────────────────────
+  {
+    id: 'graphql',
+    name: 'GraphQL',
+    pillar: 'Backend & APIs',
+    level: 'proficient',
+    tags: ['used-in:taxbridge', 'used-in:hashablanca'],
+  },
+  {
+    id: 'celery',
+    name: 'Celery',
+    pillar: 'Backend & APIs',
+    level: 'proficient',
+    tags: ['used-in:ubec', 'used-in:sabiscore'],
+  },
+
+  // ── Frontend & Full-Stack (extended) ──────────────────────────────────────
+  {
+    id: 'tailwind-v4',
+    name: 'Tailwind CSS v4',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:sabiscore', 'documented'],
+  },
 ];
 
 // ─── Accessors ────────────────────────────────────────────────────────────────
@@ -314,7 +420,5 @@ export function getSkillsByPillar(pillar: SkillPillar): SkillNode[] {
 }
 
 export function getSkillsBySystem(systemId: string): SkillNode[] {
-  return SKILLS.filter(s =>
-    s.tags.some(t => t === `used-in:${systemId}`)
-  )
+  return SKILLS.filter(s => (s.tags as readonly string[]).includes(`used-in:${systemId}`))
 }

@@ -62,7 +62,7 @@ export function ProjectsSection() {
               className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
               aria-hidden="true"
             >
-              01 —
+              01
             </span>
             Selected Work
           </m.span>
