@@ -63,7 +63,7 @@ export function ContactSection() {
             role="status"
           >
             <span className="dot-live" aria-hidden="true" />
-            Open — responding within 48hrs
+            <span>Open — responding within 48hrs</span>
           </m.div>
 
           <div className="mt-8 max-w-3xl">

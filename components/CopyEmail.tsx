@@ -16,7 +16,7 @@ interface CopyEmailProps {
   className?: string;
 }
 
-export function CopyEmail({ email, className = '' }: CopyEmailProps) {
+export function CopyEmail({ email, className = '' }: Readonly<CopyEmailProps>) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent<HTMLAnchorElement>) => {

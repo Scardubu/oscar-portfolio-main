@@ -87,6 +87,7 @@
   --color-bg: #0a0a0b;
   --color-surface: #111113;
   --color-surface-raised: #14141e;
+  --bg-surface: var(--color-surface);
   --color-border: rgba(255, 255, 255, 0.06);
   --color-border-subtle: rgba(255, 255, 255, 0.04);
 
@@ -1218,15 +1219,6 @@ section {
   gap: 0;
 }
 
-/* Tailwind sm:grid-cols-3 handles the 3-column layout at ≥640px.
-   This rule only ensures the base single-column stack is not
-   accidentally overridden by other grid utilities. */
-@media (min-width: 640px) {
-  .arch-grid.sm\:grid-cols-3 {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-
 /* Arch-decision label colors — data-attribute avoids inline styles */
 .arch-label[data-arch-key='chosen'] {
   color: var(--color-live);
@@ -1317,14 +1309,19 @@ a[data-cta='ghost']:hover {
 .hero-proof-callout {
   border-left: 2px solid var(--color-cyan);
   padding-left: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.outcomes-strip {
+  margin-top: 1.5rem;
 }
 
 /* ── Writing section inner (V35) ────────────────────────────── */
 .writing-section-inner {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--bento-gap);
 }
 
 .writing-view-all {
@@ -1462,6 +1459,14 @@ a[data-cta='ghost']:hover {
   .glass-light {
     background: rgba(10, 10, 20, 0.92);
   }
+}
+
+/* ── Section kicker row ─────────────────────────────────────────────────────── */
+.section-kicker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 /* ── Terminal ambient glow (HeroVisual) ────────────────────────────────────────── */

@@ -12,7 +12,7 @@ export function Footer() {
           <p className="font-display text-lg font-bold text-white">Oscar Ndugbu</p>
           <p className="mt-1 text-sm text-white/50">Lagos precision. Global scale.</p>
           <p className="mt-3 text-xs text-white/35">
-            © 2024–2025 Oscar Ndugbu · Built with Next.js 15
+            © 2024–2026 Oscar Ndugbu · Built with Next.js 15
           </p>
           <p className="mt-2 font-mono text-[11px] text-white/35">
             ● All systems operational · last checked:{' '}

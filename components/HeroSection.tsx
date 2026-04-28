@@ -42,7 +42,7 @@ export function HeroSection() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-dvh flex-col justify-center pt-28 pb-20 sm:pt-32 sm:pb-24"
+      className="relative flex min-h-screen flex-col justify-center pt-28 pb-20 sm:pt-32 sm:pb-24"
     >
       <div className="relative z-10 container">
         {/* V33: 2-column desktop layout */}
@@ -93,7 +93,7 @@ export function HeroSection() {
                 Book a Call
               </a>
               <Link
-                href="#projects"
+                href="#section-projects"
                 className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/20 px-5 py-3 text-sm font-medium text-white/80 transition hover:border-white/40 hover:text-white"
               >
                 View Projects →

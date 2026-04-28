@@ -1,6 +1,6 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
 
-import type { RevealVariant } from '@/src/types/portfolio.types';
+type RevealVariant = 'fade-up' | 'fade-in' | 'slide-right' | 'char-split';
 
 export const SPRING_FAST = { type: 'spring', stiffness: 400, damping: 30 } as const;
 export const SPRING_MEDIUM = { type: 'spring', stiffness: 280, damping: 24 } as const;
@@ -17,3 +17,4 @@ export const STAGGER_PROOF_GRID = 0.08;
 export const STAGGER_OPEN_SOURCE = 0.1;
 export const STAGGER_CONTACT_CARDS = 0.1;
 export const STAGGER_HERO_CHAR = 0.025;
+export const STAGGER_SKILLS = 0.04;

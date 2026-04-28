@@ -1,7 +1,8 @@
+// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
 import { AboutSection } from '@/components/AboutSection';
 import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
-import { HeroSection } from '@/components/HeroSection';
 import { ContactSection } from '@/components/ContactSection';
+import { HeroSection } from '@/components/HeroSection';
 import { OpenSourceSection } from '@/components/OpenSourceSection';
 import { ProjectsSection } from '@/components/ProjectsSection';
 import { SkillsMap } from '@/components/skills/SkillsMap';
@@ -20,21 +21,18 @@ export default async function Home() {
         <section id="skills" aria-labelledby="skills-heading" className="py-28 sm:py-32">
           <div className="container">
             <div className="mb-16 max-w-4xl">
-              <span className="label">
-                <span
-                  className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
-                  aria-hidden="true"
-                >
+              <div className="section-kicker-row">
+                <span className="section-number" aria-hidden="true">
                   03
                 </span>
-                Skills
-              </span>
-              <h2 id="skills-heading" className="gradient-text mt-(--space-2)">
-                Seven pillars. Production proof.
+                <span className="section-label">SKILLS</span>
+              </div>
+              <h2 id="skills-heading" className="mt-(--space-2) text-white">
+                Built for the full stack. Proven in production.
               </h2>
-              <p className="font-display text-text-secondary mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8]">
-                Every skill listed here has shipped to production. Pillar tabs filter by domain —
-                each card shows where it was used and at what proficiency.
+              <p className="text-text-secondary mt-5 max-w-[62ch] text-base leading-8 sm:text-lg">
+                52 skills across architecture, infrastructure, compliance, and full-stack delivery
+                from PostgreSQL RLS through Spring Boot, Go services, and production ML.
               </p>
             </div>
             <SkillsMap />

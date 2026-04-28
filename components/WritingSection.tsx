@@ -1,4 +1,4 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -40,15 +40,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.div variants={child} className="mb-12 max-w-4xl">
-            <m.span variants={child} className="label">
-              <span
-                className="mr-3 font-mono text-[10px] tracking-widest text-(--color-text-muted) select-none"
-                aria-hidden="true"
-              >
+            <m.div variants={child} className="section-kicker-row">
+              <span className="section-number" aria-hidden="true">
                 05
               </span>
-              THE CUT
-            </m.span>
+              <span className="section-label">WRITING</span>
+            </m.div>
             <m.h2 variants={child} id="writing-heading" className="mt-(--space-2) text-white">
               Engineering in depth
             </m.h2>
@@ -63,7 +60,6 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <button
                 type="button"
                 onClick={() => setActiveFilter('ALL')}
-                aria-pressed={activeFilter === 'ALL' ? 'true' : 'false'}
                 className={`tag cursor-pointer ${activeFilter === 'ALL' ? 'tag--active' : ''}`}
               >
                 ALL
@@ -73,7 +69,6 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   key={label}
                   type="button"
                   onClick={() => setActiveFilter(label)}
-                  aria-pressed={activeFilter === label ? 'true' : 'false'}
                   className={`tag cursor-pointer ${activeFilter === label ? 'tag--active' : ''}`}
                 >
                   {label}
@@ -83,7 +78,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
           </m.div>
 
           {featuredPost ? (
-            <div className="grid gap-6">
+            <div className="writing-section-inner">
               <m.article
                 variants={card}
                 className="glass glass-full glass-chromatic rounded-(--radius-xl) p-7 sm:p-9 lg:p-10"
@@ -116,6 +111,20 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </m.article>
+
+              {posts.length < 2 ? (
+                <m.article
+                  variants={card}
+                  className="glass-surface border-border-subtle rounded-(--radius-xl) border border-dashed p-7 opacity-75 sm:p-9"
+                >
+                  <p className="font-mono text-[11px] tracking-widest text-white/45 uppercase">
+                    Next article
+                  </p>
+                  <p className="mt-4 text-sm leading-7 text-white/65">
+                    In progress. A new deep-dive is currently being prepared for this section.
+                  </p>
+                </m.article>
+              ) : null}
 
               {otherPosts.length ? (
                 <m.div variants={container} className="grid gap-3">

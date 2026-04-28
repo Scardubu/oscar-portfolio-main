@@ -1,3 +1,4 @@
+// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
 interface ArchDecisionProps {
   chosen: string;
   over: string;
@@ -55,7 +56,7 @@ export function ArchDecision({
                 {item.label}
               </p>
               <p
-                className={`font-display mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'text-text-primary font-medium' : 'text-text-secondary'}`}
+                className={`font-body mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'text-text-primary font-medium' : 'text-text-secondary'}`}
                 data-label={item.label}
               >
                 {value}

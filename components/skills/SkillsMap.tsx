@@ -1,4 +1,5 @@
-'use client'
+// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
+'use client';
 
 /**
  * components/skills/SkillsMap.tsx
@@ -25,14 +26,24 @@ import * as React from 'react';
 // ─── Level configuration ──────────────────────────────────────────────────────
 
 const LEVEL_CONFIG = {
-  expert: { label: 'Expert' },
-  proficient: { label: 'Proficient' },
-  foundational: { label: 'Foundational' },
+  expert: { label: 'Expert', width: '95%', barClassName: 'bg-cyan-400' },
+  proficient: { label: 'Proficient', width: '70%', barClassName: 'bg-emerald-400' },
+  foundational: {
+    label: 'Foundational',
+    width: '35%',
+    barClassName: 'bg-white/35',
+  },
 } as const;
 
 // ─── SkillCard ────────────────────────────────────────────────────────────────
 
-function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement {
+function SkillCard({
+  skill,
+  prefersReduced,
+}: {
+  readonly skill: SkillNode;
+  readonly prefersReduced: boolean;
+}): React.ReactElement {
   const lvl = LEVEL_CONFIG[skill.level];
 
   const systemTags = skill.tags
@@ -40,15 +51,6 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
     .map((t) => t.replace('used-in:', ''));
 
   const metaTags = skill.tags.filter((t) => !t.startsWith('used-in:'));
-
-  let progressValue: number;
-  if (skill.level === 'expert') {
-    progressValue = 95;
-  } else if (skill.level === 'proficient') {
-    progressValue = 70;
-  } else {
-    progressValue = 35;
-  }
 
   const usedInLabel = systemTags.length ? ` — used in: ${systemTags.join(', ')}` : '';
   const cardLabel = `${skill.name} — ${lvl.label}${usedInLabel}`;
@@ -58,7 +60,10 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
       className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-3 transition-colors duration-200"
       aria-label={cardLabel}
     >
-      {/* Name and level label */}
+      <p className="mb-2 font-mono text-[10px] tracking-widest text-white/45 uppercase">
+        {skill.pillar}
+      </p>
+
       <div className="mb-2 flex items-center justify-between gap-1">
         <span className="text-text-primary truncate text-sm leading-snug font-semibold">
           {skill.name}
@@ -66,14 +71,21 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
         <span className="text-text-muted shrink-0 text-[10px] font-medium">{lvl.label}</span>
       </div>
 
-      {/* Proficiency bar */}
-      <progress
-        className="[&::-webkit-progress-bar]:bg-border-subtle mb-2.5 h-1 w-full rounded-full [&::-moz-progress-bar]:rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:rounded-full"
-        data-level={skill.level}
-        value={progressValue}
-        max={100}
+      <div
+        className="bg-border-subtle mb-2.5 h-(--skill-bar-height) w-full overflow-hidden rounded-full"
         aria-label={`${skill.name} proficiency: ${lvl.label}`}
-      />
+      >
+        <m.div
+          className={`h-full rounded-full ${lvl.barClassName}`}
+          initial={{ width: prefersReduced ? lvl.width : '0%' }}
+          animate={{ width: lvl.width }}
+          transition={
+            prefersReduced
+              ? { duration: 0 }
+              : { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+          }
+        />
+      </div>
 
       {/* Context tags */}
       {(systemTags.length > 0 || metaTags.length > 0) && (
@@ -104,47 +116,42 @@ function SkillCard({ skill }: { readonly skill: SkillNode }): React.ReactElement
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function SkillsMap(): React.ReactElement {
-  const prefersReduced = useReducedMotion()
-  const [active, setActive] = React.useState<'All' | SkillPillar>('All')
+  const prefersReduced = useReducedMotion();
+  const [active, setActive] = React.useState<'All' | SkillPillar>('All');
 
-  const filtered: SkillNode[] = active === 'All'
-    ? SKILLS
-    : SKILLS.filter(s => s.pillar === active)
+  const filtered: SkillNode[] = active === 'All' ? SKILLS : SKILLS.filter((s) => s.pillar === active);
 
-  const tabs: Array<'All' | SkillPillar> = ['All', ...ALL_PILLARS]
+  const tabs: Array<'All' | SkillPillar> = ['All', ...ALL_PILLARS];
+  const activeCountLabel = active === 'All' ? '' : `${active} — ${filtered.length} skills`;
 
   return (
     <div className="space-y-6">
-      {/* Filter tabs */}
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter skills by pillar">
+      <div
+        className="flex flex-nowrap gap-2 overflow-x-auto pb-1 sm:flex-wrap"
+        aria-label="Filter skills by category"
+      >
         {tabs.map((tab) => {
-          const count =
-            tab === 'All' ? SKILLS.length : SKILLS.filter((s) => s.pillar === tab).length;
           const isActive = active === tab;
 
           return (
             <button
               key={tab}
-              role="tab"
-              aria-selected={isActive ? 'true' : 'false'}
-              aria-controls="skills-grid"
               onClick={() => setActive(tab)}
-              className={`focus:ring-accent focus:ring-offset-bg rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-1 focus:outline-none ${
+              className={`focus:ring-accent focus:ring-offset-bg shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-offset-1 focus:outline-none ${
                 isActive
-                  ? 'bg-accent text-bg border-transparent shadow-sm'
+                  ? 'border-white/30 bg-white/10 text-white shadow-sm'
                   : 'border-border text-text-secondary hover:border-border/60 hover:text-text-primary bg-transparent'
               } `}
             >
               {tab}
-              <span
-                className={`ml-1.5 text-[10px] font-normal ${isActive ? 'opacity-70' : 'opacity-50'}`}
-              >
-                {count}
-              </span>
             </button>
           );
         })}
       </div>
+
+      <p aria-live="polite" className="font-mono text-[11px] tracking-widest text-white/55 uppercase">
+        {activeCountLabel}
+      </p>
 
       {/*
         ANIMATION PATTERN (correct):
@@ -161,7 +168,6 @@ export function SkillsMap(): React.ReactElement {
         <m.div
           key={active}
           id="skills-grid"
-          role="tabpanel"
           aria-label={`${active} skills — ${filtered.length} items`}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -184,7 +190,7 @@ export function SkillsMap(): React.ReactElement {
                       }
                 }
               >
-                <SkillCard skill={skill} />
+                <SkillCard skill={skill} prefersReduced={Boolean(prefersReduced)} />
               </m.li>
             ))}
           </ul>

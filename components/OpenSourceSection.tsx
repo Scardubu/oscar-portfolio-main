@@ -53,7 +53,7 @@ export function OpenSourceSection() {
             >
               02
             </span>
-            Open source
+            <span>Open source</span>
           </m.span>
           <m.h2 variants={child} id="oss-heading" className="mt-4 max-w-[28ch] text-white">
             Tools built for the problems nobody else solved yet.
