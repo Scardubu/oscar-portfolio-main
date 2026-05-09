@@ -3,7 +3,13 @@
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
 
-import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import {
+  cardReveal,
+  clipReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
+} from '@/lib/motionVariants';
 
 const OSS_PROJECTS = [
   {
@@ -31,11 +37,22 @@ const OSS_PROJECTS = [
 
 export function OpenSourceSection() {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const inView = useInView(ref, {
+    once: true,
+    margin: '-80px',
+  });
+
   const reducedMotion = useReducedMotion();
+
   const container = useMemo(() => staggerContainer(0.09, 0.05), []);
+
   const child = reducedMotion ? noMotion : fadeRise;
-  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+
+  const card = useMemo(
+    () => (reducedMotion ? noMotion : cardReveal(24)),
+    [reducedMotion],
+  );
 
   return (
     <section
@@ -45,17 +62,27 @@ export function OpenSourceSection() {
       className="border-border border-t py-28 sm:py-32"
     >
       <div className="container">
-        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+        <m.div
+          variants={container}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
           <m.span variants={child} className="label">
             <span
-              className="text-text-muted mr-3 font-mono text-[10px] tracking-widest select-none"
+              className="text-text-muted mr-3 select-none font-mono text-[10px] tracking-widest"
               aria-hidden="true"
             >
               02
             </span>
+
             <span>Open source</span>
           </m.span>
-          <m.h2 variants={child} id="oss-heading" className="mt-4 max-w-[28ch] text-white">
+
+          <m.h2
+            variants={reducedMotion ? child : clipReveal}
+            id="oss-heading"
+            className="mt-4 max-w-[28ch] text-white"
+          >
             Tools built for the problems nobody else solved yet.
           </m.h2>
 
@@ -72,19 +99,32 @@ export function OpenSourceSection() {
                     ? undefined
                     : {
                         y: -3,
-                        transition: { type: 'spring', stiffness: 400, damping: 30 },
+                        transition: {
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 30,
+                        },
                       }
                 }
-                className="glass glass-medium group flex flex-col rounded-(--radius-lg) p-6 sm:p-7"
+                className="glass-medium group flex flex-col rounded-[var(--radius-xl)] p-6 sm:p-7"
                 aria-label={`${item.name} — ${item.stack} on GitHub`}
               >
                 <p className="label">{item.stack}</p>
+
                 <h3 className="mt-4 text-white">{item.name}</h3>
-                <p className="mt-4 flex-1 text-sm leading-7 text-white/65">{item.desc}</p>
+
+                <p className="mt-4 flex-1 text-sm leading-7 text-white/65">
+                  {item.desc}
+                </p>
+
                 <div className="mt-6 flex items-center justify-between gap-3 border-t border-(--color-border) pt-5">
-                  <span className="font-mono text-[11px] text-(--color-text-muted) transition group-hover:text-(--color-text-secondary)">
+                  <code
+                    className="font-mono text-[11px] tracking-wide"
+                    style={{ color: 'var(--color-cyan)' }}
+                  >
                     {item.label}
-                  </span>
+                  </code>
+
                   <svg
                     viewBox="0 0 24 24"
                     className="h-4 w-4 shrink-0 fill-current text-(--color-text-muted) transition group-hover:text-(--color-accent)"
@@ -97,8 +137,12 @@ export function OpenSourceSection() {
             ))}
           </div>
 
-          <m.p variants={child} className="mt-10 font-mono text-xs text-(--color-text-muted)">
-            15+ merged contributions to XGBoost & scikit-learn &nbsp;·&nbsp; 12 public repositories
+          <m.p
+            variants={child}
+            className="mt-10 font-mono text-xs text-(--color-text-muted)"
+          >
+            15+ merged contributions to XGBoost & scikit-learn &nbsp;·&nbsp; 12
+            public repositories
           </m.p>
         </m.div>
       </div>
