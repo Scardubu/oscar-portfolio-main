@@ -28,7 +28,7 @@ export function ArchDecision({
   return (
     <section
       aria-label="Architecture decision"
-      className="arch-decision mt-5 overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-bg)"
+      className="arch-decision mt-5 overflow-hidden rounded-(--radius-md) border border-(--color-border)"
     >
       <header className="flex items-center gap-2 border-b border-(--color-border) px-4 py-3">
         <span
