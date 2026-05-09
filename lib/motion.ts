@@ -325,3 +325,8 @@ export const pageTransition: Variants = {
     transition: { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, duration: 0.15 },
   },
 };
+
+// ThemeToggle imports springConfig from here — keep this export.
+// New components should use springs.snappy from motionVariants.ts instead.
+export { springs } from './motionVariants';
+export const springConfig = springs.snappy;
