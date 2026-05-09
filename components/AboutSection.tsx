@@ -21,7 +21,7 @@ export function AboutSection() {
   const child = reducedMotion ? noMotion : fadeRise;
 
   return (
-    <section id="about" ref={ref} className="border-t border-(--color-border) py-24 sm:py-28">
+    <section id="section-about" ref={ref} className="border-t border-(--color-border) py-[var(--section-py)]">
       <div className="container">
         <m.div
           variants={container}
@@ -32,15 +32,15 @@ export function AboutSection() {
           <div>
             <m.p
               variants={child}
-              className="font-mono text-[11px] tracking-widest text-cyan-400 uppercase"
+              className="label-mono" style={{ color: 'var(--color-cyan)' }}
             >
               BACKGROUND
             </m.p>
-            <m.h2 variants={child} id="section-about" className="mt-4 text-white">
-              The system has to work at 2am.
+            <m.h2 variants={child} id="about-heading" className="mt-4 text-white">
+              A decade of infrastructure. Four years of product.
             </m.h2>
-            <m.p variants={child} className="mt-3 text-xl text-white/72">
-              {"That's not a slogan. It's a design constraint."}
+            <m.p variants={child} className="mt-3 max-w-[42ch] text-xl" style={{ color: 'var(--color-text-secondary)' }}>
+              Non-CS background. Federal-scale engineering. Production ML. Full-stack delivery.
             </m.p>
 
             <m.p
@@ -73,7 +73,8 @@ export function AboutSection() {
 
             <m.div
               variants={child}
-              className="glass-surface mt-8 rounded-(--radius-lg) border-l-2 border-l-cyan-400 p-4 sm:p-6"
+              className="glass-medium mt-8 rounded-[var(--radius-lg)] border-l-2 p-4 sm:p-6"
+              style={{ borderLeftColor: 'var(--color-cyan)' }}
             >
               <p className="text-sm leading-7 text-white/78">
                 During my time at Nigeria&apos;s Universal Basic Education Commission, I built the
