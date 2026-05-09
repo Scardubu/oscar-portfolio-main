@@ -1,4 +1,16 @@
-// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v11.0 — HeroSection
+//
+// Design principles applied:
+//   • A24 Didone: word-by-word rise reveal ("The system has to work at 2am.")
+//     Each word is wrapped in overflow:hidden — inner span translates Y 110%→0.
+//     Creates the cinematic "unknown → revealed" letterform unfurl.
+//   • Stripe trust architecture: proof callout is concrete data, not promise.
+//     No adjectives. Every claim is a number with a denominator.
+//   • Dual-audience: engineer reads metrics in <400ms; DM reads outcomes first.
+//     CTA hierarchy: primary = book a call (DM), secondary = view projects (engineer).
+//   • Linear Liquid Glass: glass-full proof cards with fresnel edge lighting.
+//   • Spring physics: hero reveal is gentle (stiffness 180), not snappy.
+//
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
@@ -6,118 +18,239 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
+import {
+  cardReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
+  wordReveal,
+  wordRevealContainer,
+} from '@/lib/motionVariants';
 
-// V33: HeroVisual loaded client-only — no SSR hydration mismatch on terminal animation
+// HeroVisual: SSR-disabled — terminal animation hydration mismatch prevention
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
 });
 
+// ── Proof pillars: Stripe-style — claims with denominators ──────────────────
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
-    body: 'SabiScore sustains 99.9%+ uptime on a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement.',
+    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement over reactive alerting.',
   },
   {
     label: 'DECISIONS DOCUMENTED',
-    body: 'Every tradeoff — Chosen, Over, Because — is written out, not summarised. Architecture reasoning at every level, legible without clicking a link.',
+    body: 'Every tradeoff is written as Chosen / Over / Because — architecture reasoning at every layer, legible to the next engineer without clicking a link.',
   },
   {
     label: 'ZERO-DOWNTIME DESIGN',
-    body: 'Health checks, idempotent job queues, circuit breakers, and environment-scoped rate limits — in the baseline, not added after an incident.',
+    body: 'Health checks, idempotent BullMQ queues, circuit breakers, and rate-limit scoping are in the baseline — not added after the first 3am incident.',
   },
   {
     label: 'FULL STACK OWNERSHIP',
-    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, complete ownership — no handoff latency, no translation loss.',
+    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, complete ownership — no handoff tax, no translation loss, no ticket queue.',
   },
 ] as const;
+
+// Headline words — each gets its own overflow:hidden clip wrapper
+const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
 
-  const reveal = reducedMotion
-    ? { opacity: 1, y: 0 }
-    : { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 280, damping: 24 } };
+  const heroContainer = staggerContainer(0.065, 0.1);
+  const proofContainer = staggerContainer(0.09, 0.55);
+  const child = reducedMotion ? noMotion : fadeRise;
+  const card = reducedMotion ? noMotion : cardReveal(24);
+  const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.065, 0.1);
 
   return (
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-screen flex-col justify-center pt-28 pb-20 sm:pt-32 sm:pb-24"
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-20 pt-28 sm:pt-32 sm:pb-24"
     >
+      {/* ── Ambient background glows (GPU layer, pointer-events: none) ── */}
+      <div className="work-surface-glow" aria-hidden="true" />
+
       <div className="relative z-10 container">
-        {/* V33: 2-column desktop layout */}
+        {/* ── 2-column grid: left text, right live metrics terminal ─── */}
         <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
-          {/* ── Left column ─────────────────────────────────────────────── */}
-          <m.div initial={{ opacity: 0, y: reducedMotion ? 0 : 16 }} animate={reveal}>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
-              <span className="font-mono text-[11px] tracking-widest text-white uppercase">
-                AVAILABLE · STAFF+ / PRINCIPAL · BACKEND & INFRASTRUCTURE
-              </span>
-            </div>
 
-            <p className="font-body mb-4 text-xs tracking-[0.12em] text-cyan-400 uppercase sm:text-sm">
-              PRINCIPAL BACKEND ENGINEER · INFRASTRUCTURE & SRE ARCHITECT · AI SYSTEMS
-            </p>
+          {/* ═══════════════════════════════════════════════════════════
+              LEFT COLUMN — Conviction copy stack
+              Hierarchy: kicker → headline → sub-line → body → proof → CTAs
+              ═══════════════════════════════════════════════════════════ */}
+          <m.div
+            variants={heroContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* ── Availability pill ────────────────────────────────── */}
+            <m.div variants={child}>
+              <div
+                className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                aria-label="Availability status"
+              >
+                <span className="dot-live" aria-hidden="true" />
+                <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
+                  AVAILABLE · STAFF+ / PRINCIPAL · BACKEND & INFRASTRUCTURE
+                </span>
+              </div>
+            </m.div>
 
-            <h1 id="hero-heading" className="max-w-[20ch] text-balance text-white">
-              The system has to work at 2am.
+            {/* ── Kicker: role classification ───────────────────────── */}
+            <m.p
+              variants={child}
+              className="mb-5 font-mono text-[11px] tracking-[0.14em] uppercase"
+              style={{ color: 'var(--color-cyan)' }}
+            >
+              Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems
+            </m.p>
+
+            {/* ── Hero headline: A24 Didone word-by-word reveal ─────── */}
+            {/* Each word is an overflow:hidden box; inner span translates Y */}
+            <h1
+              id="hero-heading"
+              className="max-w-[18ch] text-balance"
+              aria-label="The system has to work at 2am."
+            >
+              <m.span
+                variants={wordContainer}
+                initial="hidden"
+                animate="visible"
+                className="inline"
+                aria-hidden="true" /* Screen reader reads the aria-label above */
+              >
+                {HEADLINE_WORDS.map((word, i) => (
+                  <span
+                    key={`${word}-${i}`}
+                    className="inline-block overflow-hidden"
+                    style={{
+                      // Space between words, hanging punctuation for '2am.'
+                      marginRight: i < HEADLINE_WORDS.length - 1 ? '0.28em' : '0',
+                      lineHeight: 'var(--leading-tight)',
+                      verticalAlign: 'bottom',
+                    }}
+                  >
+                    <m.span
+                      variants={reducedMotion ? noMotion : wordReveal}
+                      className="inline-block"
+                    >
+                      {word}
+                    </m.span>
+                  </span>
+                ))}
+              </m.span>
             </h1>
 
-            <p className="font-display mt-4 max-w-[30ch] text-2xl text-white/72 sm:text-3xl">
+            {/* ── Didone sub-line: italic serif — emotional resonance ── */}
+            <m.p
+              variants={child}
+              className="text-didone-sub mt-5 max-w-[30ch]"
+            >
               {"That's not a slogan. It's a design constraint."}
-            </p>
+            </m.p>
 
-            <p className="mt-5 font-mono text-xs tracking-widest text-white/70 uppercase">
-              Sub-150ms API · 99.9%+ uptime · 40% ops reduction · 95% test coverage
-            </p>
-
-            <p className="mt-6 max-w-(--max-width-hero) text-base leading-relaxed text-white/78 sm:text-lg">
+            {/* ── Body: Stripe "you" language — concrete, no adjectives */}
+            <m.p
+              variants={child}
+              className="mt-6 max-w-[52ch] text-base leading-[1.8]"
+              style={{ color: 'oklch(93% 0.006 264 / 0.72)' }}
+            >
               I build backend systems that keep fintech products alive, compliant, and fast —
               whether it&apos;s a quiet Tuesday or a FIRS audit season.
-            </p>
+            </m.p>
 
-            {/* V43: proof callout as separated bordered block */}
-            <div className="hero-proof-callout">
-              <p className="text-sm leading-relaxed text-white/65">
-                Tax filing time: 4 hours → 15 minutes. Zero data-loss record across three production
-                systems.
+            {/* ── Proof callout: left-border accent, concrete metrics ── */}
+            <m.div variants={child} className="hero-proof-callout">
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: 'oklch(93% 0.006 264 / 0.55)' }}
+              >
+                Tax filing time: 4 hours → 15 minutes. Zero data-loss record across three
+                production systems.
               </p>
-            </div>
+            </m.div>
 
-            <div className="mt-8 mb-8 flex flex-wrap items-center gap-3 sm:gap-4">
+            {/* ── Performance bar: high-density tech credibility strip ── */}
+            <m.p
+              variants={child}
+              className="font-mono text-[11px] tracking-widest uppercase"
+              style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}
+            >
+              <span style={{ color: 'var(--color-success)' }}>Sub-150ms</span> API p99 ·{' '}
+              <span style={{ color: 'var(--color-success)' }}>99.9%+</span> uptime ·{' '}
+              <span style={{ color: 'var(--color-success)' }}>40%</span> ops reduction ·{' '}
+              <span style={{ color: 'var(--color-success)' }}>95%</span> test coverage
+            </m.p>
+
+            {/* ── CTAs: Stripe friction-removal hierarchy ───────────── */}
+            {/* Primary: book call (DM) — one per viewport rule */}
+            {/* Secondary: view projects (engineer) — ghost, lower weight */}
+            <m.div
+              variants={child}
+              className="mt-8 mb-8 flex flex-wrap items-center gap-3 sm:gap-4"
+            >
               <a
                 href="mailto:scardubu@gmail.com"
-                className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/20 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
+                className="cta-primary"
+                aria-label="Email Oscar to book a call"
               >
                 Book a Call
               </a>
-              <Link
-                href="#section-projects"
-                className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/20 px-5 py-3 text-sm font-medium text-white/80 transition hover:border-white/40 hover:text-white"
-              >
-                View Projects →
+              <Link href="#section-projects" className="cta-secondary">
+                View Projects{' '}
+                <span aria-hidden="true">→</span>
               </Link>
-            </div>
+              <a
+                href="/cv/oscar-ndugbu-resume.pdf"
+                download
+                className="cta-ghost"
+                aria-label="Download resume PDF"
+              >
+                Download CV
+              </a>
+            </m.div>
 
-            <LiveActivityBar />
+            {/* ── Live activity bar ─────────────────────────────────── */}
+            <m.div variants={child}>
+              <LiveActivityBar />
+            </m.div>
 
-            <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* ── Proof cards grid: glass-full, 4 pillars ───────────── */}
+            <m.div
+              variants={proofContainer}
+              initial="hidden"
+              animate="visible"
+              className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2"
+            >
               {PROOF_COLUMNS.map((column) => (
-                <article
+                <m.article
                   key={column.label}
-                  className="proof-card glass-surface h-full rounded-(--radius-lg) p-4 sm:p-6"
+                  variants={card}
+                  className="proof-card"
+                  // Engineer audience: hover reveals more depth on proof
+                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }}
                 >
-                  <p className="font-mono text-[11px] tracking-widest text-cyan-400 uppercase">
+                  <p className="label-mono" style={{ color: 'var(--color-cyan)' }}>
                     {column.label}
                   </p>
-                  <p className="mt-3 text-sm leading-7 text-white/72">{column.body}</p>
-                </article>
+                  <p
+                    className="mt-3 text-sm leading-7"
+                    style={{ color: 'oklch(93% 0.006 264 / 0.65)' }}
+                  >
+                    {column.body}
+                  </p>
+                </m.article>
               ))}
-            </div>
+            </m.div>
           </m.div>
 
-          {/* ── Right column: terminal visual (V33) ─────────────────────── */}
+          {/* ═══════════════════════════════════════════════════════════
+              RIGHT COLUMN — Live metrics dashboard
+              (Replaces static terminal: signals live system authority)
+              ═══════════════════════════════════════════════════════════ */}
           <HeroVisual />
         </div>
       </div>
