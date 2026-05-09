@@ -1,4 +1,6 @@
+// components/ArchDecision.tsx
 // CONVICTION ENGINE v10.0 — FULL REPLACEMENT
+
 interface ArchDecisionProps {
   chosen: string;
   over: string;
@@ -7,8 +9,18 @@ interface ArchDecisionProps {
 }
 
 const ITEMS = [
-  { key: 'chosen', label: 'CHOSEN', labelClassName: '', valueClassName: '' },
-  { key: 'over', label: 'OVER', labelClassName: '', valueClassName: '' },
+  {
+    key: 'chosen',
+    label: 'CHOSEN',
+    labelClassName: '',
+    valueClassName: '',
+  },
+  {
+    key: 'over',
+    label: 'OVER',
+    labelClassName: '',
+    valueClassName: '',
+  },
   {
     key: 'because',
     label: 'BECAUSE',
@@ -35,7 +47,10 @@ export function ArchDecision({
           aria-hidden="true"
           className="inline-block h-1.5 w-1.5 rounded-full bg-(--color-accent)"
         />
-        <span className="label text-[10px]">Architecture Decision</span>
+
+        <span className="label text-[10px]">
+          Architecture Decision
+        </span>
       </header>
 
       <div className={`arch-grid ${compact ? '' : 'arch-grid--full'}`}>
@@ -47,16 +62,40 @@ export function ArchDecision({
           return (
             <div
               key={item.key}
-              className={`px-4 py-3 ${isBecause ? 'arch-because-cell' : ''} ${compactDivider ? 'border-border-subtle border-b' : ''}`}
+              className={`
+                px-4 py-3
+                ${isBecause ? 'arch-because-cell' : ''}
+                ${compactDivider ? 'border-border-subtle border-b' : ''}
+              `}
             >
               <p
-                className={`arch-label font-mono text-[10px] tracking-[0.18em] uppercase ${item.labelClassName}`}
+                className={`
+                  arch-label
+                  font-mono
+                  text-[10px]
+                  tracking-[0.18em]
+                  uppercase
+                  ${item.labelClassName}
+                `}
                 data-arch-key={item.key}
               >
                 {item.label}
               </p>
+
               <p
-                className={`font-body mt-2 max-w-none text-sm leading-6 ${item.valueClassName} ${isBecause ? 'text-text-primary font-medium' : 'text-text-secondary'}`}
+                className={`
+                  font-body
+                  mt-2
+                  max-w-none
+                  text-sm
+                  leading-6
+                  ${item.valueClassName}
+                  ${
+                    isBecause
+                      ? 'text-text-primary font-medium'
+                      : 'text-text-secondary'
+                  }
+                `}
                 data-label={item.label}
               >
                 {value}
