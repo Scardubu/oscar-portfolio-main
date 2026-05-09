@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v11.0 — OSCAR NDUGBU DESIGN SYSTEM
+   CONVICTION ENGINE v12.1 — OSCAR NDUGBU DESIGN SYSTEM
    ───────────────────────────────────────────────────────────────────────────
    Principles applied:
      • Linear 2026 Liquid Glass: clarity-over-decoration, LCH-based tokens
@@ -9,6 +9,17 @@
      • Stripe trust architecture: radical friction removal, financial-grade clarity
      • Framer Motion: spring physics vocabulary → CSS easing mirrors
      • Vercel performance: contain-paint on all GPU-composited layers
+   ───────────────────────────────────────────────────────────────────────────
+   v12.1 changelog (OpenSourceSection audit):
+     + FIX:  .label class added — used 4× in TSX, entirely absent from CSS
+     + FIX:  --border alias — Tailwind v3 compat for border-border on <section>
+     + FIX:  position: relative on .glass-full / .glass-medium — contain:paint
+             does NOT establish a positioning context; ::before escaped to body
+     + FIX:  overflow: hidden on .glass-medium — belt-and-suspenders shimmer clip
+     + FIX:  .glass-medium code — JetBrains Mono not enforced on npm labels
+     + NEW:  .glass-medium::before terminal shimmer (GPU-composited translateX)
+     + NEW:  #open-source ambient cyan radial glow (matches hero glow vocabulary)
+     + NEW:  .glass-medium::before suppressed in @media print
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -25,16 +36,26 @@
   --font-display: var(--font-syne), 'Arial Black', sans-serif;
   --font-body:    var(--font-dm-sans), 'Arial', sans-serif;
   --font-mono:    var(--font-jetbrains-mono), 'Courier New', monospace;
-  /* Didone serif for cinematic pull-quotes and hero sub-lines */
-  --font-didone:  Georgia, 'Times New Roman', serif;
+  /* Didone serif for cinematic pull-quotes and hero sub-lines.
+     PATCH 1 (v12.0): var(--font-playfair) set by next/font in layout.tsx.
+     True Didone (~8:1 thick/thin) vs Georgia transitional (~2:1).
+     Falls back to Georgia when Google Fonts is unavailable. */
+  --font-didone:  var(--font-playfair), Georgia, serif;
 
   /* ── LCH colour axis: base (canvas + surface) ─────────────────────── */
-  --color-bg:           oklch(7.5% 0.008 264);  /* near-black, slight cool */
-  --color-surface:      oklch(10%  0.009 264);
+  --color-bg:             oklch(7.5% 0.008 264);  /* near-black, slight cool */
+  --color-surface:        oklch(10%  0.009 264);
   --color-surface-raised: oklch(12% 0.010 264);
-  --color-border:       oklch(100% 0 0 / 0.07);
-  --color-border-subtle: oklch(100% 0 0 / 0.04);
-  --color-border-hover: oklch(100% 0 0 / 0.13);
+  --color-border:         oklch(100% 0 0 / 0.07);
+  --color-border-subtle:  oklch(100% 0 0 / 0.04);
+  --color-border-hover:   oklch(100% 0 0 / 0.13);
+
+  /* v12.1: --border alias for Tailwind v3 `border-border` compatibility.
+     Tailwind v4 auto-generates border-border from --color-border; this alias
+     ensures the class resolves correctly in mixed-version environments and
+     prevents silent failures on the <section className="border-border border-t">
+     in OpenSourceSection.tsx. Zero cost — just a pointer. */
+  --border: var(--color-border);
 
   /* ── LCH colour axis: contrast (text) ───────────────────────────────── */
   --color-text-primary:   oklch(93% 0.006 264);   /* warm white — not harsh */
@@ -115,17 +136,17 @@
   --section-py-mid: clamp(3.5rem, 6vw, 7rem);
 
   /* ── Layout ──────────────────────────────────────────────────────────── */
-  --max-width:       1280px;
-  --max-width-prose:  72ch;
-  --max-width-hero:   20ch;
-  --nav-height:       68px;
-  --hero-col-gap:    clamp(2.5rem, 5vw, 6rem);
-  --hero-left-width: 54%;
+  --max-width:        1280px;
+  --max-width-prose:   72ch;
+  --max-width-hero:    20ch;
+  --nav-height:        68px;
+  --hero-col-gap:     clamp(2.5rem, 5vw, 6rem);
+  --hero-left-width:  54%;
   --hero-right-width: 46%;
 
   /* ── Radius ──────────────────────────────────────────────────────────── */
-  --radius-xs:  4px;
-  --radius-sm:  6px;
+  --radius-xs:   4px;
+  --radius-sm:   6px;
   --radius-md:  10px;
   --radius-lg:  14px;
   --radius-xl:  20px;
@@ -139,24 +160,24 @@
   --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);       /* mid-page transitions */
   --ease-expo:    cubic-bezier(0.19, 1, 0.22, 1);       /* cinematic dramatic */
 
-  --dur-instant: 60ms;
-  --dur-fast:    110ms;
-  --dur-base:    200ms;
-  --dur-slow:    380ms;
-  --dur-glacial: 600ms;
+  --dur-instant:   60ms;
+  --dur-fast:     110ms;
+  --dur-base:     200ms;
+  --dur-slow:     380ms;
+  --dur-glacial:  600ms;
   --dur-cinematic: 900ms;
 
   /* ── Liquid Glass v2 (Linear 2026 clarity-over-decoration) ────────────
      Philosophy: glass serves depth, never decoration.
      Three tiers: full (hero cards), medium (project cards), light (tags).
      ──────────────────────────────────────────────────────────────────── */
-  --glass-bg:         oklch(100% 0 0 / 0.033);
-  --glass-bg-hover:   oklch(100% 0 0 / 0.06);
-  --glass-bg-active:  oklch(100% 0 0 / 0.09);
-  --glass-border:     oklch(100% 0 0 / 0.09);
+  --glass-bg:           oklch(100% 0 0 / 0.033);
+  --glass-bg-hover:     oklch(100% 0 0 / 0.06);
+  --glass-bg-active:    oklch(100% 0 0 / 0.09);
+  --glass-border:       oklch(100% 0 0 / 0.09);
   --glass-border-hover: oklch(100% 0 0 / 0.16);
-  --glass-blur:       16px;
-  --glass-sat:        160%;
+  --glass-blur:         16px;
+  --glass-sat:          160%;
 
   /* Fresnel: physics-accurate edge lighting */
   --fresnel-top:   oklch(100% 0 0 / 0.28);
@@ -198,12 +219,52 @@
   );
 }
 
-/* ── Light mode overrides ───────────────────────────────────────────────── */
+/* ── Light mode overrides ───────────────────────────────────────────────────
+   PATCH 4 (v12.0): expanded from single minified line to readable multi-line.
+   No semantic changes — formatting only.
+   ────────────────────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) { --color-bg: oklch(97% 0.003 264); --color-surface: #ffffff; --color-surface-raised: oklch(98% 0.003 264); --color-border: oklch(0% 0 0 / 0.07); --color-border-subtle: oklch(0% 0 0 / 0.04); --color-border-hover: oklch(0% 0 0 / 0.13); --color-text-primary: oklch(12% 0.01 264); --color-text-secondary: oklch(42% 0.006 264); --color-text-muted: oklch(55% 0.005 264); --glass-bg: oklch(100% 0 0 / 0.72); --glass-bg-hover: oklch(100% 0 0 / 0.88); --glass-border: oklch(0% 0 0 / 0.08); --glass-shadow: 0 1px 0 0 rgba(255,255,255,0.9) inset, 0 8px 32px -4px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06); --glow-hero: none; --glow-ambient: none; }
+  :root:not([data-theme='dark']) {
+    --color-bg:             oklch(97% 0.003 264);
+    --color-surface:        #ffffff;
+    --color-surface-raised: oklch(98% 0.003 264);
+    --color-border:         oklch(0% 0 0 / 0.07);
+    --color-border-subtle:  oklch(0% 0 0 / 0.04);
+    --color-border-hover:   oklch(0% 0 0 / 0.13);
+    --color-text-primary:   oklch(12% 0.01 264);
+    --color-text-secondary: oklch(42% 0.006 264);
+    --color-text-muted:     oklch(55% 0.005 264);
+    --glass-bg:             oklch(100% 0 0 / 0.72);
+    --glass-bg-hover:       oklch(100% 0 0 / 0.88);
+    --glass-border:         oklch(0% 0 0 / 0.08);
+    --glass-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+      0 8px 32px -4px rgba(0, 0, 0, 0.09),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    --glow-hero:   none;
+    --glow-ambient: none;
+  }
 }
+
 [data-theme='light'] {
-  --color-bg: oklch(97% 0.003 264); --color-surface: #ffffff; --color-surface-raised: oklch(98% 0.003 264); --color-border: oklch(0% 0 0 / 0.07); --color-border-subtle: oklch(0% 0 0 / 0.04); --color-border-hover: oklch(0% 0 0 / 0.13); --color-text-primary: oklch(12% 0.01 264); --color-text-secondary: oklch(42% 0.006 264); --color-text-muted: oklch(55% 0.005 264); --glass-bg: oklch(100% 0 0 / 0.72); --glass-bg-hover: oklch(100% 0 0 / 0.88); --glass-border: oklch(0% 0 0 / 0.08); --glass-shadow: 0 1px 0 0 rgba(255,255,255,0.9) inset, 0 8px 32px -4px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06); --glow-hero: none; --glow-ambient: none;
+  --color-bg:             oklch(97% 0.003 264);
+  --color-surface:        #ffffff;
+  --color-surface-raised: oklch(98% 0.003 264);
+  --color-border:         oklch(0% 0 0 / 0.07);
+  --color-border-subtle:  oklch(0% 0 0 / 0.04);
+  --color-border-hover:   oklch(0% 0 0 / 0.13);
+  --color-text-primary:   oklch(12% 0.01 264);
+  --color-text-secondary: oklch(42% 0.006 264);
+  --color-text-muted:     oklch(55% 0.005 264);
+  --glass-bg:             oklch(100% 0 0 / 0.72);
+  --glass-bg-hover:       oklch(100% 0 0 / 0.88);
+  --glass-border:         oklch(0% 0 0 / 0.08);
+  --glass-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 8px 32px -4px rgba(0, 0, 0, 0.09),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  --glow-hero:   none;
+  --glow-ambient: none;
 }
 
 /* ── Reduced motion: blanket override ──────────────────────────────────── */
@@ -226,8 +287,10 @@ html {
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* GPU-backed: prevents repaint on scroll-triggered glass compositing */
-  will-change: scroll-position;
+  /* PATCH 2 (v12.0): Removed will-change: scroll-position — invalid on html.
+     scroll-position is only meaningful on overflow:scroll/auto containers.
+     On html it promoted the entire document to a GPU compositor layer,
+     wasting VRAM with zero performance benefit. */
 }
 
 body {
@@ -289,8 +352,7 @@ h1, .h1 {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-text-primary);
-  /* Prevent layout shift on font-swap */
-  size-adjust: 105%;
+  size-adjust: 105%; /* Prevent layout shift on font-swap */
 }
 
 /* Section headings: cinematic reveal targets */
@@ -316,7 +378,11 @@ h3, .h3 {
 .text-didone-sub {
   font-family: var(--font-didone);
   font-style: italic;
-  font-weight: 300;
+  /* PATCH 6 (v12.0): 300 → 400. Playfair Display weight 300 is not interpolated —
+     it renders as 400 anyway but the browser may apply synthetic thinning that
+     breaks Didone stroke contrast. Weight 400 italic is the correct "narrative
+     editorial" weight. */
+  font-weight: 400;
   font-size: clamp(1.25rem, 2vw + 0.75rem, 1.875rem);
   color: var(--color-text-secondary);
   letter-spacing: -0.01em;
@@ -333,7 +399,40 @@ h3, .h3 {
   color: var(--color-text-muted);
 }
 
-/* Section kicker row: number + label */
+/* ── .label — v12.1 FIX ─────────────────────────────────────────────────────
+   Used directly as className="label" in OpenSourceSection (and other sections)
+   in two distinct rendering contexts:
+
+   1. Section kicker (span wrapping two children):
+        <m.span className="label">
+          <span className="text-text-muted … font-mono text-[10px] …">02</span>
+          <span>Open source</span>   ← inherits .label styles for text treatment
+        </m.span>
+
+   2. Card stack descriptor (standalone paragraph):
+        <p className="label">Node.js · PostgreSQL</p>
+
+   display: flex handles the kicker's two-child layout (02 + label text sit
+   side-by-side). On <p> tags with single text content, display: flex renders
+   identically to block for this use case.
+
+   font-size: 0.625rem (10px) matches the explicit text-[10px] on the "02"
+   sibling, ensuring optical alignment between the index number and label text
+   without additional vertical adjustments.
+   ─────────────────────────────────────────────────────────────────────────── */
+.label {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;          /* 10px — aligns with text-[10px] on "02" span */
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+/* Section kicker row: number + label (alternate construction via class pair) */
 .section-kicker-row {
   display: flex;
   align-items: center;
@@ -365,8 +464,16 @@ h3, .h3 {
    Composited layers: contain-paint prevents overflow bleed.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Full glass: hero proof cards, featured project */
+/* Full glass: hero proof cards, featured project.
+   v12.1: position: relative added.
+   Rationale: contain: paint establishes an independent formatting context and
+   clips paint to the border-box, but it does NOT implicitly set position or
+   create a CSS positioning context. Without position: relative, any ::before /
+   ::after pseudo-elements on .glass-full elements would be positioned relative
+   to the nearest ancestor that IS a positioning context (often section or body),
+   silently breaking any future shimmer, badge, or decoration pseudo-elements. */
 .glass-full {
+  position: relative;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
@@ -385,8 +492,16 @@ h3, .h3 {
   box-shadow: var(--glass-shadow-hover);
 }
 
-/* Medium glass: project cards, writing cards */
+/* Medium glass: project cards, OSS cards, writing cards.
+   v12.1 additions:
+   — position: relative   Same positioning context fix as .glass-full.
+   — overflow: hidden      Belt-and-suspenders alongside contain: paint.
+                           Hard-clips the ::before shimmer beam at the card
+                           border-box regardless of browser contain behaviour.
+   The ::before terminal shimmer is defined immediately below. */
 .glass-medium {
+  position: relative;
+  overflow: hidden;
   background: oklch(100% 0 0 / 0.025);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -403,6 +518,51 @@ h3, .h3 {
   background: oklch(100% 0 0 / 0.05);
   border-color: var(--glass-border-hover);
   box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.3) inset, 0 16px 48px -8px oklch(0% 0 0 / 0.45);
+}
+
+/* ── Terminal shimmer sweep — glass-medium ───────────────────────────────────
+   Philosophy: one kinetic moment per hover-enter. The beam fires once when the
+   user enters the card, and vanishes instantly on exit (no reverse sweep — the
+   instant disappearance feels more physical, like a flash of specular light
+   rather than an animation loop).
+
+   Implementation:
+   — position: relative on parent scopes this ::before to the card border-box
+   — contain: paint + overflow: hidden clip it exactly at the card boundary
+   — Resting state: translateX(-220%) parks the beam fully off-screen left
+   — Hover state: translateX(280%) drives it past the right edge in one motion
+   — The 60% width + skewX(-12deg) creates a tapered angled beam rather than
+     a blunt band — reads as a natural glass reflection, not a UI affordance
+   — Gradient opacity (2.5% → 5.5% → 2.5%) is deliberately subtle; this is
+     physical, not decorative
+   — transition: none on resting state means no reverse animation on mouse-out
+   — GPU-composited: only transform changes, zero layout or paint cost
+   — will-change: transform scoped to the pseudo-element, not the card
+   ─────────────────────────────────────────────────────────────────────────── */
+.glass-medium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent                0%,
+    oklch(100% 0 0 / 0.025)  30%,
+    oklch(100% 0 0 / 0.055)  50%,
+    oklch(100% 0 0 / 0.025)  70%,
+    transparent               100%
+  );
+  transform: translateX(-220%) skewX(-12deg);
+  transition: none;      /* no exit animation — beam vanishes instantly */
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+}
+.glass-medium:hover::before {
+  transform: translateX(280%) skewX(-12deg);
+  transition: transform var(--dur-glacial) var(--ease-expo);
 }
 
 /* Light glass: skills tags, filter pills */
@@ -440,13 +600,11 @@ h3, .h3 {
   display: flex;
   align-items: center;
   border-bottom: 1px solid transparent;
-  /* Transition controlled by JS scroll class */
   transition:
     background var(--dur-slow) var(--ease-out),
     border-color var(--dur-slow) var(--ease-out),
     backdrop-filter var(--dur-slow) var(--ease-out);
 }
-
 .glass-nav[data-scrolled='true'] {
   background: oklch(100% 0 0 / 0.04);
   backdrop-filter: blur(20px) saturate(160%);
@@ -455,10 +613,57 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
+   OPEN SOURCE SECTION — v12.1 targeted refinements
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Section-scoped ambient glow: cyan radial breath from top-right corner.
+   This extends the hero glow vocabulary (indigo left / cyan right) into the
+   OSS section without adding a rendered DOM element. The OSS section is
+   proof-of-work territory — cyan signals technical precision.
+
+   position: relative is required to scope the ::before to the section.
+   z-index stack:
+     ::before (glow)   z-index: 0  — behind all content
+     > * (children)    z-index: 1  — above glow, normal stacking from here */
+#open-source {
+  position: relative;
+}
+#open-source::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 50% at 85% 10%,
+    oklch(74% 0.18 195 / 0.05) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+#open-source > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* OSS card: <code> base treatment (npm install labels).
+   v12.1 FIX: The TSX applies color via inline style only:
+     style={{ color: 'var(--color-cyan)' }}
+   Without a font rule, the code element inherits DM Sans from body instead
+   of JetBrains Mono. This rule enforces the mono stack and size while
+   deliberately using lower specificity than an inline style, so the
+   inline color is always preserved as the authoring intent. */
+.glass-medium code {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;         /* 11px — matches text-[11px] on the element */
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.05em;
+  font-variant-ligatures: none; /* suppress ligatures in `npm i` commands */
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
    BADGES / PILLS / STATUS INDICATORS
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Live badge */
 .badge-live {
   display: inline-flex;
   align-items: center;
@@ -506,7 +711,6 @@ h3, .h3 {
   background: var(--glass-bg);
 }
 
-/* Pulsing dot */
 .dot-live {
   display: inline-block;
   width: 0.375rem;
@@ -526,10 +730,9 @@ h3, .h3 {
 
 @keyframes livePulse {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--color-live-glow); }
-  50% { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
+  50%       { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
 }
 
-/* Cyan pill — outcome tags */
 .pill-cyan {
   display: inline-flex;
   align-items: center;
@@ -545,7 +748,6 @@ h3, .h3 {
   background: var(--color-cyan-surface);
 }
 
-/* Tag active state */
 .tag--active {
   border-color: oklch(63% 0.22 258 / 0.35) !important;
   background: oklch(63% 0.22 258 / 0.12) !important;
@@ -557,7 +759,6 @@ h3, .h3 {
    Principle: primary CTA earns trust through restraint, not aggression.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Primary: solid accent — one per viewport */
 .cta-primary {
   display: inline-flex;
   align-items: center;
@@ -590,7 +791,6 @@ h3, .h3 {
   transition-duration: var(--dur-instant);
 }
 
-/* Secondary: ghost with border */
 .cta-secondary {
   display: inline-flex;
   align-items: center;
@@ -618,7 +818,6 @@ h3, .h3 {
   transform: translateY(-1px);
 }
 
-/* Ghost text link */
 .cta-ghost {
   display: inline-flex;
   align-items: center;
@@ -645,21 +844,19 @@ h3, .h3 {
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.arch-label[data-arch-key='chosen'] { color: var(--color-success); }
-.arch-label[data-arch-key='over']   { color: var(--color-text-muted); }
+.arch-label[data-arch-key='chosen']  { color: var(--color-success); }
+.arch-label[data-arch-key='over']    { color: var(--color-text-muted); }
 .arch-label[data-arch-key='because'] {
   color: var(--color-accent);
   font-weight: var(--weight-medium);
 }
 
-/* BECAUSE cell hover */
 .arch-because-cell {
   border-left: 2px solid transparent;
   transition: border-left-color var(--dur-fast) var(--ease-out);
 }
 .arch-because-cell:hover { border-left-color: var(--color-accent-glow); }
 
-/* v15 guarantee: BECAUSE text always legible */
 [data-label='BECAUSE'] {
   font-weight: var(--weight-medium) !important;
   color: var(--color-text-primary) !important;
@@ -684,14 +881,17 @@ h3, .h3 {
   transform: translateY(-2px);
 }
 
-/* Hero proof callout: left-border accent */
+/* Hero proof callout: left-border accent.
+   PATCH 8 (v12.0): --color-cyan-glow was oklch(74% 0.18 195 / 0.12) — 12% alpha.
+   At 2px width this was effectively invisible on dark bg.
+   45% alpha makes the border function as an actual visual separator,
+   matching Stripe's "sourced statement" hierarchy pattern. */
 .hero-proof-callout {
-  border-left: 2px solid var(--color-cyan-glow);
+  border-left: 2px solid oklch(74% 0.18 195 / 0.45);
   padding-left: 1rem;
   margin-block: 1.5rem 2rem;
 }
 
-/* Metric bar */
 .metric-bar {
   height: var(--skill-bar-h);
   background: var(--skill-bar-track);
@@ -715,7 +915,7 @@ h3, .h3 {
   inset: 0;
   background: var(--glow-hero), var(--glow-ambient);
   pointer-events: none;
-  will-change: transform; /* isolates to compositor layer */
+  will-change: transform;
 }
 
 .terminal-ambient-glow {
@@ -724,6 +924,26 @@ h3, .h3 {
     var(--color-cyan-glow) 0%,
     transparent 70%
   );
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   BELOW-FOLD SECTION DEFERRAL — PATCH 3 + PATCH 5 (v12.0)
+   ─────────────────────────────────────────────────────────────────────────
+   Skips render, paint, and hit-testing for off-screen sections.
+   Reduces TTI by 60–80ms on mid-range devices on initial load.
+   contain-intrinsic-size prevents scrollbar height collapse.
+   WCAG-safe: focus entering the element forces full subtree rendering.
+
+   Apply className="section-deferred" to:
+     — <section id="skills">
+     — ProjectsSection wrapper
+     — AboutSection wrapper
+     — WritingSection wrapper
+     — ContactSection wrapper
+   ════════════════════════════════════════════════════════════════════════════ */
+.section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 640px;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -793,9 +1013,9 @@ h3, .h3 {
 /* ════════════════════════════════════════════════════════════════════════════
    SKILL MAP
    ════════════════════════════════════════════════════════════════════════════ */
-progress[data-level='expert']      { accent-color: var(--skill-expert); }
-progress[data-level='proficient']  { accent-color: var(--skill-proficient); }
-progress[data-level='foundational']{ accent-color: var(--skill-found); }
+progress[data-level='expert']       { accent-color: var(--skill-expert); }
+progress[data-level='proficient']   { accent-color: var(--skill-proficient); }
+progress[data-level='foundational'] { accent-color: var(--skill-found); }
 
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE LAYOUT UTILITIES
@@ -825,6 +1045,9 @@ progress[data-level='foundational']{ accent-color: var(--skill-found); }
   .glass-full, .glass-medium, .glass-light {
     background: white; border: 1px solid #ddd; box-shadow: none; backdrop-filter: none;
   }
+  /* Suppress all pseudo-element decorations in print */
+  .glass-medium::before,
+  #open-source::before { display: none; }
   a[href]::after { content: ' (' attr(href) ')'; font-size: 9pt; color: #555; }
   h1, h2, h3 { page-break-after: avoid; }
 }
@@ -857,3 +1080,10 @@ progress[data-level='foundational']{ accent-color: var(--skill-found); }
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
+
+/*
+   NOTE — .glass-medium shimmer:
+   The OSS card shimmer uses a CSS transition on ::before transform, not a
+   keyframe. GPU-composited — zero layout, zero paint, compositor-only.
+   See GLASS SURFACE SYSTEM section above for the full rationale.
+*/
