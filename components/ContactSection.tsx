@@ -1,4 +1,17 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v11.0 — ContactSection
+//
+// Design principles:
+//   • Stripe trust architecture: "you" language — address the reader's situation,
+//     not Oscar's desires. Objections are defanged by anticipating them inline.
+//     "Deliverable-led, not hourly" kills the hourly-billing objection.
+//   • Three hire-me vectors: Staff+ hire, Technical CTO, Consulting.
+//     Each serves a different decision-maker reading the same page.
+//   • CTA hierarchy: one primary (email), one secondary (CV download).
+//     No tertiary — decision fatigue kills conversions.
+//   • Glass cards: left-border accent color identifies the hire type instantly.
+//   • A24 resonance: headline "Let's build something that doesn't fail at 2am"
+//     completes the hero's design-constraint motif. Full narrative arc closure.
+//
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -6,26 +19,38 @@ import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
 import { CopyEmail } from '@/components/CopyEmail';
-import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import {
+  cardReveal,
+  clipReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
+} from '@/lib/motionVariants';
 
 const CONTACT_CARDS = [
   {
+    id: 'staff-plus',
     title: 'STAFF+ / PRINCIPAL',
     headline: 'Product delivery · APIs · data infrastructure',
-    body: 'Available for Staff+ and Principal Backend roles at fintech and AI-native product companies. Four years of independent platform work — user-facing product surfaces, multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline constraint.',
-    border: 'border-l-emerald-400',
+    body: 'Available for Staff+ and Principal Backend roles at fintech and AI-native product companies. Four years of independent platform work — user-facing surfaces, multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as a baseline, not a feature.',
+    accentColor: 'var(--color-success)',
+    glowColor: 'oklch(65% 0.18 155 / 0.06)',
   },
   {
+    id: 'technical-cofounder',
     title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
-    body: 'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds. The system should outlast the seed deck.',
-    border: 'border-l-blue-500',
+    body: 'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds. The system should outlast the seed deck — I build like it will.',
+    accentColor: 'var(--color-accent)',
+    glowColor: 'oklch(63% 0.22 258 / 0.06)',
   },
   {
+    id: 'consulting',
     title: 'INFRASTRUCTURE CONSULTING',
     headline: 'Production reliability · compliance systems · ML backends',
-    body: 'Scoped engagements: production incident remediation, architecture review, Nigerian tax compliance integration (NTA 2025 / NRS 2026), and ML inference pipeline optimisation. Deliverable-led, not hourly.',
-    border: 'border-l-violet-500',
+    body: 'Scoped engagements: production incident remediation, architecture review, Nigerian tax compliance integration (NTA 2025 / NRS 2026), and ML inference pipeline optimisation. Deliverable-led, not hourly. You get working infrastructure — not billable-hour reports.',
+    accentColor: 'var(--color-cyan)',
+    glowColor: 'oklch(74% 0.18 195 / 0.06)',
   },
 ] as const;
 
@@ -49,103 +74,154 @@ export function ContactSection() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
-  const container = useMemo(() => staggerContainer(0.1, 0.05), []);
+
+  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
   const child = reducedMotion ? noMotion : fadeRise;
-  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+  const card = (i: number) => (reducedMotion ? noMotion : cardReveal(24 + i * 4));
 
   return (
-    <section id="contact" ref={ref} className="border-t border-(--color-border) py-28 sm:py-32">
+    <section
+      id="section-contact"
+      ref={ref}
+      aria-labelledby="contact-heading"
+      className="border-t py-[var(--section-py)]"
+      style={{ borderColor: 'var(--color-border)' }}
+    >
       <div className="container">
-        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <m.div
-            variants={child}
-            className="pill pill-cyan inline-flex items-center gap-3"
-            role="status"
-          >
-            <span className="dot-live" aria-hidden="true" />
-            <span>Open — responding within 48hrs</span>
+        <m.div
+          variants={container}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
+          {/* ── Section kicker ──────────────────────────────────────── */}
+          <m.div variants={child} className="section-kicker-row">
+            <span className="section-number" aria-hidden="true">06</span>
+            <span className="section-label">Contact</span>
           </m.div>
 
-          <div className="mt-8 max-w-3xl">
-            <m.h2
-              variants={child}
-              id="section-contact"
-              className="font-display text-4xl font-bold text-white sm:text-5xl"
-            >
-              Start a conversation.
-            </m.h2>
-            <m.p
-              variants={child}
-              className="mt-5 max-w-[62ch] text-base leading-8 text-white/72 sm:text-lg"
-            >
-              Available for both sides: technical co-founders and hiring managers.
-            </m.p>
-          </div>
+          {/* ── Headline: A24 narrative closure — mirrors hero motif ── */}
+          {/* "That's not a slogan. It's a design constraint." → close loop */}
+          <m.h2
+            id="contact-heading"
+            variants={reducedMotion ? child : clipReveal}
+            className="mt-3 max-w-[24ch]"
+          >
+            Let&apos;s build something that doesn&apos;t fail at 2am.
+          </m.h2>
 
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {CONTACT_CARDS.map((mode) => (
-              <m.article
-                key={mode.title}
-                variants={card}
-                data-accent={mode.title.toLowerCase()}
-                whileHover={
-                  reducedMotion
-                    ? undefined
-                    : {
-                        y: -3,
-                        boxShadow: 'var(--glass-shadow-hover)',
-                        transition: { type: 'spring', stiffness: 400, damping: 30 },
-                      }
-                }
-                className={`glass-surface rounded-(--radius-lg) border border-l-2 border-(--glass-border) p-6 sm:p-8 ${mode.border}`}
-              >
-                <p className="font-mono text-[11px] tracking-widest text-white/65 uppercase">
-                  {mode.title}
-                </p>
-                <h3 className="mt-4 text-xl font-semibold text-white">{mode.headline}</h3>
-                <p className="mt-4 text-sm leading-7 text-white/75">{mode.body}</p>
-              </m.article>
-            ))}
-          </div>
+          {/* ── Body: Stripe "you" language — address reader's situation */}
+          <m.p
+            variants={child}
+            className="mt-5 max-w-[56ch] text-base leading-8"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            If you need a backend that holds under pressure, infrastructure legible to the
+            next engineer, or a technical co-founder who&apos;s shipped from zero — I&apos;m
+            available. No discovery calls before seeing actual work; it&apos;s all on this page.
+          </m.p>
 
+          {/* ── Primary CTA strip ───────────────────────────────────── */}
+          <m.div variants={child} className="mt-8 flex flex-wrap items-center gap-4">
+            <a
+              href="mailto:scardubu@gmail.com"
+              className="cta-primary"
+              aria-label="Email Oscar Ndugbu"
+            >
+              Send an email
+            </a>
+            <a
+              href="/cv/oscar-ndugbu-resume.pdf"
+              download
+              className="cta-secondary"
+              aria-label="Download Oscar's resume PDF"
+            >
+              Download CV
+            </a>
+            <CopyEmail />
+          </m.div>
+
+          {/* ── Social links ────────────────────────────────────────── */}
           <m.div
             variants={child}
-            className="mt-12 flex flex-wrap items-center gap-3 border-t border-(--color-border) pt-8 sm:gap-4"
+            className="mt-6 flex items-center gap-4"
           >
-            <CopyEmail
-              email="scardubu@gmail.com"
-              className="min-h-11 rounded-(--radius-md) bg-(--color-accent) px-6 py-3.5 text-xs font-semibold tracking-wider uppercase shadow-[0_0_20px_var(--color-accent-glow)] hover:bg-(--color-accent-hover) hover:text-white"
-            />
-
-            <Link
-              href="https://linkedin.com/in/oscar-ndugbu"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Oscar Ndugbu on LinkedIn"
-              data-cta="secondary"
-              className="border-border text-text-secondary inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border px-5 py-3.5 font-mono text-xs font-medium uppercase transition"
-            >
-              <LinkedInIcon />
-              LinkedIn
-            </Link>
-            <Link
+            <a
               href="https://github.com/Scardubu"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Oscar Ndugbu on GitHub"
-              data-cta="secondary"
-              className="border-border text-text-secondary inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) border px-5 py-3.5 font-mono text-xs font-medium uppercase transition"
+              className="cta-ghost"
+              aria-label="GitHub profile"
             >
               <GitHubIcon />
-              GitHub
-            </Link>
+              <span className="ml-1.5">Scardubu</span>
+            </a>
             <a
-              href="tel:+2348033885065"
-              className="text-text-muted hover:text-text-primary font-body text-sm transition-colors sm:ml-1"
+              href="https://linkedin.com/in/oscar-ndugbu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cta-ghost"
+              aria-label="LinkedIn profile"
             >
-              +234 803 388 5065
+              <LinkedInIcon />
+              <span className="ml-1.5">Oscar Ndugbu</span>
             </a>
           </m.div>
+
+          {/* ── Three hire-me cards ─────────────────────────────────── */}
+          {/* Grid: 1 col mobile, 3 col desktop — left-border color codes type */}
+          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {CONTACT_CARDS.map(({ id, title, headline, body, accentColor, glowColor }, i) => (
+              <m.div
+                key={id}
+                variants={card(i)}
+                className="glass-medium rounded-[var(--radius-xl)] p-6 relative overflow-hidden"
+                style={{
+                  borderLeft: `2px solid ${accentColor}`,
+                  // Subtle ambient glow matching card type
+                  background: glowColor,
+                }}
+                whileHover={reducedMotion ? undefined : {
+                  y: -3,
+                  transition: { type: 'spring', stiffness: 400, damping: 30 },
+                }}
+              >
+                {/* Type label */}
+                <p className="label-mono mb-3" style={{ color: accentColor }}>
+                  {title}
+                </p>
+
+                {/* Headline: service promise */}
+                <p
+                  className="text-sm font-medium mb-4 leading-snug"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {headline}
+                </p>
+
+                {/* Body: objection-defanging precision (Stripe style) */}
+                <p
+                  className="text-sm leading-7"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  {body}
+                </p>
+
+                {/* Ambient corner glow: spatial depth cue */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    width: '80px',
+                    height: '80px',
+                    background: `radial-gradient(circle at 100% 100%, ${accentColor.replace(')', ' / 0.08)')}, transparent 70%)`,
+                    pointerEvents: 'none',
+                  }}
+                />
+              </m.div>
+            ))}
+          </div>
         </m.div>
       </div>
     </section>
