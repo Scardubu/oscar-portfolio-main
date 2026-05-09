@@ -1,4 +1,15 @@
-// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v11.0 — ProjectsSection
+//
+// Design principles:
+//   • A24 Didone authority: section heading clips in from left (wipe reveal),
+//     not a simple fade. Creates geometric intersection — "unknown→revealed".
+//   • Stripe trust architecture: "Read full brief" accordion uses spring
+//     physics — never linear. Outcomes strip uses concrete metrics (no adjectives).
+//   • Linear high-density: ArchDecision table is always visible on featured card.
+//     Engineers shouldn't need to expand to see architectural reasoning.
+//   • Dual-audience layout: tagline (DM) → outcomes pills (both) → arch (engineer).
+//   • Scroll-triggered: useInView + staggerContainer for sequential reveals.
+//
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -7,18 +18,26 @@ import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 
 import { ArchDecision } from '@/components/ArchDecision';
-import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import {
+  accordionReveal,
+  cardReveal,
+  clipReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
+  wordReveal,
+  wordRevealContainer,
+} from '@/lib/motionVariants';
 import { PROJECTS, type Project } from '@/lib/projects';
 
-// Module-scope constants — never call cardReveal() inside .map() or JSX [v15 FIX-HOOK]
-const FEATURED_VARIANT = cardReveal(24);
-const GRID_VARIANTS = [cardReveal(24), cardReveal(-24)] as const;
+const FEATURED_VARIANT = cardReveal(28);
+const GRID_VARIANT_A = cardReveal(28);
+const GRID_VARIANT_B = cardReveal(-24);
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
     return <span className="badge-muted">CASE STUDY</span>;
   }
-
   return (
     <span className={status === 'live' ? 'badge-live' : 'badge-wip'}>
       <span className={status === 'live' ? 'dot-live' : 'dot-wip'} aria-hidden="true" />
@@ -30,210 +49,270 @@ function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
 function FeaturedProjectCard({
   featured,
   reducedMotion,
-  variant,
 }: Readonly<{
   featured: Project;
   reducedMotion: boolean;
-  variant: typeof FEATURED_VARIANT;
 }>) {
   const [briefOpen, setBriefOpen] = useState(false);
 
   return (
     <m.article
-      variants={variant}
-      className="glass glass-full glass-chromatic card-depth mb-8 overflow-hidden rounded-(--radius-xl) p-8 sm:p-10 lg:p-12"
+      variants={FEATURED_VARIANT}
+      className="glass-full rounded-[var(--radius-xl)] p-8 sm:p-10 lg:p-12 overflow-hidden mb-6"
       data-project-id={featured.slug}
+      // Engineer micro-interaction: hover lifts
+      whileHover={reducedMotion ? undefined : { y: -3, transition: { type: 'spring', stiffness: 360, damping: 28 } }}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <span className="label">{featured.type}</span>
+      {/* ── Header ──────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <span className="label-mono">{featured.type}</span>
+        </div>
         <StatusBadge status={featured.status} />
       </div>
 
-      <h3 className="mt-6 text-[clamp(2rem,2vw+1rem,2.8rem)] font-semibold text-white">
+      {/* ── Headline: Didone display type ───────────────────────────── */}
+      <h3
+        className="text-[clamp(1.875rem,2.5vw+1rem,2.75rem)] font-bold leading-[1.1] tracking-tight"
+        style={{ color: 'var(--color-text-primary)' }}
+      >
         {featured.title}
       </h3>
-      <p className="font-display text-text-secondary mt-4 max-w-[58ch] text-(length:--text-xl) leading-[1.7]">
+
+      {/* ── Tagline: DM-readable, no jargon ─────────────────────────── */}
+      <p
+        className="mt-4 max-w-[58ch] text-lg leading-[1.7]"
+        style={{
+          fontFamily: 'var(--font-body)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
         {featured.tagline}
       </p>
 
-      <ul className="outcomes-strip mt-6 flex flex-wrap gap-3" aria-label={`${featured.title} outcomes`}>
+      {/* ── Outcomes strip: concrete metrics — both audiences ────────── */}
+      <ul
+        className="mt-6 flex flex-wrap gap-2"
+        aria-label={`${featured.title} outcomes`}
+      >
         {featured.outcomes.map((outcome) => (
           <li
             key={`${featured.slug}-${outcome}`}
-            className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
+            className="pill-cyan"
           >
             {outcome}
           </li>
         ))}
       </ul>
 
+      {/* ── Stack ────────────────────────────────────────────────────── */}
+      <div className="mt-5 flex flex-wrap gap-1.5">
+        {featured.stack.map((tech) => (
+          <span
+            key={tech}
+            className="glass-light rounded-md px-2.5 py-1 font-mono text-[10px] tracking-wide"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+
+      {/* ── Brief accordion: spring physics ─────────────────────────── */}
       <button
         type="button"
         onClick={() => setBriefOpen((v) => !v)}
-        className="mt-5 inline-flex min-h-11 items-center rounded-full border border-white/15 px-4 py-2 font-mono text-[11px] tracking-widest text-white/70 uppercase transition hover:border-white/30 hover:text-white"
+        className="mt-5 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/14 px-4 py-2 font-mono text-[11px] tracking-widest uppercase text-white/55 transition hover:border-white/28 hover:text-white/80"
+        aria-expanded={briefOpen}
+        aria-controls={`brief-${featured.slug}`}
       >
-        {briefOpen ? 'Hide full brief ↑' : 'Read full brief ↓'}
+        {briefOpen ? 'Hide brief ↑' : 'Read full brief ↓'}
       </button>
 
       <AnimatePresence initial={false}>
-        {briefOpen ? (
+        {briefOpen && (
           <m.div
-            initial={reducedMotion ? false : { opacity: 0, height: 0 }}
-            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
-            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
-            transition={
-              reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 280, damping: 24 }
-            }
+            id={`brief-${featured.slug}`}
+            variants={reducedMotion ? undefined : accordionReveal}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             className="overflow-hidden"
           >
-            <p className="font-display text-text-secondary mt-5 max-w-[72ch] text-base leading-8">
+            <p
+              className="mt-5 max-w-[72ch] text-base leading-8"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
               {featured.description}
             </p>
-            <p className="font-display text-text-secondary mt-4 max-w-[72ch] border-l-2 border-[rgba(245,158,11,0.35)] pl-3 text-sm italic">
+            <p
+              className="mt-4 max-w-[72ch] border-l-2 pl-3 text-sm italic"
+              style={{
+                borderLeftColor: 'oklch(73% 0.18 75 / 0.35)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
               Constraint: {featured.constraint}
             </p>
           </m.div>
-        ) : null}
+        )}
       </AnimatePresence>
 
-      <ArchDecision
-        chosen={featured.chosen}
-        over={featured.over}
-        because={featured.because}
-        compact={false}
-      />
+      {/* ── ArchDecision: always visible on featured card ────────────── */}
+      {/* Rationale: engineer audience pattern-recognizes in <400ms.      */}
+      {/* Hiding inside an accordion costs cognitive latency they won't pay. */}
+      <div className="mt-8">
+        <ArchDecision
+          chosen={featured.chosen}
+          over={featured.over}
+          because={featured.because}
+        />
+      </div>
 
-      <ul className="mt-6 flex flex-wrap gap-3" aria-label={`${featured.title} technology stack`}>
-        {featured.stack.map((tag) => (
-          <li key={`${featured.slug}-${tag}`} className="tag">
-            {tag}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-8 flex flex-wrap gap-6 border-t border-(--color-border) pt-7 text-xs tracking-[0.16em] uppercase">
-        {featured.demoUrl ? (
+      {/* ── CTA strip ───────────────────────────────────────────────── */}
+      <div className="mt-8 flex flex-wrap items-center gap-3">
+        {featured.caseStudy && (
+          <Link href={featured.caseStudy} className="cta-primary">
+            Read case study
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+        )}
+        {featured.demoUrl && (
           <a
             href={featured.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-reveal text-text-secondary inline-flex items-center gap-1 font-mono"
+            className="cta-secondary"
           >
-            <span>Live demo</span>
+            Live demo
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
           </a>
-        ) : null}
-        {featured.githubUrl ? (
+        )}
+        {featured.githubUrl && (
           <a
             href={featured.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-reveal text-text-secondary inline-flex items-center gap-1 font-mono"
+            className="cta-ghost"
           >
-            <span>GitHub</span>
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+            View source →
           </a>
-        ) : null}
-        {featured.caseStudy ? (
-          <Link
-            href={featured.caseStudy}
-            className="link-reveal inline-flex items-center gap-1 font-mono text-(--color-accent)"
-          >
-            <span>Case study</span>
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </Link>
-        ) : null}
+        )}
       </div>
     </m.article>
   );
 }
 
-function ProjectGridCard({
+function ProjectCard({
   project,
-  reducedMotion,
   variant,
+  reducedMotion,
 }: Readonly<{
   project: Project;
+  variant: ReturnType<typeof cardReveal>;
   reducedMotion: boolean;
-  variant: (typeof GRID_VARIANTS)[number];
 }>) {
   return (
     <m.article
-      variants={reducedMotion ? noMotion : variant}
-      className="glass glass-medium card-depth flex h-full flex-col overflow-hidden rounded-(--radius-xl) p-8 sm:p-10"
+      variants={variant}
+      className="glass-medium flex flex-col rounded-[var(--radius-xl)] p-6 sm:p-8 overflow-hidden"
       data-project-id={project.slug}
+      whileHover={reducedMotion ? undefined : {
+        y: -4,
+        transition: { type: 'spring', stiffness: 360, damping: 28 },
+      }}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <span className="label">{project.type}</span>
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <span className="label-mono">{project.type}</span>
         <StatusBadge status={project.status} />
       </div>
 
-      <h3 className="mt-6 font-semibold text-white">{project.title}</h3>
-      <p className="font-display text-text-secondary mt-3 flex-1 text-base leading-8">
+      <h3
+        className="text-xl font-semibold leading-snug tracking-tight"
+        style={{ color: 'var(--color-text-primary)' }}
+      >
+        {project.title}
+      </h3>
+      <p
+        className="mt-3 text-sm leading-7 flex-1"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
         {project.tagline}
       </p>
-      <p className="font-display mt-4 text-base leading-8 text-(--color-text-muted)">
-        {project.description}
-      </p>
 
-      <ul className="mt-5 flex flex-wrap gap-3" aria-label={`${project.title} outcomes`}>
+      <ul className="mt-4 flex flex-wrap gap-2" aria-label={`${project.title} outcomes`}>
         {project.outcomes.slice(0, 3).map((outcome) => (
-          <li
-            key={`${project.slug}-${outcome}`}
-            className="pill-cyan font-mono text-[11px] tracking-widest uppercase"
-          >
+          <li key={`${project.slug}-${outcome}`} className="pill-cyan">
             {outcome}
           </li>
         ))}
       </ul>
 
-      <ArchDecision
-        chosen={project.chosen}
-        over={project.over}
-        because={project.because}
-        compact={true}
-      />
-
-      <ul className="mt-6 flex flex-wrap gap-3" aria-label={`${project.title} technology stack`}>
-        {project.stack.map((tag) => (
-          <li key={`${project.slug}-${tag}`} className="tag">
-            {tag}
-          </li>
+      {/* Stack — condensed for grid card */}
+      <div className="mt-4 flex flex-wrap gap-1">
+        {project.stack.slice(0, 6).map((tech) => (
+          <span
+            key={tech}
+            className="font-mono text-[9px] tracking-wide"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            {tech}
+          </span>
         ))}
-      </ul>
+        {project.stack.length > 6 && (
+          <span className="font-mono text-[9px]" style={{ color: 'var(--color-text-muted)' }}>
+            +{project.stack.length - 6}
+          </span>
+        )}
+      </div>
 
-      <div className="mt-7 flex flex-wrap gap-4 border-t border-(--color-border) pt-6 text-xs tracking-[0.16em] uppercase">
-        {project.demoUrl ? (
-          <a
-            href={project.demoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-reveal text-text-secondary inline-flex items-center gap-1 font-mono"
-          >
-            <span>Live demo</span>
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
-        ) : null}
-        {project.githubUrl ? (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link-reveal inline-flex items-center gap-1 font-mono text-(--color-text-muted)"
-          >
-            <span>GitHub</span>
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
-        ) : null}
-        {project.caseStudy ? (
-          <Link
-            href={project.caseStudy}
-            className="link-reveal inline-flex items-center gap-1 font-mono text-(--color-accent)"
-          >
-            <span>Case study</span>
-            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+      {/* ArchDecision: compact 3-liner for grid cards */}
+      <div
+        className="mt-5 border-t pt-4"
+        style={{ borderColor: 'var(--color-border-subtle)' }}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <span className="label-mono w-14 flex-shrink-0" style={{ color: 'var(--color-success)' }}>
+              CHOSEN
+            </span>
+            <span className="text-[11px] leading-5" style={{ color: 'var(--color-text-secondary)' }}>
+              {project.chosen}
+            </span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="label-mono w-14 flex-shrink-0">OVER</span>
+            <span className="text-[11px] leading-5" style={{ color: 'var(--color-text-muted)' }}>
+              {project.over}
+            </span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="label-mono w-14 flex-shrink-0" style={{ color: 'var(--color-accent)' }}>
+              BECAUSE
+            </span>
+            <span
+              className="text-[11px] leading-5 font-medium"
+              style={{ color: 'var(--color-text-primary)' }}
+              data-label="BECAUSE"
+            >
+              {project.because}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="mt-5 flex gap-3">
+        {project.caseStudy && (
+          <Link href={project.caseStudy} className="cta-ghost text-xs">
+            Case study →
           </Link>
-        ) : null}
+        )}
+        {project.githubUrl && (
+          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="cta-ghost text-xs">
+            Source →
+          </a>
+        )}
       </div>
     </m.article>
   );
@@ -241,67 +320,65 @@ function ProjectGridCard({
 
 export function ProjectsSection() {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const inView = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
+
+  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
+  const child = reducedMotion ? noMotion : fadeRise;
+
   const featured = PROJECTS[0];
-  const grid = PROJECTS.slice(1);
-
-  const featuredReveal = reducedMotion ? noMotion : FEATURED_VARIANT;
-  const header = reducedMotion ? noMotion : fadeRise;
-  const container = useMemo(() => staggerContainer(0.12, 0.05), []);
-  const headingContainer = useMemo(() => staggerContainer(0.08), []);
-
-  if (!featured) {
-    return null;
-  }
+  const gridProjects = PROJECTS.slice(1);
 
   return (
     <section
       id="section-projects"
       ref={ref}
       aria-labelledby="projects-heading"
-      className="py-28 sm:py-32"
+      className="border-t py-[var(--section-py)]"
+      style={{ borderColor: 'var(--color-border)' }}
     >
       <div className="container">
         <m.div
-          variants={headingContainer}
+          variants={container}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mb-16 max-w-4xl"
         >
-          <m.div variants={header} className="section-kicker-row">
-            <span className="section-number" aria-hidden="true">
-              01
-            </span>
-            <span className="section-label">SELECTED WORK</span>
+          {/* ── Section kicker ───────────────────────────────────────── */}
+          <m.div variants={child} className="section-kicker-row mb-14 max-w-4xl">
+            <span className="section-number" aria-hidden="true">01</span>
+            <span className="section-label">Projects</span>
           </m.div>
-          <m.h2 variants={header} id="projects-heading" className="gradient-text mt-(--space-2)">
-            Fullstack systems that shipped
-          </m.h2>
-          <m.p
-            variants={header}
-            className="font-display text-text-secondary mt-5 max-w-[62ch] text-(length:--text-xl) leading-[1.8]"
+
+          {/* ── Section heading: A24 clip wipe ───────────────────────── */}
+          {/* Clipped left-to-right — "unknown → revealed" geometry */}
+          <m.h2
+            variants={reducedMotion ? child : clipReveal}
+            id="projects-heading"
+            className="mb-5"
           >
-            Product interfaces, backend platforms, and production operations delivered as one
-            system. Each case study includes decision rationale, constraints, and measurable
-            outcomes.
+            Systems built to last.
+          </m.h2>
+
+          <m.p
+            variants={child}
+            className="mb-14 max-w-[60ch] text-base leading-8"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            Four years of independent product work — production-grade infrastructure,
+            compliance architecture, and ML backends built from zero and maintained in production.
           </m.p>
-        </m.div>
 
-        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <FeaturedProjectCard
-            featured={featured}
-            reducedMotion={Boolean(reducedMotion)}
-            variant={featuredReveal}
-          />
+          {/* ── Featured project card ────────────────────────────────── */}
+          <FeaturedProjectCard featured={featured} reducedMotion={reducedMotion ?? false} />
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            {grid.map((project, index) => (
-              <ProjectGridCard
+          {/* ── Grid projects ────────────────────────────────────────── */}
+          <div className="grid gap-5 sm:grid-cols-2">
+            {gridProjects.map((project, i) => (
+              <ProjectCard
                 key={project.slug}
                 project={project}
-                reducedMotion={Boolean(reducedMotion)}
-                variant={GRID_VARIANTS[index % 2]}
+                variant={i % 2 === 0 ? GRID_VARIANT_A : GRID_VARIANT_B}
+                reducedMotion={reducedMotion ?? false}
               />
             ))}
           </div>
