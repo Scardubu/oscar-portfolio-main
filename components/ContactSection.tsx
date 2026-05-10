@@ -300,7 +300,7 @@ export function ContactSection() {
                 <LinkedInIcon />
                 <span className="hidden sm:inline">LinkedIn</span>
               </a>
-              <CopyEmail />
+              <CopyEmail email="scardubu@gmail.com" />
             </div>
 
             {/* Narrative closer — conviction arc */}
