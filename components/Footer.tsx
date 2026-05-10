@@ -1,27 +1,14 @@
-// CONVICTION ENGINE v14.0 — Footer
+// CONVICTION ENGINE v14.1 — Footer
 //
-// CHANGELOG from v13.0:
+// CHANGELOG from v14.0:
 //
-//   FIX:  Brand tagline: "Lagos precision. Global scale." — location string
-//     corrected to "Abuja-built. Globally proven." consistent with the
-//     global Lagos→Abuja correction pass (v12.x find/replace artifact).
-//
-//   REF:  Narrative closure line upgraded: now echoes the hero headline
-//     more precisely. "Built in Nigeria. Running globally." (v13) was
-//     generic. "Abuja-built. Globally proven." (v14) is specific and
-//     carries the same conviction signal as the "2am" thesis.
-//
-//   REF:  System status colour now uses var(--color-success) token directly
-//     instead of hardcoded green — light mode compatible.
-//
-//   ADD:  Footer conviction closer: a one-line echo of the hero thesis.
-//     "Systems that work at 2am. That's the standard." — closes the
-//     narrative loop opened at first load. DMs feel the continuity;
-//     engineers recognise the design discipline.
+//   FIX:  Brand tagline: "Abuja-built. Globally proven." corrected to
+//     "Lagos-built. Globally proven." — location of record is Lagos, Nigeria.
 //
 //   KEEP: role="contentinfo", aria-label — WCAG 2.2 semantic landmarks.
 //   KEEP: min-height 44px on all links — WCAG 2.2 §2.5.8 target size.
 //   KEEP: ISO timestamp format — precise, technical signal.
+//   KEEP: Conviction closer narrative echo of hero thesis.
 //
 'use client';
 
@@ -45,9 +32,9 @@ export function Footer() {
           >
             Oscar Ndugbu
           </p>
-          {/* v14.0 FIX: "Lagos precision" → "Abuja-built. Globally proven." */}
+          {/* v14.1 FIX: "Abuja-built" → "Lagos-built" */}
           <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Abuja-built. Globally proven.
+            Lagos-built. Globally proven.
           </p>
           <p className="mt-3 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}>
             © 2024–2026 Oscar Ndugbu · Built with Next.js 15
@@ -67,7 +54,7 @@ export function Footer() {
             All systems operational · {buildTime}
           </p>
 
-          {/* v14.0 ADD: Conviction closer — narrative echo of hero thesis */}
+          {/* Conviction closer — narrative echo of hero thesis */}
           <p
             className="mt-5 font-mono text-[10px] tracking-wide"
             style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}
