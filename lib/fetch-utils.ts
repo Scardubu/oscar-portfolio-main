@@ -1,115 +1,77 @@
-// lib/fetch-utils.ts - Consistent fetch caching utilities
+/**
+ * lib/fetch-utils.ts — CONVICTION ENGINE v19.0
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Mobile-first fetch utilities:
+ *   fetchWithTimeout — cancels after n ms (default 8s). Prevents indefinite
+ *     loading spinners on intermittent Lagos / mobile networks.
+ *   withRetry — exponential backoff for transient API failures.
+ */
 
 /**
- * Fetch with Next.js caching support
- * Uses ISR (Incremental Static Regeneration) for optimal performance
+ * Fetch with an AbortController timeout.
+ * @param url     - Request URL
+ * @param options - Standard RequestInit options
+ * @param ms      - Timeout in milliseconds (default 8000)
  */
-export async function fetchWithCache<T>(
-  url: string,
-  options: {
-    revalidate?: number
-    tags?: string[]
-  } = {}
-): Promise<T> {
-  const { revalidate = 3600, tags = [] } = options
+export async function fetchWithTimeout(
+  url:     string,
+  options: RequestInit = {},
+  ms      = 8_000
+): Promise<Response> {
+  const ctrl = new AbortController();
+  const id   = setTimeout(() => ctrl.abort(), ms);
 
   try {
-    const response = await fetch(url, {
-      next: {
-        revalidate,
-        tags,
-      },
-      cache: 'force-cache',
-    })
-
-    if (!response.ok) {
-      throw new Error(`Fetch failed: ${response.status} ${response.statusText}`)
-    }
-
-    return response.json()
-  } catch (error) {
-    console.error(`Fetch error for ${url}:`, error)
-    throw error
+    const res = await fetch(url, { ...options, signal: ctrl.signal });
+    clearTimeout(id);
+    return res;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
   }
 }
 
 /**
- * Fetch with no caching - for real-time data
+ * Retry a fetch up to `attempts` times with exponential backoff.
+ * @param fn       - Async function that returns a Response
+ * @param attempts - Max attempts (default 3)
+ * @param baseMs   - Base backoff in ms (default 400 — doubles each retry)
  */
-export async function fetchNoCache<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
-    cache: 'no-store',
-  })
+export async function withRetry<T>(
+  fn:       () => Promise<T>,
+  attempts  = 3,
+  baseMs    = 400
+): Promise<T> {
+  let lastError: unknown;
 
-  if (!response.ok) {
-    throw new Error(`Fetch failed: ${response.status}`)
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, baseMs * 2 ** i));
+      }
+    }
   }
 
-  return response.json()
+  throw lastError;
 }
 
 /**
- * Fetch with short cache - for frequently updated data
+ * Safe JSON fetch: wraps fetchWithTimeout + response.json().
+ * Returns null on network error instead of throwing.
  */
-export async function fetchShortCache<T>(
-  url: string,
-  revalidateSeconds: number = 60
-): Promise<T> {
-  return fetchWithCache<T>(url, { revalidate: revalidateSeconds })
-}
-
-/**
- * Fetch with long cache - for rarely changing data
- */
-export async function fetchLongCache<T>(
-  url: string,
-  revalidateSeconds: number = 86400
-): Promise<T> {
-  return fetchWithCache<T>(url, { revalidate: revalidateSeconds })
-}
-
-// Type for GitHub stats response
-export interface GitHubStats {
-  totalStars: number
-  publicRepos: number
-  followers: number
-}
-
-/**
- * Get GitHub stats with caching
- */
-export async function getGitHubStats(username: string): Promise<GitHubStats | null> {
+export async function safeFetchJson<T>(
+  url:     string,
+  options: RequestInit = {},
+  ms      = 8_000
+): Promise<T | null> {
   try {
-    const [userResponse, reposResponse] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`, {
-        next: { revalidate: 86400, tags: ['github-user'] },
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-        },
-      }),
-      fetch(`https://api.github.com/users/${username}/repos?per_page=100`, {
-        next: { revalidate: 86400, tags: ['github-repos'] },
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-        },
-      }),
-    ])
-
-    if (!userResponse.ok || !reposResponse.ok) {
-      return null
-    }
-
-    const user = await userResponse.json()
-    const repos = await reposResponse.json()
-
-    return {
-      totalStars: repos.reduce((sum: number, repo: { stargazers_count: number }) => 
-        sum + repo.stargazers_count, 0),
-      publicRepos: user.public_repos,
-      followers: user.followers,
-    }
-  } catch (error) {
-    console.error('GitHub stats fetch error:', error)
-    return null
+    const res = await fetchWithTimeout(url, options, ms);
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
   }
 }
