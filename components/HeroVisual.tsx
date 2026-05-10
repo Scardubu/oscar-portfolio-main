@@ -30,7 +30,7 @@
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 
-import { cardReveal, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { cardReveal } from '@/lib/motionVariants';
 
 // ── System status: live production health ───────────────────────────────────
 const SYSTEMS = [
