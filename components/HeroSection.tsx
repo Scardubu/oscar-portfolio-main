@@ -1,37 +1,30 @@
-// CONVICTION ENGINE v15.0 — HeroSection
+// CONVICTION ENGINE v15.1 — HeroSection
 //
-// v15.0 MOBILE-NATIVE REBUILD:
+// CHANGELOG from v15.0:
 //
-//   ARCH:  Single-column mobile layout — text column full width.
-//     HeroVisual (terminal dashboard) deferred below the fold on mobile.
-//     Desktop: 2-column grid restored as progressive enhancement.
+//   FIX:  Duplicate `style` prop on <m.section>. JSX allows only one `style`
+//     attribute per element — the second silently overwrites the first.
+//     In v15.0, `style={{ opacity: heroOpacity }}` was declared on one line
+//     and `style={{ opacity, paddingTop, paddingBottom }}` on another.
+//     TypeScript accepts this because framer-motion's m.* components accept
+//     MotionStyle and CSSProperties separately, but at runtime the second
+//     object wins and the MotionValue opacity never binds correctly.
+//     FIX: merged into a single style object. Opacity MotionValue now applies
+//     alongside the padding values as intended.
 //
-//   MOBILE CONVERSION FLOW (≤768px):
-//     Screen 1: pill → kicker → headline → sub-line → CTAs (thumb zone)
-//     Screen 2: body copy → proof callout → perf bar
-//     Screen 3: proof cards (2 visible, scroll to 4)
-//     No HeroVisual on mobile first viewport — LCP priority.
+//   FIX:  Location kicker: "Abuja → Global" corrected to "Lagos → Global".
+//     Location of record is Lagos, Nigeria.
 //
-//   THUMB ERGONOMICS:
-//     CTAs placed at bottom of first viewport — natural reach zone.
-//     CTA group: full-width stacked on mobile (no grip shift required).
-//     Min 48×48px tap targets (WCAG AAA).
+//   FIX:  Proof callout: "Built in Abuja. Running globally." corrected to
+//     "Built in Lagos. Running globally."
 //
-//   MOTION:
-//     Mobile: faster settle times, zero concurrent heavy animations.
-//     Desktop: full cinematic system (unchanged from v14).
-//     prefers-reduced-motion: zero motion path (noMotion variants).
-//
-//   PERFORMANCE:
-//     HeroVisual: still SSR-disabled (hydration mismatch prevention).
-//     On mobile, HeroVisual renders below proof cards — after LCP content.
-//     Scroll parallax disabled on mobile (no scroll-linked visual).
-//
-//   KEEP: A24 word-by-word headline reveal — strongest motion signal.
-//   KEEP: Spring physics on card hover (stiffness 420, damping 30).
-//   KEEP: LiveActivityBar — operational cadence proof.
-//   KEEP: Proof columns — concrete denominators, no adjectives.
-//   KEEP: Availability pill with live dot.
+//   KEEP: All v15.0 mobile-native architecture — single column mobile,
+//     2-column desktop grid, CTAs in thumb comfort zone (bottom 60%),
+//     HeroVisual deferred below fold on mobile for LCP priority.
+//   KEEP: A24 word-by-word Didone headline reveal.
+//   KEEP: Spring physics on proof card hover (stiffness 420, damping 30).
+//   KEEP: LiveActivityBar operational cadence proof.
+//   KEEP: prefers-reduced-motion: noMotion fallback throughout.
 //
 'use client';
 
@@ -95,7 +88,6 @@ export function HeroSection() {
     offset: HERO_SCROLL_CONFIG.offset,
   });
 
-  // Text parallax — disabled on mobile (performance + no benefit)
   const textY = useTransform(
     scrollYProgress,
     HERO_SCROLL_CONFIG.textRange,
@@ -115,7 +107,7 @@ export function HeroSection() {
   );
 
   // ── Variant configuration ─────────────────────────────────────────────────
-  const heroContainer = staggerContainer(0.055, 0.05);   // v15: faster stagger on mobile
+  const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
   const card = reducedMotion ? noMotion : cardReveal(24);
@@ -126,45 +118,30 @@ export function HeroSection() {
       id="hero"
       ref={heroRef}
       aria-labelledby="hero-heading"
-      style={{ opacity: heroOpacity }}
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden"
+      // v15.1 FIX: Single merged style object — was two separate `style`
+      // props. The second overwrote the first at runtime, causing the
+      // scroll-linked opacity MotionValue to silently bind to nothing.
       style={{
         opacity: heroOpacity,
-        // Mobile: tighter vertical rhythm — content fits first viewport
         paddingTop: 'clamp(5rem, 8vw, 7rem)',
         paddingBottom: 'clamp(2rem, 4vw, 6rem)',
       }}
     >
-      {/* ── Ambient background glows (GPU layer, pointer-events: none) ──────── */}
-      {/* Suppressed on mobile via CSS token override */}
+      {/* Ambient background glows — suppressed on mobile via CSS */}
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
-
-        {/* ══════════════════════════════════════════════════════════════════════
-            MOBILE LAYOUT: Single column — text fills full width.
-            Left column: conviction copy stack.
-            HeroVisual: deferred below proof cards on mobile.
-
-            DESKTOP LAYOUT: 2-column grid (unchanged from v14).
-            54% text / 46% HeroVisual — Z-parallax separation.
-            ══════════════════════════════════════════════════════════════════════ */}
         <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
 
-          {/* ══════════════════════════════════════════════════════════════════
-              LEFT COLUMN — Conviction copy stack
-              Mobile hierarchy:
-                pill → kicker → headline → sub-line → CTAs (fold 1)
-                body → proof callout → perf bar (fold 2)
-                proof cards (fold 3)
-              ══════════════════════════════════════════════════════════════════ */}
+          {/* ── Left column: conviction copy stack ─────────────────────────── */}
           <m.div
             style={{ y: textY }}
             variants={heroContainer}
             initial="hidden"
             animate="visible"
           >
-            {/* ── Availability pill ──────────────────────────────────────── */}
+            {/* Availability pill */}
             <m.div variants={child}>
               <div
                 className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
@@ -177,16 +154,16 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* ── Kicker ────────────────────────────────────────────────── */}
+            {/* Kicker — v15.1 FIX: "Abuja → Global" → "Lagos → Global" */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.14em] uppercase"
               style={{ color: 'var(--color-cyan)' }}
             >
-              Full-Stack · Infrastructure · AI Systems · Abuja → Global
+              Full-Stack · Infrastructure · AI Systems · Lagos → Global
             </m.p>
 
-            {/* ── Hero headline: A24 Didone word-by-word reveal ─────────── */}
+            {/* Hero headline: A24 Didone word-by-word reveal */}
             <h1
               id="hero-heading"
               className="max-w-[18ch] text-balance"
@@ -220,7 +197,7 @@ export function HeroSection() {
               </m.span>
             </h1>
 
-            {/* ── Didone sub-line ────────────────────────────────────────── */}
+            {/* Didone sub-line */}
             <m.p
               variants={child}
               className="text-didone-sub mt-4 max-w-[30ch]"
@@ -229,15 +206,13 @@ export function HeroSection() {
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* ══════════════════════════════════════════════════════════════
-                v15 MOBILE CTA BLOCK — in thumb comfort zone.
-                Placed immediately after headline — before body copy.
-                Mobile: full-width stacked buttons, no grip shift.
-                Desktop: inline flex row (restored).
-
-                Conversion psychology: CTA before proof — intention first,
-                evidence confirms. DMs act; engineers scroll to proof.
-                ══════════════════════════════════════════════════════════════ */}
+            {/* ── Mobile CTA block — thumb comfort zone ──────────────────── */}
+            {/*
+              Placed immediately after headline — before body copy.
+              Mobile: full-width stacked buttons, no grip shift required.
+              Desktop: inline flex row.
+              Conversion logic: intention first, evidence confirms.
+            */}
             <m.div
               variants={child}
               className="mt-8 mb-8 cta-hero-group"
@@ -254,7 +229,7 @@ export function HeroSection() {
               </Link>
             </m.div>
 
-            {/* ── Body: Stripe "you" language ────────────────────────────── */}
+            {/* Body: Stripe "you" language */}
             <m.p
               variants={child}
               className="max-w-[52ch] text-base leading-[1.8]"
@@ -265,18 +240,18 @@ export function HeroSection() {
               or FIRS filing deadline.
             </m.p>
 
-            {/* ── Proof callout ──────────────────────────────────────────── */}
+            {/* Proof callout — v15.1 FIX: "Built in Abuja" → "Built in Lagos" */}
             <m.div variants={child} className="hero-proof-callout">
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: 'oklch(93% 0.006 264 / 0.55)' }}
               >
                 TaxBridge: filing time 4h → 15 min. SabiScore: zero data-loss
-                across 90-day production window. Built in Abuja. Running globally.
+                across 90-day production window. Built in Lagos. Running globally.
               </p>
             </m.div>
 
-            {/* ── Performance bar ────────────────────────────────────────── */}
+            {/* Performance bar */}
             <m.p
               variants={child}
               className="font-mono text-[11px] tracking-widest uppercase"
@@ -291,7 +266,7 @@ export function HeroSection() {
               </span>
             </m.p>
 
-            {/* ── Ghost CV link — desktop inline, mobile below perf bar ──── */}
+            {/* Ghost CV link */}
             <m.div variants={child} className="mt-4 mb-2">
               <a
                 href="/cv/oscar-ndugbu-resume.pdf"
@@ -303,17 +278,12 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* ── Live activity bar ──────────────────────────────────────── */}
+            {/* Live activity bar */}
             <m.div variants={child} className="mt-4">
               <LiveActivityBar />
             </m.div>
 
-            {/* ── Proof cards grid ──────────────────────────────────────── */}
-            {/*
-              v15 Mobile: 1-column, all 4 cards visible (scroll pattern).
-              Desktop: 2-column grid (unchanged from v14).
-              Cards reveal sequentially — trust builds as user scrolls.
-            */}
+            {/* Proof cards grid */}
             <m.div
               variants={proofContainer}
               initial="hidden"
@@ -345,12 +315,7 @@ export function HeroSection() {
             </m.div>
           </m.div>
 
-          {/* ══════════════════════════════════════════════════════════════════
-              RIGHT COLUMN — Live metrics dashboard (HeroVisual)
-              Mobile: Rendered below proof cards (not in this grid column).
-                      See mobile HeroVisual section after this grid.
-              Desktop: Rendered here with slower parallax for Z-depth.
-              ══════════════════════════════════════════════════════════════════ */}
+          {/* ── Right column: HeroVisual — desktop only ─────────────────────── */}
           <m.div style={{ y: visualY }} className="hidden lg:block">
             <HeroVisual />
           </m.div>
@@ -360,11 +325,9 @@ export function HeroSection() {
         {/* ── Mobile HeroVisual — below fold, after proof ─────────────────── */}
         {/*
           v15: On mobile, HeroVisual renders AFTER the conversion content.
-          Not in the 2-col grid — takes full width below the text column.
-          This preserves LCP for the text headline while still showing
-          the live metrics terminal as a credibility reinforcement.
-
-          Hidden on desktop (lg:hidden) — desktop uses the grid column above.
+          Preserves LCP for the text headline while still providing
+          live metrics terminal as credibility reinforcement below fold.
+          Hidden on desktop — handled by the grid column above.
         */}
         <div className="mt-10 lg:hidden">
           <HeroVisual />
