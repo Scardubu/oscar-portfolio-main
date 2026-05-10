@@ -1,14 +1,17 @@
-// CONVICTION ENGINE v18.0 — SkillsMap
+// CONVICTION ENGINE v20.0 — SkillsMap
 // Mobile-native:
-//   • Tab row: overflow-x-auto, shrink-0 tabs, no flex-wrap on mobile.
+//   • Tab row: overflow-x-auto, shrink-0 tabs, min-h-[44px] touch targets.
 //   • Grid: 2-col on mobile, 3 on md, 4 on lg, 5 on xl.
-//   • Skill cards: compact padding on mobile (p-2.5), context tags hidden
-//     on mobile to reduce density (shown on sm+).
-//   • Bar fill animation: unchanged (framer-motion initial/animate pattern).
+//   • Skill cards: compact on mobile (p-2.5), pillar label + context tags
+//     visible only on sm+ to reduce density.
+//   • Bar fill: spring-eased on capable devices, instant on reduced-motion.
+//   • Active tab: pill highlight with accent color, not just border change.
+//   • Live count: sr-friendly aria-live region.
 //
-// ANIMATION CONTRACT (unchanged):
-//   AnimatePresence handles tab switch. Inner items use initial/animate — NOT whileInView.
-//   When animate is set to a string, Framer ignores viewport triggers.
+// ANIMATION CONTRACT:
+//   AnimatePresence handles tab switch (key prop on grid).
+//   Inner items use initial/animate — NOT whileInView.
+//   When animate is set on a parent, Framer ignores viewport triggers.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import { filterTransition } from '@/lib/motion';
@@ -17,17 +20,31 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
 const LEVEL_CONFIG = {
-  expert:       { label: 'Expert',      width: '95%', barClassName: 'bg-cyan-400' },
-  proficient:   { label: 'Proficient',  width: '70%', barClassName: 'bg-emerald-400' },
-  foundational: { label: 'Foundational', width: '35%', barClassName: 'bg-white/35' },
+  expert: {
+    label: 'Expert',
+    width: '95%',
+    barColor: 'oklch(73% 0.18 196)',  // --color-film-teal equivalent
+  },
+  proficient: {
+    label: 'Proficient',
+    width: '70%',
+    barColor: 'oklch(72% 0.17 160)',  // emerald tone
+  },
+  foundational: {
+    label: 'Foundational',
+    width: '35%',
+    barColor: 'oklch(100% 0 0 / 0.3)',
+  },
 } as const;
 
 function SkillCard({
   skill,
   prefersReduced,
+  index,
 }: {
   readonly skill: SkillNode;
   readonly prefersReduced: boolean;
+  readonly index: number;
 }): React.ReactElement {
   const lvl = LEVEL_CONFIG[skill.level];
 
@@ -40,12 +57,24 @@ function SkillCard({
   const cardLabel = `${skill.name} — ${lvl.label}${usedInLabel}`;
 
   return (
-    <div
+    <m.div
+      initial={prefersReduced ? false : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={
+        prefersReduced
+          ? { duration: 0 }
+          : {
+              delay: index * 0.016,
+              type: 'spring',
+              stiffness: 280,
+              damping: 26,
+            }
+      }
       className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-2.5 sm:p-3 transition-colors duration-200"
       aria-label={cardLabel}
     >
-      {/* Pillar label: hidden on mobile to save space */}
-      <p className="hidden sm:block mb-2 font-mono text-[10px] tracking-widest text-white/45 uppercase">
+      {/* Pillar: hidden on mobile */}
+      <p className="hidden sm:block mb-2 font-mono text-[10px] tracking-widest text-white/40 uppercase truncate">
         {skill.pillar}
       </p>
 
@@ -53,31 +82,55 @@ function SkillCard({
         <span className="text-text-primary truncate text-xs sm:text-sm leading-snug font-semibold">
           {skill.name}
         </span>
-        <span className="text-text-muted shrink-0 text-[9px] sm:text-[10px] font-medium">
+        <span
+          className="shrink-0 text-[9px] sm:text-[10px] font-medium font-mono"
+          style={{
+            color: skill.level === 'expert'
+              ? 'var(--color-film-teal)'
+              : skill.level === 'proficient'
+              ? 'oklch(72% 0.17 160)'
+              : 'var(--color-text-muted)',
+          }}
+        >
           {lvl.label}
         </span>
       </div>
 
+      {/* Proficiency bar */}
       <div
-        className="bg-border-subtle mb-2 h-[3px] w-full overflow-hidden rounded-full"
+        className="mb-2 h-[3px] w-full overflow-hidden rounded-full"
+        style={{ background: 'oklch(100% 0 0 / 0.08)' }}
+        role="meter"
+        aria-valuenow={
+          skill.level === 'expert' ? 95 : skill.level === 'proficient' ? 70 : 35
+        }
+        aria-valuemin={0}
+        aria-valuemax={100}
         aria-label={`${skill.name} proficiency: ${lvl.label}`}
       >
         <m.div
-          className={`h-full rounded-full ${lvl.barClassName}`}
+          style={{ background: lvl.barColor }}
+          className="h-full rounded-full"
           initial={{ width: prefersReduced ? lvl.width : '0%' }}
           animate={{ width: lvl.width }}
           transition={
             prefersReduced
               ? { duration: 0 }
-              : { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+              : {
+                  delay: index * 0.016 + 0.1,
+                  type: 'spring',
+                  stiffness: 120,
+                  damping: 20,
+                  mass: 1,
+                }
           }
         />
       </div>
 
-      {/* Context tags: only on sm+ to avoid mobile overload */}
+      {/* Context tags: sm+ only */}
       {(systemTags.length > 0 || metaTags.length > 0) && (
         <div className="hidden sm:flex flex-wrap gap-1 mt-1">
-          {systemTags.map((tag) => (
+          {systemTags.slice(0, 3).map((tag) => (
             <span
               key={`sys-${tag}`}
               className="border-border-subtle bg-surface text-cyan rounded border px-1.5 py-0.5 text-[9px] font-semibold"
@@ -86,7 +139,7 @@ function SkillCard({
               {tag}
             </span>
           ))}
-          {metaTags.map((tag) => (
+          {metaTags.slice(0, 2).map((tag) => (
             <span
               key={`meta-${tag}`}
               className="border-border-subtle bg-surface text-text-muted rounded border px-1.5 py-0.5 text-[9px] font-medium"
@@ -96,7 +149,7 @@ function SkillCard({
           ))}
         </div>
       )}
-    </div>
+    </m.div>
   );
 }
 
@@ -104,15 +157,19 @@ export function SkillsMap(): React.ReactElement {
   const prefersReduced = useReducedMotion();
   const [active, setActive] = React.useState<'All' | SkillPillar>('All');
 
-  const filtered: SkillNode[] = active === 'All' ? SKILLS : SKILLS.filter((s) => s.pillar === active);
+  const filtered: SkillNode[] =
+    active === 'All' ? SKILLS : SKILLS.filter((s) => s.pillar === active);
   const tabs: Array<'All' | SkillPillar> = ['All', ...ALL_PILLARS];
-  const activeCountLabel = active === 'All' ? `All skills — ${filtered.length}` : `${active} — ${filtered.length} skills`;
+  const liveLabel =
+    active === 'All'
+      ? `Showing all ${filtered.length} skills`
+      : `${active} — ${filtered.length} skills`;
 
   return (
     <div className="space-y-5">
-      {/* ── Tab row: overflow scroll on mobile ─────────────────────── */}
+      {/* Tab row: overflow scroll on mobile */}
       <div
-        className="flex gap-2 overflow-x-auto pb-1 no-scrollbar"
+        className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
         style={{ scrollbarWidth: 'none' }}
         role="group"
         aria-label="Filter skills by category"
@@ -124,15 +181,15 @@ export function SkillsMap(): React.ReactElement {
               key={tab}
               onClick={() => setActive(tab)}
               type="button"
-              className={`
-                shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium
-                transition-all duration-200 min-h-[36px]
-                focus:outline-none focus:ring-2 focus:ring-offset-1
-                ${isActive
-                  ? 'border-white/30 bg-white/10 text-white shadow-sm'
-                  : 'border-border text-text-secondary hover:border-border/60 hover:text-text-primary bg-transparent'
-                }
-              `}
+              aria-pressed={isActive}
+              className={[
+                'shrink-0 rounded-full px-3.5 py-2 text-xs font-medium',
+                'transition-all duration-200 min-h-[44px]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                isActive
+                  ? 'bg-white/10 text-white border border-white/25 shadow-sm'
+                  : 'border border-transparent text-text-secondary hover:text-white bg-transparent',
+              ].join(' ')}
             >
               {tab}
             </button>
@@ -140,39 +197,40 @@ export function SkillsMap(): React.ReactElement {
         })}
       </div>
 
-      {/* ── Live count ─────────────────────────────────────────────── */}
+      {/* Live count: sr-friendly */}
       <p
         aria-live="polite"
-        className="font-mono text-[11px] tracking-widest text-white/40 uppercase"
+        aria-atomic="true"
+        className="font-mono text-[11px] tracking-widest uppercase"
+        style={{ color: 'var(--color-text-muted)' }}
       >
-        {activeCountLabel}
+        {liveLabel}
       </p>
 
-      {/* ── Skill grid ─────────────────────────────────────────────── */}
+      {/* Skill grid */}
       <AnimatePresence mode="wait">
         <m.div
           key={active}
           id="skills-grid"
-          aria-label={`${active} skills — ${filtered.length} items`}
-          initial={{ opacity: 0, y: 6 }}
+          aria-label={liveLabel}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
-          transition={prefersReduced ? { duration: 0 } : (filterTransition as Parameters<typeof m.div>[0]['transition'])}
+          transition={
+            prefersReduced
+              ? { duration: 0 }
+              : (filterTransition as Parameters<typeof m.div>[0]['transition'])
+          }
         >
           <ul className="grid list-none grid-cols-2 gap-2 p-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filtered.map((skill, i) => (
-              <m.li
-                key={skill.id}
-                initial={prefersReduced ? false : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={
-                  prefersReduced
-                    ? { duration: 0 }
-                    : { delay: i * 0.018, duration: 0.2, ease: [0.16, 1, 0.3, 1] }
-                }
-              >
-                <SkillCard skill={skill} prefersReduced={Boolean(prefersReduced)} />
-              </m.li>
+              <li key={skill.id} className="h-full">
+                <SkillCard
+                  skill={skill}
+                  prefersReduced={Boolean(prefersReduced)}
+                  index={i}
+                />
+              </li>
             ))}
           </ul>
         </m.div>
