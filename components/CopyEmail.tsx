@@ -1,46 +1,43 @@
-// CONVICTION ENGINE v9.0 — FULL REPLACEMENT
-// components/CopyEmail.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Copy-to-clipboard email micro-interaction. (V30 FIX)
-// Renders as <a href="mailto:..."> so it works on mobile (opens mail client)
-// and on desktop uses navigator.clipboard.writeText for instant copy.
-// States: idle → hover (copy icon) → copied (✓ Copied!) → idle (after 1200ms)
-// ─────────────────────────────────────────────────────────────────────────────
-
 'use client';
+// components/CopyEmail.tsx — CONVICTION ENGINE v19.0
+// Renders as <a href="mailto:..."> — opens mail client on touch devices.
+// On desktop with clipboard API: intercepts click and copies address.
+// Icon is always visible (not hover-only) for touch accessibility.
 
 import { useState } from 'react';
 
 interface CopyEmailProps {
-  email: string;
+  email:      string;
   className?: string;
 }
 
 export function CopyEmail({ email, className = '' }: Readonly<CopyEmailProps>) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Only intercept on devices with clipboard API; fall through to mailto on touch.
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (typeof navigator.clipboard?.writeText === 'function') {
       try {
         e.preventDefault();
         await navigator.clipboard.writeText(email);
         setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
+        setTimeout(() => setCopied(false), 1400);
       } catch {
-        // Fallback: let the default mailto: behaviour happen.
+        // Clipboard denied — fall through to mailto:
       }
     }
   };
 
   return (
-    <a
+    
       href={`mailto:${email}`}
-      onClick={handleCopy}
+      onClick={handleClick}
       aria-label={
-        copied ? 'Email address copied to clipboard' : 'Copy email address or open mail client'
+        copied
+          ? 'Email address copied to clipboard'
+          : `Send email to ${email}`
       }
-      className={`copy-email group inline-flex items-center gap-1.5 font-mono text-xs tracking-wider text-white transition-colors hover:text-(--color-accent) ${className}`}
+      className={`copy-email inline-flex items-center gap-1.5 font-mono text-xs tracking-wider transition-colors ${className}`}
+      style={{ color: copied ? 'var(--color-film-teal)' : 'var(--color-text-muted)' }}
     >
       {copied ? (
         <>
@@ -65,7 +62,7 @@ function CopyIcon() {
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden="true"
-      className="opacity-0 transition-opacity group-hover:opacity-60"
+      style={{ opacity: 0.5 }}
     >
       <rect x="4" y="4" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.2" />
       <path
@@ -85,7 +82,6 @@ function CheckIcon() {
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden="true"
-      className="text-(--color-accent)"
     >
       <path
         d="M2 6l3 3 5-5"
