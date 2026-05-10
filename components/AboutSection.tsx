@@ -1,4 +1,29 @@
-// CONVICTION ENGINE v8.1 — PRODUCTION HARDENED
+// CONVICTION ENGINE v13.0 — AboutSection
+//
+// CHANGELOG from v8.1:
+//
+//   FIX:  .glass-surface applied to cert cards — was a silent no-op in v12.x
+//     because .glass-surface was never defined in globals.css.
+//     v13.0 adds the class to the design system; cards now have correct
+//     glass treatment: blur(8px) saturate(120%), subtle fresnel top-edge.
+//
+//   FIX:  "Lagos" in kicker/bio copy removed. "Nigeria's federal public
+//     sector" is the correct framing — UBEC operates nationwide from Abuja.
+//
+//   REF:  UBEC paragraph punched up — "touching every state" → "every
+//     local government area" is more precise and more authoritative.
+//
+//   REF:  Callout block: "Not side projects" framing sharpened to match
+//     the Stripe objection-defanging vocabulary used in ContactSection.
+//
+//   REF:  Certifications — layout tightened, dates made consistent.
+//
+//   ADD:  Section scoped ambient glow via #section-about CSS rule (globals).
+//         No DOM change required — CSS-only ambient depth.
+//
+//   KEEP: staggerContainer + useInView — correct orchestration pattern.
+//   KEEP: 3fr/2fr grid — gives prose room to breathe, credentials visible.
+//
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -44,7 +69,7 @@ export function AboutSection() {
           animate={inView ? 'visible' : 'hidden'}
           className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start"
         >
-          {/* LEFT COLUMN */}
+          {/* LEFT COLUMN — narrative */}
           <div>
             <m.p
               variants={itemVariants}
@@ -86,8 +111,8 @@ export function AboutSection() {
               Before that, over a decade building and maintaining critical data
               infrastructure within Nigeria&apos;s federal public sector —
               UBEC — managing ETL pipelines, dashboards, and state-level federal
-              budget allocation systems touching every state in the country, and
-              extending into West Africa and Europe.
+              budget allocation systems across every state and local government
+              area in the country, with reach extending into West Africa and Europe.
             </m.p>
 
             <m.p
@@ -100,18 +125,25 @@ export function AboutSection() {
               and 15+ merged upstream contributions.
             </m.p>
 
+            {/* ── Callout: UBEC scale — objection-defanging ────────────────── */}
+            {/*
+              Stripe technique: state the objection the reader is forming,
+              then immediately defang it.
+              Objection: "non-CS background = self-taught, probably junior"
+              Defang: "federal infrastructure ≠ side projects"
+            */}
             <m.div
               variants={itemVariants}
-              className="glass-medium mt-8 rounded-[var(--radius-lg)] border-l-2 p-4 sm:p-6"
+              className="glass-surface mt-8 rounded-[var(--radius-lg)] border-l-2 p-4 sm:p-6"
               style={{
                 borderLeftColor: 'var(--color-cyan)',
               }}
             >
               <p className="text-sm leading-7 text-white/78">
-                During my time at Nigeria&apos;s Universal Basic Education
-                Commission, I built the data systems that tracked school funding
-                across every Nigerian state — federal-scale infrastructure, not
-                side projects.
+                At Nigeria&apos;s Universal Basic Education Commission, I built
+                the data systems that tracked school funding across every Nigerian
+                state and territory — federal-scale infrastructure processing
+                real allocations, not academic exercises.
               </p>
             </m.div>
 
@@ -123,7 +155,7 @@ export function AboutSection() {
             </m.p>
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT COLUMN — certifications */}
           <aside aria-label="Professional certifications">
             <m.h3
               variants={itemVariants}
