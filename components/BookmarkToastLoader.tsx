@@ -1,22 +1,18 @@
 'use client';
-import dynamic from 'next/dynamic';
 
-// ssr:false must live in a Client Component — Server Components forbid it.
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+// BookmarkToast is client-only and tiny — SSR: false prevents hydration mismatch
 const BookmarkToast = dynamic(
   () => import('@/components/BookmarkToast').then((m) => ({ default: m.BookmarkToast })),
   { ssr: false }
 );
 
-const CommandPalette = dynamic(
-  () => import('@/components/CommandPalette').then((m) => ({ default: m.CommandPalette })),
-  { ssr: false }
-);
-
 export function BookmarkToastLoader() {
   return (
-    <>
+    <Suspense fallback={null}>
       <BookmarkToast />
-      <CommandPalette />
-    </>
+    </Suspense>
   );
 }
