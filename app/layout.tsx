@@ -1,25 +1,26 @@
-// CONVICTION ENGINE v12.0 — Root Layout
+// CONVICTION ENGINE v20.0 — Root Layout
 //
-// CHANGELOG from v11.0:
+// CHANGELOG from v12.0:
 //
-//   ADD: Playfair Display — replaces Georgia as --font-didone.
-//     Georgia is a transitional serif (moderate thick/thin contrast).
-//     The A24 cinematic authority requires true Didone letterforms:
-//     extreme thick/thin stroke contrast, hairline serifs, vertical stress.
-//     Playfair Display is the highest-quality free Didone available and
-//     renders at 300% contrast ratio vs. Georgia at --text-didone-sub size.
-//     Result: the hero sub-line "That's not a slogan. It's a design constraint."
-//     now carries genuine typographic weight, not just semantic meaning.
+//   FIX: JSON-LD Person schema — added `address` block with addressLocality:
+//     'Lagos', addressCountry: 'NG'. Omitting location from structured data
+//     on a portfolio that references Lagos in copy creates a schema/content
+//     mismatch that hurts local SEO signals. Engineers verifying technical
+//     competence also expect consistent data across the page and its metadata.
 //
-//   ADD: Font preload strategy — Syne 800 (hero headline) is preloaded via
-//     next/font display:'swap' with size-adjust to prevent CLS. The html
-//     element className now includes the Playfair variable.
+//   FIX: `keywords` — added 'Lagos Nigeria', 'Lagos Engineer'. These are
+//     non-zero search volume terms for engineering recruitment in West Africa
+//     and among diaspora-sourcing teams at global companies.
 //
-//   FIX: Removed `will-change: scroll-position` from html in globals.css.
-//     (See globals.css comment.) This layout remains clean.
+//   FIX: `description` — explicitly names Lagos. Google's rich-result
+//     extractor uses the description as fallback location context for Person
+//     entities when the structured data address is ambiguous.
 //
-//   KEEP: LazyMotion + domAnimation bundle in MotionProvider — still correct.
-//     useScroll + useTransform are pure hooks, don't require domMax.
+//   KEEP: Playfair Display — true Didone, hairline strokes, A24 cinematic
+//     authority. The `--font-didone` CSS var is consumed by globals.css.
+//
+//   KEEP: LazyMotion + domAnimation in MotionProvider (providers.tsx).
+//     useScroll / useTransform are hooks, domMax is not needed.
 //
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -81,7 +82,7 @@ export const metadata: Metadata = {
     template: '%s · Oscar Ndugbu',
   },
   description:
-    'Oscar Ndugbu (Scardubu) builds production-grade full-stack fintech platforms — React Native, Next.js 15, Java/Spring Boot, FastAPI, Effect-TS, Turborepo monorepos, sub-150ms APIs, 99.9%+ uptime, PostgreSQL RLS multi-tenancy, and NRS-compliant audit trails.',
+    'Oscar Ndugbu (Scardubu) is a principal full-stack engineer based in Lagos, Nigeria — building production-grade fintech platforms with React Native, Next.js 15, Java/Spring Boot, FastAPI, Effect-TS, Turborepo, sub-150ms APIs, 99.9%+ uptime, PostgreSQL RLS multi-tenancy, and NRS-compliant audit trails.',
   metadataBase: new URL('https://www.scardubu.dev'),
   keywords: [
     'Full-Stack Engineer',
@@ -103,6 +104,8 @@ export const metadata: Metadata = {
     'Redis',
     'Fintech',
     'Nigerian fintech',
+    'Lagos Engineer',
+    'Lagos Nigeria',
     'TaxBridge',
     'SabiScore',
     'NRS DigiTax',
@@ -118,7 +121,7 @@ export const metadata: Metadata = {
     siteName: 'Oscar Ndugbu',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     description:
-      'Principal full-stack engineer. TaxBridge · SabiScore · Hashablanca. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
+      'Principal full-stack engineer, Lagos. TaxBridge · SabiScore · Hashablanca. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
@@ -145,6 +148,7 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
+// ── Schema.org Person — location-explicit for accurate rich-result extraction ──
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -152,7 +156,12 @@ const personJsonLd = {
   url: 'https://www.scardubu.dev',
   jobTitle: 'Principal Full-Stack Engineer',
   description:
-    'Principal full-stack engineer specialising in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, Hashablanca.',
+    'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, Hashablanca.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Lagos',
+    addressCountry: 'NG',
+  },
   knowsAbout: [
     'Next.js',
     'React Native',
@@ -250,7 +259,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {/*
             ── Stacking context ────────────────────────────────────────
             `isolate` creates a new stacking context for z-index.
-            NAV, Footer, ScrollProgress are siblings (outside this div)
+            NavBar, Footer, ScrollProgress are siblings (outside this div)
             so position:fixed elements in those are NOT affected.
             Content inside this div is correctly isolated from NavBar
             z-index competition.
