@@ -1,15 +1,13 @@
-// CONVICTION ENGINE v20.0 — WritingSection
-// Mobile-native: filter chips scroll horizontally (no wrap), rows have
-// 48px minimum touch target, featured article is vertically scannable.
+// CONVICTION ENGINE v21.0 — WritingSection
+// Mobile-native: filter chips scroll horizontally, rows 52px min touch target.
 // Lagos, Nigeria → Global.
 //
-// v20 changes:
-//   • Heading: "Engineering in depth" → "Writing that ships decisions." — outcome-first.
-//   • Featured card: reading time elevated next to title as a scannable signal.
-//   • Article row: date hidden on mobile (saves horizontal space), visible sm+.
-//   • View all CTA: pill-cyan with count, full-width on mobile.
-//   • AnimatePresence: popLayout for smooth filter transitions.
-//   • All filter labels properly mapped to post tags.
+// v21 changes vs v20:
+//   • Featured card: min-h-[52px] read CTA for thumb zone; title line-clamp-3 mobile.
+//   • Article row: explicit min-h-[52px] + py-3 for reliable tap target.
+//   • Filter pill active: solid bg + border for maximum contrast outdoors.
+//   • Section copy: tightened to ≤56ch for mobile line-length.
+//   • "View all" CTA: w-full on mobile.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -71,12 +69,11 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
             <m.p
               variants={child}
-              className="mt-4 max-w-[62ch] text-base leading-[1.8]"
+              className="mt-4 max-w-[56ch] text-base leading-[1.8]"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Long-form breakdowns of the calls that held in production — platform
-              constraints, architecture decisions, and what holds when systems stop
-              being polite from Lagos to the world.
+              Architecture calls, ML trade-offs, and what actually held in production —
+              from Lagos to the world.
             </m.p>
 
             {/* Filter chips: horizontal scroll on mobile */}
@@ -100,8 +97,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                       'transition-all duration-200 min-h-[44px] border',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
                       isActive
-                        ? 'bg-white/10 border-white/25 text-white'
-                        : 'border-transparent text-white/45 hover:text-white/70',
+                        ? 'bg-white/12 border-white/30 text-white shadow-sm'
+                        : 'border-white/10 text-white/45 hover:text-white/70 hover:border-white/20',
                     ].join(' ')}
                   >
                     {label}
@@ -130,14 +127,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </div>
 
                 <h3
-                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight"
+                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight line-clamp-3 sm:line-clamp-none"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   {featuredPost.title}
                 </h3>
 
                 <p
-                  className="mt-4 max-w-[68ch] text-base leading-8"
+                  className="mt-4 max-w-[64ch] text-base leading-8"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
                   {featuredPost.summary}
@@ -159,7 +156,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-6 inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 py-2.5 text-sm transition"
+                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                   style={{
                     borderColor: 'var(--color-cyan-surface)',
                     color: 'var(--color-film-teal)',
@@ -200,9 +197,9 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                                     },
                                   }
                             }
-                            className="writing-row min-h-[52px] px-4 sm:px-0"
+                            className="writing-row min-h-[52px] py-3 px-4 sm:px-0"
                           >
-                            {/* Date: hidden on mobile to save space */}
+                            {/* Date: hidden on mobile — shown inline below title */}
                             <time
                               dateTime={post.date}
                               className="hidden sm:block min-w-24 shrink-0 font-mono text-xs"
@@ -218,7 +215,6 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                               >
                                 {post.title}
                               </span>
-                              {/* Mobile: show date inline under title */}
                               <time
                                 dateTime={post.date}
                                 className="sm:hidden block font-mono text-[10px] mt-0.5"
@@ -242,14 +238,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </AnimatePresence>
               )}
 
-              {/* View all CTA */}
+              {/* View all CTA: full-width on mobile */}
               <m.div
                 variants={child}
-                className="mt-8 flex justify-center sm:justify-start"
+                className="mt-8"
               >
                 <Link
                   href="/writing"
-                  className="pill pill-cyan inline-flex min-h-[48px] items-center gap-2 px-5 transition hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-white/30"
+                  className="pill pill-cyan inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 px-5 transition hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-white/30"
                 >
                   <span>All {posts.length} articles</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
