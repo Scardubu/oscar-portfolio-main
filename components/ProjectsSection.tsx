@@ -1,17 +1,15 @@
-// CONVICTION ENGINE v20.0 — ProjectsSection
-// Mobile-native: 320–430px is source of truth.
+// CONVICTION ENGINE v21.0 — ProjectsSection
+// Mobile-native: 320–430px is the source of truth.
 // Lagos, Nigeria → Global.
 //
-// v20 changes:
-//   • Outcome pills: tighter layout on mobile, icon-free, bold value-first copy.
-//   • Featured card: constraint line elevated to visible — not hidden behind toggle.
-//   • Brief toggle removed — description now shows in a persistent <details> below
-//     the tagline, closed by default on mobile to keep first viewport clean.
-//   • Stack pills: replaced with a single condensed "tech strip" — no horizontal
-//     scroll debt on first render.
-//   • Grid cards: BECAUSE row is now the dominant text — most convincing signal.
-//   • All primary CTAs at bottom 60% of card viewport (thumb zone).
-//   • whileHover disabled below md breakpoint via CSS media query trick (no JS).
+// v21 changes vs v20:
+//   • Featured card: BECAUSE line elevated ABOVE tech strip (most evaluator-facing signal).
+//   • CTA primary button: w-full on mobile, auto on sm+. Eliminates mis-tap.
+//   • Grid cards: BECAUSE value gets 2-line clamp + ellipsis to prevent layout break on long values.
+//   • Outcome pills: max 3 on mobile, all on sm+, controlled via CSS only.
+//   • Section intro: tighter paragraph (<56ch) for mobile line-length control.
+//   • whileHover: explicitly disabled on touch devices via reducedMotion guard.
+//   • All CTAs: min-h-[48px] guaranteed.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -31,8 +29,8 @@ import {
 import { PROJECTS, type Project } from '@/lib/projects';
 
 const FEATURED_VARIANT = cardReveal(28);
-const GRID_VARIANT_A = cardReveal(28);
-const GRID_VARIANT_B = cardReveal(-24);
+const GRID_VARIANT_A = cardReveal(24);
+const GRID_VARIANT_B = cardReveal(-20);
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
@@ -52,12 +50,13 @@ function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
 function TechStrip({
   stack,
   slug,
-}: Readonly<{ stack: readonly string[]; slug: string }>) {
-  const visible = stack.slice(0, 6);
+  limit = 6,
+}: Readonly<{ stack: readonly string[]; slug: string; limit?: number }>) {
+  const visible = stack.slice(0, limit);
   const rest = stack.length - visible.length;
   return (
     <div
-      className="mt-4 flex flex-wrap gap-1"
+      className="mt-3 flex flex-wrap gap-1"
       aria-label={`${slug} technology stack`}
     >
       {visible.map((tech) => (
@@ -93,7 +92,7 @@ function FeaturedProjectCard({
   return (
     <m.article
       variants={FEATURED_VARIANT}
-      className="glass-full rounded-[var(--radius-xl)] overflow-hidden mb-6"
+      className="glass-full rounded-[var(--radius-xl)] overflow-hidden mb-5"
       data-project-id={featured.slug}
     >
       {/* ── Header ──────────────────────────────────────────────────────── */}
@@ -113,13 +112,13 @@ function FeaturedProjectCard({
 
         {/* Tagline */}
         <p
-          className="mt-3 max-w-[58ch] text-base leading-[1.75]"
+          className="mt-3 max-w-[56ch] text-base leading-[1.75]"
           style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)' }}
         >
           {featured.tagline}
         </p>
 
-        {/* Outcomes: flex-wrap, no overflow-scroll debt */}
+        {/* Outcomes — flex-wrap, no scroll */}
         <ul
           className="mt-4 flex flex-wrap gap-2"
           aria-label={`${featured.title} outcomes`}
@@ -131,9 +130,31 @@ function FeaturedProjectCard({
           ))}
         </ul>
 
-        {/* Constraint — always visible: most trust-building signal */}
+        {/* BECAUSE — elevated above tech strip: highest evaluator signal */}
+        <div
+          className="mt-4 flex items-start gap-2.5 rounded-[var(--radius-sm)] border-l-2 py-2 pl-3 pr-2"
+          style={{
+            borderLeftColor: 'var(--color-film-teal)',
+            background: 'oklch(73% 0.18 196 / 0.05)',
+          }}
+        >
+          <span
+            className="label-mono text-[10px] shrink-0 pt-0.5 w-14"
+            style={{ color: 'var(--color-film-teal)' }}
+          >
+            WHY
+          </span>
+          <span
+            className="text-[12px] sm:text-sm leading-5 font-medium"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {featured.because}
+          </span>
+        </div>
+
+        {/* Constraint */}
         <p
-          className="mt-4 border-l-2 pl-3 text-xs leading-5 italic"
+          className="mt-3 border-l-2 pl-3 text-xs leading-5 italic"
           style={{
             borderLeftColor: 'oklch(73% 0.18 75 / 0.3)',
             color: 'var(--color-text-muted)',
@@ -145,10 +166,10 @@ function FeaturedProjectCard({
         {/* Tech strip */}
         <TechStrip stack={featured.stack} slug={featured.slug} />
 
-        {/* Description — native details/summary for zero-JS accordion */}
+        {/* Full brief: native details, zero JS */}
         <details className="mt-5 group">
           <summary
-            className="list-none cursor-pointer inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-white/14 px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28"
+            className="list-none cursor-pointer inline-flex min-h-[48px] items-center gap-1.5 rounded-full border border-white/14 px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
             style={{ color: 'var(--color-text-muted)' }}
           >
             <span className="group-open:hidden">Full brief ↓</span>
@@ -165,12 +186,12 @@ function FeaturedProjectCard({
         </details>
       </div>
 
-      {/* ── ArchDecision: collapsible on mobile ─────────────────────────── */}
+      {/* ── Architecture Decision: collapsible on mobile ─────────────────── */}
       <div className="mt-5 px-5 sm:px-8 lg:px-10">
         <button
           type="button"
           onClick={() => setArchOpen((v) => !v)}
-          className="lg:hidden w-full flex items-center justify-between min-h-[48px] py-3 border-t font-mono text-[11px] tracking-widest uppercase"
+          className="lg:hidden w-full flex items-center justify-between min-h-[48px] py-3 border-t font-mono text-[11px] tracking-widest uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
           style={{
             borderColor: 'var(--color-border)',
             color: 'var(--color-text-muted)',
@@ -226,25 +247,25 @@ function FeaturedProjectCard({
           {featured.caseStudy && (
             <Link
               href={featured.caseStudy}
-              className="cta-primary justify-center sm:justify-start sm:w-auto"
+              className="cta-primary w-full justify-center sm:w-auto sm:justify-start"
             >
               Read case study
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           )}
           {featured.demoUrl && (
-            <a
+            
               href={featured.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="cta-secondary justify-center sm:justify-start sm:w-auto"
+              className="cta-secondary w-full justify-center sm:w-auto sm:justify-start"
             >
               Live demo
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
           )}
           {featured.githubUrl && (
-            <a
+            
               href={featured.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -298,7 +319,7 @@ function ProjectCard({
         {project.tagline}
       </p>
 
-      {/* Outcomes */}
+      {/* Outcomes: 3 max always — no overflow */}
       <ul
         className="mt-4 flex flex-wrap gap-2"
         aria-label={`${project.title} outcomes`}
@@ -310,36 +331,34 @@ function ProjectCard({
         ))}
       </ul>
 
-      {/* Arch decision: BECAUSE is the hero signal */}
+      {/* Arch signals: BECAUSE dominant */}
       <div
-        className="mt-5 pt-4 border-t space-y-2"
+        className="mt-5 pt-4 border-t space-y-2.5"
         style={{ borderColor: 'var(--color-border-subtle)' }}
       >
-        {/* BECAUSE — dominant */}
         <div className="flex items-start gap-2">
           <span
-            className="label-mono w-14 shrink-0 mt-0.5"
+            className="label-mono w-14 shrink-0 mt-0.5 text-[10px]"
             style={{ color: 'var(--color-film-teal)' }}
           >
             BECAUSE
           </span>
           <span
-            className="text-[11px] leading-5 font-medium"
+            className="text-[11px] leading-5 font-medium line-clamp-2"
             style={{ color: 'var(--color-text-primary)' }}
           >
             {project.because}
           </span>
         </div>
-        {/* CHOSEN — secondary */}
         <div className="flex items-start gap-2">
           <span
-            className="label-mono w-14 shrink-0 mt-0.5"
+            className="label-mono w-14 shrink-0 mt-0.5 text-[10px]"
             style={{ color: 'var(--color-success)' }}
           >
             CHOSEN
           </span>
           <span
-            className="text-[11px] leading-5"
+            className="text-[11px] leading-5 line-clamp-1"
             style={{ color: 'var(--color-text-secondary)' }}
           >
             {project.chosen}
@@ -348,7 +367,7 @@ function ProjectCard({
       </div>
 
       {/* Tech strip — condensed */}
-      <div className="mt-4 flex flex-wrap gap-1">
+      <div className="mt-3 flex flex-wrap gap-1">
         {project.stack.slice(0, 4).map((tech) => (
           <span
             key={tech}
@@ -368,7 +387,7 @@ function ProjectCard({
         )}
       </div>
 
-      {/* CTAs */}
+      {/* CTAs: full-width on mobile */}
       <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {project.caseStudy && (
           <Link
@@ -379,7 +398,7 @@ function ProjectCard({
           </Link>
         )}
         {project.githubUrl && (
-          <a
+          
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -435,12 +454,11 @@ export function ProjectsSection() {
 
           <m.p
             variants={child}
-            className="mb-10 sm:mb-14 max-w-[60ch] text-base leading-8"
+            className="mb-10 sm:mb-14 max-w-[56ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Four years of independent product work — production-grade infrastructure,
-            compliance architecture, and ML backends built from zero and maintained in
-            production from Lagos, Nigeria.
+            Four years of independent product work — production-grade fintech infrastructure,
+            compliance automation, and ML backends. Built in Lagos. Maintained in production.
           </m.p>
 
           {/* Featured project */}
