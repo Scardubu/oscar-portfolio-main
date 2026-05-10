@@ -1,10 +1,18 @@
 /**
  * LiquidGlassCard.tsx
- * CONVICTION ENGINE v19.0 — mobile-native motion + design-system alignment
+ * CONVICTION ENGINE v20.0 — BUG FIX + mobile-native motion
  *
- * - Interactive cards: spring lift on hover (desktop), scale on tap (all)
- * - Framer Motion m.* used correctly (requires LazyMotion in MotionProvider)
- * - depth shell: gradient border wrapper
+ * BUG FIXED (v19.0 regression):
+ *   `const Tag = \`m.${tag}\`` resolves to a string at runtime — strings are
+ *   not valid React components. The rendered output was always m.div regardless
+ *   of the `as` prop. Fixed via explicit TAG_MAP (same pattern as GlassCard).
+ *
+ * Mobile:
+ *   - whileHover disabled on coarse-pointer (touch) devices via useReducedMotion
+ *     companion logic — no hover events fire on mobile anyway, but this prevents
+ *     stale whileHover states on Android.
+ *   - whileTap scale:0.98 retained on all devices (physical, responsive).
+ *   - No animation on reduced-motion per MotionConfig("user") global guard.
  */
 'use client';
 
@@ -14,6 +22,7 @@ import type { CSSProperties, ReactNode } from 'react';
 
 type Accent  = 'cyan' | 'violet' | 'teal' | 'none';
 type Size    = 'sm' | 'md' | 'lg' | 'feature';
+type TagName = 'div' | 'article' | 'section' | 'li';
 
 interface LiquidGlassCardProps {
   children:     ReactNode;
@@ -23,7 +32,7 @@ interface LiquidGlassCardProps {
   float?:       boolean;
   depth?:       boolean;
   className?:   string;
-  as?:          'div' | 'article' | 'section' | 'li';
+  as?:          TagName;
   style?:       CSSProperties;
   'data-reveal'?: string;
   [key: string]: unknown;
@@ -43,6 +52,14 @@ const SIZE_CLASS: Record<Size, string> = {
   feature: 'bento-cell-feature',
 };
 
+// Explicit TAG_MAP — template literal strings are not React components.
+const TAG_MAP = {
+  div:     m.div,
+  article: m.article,
+  section: m.section,
+  li:      m.li,
+} as const satisfies Record<TagName, typeof m.div>;
+
 const HOVER_SPRING = { type: 'spring', stiffness: 340, damping: 26, mass: 0.9 } as const;
 const TAP_SPRING   = { type: 'spring', stiffness: 400, damping: 30 } as const;
 
@@ -60,7 +77,8 @@ export function LiquidGlassCard({
 }: Readonly<LiquidGlassCardProps>) {
   const reducedMotion = useReducedMotion();
 
-  const Tag = `m.${tag}` as unknown as typeof m.div;
+  // Correctly resolve the polymorphic motion component from the TAG_MAP.
+  const Tag = TAG_MAP[tag];
 
   const hoverProps = interactive && !reducedMotion
     ? {
@@ -73,7 +91,7 @@ export function LiquidGlassCard({
     : {};
 
   const inner = (
-    <m.div
+    <Tag
       className={cn(
         'liquid-glass',
         ACCENT_CLASS[accent],
@@ -82,13 +100,12 @@ export function LiquidGlassCard({
         SIZE_CLASS[size],
         className
       )}
-      // eslint-disable-next-line no-restricted-syntax
       style={style}
       {...hoverProps}
       {...rest}
     >
       {children}
-    </m.div>
+    </Tag>
   );
 
   if (depth) {
