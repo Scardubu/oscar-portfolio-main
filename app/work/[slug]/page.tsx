@@ -1,3 +1,6 @@
+// app/work/[slug]/page.tsx — CONVICTION ENGINE v21.0
+// Mobile-native case study. Sidebar rendered below content on mobile (<xl).
+// Lagos, Nigeria → Global.
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -10,54 +13,45 @@ import { getWorkCase, getWorkCases } from '@/lib/content';
 import { getProject, PROJECTS, type Project } from '@/lib/projects';
 
 type WorkPageProps = Readonly<{
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 }>;
 
 function getProjectStatusLabel(status?: Project['status']) {
   switch (status) {
-    case 'live':
-      return 'Live deployment';
-    case 'wip':
-      return 'Active build';
-    case 'case-study':
-      return 'Case study';
-    default:
-      return 'Case study';
+    case 'live':       return 'Live deployment';
+    case 'wip':        return 'Active build';
+    case 'case-study': return 'Case study';
+    default:           return 'Case study';
   }
 }
 
 function getCompactProjectStatusLabel(status: Project['status']) {
   switch (status) {
-    case 'live':
-      return 'Live';
-    case 'wip':
-      return 'WIP';
-    case 'case-study':
-      return 'Case study';
-    default:
-      return 'Case study';
+    case 'live':       return 'Live';
+    case 'wip':        return 'WIP';
+    case 'case-study': return 'Case study';
+    default:           return 'Case study';
   }
 }
 
 function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
-  if (!entries.length) {
-    return null;
-  }
+  if (!entries.length) return null;
 
   return (
     <aside
       aria-labelledby="related-case-studies-heading"
-      className="glass-no-hover mb-(--space-20) rounded-(--radius-xl) border border-white/10 p-6"
+      className="mb-[var(--space-20)] rounded-[var(--radius-xl)] border border-white/10 p-5 sm:p-6"
     >
       <span className="label">More work</span>
-      <h2 id="related-case-studies-heading" className="mt-(--space-2)">
+      <h2 id="related-case-studies-heading" className="mt-[var(--space-2)]">
         Other case studies
       </h2>
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {entries.map((entry) => (
-          <article key={entry.slug} className="rounded-(--radius-lg) border border-white/10 p-5">
+          <article
+            key={entry.slug}
+            className="rounded-[var(--radius-lg)] border border-white/10 p-4 sm:p-5"
+          >
             <div className="flex flex-wrap gap-2">
               <span className="pill">{getCompactProjectStatusLabel(entry.status)}</span>
               {entry.stack.slice(0, 2).map((tag) => (
@@ -67,10 +61,11 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
               ))}
             </div>
             <h3 className="mt-4 text-white">{entry.title}</h3>
-            <p className="mt-3 text-sm leading-7 text-white/65">{entry.description}</p>
+            <p className="mt-3 text-sm leading-7 text-white/65">{entry.tagline}</p>
             <Link
               href={`/work/${entry.slug}`}
-              className="mt-5 inline-flex items-center gap-2 text-sm text-cyan-200 transition hover:text-white"
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 text-sm transition hover:text-white"
+              style={{ color: 'var(--color-film-teal)' }}
             >
               Read case study →
             </Link>
@@ -84,38 +79,75 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
 function ProjectLinksCard({
   demoUrl,
   githubUrl,
-}: Readonly<{
-  demoUrl?: string;
-  githubUrl?: string;
-}>) {
-  if (!demoUrl && !githubUrl) {
-    return null;
-  }
+}: Readonly<{ demoUrl?: string; githubUrl?: string }>) {
+  if (!demoUrl && !githubUrl) return null;
 
   return (
-    <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
+    <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
       <span className="label">Links</span>
       <div className="mt-4 flex flex-col gap-3">
-        {demoUrl ? (
-          <Link
+        {demoUrl && (
+          
             href={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="pill pill-cyan inline-flex justify-center"
+            className="pill pill-cyan inline-flex justify-center min-h-[48px] items-center"
           >
             View live demo
-          </Link>
-        ) : null}
-        {githubUrl ? (
-          <Link
+          </a>
+        )}
+        {githubUrl && (
+          
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="pill inline-flex justify-center"
+            className="pill inline-flex justify-center min-h-[48px] items-center"
           >
             GitHub
-          </Link>
-        ) : null}
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StackCard({ tags }: Readonly<{ tags: string[] }>) {
+  if (!tags.length) return null;
+  return (
+    <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
+      <span className="label">Stack</span>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span key={tag} className="pill">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SnapshotCard({ statusLabel }: Readonly<{ statusLabel: string }>) {
+  return (
+    <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
+      <span className="label">Snapshot</span>
+      <div className="mt-4 space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs tracking-[0.14em] uppercase" style={{ color: 'var(--color-text-muted)' }}>
+            Status
+          </p>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            {statusLabel}
+          </p>
+        </div>
+        <div className="space-y-1">
+          <p className="text-xs tracking-[0.14em] uppercase" style={{ color: 'var(--color-text-muted)' }}>
+            Surface
+          </p>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Case study and architecture review
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -128,20 +160,18 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getWorkCase(slug);
-  const projectMeta = getProject(slug);
+  const project  = await getWorkCase(slug);
+  const meta     = getProject(slug);
 
-  if (!project) {
-    return { title: 'Work' };
-  }
+  if (!project) return { title: 'Work' };
 
   return {
-    title: projectMeta?.title ?? project.frontmatter.title,
-    description: projectMeta?.tagline ?? project.frontmatter.summary,
+    title: meta?.title ?? project.frontmatter.title,
+    description: meta?.tagline ?? project.frontmatter.summary,
     alternates: { canonical: `https://www.scardubu.dev/work/${slug}` },
     openGraph: {
-      title: `${projectMeta?.title ?? project.frontmatter.title} · Oscar Ndugbu (Scardubu)`,
-      description: projectMeta?.tagline ?? project.frontmatter.summary,
+      title: `${meta?.title ?? project.frontmatter.title} · Oscar Ndugbu`,
+      description: meta?.tagline ?? project.frontmatter.summary,
       url: `https://www.scardubu.dev/work/${slug}`,
       images: [`/work/${slug}/og`],
     },
@@ -157,26 +187,24 @@ function caseStudyJsonLd(title: string, description: string, slug: string) {
     url: `https://www.scardubu.dev/work/${slug}`,
     author: {
       '@type': 'Person',
-      name: 'Oscar Ndugbu (Scardubu)',
+      name: 'Oscar Ndugbu',
       url: 'https://www.scardubu.dev',
     },
   };
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
-  const { slug } = await params;
-  const project = await getWorkCase(slug);
+  const { slug }   = await params;
+  const project    = await getWorkCase(slug);
 
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
 
-  const projectMeta = getProject(slug);
-  const relatedProjects = PROJECTS.filter((entry) => entry.slug !== slug).slice(0, 2);
-  const title = projectMeta?.title ?? project.frontmatter.title;
-  const description = projectMeta?.tagline ?? project.frontmatter.summary;
-  const tags = projectMeta?.stack ?? project.frontmatter.tags ?? [];
-  const statusLabel = getProjectStatusLabel(projectMeta?.status);
+  const projectMeta    = getProject(slug);
+  const relatedProjects = PROJECTS.filter((e) => e.slug !== slug).slice(0, 2);
+  const title          = projectMeta?.title ?? project.frontmatter.title;
+  const description    = projectMeta?.tagline ?? project.frontmatter.summary;
+  const tags           = projectMeta?.stack ?? project.frontmatter.tags ?? [];
+  const statusLabel    = getProjectStatusLabel(projectMeta?.status);
 
   return (
     <>
@@ -185,6 +213,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
       <main id="main-content" tabIndex={-1}>
         <section className="relative overflow-hidden pt-[calc(var(--nav-height)+var(--space-12))]">
           <div aria-hidden="true" className="work-surface-glow" />
+
           <div className="relative container">
             <script
               type="application/ld+json"
@@ -192,70 +221,77 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 __html: JSON.stringify(caseStudyJsonLd(title, description, slug)),
               }}
             />
-            <Link href="/#projects" className="pill pill-cyan">
-              Back to projects
+
+            {/* Back link — top thumb zone */}
+            <Link
+              href="/#section-projects"
+              className="pill pill-cyan inline-flex min-h-[44px] items-center"
+            >
+              ← Projects
             </Link>
-            <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+
+            {/*
+              Grid:
+              - Mobile: single column (content first, sidebar below)
+              - xl+: two columns with sticky sidebar
+            */}
+            <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start xl:gap-10">
+              {/* Main content column */}
               <div className="min-w-0">
-                <header className="mt-(--space-8) mb-(--space-10) max-w-[60ch]">
+                <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
                   <span className="label">Case Study</span>
-                  <h1 className="mt-(--space-2)">{title}</h1>
-                  <p className="mt-(--space-4) text-(length:--text-lg)">{description}</p>
-                  {projectMeta ? (
-                    <div className="mt-(--space-4) flex flex-wrap gap-(--space-2)">
+                  <h1 className="mt-[var(--space-2)]">{title}</h1>
+                  <p
+                    className="mt-[var(--space-4)] text-base sm:text-lg leading-8"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
+                    {description}
+                  </p>
+                  {projectMeta && (
+                    <div className="mt-[var(--space-4)] flex flex-wrap gap-[var(--space-2)]">
                       <span className="pill pill-cyan">{statusLabel}</span>
-                      {projectMeta.status === 'live' ? (
+                      {projectMeta.status === 'live' && (
                         <span className="pill">Featured system</span>
-                      ) : null}
+                      )}
                     </div>
-                  ) : null}
+                  )}
                 </header>
 
-                {projectMeta ? (
-                  <ArchDecision
-                    chosen={projectMeta.chosen}
-                    over={projectMeta.over}
-                    because={projectMeta.because}
-                  />
-                ) : null}
+                {/* Architecture decision — elevated above prose */}
+                {projectMeta && (
+                  <div className="mb-8">
+                    <ArchDecision
+                      chosen={projectMeta.chosen}
+                      over={projectMeta.over}
+                      because={projectMeta.because}
+                    />
+                  </div>
+                )}
 
-                <article className="prose max-w-none pb-(--space-20)">{project.content}</article>
+                {/* MDX prose */}
+                <article className="prose max-w-none pb-[var(--space-20)]">
+                  {project.content}
+                </article>
 
                 <RelatedCaseStudies entries={relatedProjects} />
               </div>
 
+              {/* Sidebar: sticky on xl+, inline on mobile */}
               <aside className="space-y-4 xl:sticky xl:top-[calc(var(--nav-height)+var(--space-8))]">
-                <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
-                  <span className="label">Snapshot</span>
-                  <div className="mt-4 space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-xs tracking-[0.14em] text-white/35 uppercase">Status</p>
-                      <p className="text-sm text-white/80">{statusLabel}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs tracking-[0.14em] text-white/35 uppercase">Surface</p>
-                      <p className="text-sm text-white/80">Case study and architecture review</p>
-                    </div>
-                  </div>
-                </div>
-
-                {tags.length ? (
-                  <div className="glass-no-hover rounded-(--radius-xl) border border-white/10 p-5">
-                    <span className="label">Stack</span>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {tags.map((tag) => (
-                        <span key={tag} className="pill">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-
+                <SnapshotCard statusLabel={statusLabel} />
+                <StackCard tags={tags} />
                 <ProjectLinksCard
                   demoUrl={projectMeta?.demoUrl}
                   githubUrl={projectMeta?.githubUrl}
                 />
+
+                {/* Back CTA: always visible on mobile, at natural thumb zone */}
+                <Link
+                  href="/#section-projects"
+                  className="pill pill-cyan inline-flex w-full justify-center min-h-[48px] items-center"
+                >
+                  ← Back to projects
+                </Link>
               </aside>
             </div>
           </div>
