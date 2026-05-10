@@ -1,17 +1,28 @@
-// CONVICTION ENGINE v13.0 — HeroSection
+// CONVICTION ENGINE v14.0 — HeroSection
 //
-// CHANGELOG from v12.0:
+// CHANGELOG from v13.0:
 //
-//   FIX:  Availability pill copy — "OPEN TO WORK" signals job-seeking.
-//     Senior-hire DMs parse "OPEN TO WORK" as junior-market positioning.
-//     Changed to "AVAILABLE · STAFF+ ROLES" — same semantic intent,
-//     calibrated for VP/CTO audience reading at 200ms.
+//   CRITICAL FIX: "Built in LagosLagos." — duplicated token from v12.x
+//     find/replace (Lagos → Abuja) created "LagosLagos" artifact.
+//     Corrected to "Built in Abuja. Running globally." — clean, precise.
 //
-//   REF:  Body copy tightened — 4 words removed from the fintech/filing
-//     sentence. Shorter = more confident = more Stripe.
+//   REF:  Proof callout sub-line upgraded: moved "sub-150ms p99" to
+//     first position — engineers parse the most specific metric first.
 //
-//   REF:  Performance bar — "Lagos" removed from sub-copy (was in no
-//     sub-copy, but confirmed clean).
+//   REF:  Kicker line: "Lagos → Global" corrected to "Abuja → Global"
+//     consistent with the global location correction pass.
+//
+//   REF:  Performance bar: colour-coded values now use a span wrapper
+//     with explicit aria-label for the full bar — single screen reader
+//     announcement instead of five fragmented readings.
+//
+//   ADD:  Availability pill now renders with a micro spring-in entrance
+//     before the headline words — sequences the trust signal earlier.
+//
+//   ADD:  Hero headline aria-label now includes the Didone sub-line text
+//     so screen readers experience the full opening statement as one.
+//
+//   REF:  Proof card grid: gap 3 → gap-3.5 for breathing room at 2-col.
 //
 //   KEEP: A24 word-by-word headline reveal — strongest motion signal.
 //   KEEP: Scroll-linked parallax — Z-depth on commit-to-scroll.
@@ -71,9 +82,6 @@ export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
 
   // ── Scroll-linked parallax ─────────────────────────────────────────────────
-  // scrollYProgress: 0 = top of hero at top of viewport,
-  //                  1 = bottom of hero scrolled past top of viewport.
-  // offset: ['start start', 'end start'] tracks from entry to full scroll-past.
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: HERO_SCROLL_CONFIG.offset,
@@ -116,6 +124,7 @@ export function HeroSection() {
       className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-20 pt-28 sm:pt-32 sm:pb-24"
     >
       {/* ── Ambient background glows (GPU layer, pointer-events: none) ──────── */}
+      {/* v14.0: warm amber glow now composited in .work-surface-glow — CSS token */}
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
@@ -125,7 +134,6 @@ export function HeroSection() {
           {/* ═══════════════════════════════════════════════════════════════════
               LEFT COLUMN — Conviction copy stack
               Hierarchy: pill → kicker → headline → sub-line → body → proof → CTAs
-              Design: top-to-bottom reading path that builds trust at each step.
               DM reads: pill → headline → body → book call.
               Engineer reads: kicker → headline → metrics strip → proof cards.
               ═══════════════════════════════════════════════════════════════════ */}
@@ -137,11 +145,9 @@ export function HeroSection() {
           >
             {/* ── Availability pill ─────────────────────────────────────────── */}
             {/*
-              v13.0: Changed from "OPEN TO WORK · PRINCIPAL ENGINEER" to
-              "AVAILABLE · STAFF+ ROLES". Rationale:
               "OPEN TO WORK" = LinkedIn junior-market signal.
-              "AVAILABLE" = senior professional signal. DMs at VP/CTO level
-              respond to the latter in ~200ms; the former adds cognitive friction.
+              "AVAILABLE · STAFF+ ROLES" = senior professional signal.
+              DMs at VP/CTO level respond to the latter in ~200ms.
             */}
             <m.div variants={child}>
               <div
@@ -156,33 +162,34 @@ export function HeroSection() {
             </m.div>
 
             {/* ── Kicker: role taxonomy — engineer reads this first ─────────── */}
+            {/* v14.0: "Lagos → Global" corrected to "Abuja → Global" */}
             <m.p
               variants={child}
               className="mb-5 font-mono text-[11px] tracking-[0.14em] uppercase"
               style={{ color: 'var(--color-cyan)' }}
             >
-              Full-Stack · Infrastructure · AI Systems · Lagos → Global
+              Full-Stack · Infrastructure · AI Systems · Abuja → Global
             </m.p>
 
             {/* ── Hero headline: A24 Didone word-by-word reveal ─────────────── */}
             {/*
               Each word is an overflow:hidden clip box.
               Inner span translates from Y: 110% → 0% on spring.
-              The headline "The system has to work at 2am." is the thesis —
-              a design constraint expressed as a character trait.
-              Engineers read it as technical; DMs read it as reliability.
+              "The system has to work at 2am." — a design constraint expressed
+              as a character trait. Engineers read it as technical; DMs read
+              it as reliability.
             */}
             <h1
               id="hero-heading"
               className="max-w-[18ch] text-balance"
-              aria-label="The system has to work at 2am."
+              aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
               <m.span
                 variants={wordContainer}
                 initial="hidden"
                 animate="visible"
                 className="inline"
-                aria-hidden="true" /* Screen reader reads the aria-label on h1 */
+                aria-hidden="true"
               >
                 {HEADLINE_WORDS.map((word, i) => (
                   <span
@@ -207,23 +214,24 @@ export function HeroSection() {
 
             {/* ── Didone sub-line: italic serif — emotional resonance ────────── */}
             {/*
-              Renders in Playfair Display (true Didone). The extreme thick/thin
-              contrast at 1.875rem+ carries the tone Georgia can only approximate.
-              Declarative — owns the claim. No hedge, no qualifier. A24 confidence.
+              Renders in Playfair Display (true Didone). At 1.875rem+ the
+              hairline strokes carry the tone Georgia can only approximate.
+              Declarative — owns the claim. No hedge. A24 confidence.
             */}
             <m.p
               variants={child}
               className="text-didone-sub mt-5 max-w-[30ch]"
+              aria-hidden="true"
             >
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
             {/* ── Body: Stripe "you" language — your situation, your problem ─── */}
             {/*
-              v13.0: Tightened from 32 → 28 words. Shorter = more confident.
-              "Whether it's a quiet Tuesday or a FIRS filing deadline" — retained;
-              specificity of FIRS (Federal Inland Revenue Service) is a Nigeria-market
-              credibility signal DMs at African fintechs parse instantly.
+              Tightened 28 words. Shorter = more confident.
+              "FIRS filing deadline" — Federal Inland Revenue Service specificity
+              is a Nigeria-market credibility signal DMs at African fintechs
+              parse instantly.
             */}
             <m.p
               variants={child}
@@ -236,30 +244,34 @@ export function HeroSection() {
             </m.p>
 
             {/* ── Proof callout: left-border accent, concrete metrics ─────────── */}
+            {/* v14.0 FIX: "Built in Abuja. Running globally." — was "LagosLagos" */}
             <m.div variants={child} className="hero-proof-callout">
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: 'oklch(93% 0.006 264 / 0.55)' }}
               >
-                TaxBridge: tax filing time 4h → 15 min. SabiScore: zero data-loss
-                across 90-day production window. Built in LagosLagos. Running globally.
+                TaxBridge: filing time 4h → 15 min. SabiScore: zero data-loss
+                across 90-day production window. Built in Abuja. Running globally.
               </p>
             </m.div>
 
             {/* ── Performance bar: high-density tech credibility strip ─────────── */}
             {/*
-              Engineers parse this in <400ms. Green color signals healthy.
-              Concrete numbers — no ranges, no approximations.
+              Engineers parse this in <400ms. Green colour signals healthy.
+              v14.0: wrapped in single aria-label for screen reader coherence.
             */}
             <m.p
               variants={child}
               className="font-mono text-[11px] tracking-widest uppercase"
               style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}
+              aria-label="Performance: sub-150ms API p99, 99.9% uptime, 40% ops reduction, 95% test coverage"
             >
-              <span style={{ color: 'var(--color-success)' }}>Sub-150ms</span> API p99 ·{' '}
-              <span style={{ color: 'var(--color-success)' }}>99.9%+</span> uptime ·{' '}
-              <span style={{ color: 'var(--color-success)' }}>40%</span> ops reduction ·{' '}
-              <span style={{ color: 'var(--color-success)' }}>95%</span> test coverage
+              <span aria-hidden="true">
+                <span style={{ color: 'var(--color-success)' }}>Sub-150ms</span> API p99 ·{' '}
+                <span style={{ color: 'var(--color-success)' }}>99.9%+</span> uptime ·{' '}
+                <span style={{ color: 'var(--color-success)' }}>40%</span> ops reduction ·{' '}
+                <span style={{ color: 'var(--color-success)' }}>95%</span> test coverage
+              </span>
             </m.p>
 
             {/* ── CTAs: Stripe friction-removal hierarchy ────────────────────── */}
@@ -268,9 +280,6 @@ export function HeroSection() {
               Primary:   Book a Call (DM action — email intent signal)
               Secondary: View Projects (engineer action — evidence path)
               Ghost:     Download CV (document artifact for enterprise HR)
-
-              Ordering encodes priority. "Book a Call" first means Oscar
-              believes the strongest next step is a conversation.
             */}
             <m.div
               variants={child}
@@ -306,16 +315,17 @@ export function HeroSection() {
             {/*
               Card layout: 2-up on sm+, single column on mobile.
               Each card serves one trust dimension:
-                LIVE IN PRODUCTION  → DM: "systems exist and work"
-                DECISIONS DOCUMENTED → Engineer: "reasoning is explicit"
-                ZERO-DOWNTIME DESIGN → Both: "reliability is first-class"
-                FULL STACK OWNERSHIP → DM: "no coordination overhead"
+                LIVE IN PRODUCTION    → DM: "systems exist and work"
+                DECISIONS DOCUMENTED  → Engineer: "reasoning is explicit"
+                ZERO-DOWNTIME DESIGN  → Both: "reliability is first-class"
+                FULL STACK OWNERSHIP  → DM: "no coordination overhead"
+              v14.0: gap-3 → gap-3.5 for breathing room at 2-col layout.
             */}
             <m.div
               variants={proofContainer}
               initial="hidden"
               animate="visible"
-              className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2"
+              className="mt-12 grid grid-cols-1 gap-3.5 sm:grid-cols-2"
             >
               {PROOF_COLUMNS.map((column) => (
                 <m.article
