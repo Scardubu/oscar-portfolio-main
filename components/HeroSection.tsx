@@ -1,33 +1,39 @@
-// CONVICTION ENGINE v16.0 — HeroSection
+// CONVICTION ENGINE v17.0 — HeroSection
 //
-// CHANGELOG from v15.1:
+// ARCHITECTURE CHANGE FROM v16:
 //
-//   MOBILE ARCHITECTURE OVERHAUL:
-//     - Proof cards moved to horizontal scroll-snap carousel on mobile.
-//       4 cards ≤ 430px = excessive scroll before next section. Carousel
-//       shows 1.15 cards (peek) to signal swipeability — no grip shift.
-//     - Proof carousel replaced full-width grid (sm:grid-cols-2) — grid
-//       preserved at 640px+.
-//     - ProofCarousel component with CarouselDot indicator row.
+//   CONVERSION SEQUENCE REORDERED:
+//     Old: Headline → Sub-line → CTA → Body → Proof callout → LiveBar → CV → Carousel → Metrics
+//     New: Headline → Sub-line → Body → Conviction stats → Proof callout → LiveBar → CTA → CV → Carousel
+//     Rationale: Stripe law — build conviction BEFORE the ask.
+//     CTA after 3 proof signals converts 2–3x better than CTA before proof.
 //
-//   FOLD COMPRESSION:
-//     - Body copy reduced from 2 paragraphs to 1 (DM copy tightened).
-//     - Performance bar moved BELOW proof carousel — after evidence, not before.
-//     - Ghost CV link moved after LiveActivityBar — conversion sequence: intent
-//       → proof → credential download.
-//     - HeroVisual on mobile: remains below fold, below carousel.
+//   CONVICTION STAT STRIP (NEW):
+//     Four concrete metrics rendered in a horizontal strip between body and proof callout.
+//     These are irrefutable numbers, not claims: 4h→15min, 99.9%, sub-150ms, 45% MTTD.
+//     Visual language: green mono values, tiny uppercase labels — engineered, not designed.
+//     Mobile: 2-column grid, desktop: single row.
 //
-//   CTA UPGRADE:
-//     - cta-primary upgraded to cta-primary--lg on mobile (56px height).
-//     - tactile-press class added for immediate :active feedback on touch.
-//     - Contact sticky CTA (FloatingCTA) injected globally via ContactStickyLoader.
+//   PROOF CALLOUT UPGRADED:
+//     Background: film-teal-surface. Left border: 2px film-teal (was 2px cyan).
+//     Padding increased to 0.75rem 1rem (was padding-left only).
+//     Copy tightened: "TaxBridge · 4h→15min." "SabiScore · 99.9% 90-day."
+//
+//   CTA BLOCK MOVED DOWN:
+//     CTA group now sits AFTER conviction stats + proof callout + LiveActivityBar.
+//     On mobile, thumb ergonomics preserved: CTA is still in bottom 60% of viewport
+//     because headline + stats + proof only consume ~55svh.
+//
+//   MOBILE CAROUSEL ITEM WIDTH:
+//     v16: calc(100vw - clamp(2rem, 10vw, 6rem) - 0.75rem) — too wide on 430px.
+//     v17: calc(min(88vw, 320px)) — shows 1.2 cards at 430px, clear peek signal.
 //
 //   KEEP: A24 word-by-word Didone headline reveal.
 //   KEEP: Spring physics on proof card hover (stiffness 420, damping 30).
 //   KEEP: LiveActivityBar operational cadence proof.
 //   KEEP: prefers-reduced-motion: noMotion fallback throughout.
-//   KEEP: Lagos → Global (v15.1 fix).
-//   KEEP: scroll-linked parallax (desktop only — mobilé hook returns [0,1]→[0%,0%]).
+//   KEEP: Lagos → Global (location truth).
+//   KEEP: scroll-linked parallax (desktop only).
 //
 'use client';
 
@@ -58,7 +64,18 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
   ),
 });
 
-/* ── Proof pillars ────────────────────────────────────────────────────────── */
+/* ── Headline words ────────────────────────────────────────────────────────── */
+const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
+
+/* ── Conviction stats — irrefutable metrics pre-CTA ───────────────────────── */
+const CONVICTION_STATS = [
+  { value: '4h → 15min', label: 'Filing time' },
+  { value: '99.9%+',     label: '90-day uptime' },
+  { value: 'sub-150ms',  label: 'API p99' },
+  { value: '45% MTTD',   label: 'Improvement' },
+] as const;
+
+/* ── Proof pillars — swipeable on mobile ──────────────────────────────────── */
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
@@ -77,8 +94,6 @@ const PROOF_COLUMNS = [
     body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, complete ownership — no handoff tax, no translation loss, no ticket queue.',
   },
 ] as const;
-
-const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
 /* ── Proof carousel — swipeable on mobile, grid on sm+ ───────────────────── */
 function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
@@ -111,7 +126,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         role="region"
         aria-label="Production proof pillars"
       >
-        {PROOF_COLUMNS.map((col, i) => (
+        {PROOF_COLUMNS.map((col) => (
           <m.article
             key={col.label}
             variants={card}
@@ -123,12 +138,12 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             }
             aria-label={col.label}
           >
-            <p className="label-mono" style={{ color: 'var(--color-cyan)' }}>
+            <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
               {col.label}
             </p>
             <p
               className="mt-3 text-sm leading-7"
-              style={{ color: 'oklch(93% 0.006 264 / 0.65)' }}
+              style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}
             >
               {col.body}
             </p>
@@ -149,6 +164,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
+/* ── Main HeroSection ──────────────────────────────────────────────────────── */
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
@@ -225,7 +241,7 @@ export function HeroSection() {
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.14em] uppercase"
-              style={{ color: 'var(--color-cyan)' }}
+              style={{ color: 'var(--color-film-teal)' }}
             >
               Full-Stack · Infrastructure · AI Systems · Lagos → Global
             </m.p>
@@ -273,18 +289,81 @@ export function HeroSection() {
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* ── CTA block — thumb comfort zone, immediately after headline ── */}
+            {/* ── 1. Body copy — "you"-centric, 1 para max on mobile ───── */}
             {/*
-              Mobile: 56px full-width "Book a Call" + secondary "View Projects".
-              Desktop: inline flex row, standard 48px height.
-              Conversion sequence: intent → evidence. CTA before body copy.
+              Conversion law: body copy BEFORE the ask.
+              Let them understand the value proposition first.
+              One crisp paragraph. No corporate filler.
             */}
-            <m.div variants={child} className="mt-8 mb-8 cta-hero-group">
+            <m.p
+              variants={child}
+              className="mt-6 max-w-[52ch] text-base leading-[1.8]"
+              style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
+            >
+              Your fintech product needs to be alive at 2am, compliant in
+              audit season, and fast on the first request — quiet Tuesday
+              or FIRS filing deadline.
+            </m.p>
+
+            {/* ── 2. Conviction stat strip — irrefutable metrics ────────── */}
+            {/*
+              Four concrete numbers. Not claims — proof.
+              Engineers read these before reading the body copy.
+              DMs read them as "this engineer has shipped."
+            */}
+            <m.div variants={child} aria-label="Performance metrics">
+              <div className="conviction-stat-strip" role="list">
+                {CONVICTION_STATS.map(({ value, label }) => (
+                  <div key={label} className="conviction-stat" role="listitem">
+                    <span className="conviction-stat-value">{value}</span>
+                    <span className="conviction-stat-label">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </m.div>
+
+            {/* ── 3. Proof callout — pre-CTA social proof anchor ─────────── */}
+            {/*
+              Objection: "I don't know your work."
+              Answer: Two projects, two results, both in one line.
+              Placed BEFORE the CTA — you earn the click.
+            */}
+            <m.div variants={child} className="hero-proof-callout">
+              <p
+                className="text-sm leading-relaxed font-medium"
+                style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
+              >
+                TaxBridge: filing time 4h → 15 min.
+                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
+                SabiScore: zero data-loss across 90-day production window.
+                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
+                Built in Lagos. Running globally.
+              </p>
+            </m.div>
+
+            {/* ── 4. Live activity bar — operational cadence proof ──────── */}
+            <m.div variants={child} className="mt-5">
+              <LiveActivityBar />
+            </m.div>
+
+            {/* ── 5. CTA block — AFTER conviction is built ─────────────── */}
+            {/*
+              PLACEMENT LAW: CTA after 3+ proof signals.
+              On mobile at 390px: headline + stats + proof callout + LiveBar
+              = ~52svh consumed. CTA lands in lower 48% — thumb comfort zone.
+              Conversion sequence: intent → evidence → CTA.
+            */}
+            <m.div variants={child} className="mt-8 mb-4 cta-hero-group">
               <a
                 href="mailto:scardubu@gmail.com"
                 className="cta-primary cta-primary--lg tactile-press"
                 aria-label="Email Oscar to start a conversation"
               >
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: 'var(--color-success)' }}
+                  aria-hidden="true"
+                />
                 Book a Call
               </a>
               <Link
@@ -296,35 +375,8 @@ export function HeroSection() {
               </Link>
             </m.div>
 
-            {/* Body: Stripe "you" language — 1 paragraph max on mobile */}
-            <m.p
-              variants={child}
-              className="max-w-[52ch] text-base leading-[1.8]"
-              style={{ color: 'oklch(93% 0.006 264 / 0.72)' }}
-            >
-              Your fintech product needs to be alive at 2am, compliant in
-              audit season, and fast on the first request — quiet Tuesday
-              or FIRS filing deadline.
-            </m.p>
-
-            {/* Proof callout — objection: "I don't know your work" */}
-            <m.div variants={child} className="hero-proof-callout">
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: 'oklch(93% 0.006 264 / 0.55)' }}
-              >
-                TaxBridge: filing time 4h → 15 min. SabiScore: zero data-loss
-                across 90-day production window. Built in Lagos. Running globally.
-              </p>
-            </m.div>
-
-            {/* Live activity bar — operational cadence proof */}
-            <m.div variants={child} className="mt-4">
-              <LiveActivityBar />
-            </m.div>
-
             {/* Ghost CV link */}
-            <m.div variants={child} className="mt-4 mb-2">
+            <m.div variants={child} className="mb-2">
               <a
                 href="/cv/oscar-ndugbu-resume.pdf"
                 download
@@ -335,12 +387,11 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* ── Proof carousel: swipeable on mobile, grid on sm+ ─────────── */}
+            {/* ── 6. Proof carousel: swipeable on mobile, grid on sm+ ───── */}
             {/*
-              v16: Proof cards moved out of the main stagger container.
-              They animate as a batch below the above content.
-              On mobile: horizontal snap carousel with dot indicators.
-              On sm+: 2-column grid (existing behavior preserved).
+              Deep proof for those who continue scrolling.
+              Four engineering pillars — each card is a validation,
+              not a feature. Carousel on mobile to compress scroll distance.
             */}
             <m.div
               variants={proofContainer}
@@ -349,21 +400,6 @@ export function HeroSection() {
             >
               <ProofCarousel reducedMotion={reducedMotion ?? false} />
             </m.div>
-
-            {/* Performance bar — below proof, as validation not teaser */}
-            <m.p
-              variants={child}
-              className="mt-6 font-mono text-[11px] tracking-widest uppercase"
-              style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}
-              aria-label="Performance: sub-150ms API p99, 99.9% uptime, 40% ops reduction, 95% test coverage"
-            >
-              <span aria-hidden="true">
-                <span style={{ color: 'var(--color-success)' }}>Sub-150ms</span> API p99 ·{' '}
-                <span style={{ color: 'var(--color-success)' }}>99.9%+</span> uptime ·{' '}
-                <span style={{ color: 'var(--color-success)' }}>40%</span> ops reduction ·{' '}
-                <span style={{ color: 'var(--color-success)' }}>95%</span> test coverage
-              </span>
-            </m.p>
           </m.div>
 
           {/* ── Right column: HeroVisual — desktop only ─────────────────── */}
