@@ -9,6 +9,10 @@ import { Suspense } from 'react';
 
 import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
+// BookmarkToastLoader is already 'use client' + dynamic internally —
+// static import is correct here; no ssr:false wrapper needed or allowed
+// in a Server Component.
+import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { getWritingPosts } from '@/lib/content';
 
 // Heavy sections — deferred JS, SSR-rendered HTML.
@@ -36,11 +40,6 @@ const WritingSection = dynamic(
 const ContactSection = dynamic(
   () => import('@/components/ContactSection').then((m) => ({ default: m.ContactSection })),
   { ssr: true }
-);
-const BookmarkToastLoader = dynamic(
-  () =>
-    import('@/components/BookmarkToastLoader').then((m) => ({ default: m.BookmarkToastLoader })),
-  { ssr: false }
 );
 
 export default async function Home() {
@@ -91,7 +90,7 @@ export default async function Home() {
         </Suspense>
       </main>
 
-      {/* Client-only: bookmark toast — no SSR needed */}
+      {/* Client-only: bookmark toast — rendered client-side inside BookmarkToastLoader */}
       <BookmarkToastLoader />
     </>
   );
