@@ -1,5 +1,24 @@
 @import 'tailwindcss';
 
+/* ════════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v15.1 — OSCAR NDUGBU DESIGN SYSTEM
+   MOBILE-NATIVE ARCHITECTURE — Source of truth: 320–430px
+   ─────────────────────────────────────────────────────────────────────────
+   v15.1 CLEANUP:
+     - Three separate :root blocks merged into one canonical block
+     - Duplicate glass class definitions removed (glass-surface, glass-medium,
+       glass-full, glass-light, glass-chromatic were each defined twice —
+       v16 block silently overrode v15 canonical definitions)
+     - body::before split across two separate rule blocks resolved into
+       one canonical definition (z-index: -2, mix-blend-mode: soft-light)
+     - Duplicate html { scrollbar-gutter } removed
+     - Duplicate @supports not (backdrop-filter) merged
+     - Two @media (max-width: 430px) blocks merged into one
+     - All v16 "enhanced" glass fallbacks (rgba()) replaced with the
+       authoritative oklch() token system
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── @property CSS custom properties ───────────────────────────────────── */
 @property --glass-thickness {
   syntax: "<length>";
   inherits: false;
@@ -145,24 +164,6 @@
   --bottom-nav-height: 68px;
 }
 
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v15.0 — OSCAR NDUGBU DESIGN SYSTEM
-   MOBILE-NATIVE ARCHITECTURE — Source of truth: 320–430px
-   ─────────────────────────────────────────────────────────────────────────
-   v15.0 — Mobile-Native Rebuild:
-     + Mobile bottom navigation — thumb ergonomics, natural arc reach
-     + Bottom-zone CTAs — comfort zone reachable without grip shift
-     + Device performance tier — low/mid/high glass layer reduction
-     + Reduced section rhythm on mobile (clamp floor ↓ 40%)
-     + Body scroll padding for bottom nav clearance (80px mobile)
-     + Mobile glass simplification — blur ÷ 2 on ≤430px
-     + Touch target minimum enforced to 48×48px system-wide
-     + Ambient glow suppressed on mobile (<640px) — GPU savings
-     + Shimmer beam disabled on mobile — compositor budget
-     + Gradient mesh disabled <640px — LCP priority
-   ═══════════════════════════════════════════════════════════════════════════ */
-
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
 html { scrollbar-gutter: stable both-edges; }
 * { scrollbar-width: thin; scrollbar-color: rgba(0, 200, 232, 0.38) var(--color-space-black); }
@@ -172,16 +173,19 @@ html { scrollbar-gutter: stable both-edges; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,200,232,0.6); }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   DESIGN TOKENS — LCH-BASED PALETTE
+   DESIGN TOKENS — CANONICAL :root
+   Merged from three previously separate blocks (v15, TOKEN BRIDGE, FINAL POLISH).
    ════════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Fonts ───────────────────────────────────────────────────────────── */
+  color-scheme: dark;
+
+  /* ── Fonts ─────────────────────────────────────────────────────────────── */
   --font-display: var(--font-syne), 'Arial Black', sans-serif;
   --font-body:    var(--font-dm-sans), 'Arial', sans-serif;
   --font-mono:    var(--font-jetbrains-mono), 'Courier New', monospace;
   --font-didone:  var(--font-didone-var, "Playfair Display"), Georgia, serif;
 
-  /* ── LCH colour axis: base ───────────────────────────────────────────── */
+  /* ── LCH colour axis: base ─────────────────────────────────────────────── */
   --color-bg:             oklch(7.5% 0.008 264);
   --color-surface:        oklch(10%  0.009 264);
   --color-surface-raised: oklch(12% 0.010 264);
@@ -190,13 +194,13 @@ html { scrollbar-gutter: stable both-edges; }
   --color-border-hover:   oklch(100% 0 0 / 0.13);
   --border: var(--color-border);
 
-  /* ── LCH colour axis: contrast ──────────────────────────────────────── */
+  /* ── LCH colour axis: contrast ─────────────────────────────────────────── */
   --color-text-primary:   oklch(93% 0.006 264);
   --color-text-secondary: oklch(57% 0.005 264);
   --color-text-muted:     oklch(43% 0.005 264);
   --color-text-disabled:  oklch(100% 0 0 / 0.18);
 
-  /* ── LCH colour axis: accent ─────────────────────────────────────────── */
+  /* ── LCH colour axis: accent ────────────────────────────────────────────── */
   --color-accent:           oklch(63% 0.22 258);
   --color-accent-hover:     oklch(70% 0.20 258);
   --color-accent-glow:      oklch(63% 0.22 258 / 0.22);
@@ -214,7 +218,20 @@ html { scrollbar-gutter: stable both-edges; }
   --color-live-glow: oklch(65% 0.18 155 / 0.18);
   --color-wip:     var(--color-warning);
 
-  /* ── Type scale: fluid minor-third ──────────────────────────────────── */
+  /* ── Semantic aliases (v16 token bridge — merged in) ────────────────────── */
+  --color-space-black: #0a0a0f;
+  --color-space-deep: #0d0d15;
+  --color-space-mid: #111118;
+  --color-space-surface: #16161f;
+  --color-space-elevated: #1c1c28;
+  --color-accent-primary: #00c8e8;
+  --color-accent-dim: #00c8e820;
+  --color-accent-text: #4dd9f0;
+  --color-error: #ef4444;
+  --color-text-hero: #ffffff;
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+
+  /* ── Type scale: fluid minor-third ─────────────────────────────────────── */
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
   --text-base: 1rem;
@@ -222,11 +239,11 @@ html { scrollbar-gutter: stable both-edges; }
   --text-xl:   clamp(1.25rem, 1.5vw + 0.85rem, 1.44rem);
   --text-2xl:  1.5rem;
   --text-3xl:  1.875rem;
-  /* v15: mobile floor raised to 2.25rem — better single-column impact */
+  /* v15: mobile floor raised — better single-column impact */
   --text-hero: clamp(2.25rem, 6vw + 0.75rem, 6.25rem);
   --text-section: clamp(1.75rem, 3.5vw + 0.5rem, 3.25rem);
 
-  /* ── Typographic rhythm ──────────────────────────────────────────────── */
+  /* ── Typographic rhythm ─────────────────────────────────────────────────── */
   --weight-regular:  400;
   --weight-medium:   500;
   --weight-semibold: 600;
@@ -243,55 +260,53 @@ html { scrollbar-gutter: stable both-edges; }
   --leading-normal:  1.65;
   --leading-relaxed: 1.8;
 
-  /* ── 8px spatial grid ────────────────────────────────────────────────── */
-  --space-1: 0.25rem; --space-2: 0.5rem;  --space-3: 0.75rem;
-  --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
-  --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
-  --space-16: 4rem;   --space-20: 5rem;   --space-24: 6rem;
+  /* ── 8px spatial grid ───────────────────────────────────────────────────── */
+  --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
+  --space-4: 1rem;     --space-5: 1.25rem;  --space-6: 1.5rem;
+  --space-8: 2rem;     --space-10: 2.5rem;  --space-12: 3rem;
+  --space-16: 4rem;    --space-20: 5rem;    --space-24: 6rem;
   --space-32: 8rem;
 
-  /* ── Section rhythm — v15: mobile floor ↓ 40% for vertical efficiency ─ */
+  /* ── Section rhythm ─────────────────────────────────────────────────────── */
   --section-py:     clamp(3rem, 8vw, 9rem);
   --section-py-mid: clamp(2rem, 6vw, 7rem);
 
-  /* ── Layout ──────────────────────────────────────────────────────────── */
+  /* ── Layout ─────────────────────────────────────────────────────────────── */
   --max-width:        1280px;
   --max-width-prose:  72ch;
   --max-width-hero:   20ch;
 
-  /* ── Navigation — v15: dual-plane architecture ───────────────────────── */
-  /* Top bar: minimal identity on mobile, full nav on desktop */
-  --nav-height:          56px;   /* v15: 68→56 on mobile — reclaim vertical px */
+  /* ── Navigation ─────────────────────────────────────────────────────────── */
+  --nav-height:          56px;
   --nav-height-scrolled: 52px;
-  /* Bottom nav: thumb ergonomics — lives in natural comfort zone */
-  --bottom-nav-height:   72px;   /* 72px including safe area */
+  --bottom-nav-height:   72px;
   --bottom-nav-safe:     env(safe-area-inset-bottom, 0px);
 
-  /* Desktop hero layout */
+  /* ── Desktop hero layout ────────────────────────────────────────────────── */
   --hero-col-gap:     clamp(2.5rem, 5vw, 6rem);
   --hero-left-width:  54%;
   --hero-right-width: 46%;
 
-  /* ── Radius ──────────────────────────────────────────────────────────── */
-  --radius-xs: 4px; --radius-sm: 6px; --radius-md: 10px;
-  --radius-lg: 14px; --radius-xl: 20px; --radius-2xl: 28px;
+  /* ── Radius ─────────────────────────────────────────────────────────────── */
+  --radius-xs: 4px;  --radius-sm: 6px;   --radius-md: 10px;
+  --radius-lg: 14px; --radius-xl: 20px;  --radius-2xl: 28px;
   --radius-full: 9999px;
 
-  /* ── Spring physics → CSS easing mirrors ────────────────────────────── */
+  /* ── Spring physics → CSS easing mirrors ────────────────────────────────── */
   --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
   --ease-expo:     cubic-bezier(0.19, 1, 0.22, 1);
-  --dur-instant:   60ms; --dur-fast: 110ms; --dur-base: 200ms;
-  --dur-slow: 380ms; --dur-glacial: 600ms; --dur-cinematic: 900ms;
+  --dur-instant:   60ms;   --dur-fast: 110ms;    --dur-base: 200ms;
+  --dur-slow: 380ms;       --dur-glacial: 600ms; --dur-cinematic: 900ms;
 
-  /* ── Liquid Glass — 5-tier system ───────────────────────────────────── */
+  /* ── Liquid Glass — 5-tier system ───────────────────────────────────────── */
   --glass-bg:           oklch(100% 0 0 / 0.033);
   --glass-bg-hover:     oklch(100% 0 0 / 0.06);
   --glass-bg-active:    oklch(100% 0 0 / 0.09);
   --glass-border:       oklch(100% 0 0 / 0.09);
   --glass-border-hover: oklch(100% 0 0 / 0.16);
-  /* v15: Desktop blur. Mobile gets ÷2 override at 430px */
+  /* Desktop blur. Mobile gets ÷2 at 430px */
   --glass-blur:         14px;
   --glass-sat:          160%;
   --fresnel-top:   oklch(100% 0 0 / 0.28);
@@ -318,14 +333,20 @@ html { scrollbar-gutter: stable both-edges; }
     0 20px 64px -12px oklch(0% 0 0 / 0.55),
     0 4px 8px -2px oklch(0% 0 0 / 0.35);
 
-  /* ── Skill bar tokens ───────────────────────────────────────────────── */
+  /* ── Skill bar tokens ───────────────────────────────────────────────────── */
   --skill-bar-h:      3px;
   --skill-bar-track:  oklch(100% 0 0 / 0.07);
   --skill-expert:     var(--color-cyan);
   --skill-proficient: var(--color-success);
   --skill-found:      oklch(100% 0 0 / 0.28);
 
-  /* ── Background radial glows (desktop only — suppressed mobile) ──────── */
+  /* ── Performance tuning tokens (merged from FINAL POLISH block) ──────────── */
+  --glow-spread: min(72vw, 600px);
+  --glow-blur: 96px;
+  --noise-opacity: 0.045;
+  --retro-grid-opacity: 0.07;
+
+  /* ── Background radial glows (desktop only — suppressed on mobile) ────────── */
   --glow-hero: radial-gradient(ellipse 70% 80% at 8% 50%, oklch(63% 0.22 258 / 0.10) 0%, transparent 65%);
   --glow-hero-warm: radial-gradient(ellipse 50% 60% at 92% 30%, oklch(73% 0.18 75 / 0.05) 0%, transparent 70%);
   --glow-ambient: radial-gradient(ellipse 55% 60% at 85% 40%, oklch(74% 0.18 195 / 0.04) 0%, transparent 70%);
@@ -352,6 +373,7 @@ html { scrollbar-gutter: stable both-edges; }
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   --color-bg: oklch(97% 0.003 264); --color-surface: #ffffff;
   --color-surface-raised: oklch(98% 0.003 264);
   --color-border: oklch(0% 0 0 / 0.07); --color-border-subtle: oklch(0% 0 0 / 0.04);
@@ -365,6 +387,10 @@ html { scrollbar-gutter: stable both-edges; }
   --glow-projects: none; --glow-about: none; --glow-contact: none;
 }
 
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) { color-scheme: light; }
+}
+
 /* ── Reduced motion: blanket override ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -376,25 +402,29 @@ html { scrollbar-gutter: stable both-edges; }
 }
 
 /* ── Mobile glass simplification (≤430px) — performance tier ─────────── */
-/* Low/mid-range device: flatten glass layers, reduce blur to 7px */
+/* Consolidated from two previously separate 430px blocks */
 @media (max-width: 430px) {
   :root {
     --glass-blur: 7px;
     --glass-sat:  120%;
-    /* Glow suppressed on mobile — save GPU budget for content renders */
+    /* Glow suppressed — save GPU budget for content renders */
     --glow-hero:      none;
     --glow-hero-warm: none;
     --glow-ambient:   none;
     --glow-projects:  none;
     --glow-about:     none;
     --glow-contact:   none;
+    --noise-opacity: 0.03;
+    --retro-grid-opacity: 0.035;
+    --glow-spread: 420px;
+    --glow-blur: 72px;
   }
-  /* Shimmer beam disabled on mobile — too expensive for content benefit */
+  /* Shimmer beam, mesh orbs, cursor glow — disabled on mobile */
   .glass-medium::before { display: none; }
-  /* Gradient mesh orbs hidden on mobile */
-  .gradient-mesh { display: none; }
-  /* Cursor glow pointless without hover */
-  .cursor-glow { display: none; }
+  .gradient-mesh,
+  .gradient-mesh-wrap,
+  .cursor-glow { display: none !important; }
+  .work-surface-glow { opacity: 0.55; height: 360px; }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -407,11 +437,12 @@ html {
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* v15: scroll-padding so anchors clear the top nav */
   scroll-padding-top: calc(var(--nav-height) + 8px);
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
@@ -421,7 +452,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   overflow-x: hidden;
-  /* v15: Reserve bottom clearance for mobile bottom nav */
+  /* Reserve bottom clearance for mobile bottom nav */
   padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
 }
 
@@ -430,11 +461,27 @@ body {
   body { padding-bottom: 0; }
 }
 
+/* ── Noise overlay — single canonical definition ─────────────────────────
+   Previously split: first block set z-index: 1, second override set z-index: -2.
+   The second block "won" but the split was confusing. Canonical: z-index: -2.
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+  mix-blend-mode: soft-light;
+}
+
 /* Focus visible — WCAG 2.2+ */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 4px oklch(74% 0.18 195 / 0.16);
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -551,7 +598,8 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   GLASS SURFACE SYSTEM — LINEAR LIQUID GLASS v2
+   GLASS SURFACE SYSTEM — LINEAR LIQUID GLASS v2 — CANONICAL DEFINITIONS
+   Each class defined ONCE. v16 duplicate definitions removed.
    ════════════════════════════════════════════════════════════════════════════ */
 
 .glass-chromatic {
@@ -567,12 +615,14 @@ h3, .h3 {
     0 16px 64px -12px oklch(0% 0 0 / 0.6),
     0 4px 12px -2px oklch(0% 0 0 / 0.35);
   contain: paint;
+  isolation: isolate;
   border: 1px solid oklch(100% 0 0 / 0.12);
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
     box-shadow var(--dur-base) var(--ease-out),
     transform var(--dur-slow) var(--ease-spring);
+  will-change: transform;
 }
 .glass-chromatic:hover {
   background: oklch(100% 0 0 / 0.07);
@@ -593,12 +643,15 @@ h3, .h3 {
     0 12px 48px -10px oklch(0% 0 0 / 0.5),
     0 2px 6px -1px oklch(0% 0 0 / 0.3);
   contain: paint;
+  isolation: isolate;
+  will-change: transform;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
     box-shadow var(--dur-base) var(--ease-out);
 }
 
+/* glass-full: canonical definition */
 .glass-full {
   position: relative;
   background: var(--glass-bg);
@@ -607,6 +660,8 @@ h3, .h3 {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   contain: paint;
+  isolation: isolate;
+  will-change: transform;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -619,6 +674,7 @@ h3, .h3 {
   box-shadow: var(--glass-shadow-hover);
 }
 
+/* glass-medium: canonical definition + shimmer beam */
 .glass-medium {
   position: relative;
   overflow: hidden;
@@ -626,8 +682,12 @@ h3, .h3 {
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 1px 0 0 var(--fresnel-top) inset, 0 8px 32px -6px oklch(0% 0 0 / 0.3);
+  box-shadow:
+    0 1px 0 0 var(--fresnel-top) inset,
+    0 8px 32px -6px oklch(0% 0 0 / 0.3);
   contain: paint;
+  isolation: isolate;
+  will-change: transform;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -640,24 +700,7 @@ h3, .h3 {
   box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.3) inset, 0 16px 48px -8px oklch(0% 0 0 / 0.45);
 }
 
-.glass-surface {
-  position: relative;
-  background: oklch(100% 0 0 / 0.03);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.14) inset, 0 4px 16px -4px oklch(0% 0 0 / 0.2);
-  contain: paint;
-  transition:
-    background var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
-}
-.glass-surface:hover {
-  background: oklch(100% 0 0 / 0.05);
-  border-color: var(--glass-border-hover);
-}
-
-/* Shimmer beam — desktop only (disabled ≤430px via token override above) */
+/* Shimmer beam — desktop only (disabled ≤430px) */
 .glass-medium::before {
   content: '';
   position: absolute;
@@ -678,16 +721,83 @@ h3, .h3 {
   pointer-events: none;
   z-index: 1;
   will-change: transform;
+  opacity: 0.85;
 }
 .glass-medium:hover::before {
   transform: translateX(280%) skewX(-10deg);
   transition: transform var(--dur-glacial) var(--ease-expo);
 }
 
+/* glass-surface: canonical definition + v16 fresnel pseudo-elements merged */
+.glass-surface {
+  position: relative;
+  background: oklch(100% 0 0 / 0.03);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 1px 0 0 oklch(100% 0 0 / 0.14) inset,
+    0 4px 16px -4px oklch(0% 0 0 / 0.2);
+  border-radius: var(--bento-radius);
+  contain: paint;
+  isolation: isolate;
+  will-change: transform;
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.glass-surface:hover {
+  background: oklch(100% 0 0 / 0.05);
+  border-color: var(--glass-border-hover);
+}
+
+/* Fresnel gradient highlight — merged from v16 */
+.glass-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, oklch(100% 0 0 / 0.08) 0%, transparent 40%, oklch(100% 0 0 / 0.02) 100%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.95;
+}
+/* Fresnel border highlights — merged from v16 */
+.glass-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--border-glass-top);
+  border-left: 1px solid oklch(100% 0 0 / 0.15);
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid var(--border-glass-bottom);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Mobile override */
+@media (max-width: 767px) {
+  .glass-surface {
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  }
+}
+
+.glass-surface--heavy, .glass-heavy {
+  background: oklch(100% 0 0 / 0.06);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+}
+
+/* glass-light: canonical definition */
 .glass-light {
   background: oklch(100% 0 0 / 0.04);
   border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
   contain: paint;
+  isolation: isolate;
   transition:
     background var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out);
@@ -703,16 +813,17 @@ h3, .h3 {
   .glass-medium, .glass-surface, .glass-light {
     background: oklch(10% 0.01 264 / 0.95);
     border-color: oklch(100% 0 0 / 0.1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
    NAV SYSTEM — v15: Dual-plane mobile architecture
-   Desktop: traditional top navigation (unchanged)
+   Desktop: traditional top navigation
    Mobile: minimal top identity bar + thumb-ergonomic bottom navigation
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* ── Top nav: shared base ──────────────────────────────────────────────── */
 .glass-nav {
   position: fixed;
   top: 0;
@@ -723,23 +834,22 @@ h3, .h3 {
   display: flex;
   align-items: center;
   border-bottom: 1px solid transparent;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   transition:
     background var(--dur-slow) var(--ease-out),
     border-color var(--dur-slow) var(--ease-out),
-    backdrop-filter var(--dur-slow) var(--ease-out),
     height var(--dur-slow) var(--ease-out);
 }
 .glass-nav[data-scrolled='true'] {
-  background: oklch(100% 0 0 / 0.04);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border-bottom-color: var(--glass-border);
+  height: var(--nav-height-scrolled);
+  background: oklch(8% 0.009 264 / 0.88);
+  border-bottom-color: oklch(100% 0 0 / 0.08);
 }
 
-/* ── Bottom navigation — v15 MOBILE ONLY ─────────────────────────────── */
-/* Lives in the thumb comfort zone. z-index 60 — above top nav for touch  */
+/* Bottom navigation — MOBILE ONLY */
 .bottom-nav {
-  display: none; /* hidden by default, shown on mobile */
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -759,7 +869,6 @@ h3, .h3 {
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-top: 1px solid var(--glass-border);
     box-shadow: 0 -4px 24px -4px oklch(0% 0 0 / 0.5);
-    /* Native-feeling — no content gap */
     gap: 0;
   }
 
@@ -770,7 +879,6 @@ h3, .h3 {
     align-items: center;
     justify-content: center;
     gap: 4px;
-    /* 48×48 minimum touch target — centered within tab */
     min-height: 48px;
     padding: 4px 8px;
     border: none;
@@ -779,8 +887,8 @@ h3, .h3 {
     text-decoration: none;
     color: var(--color-text-muted);
     transition: color var(--dur-fast) var(--ease-out);
-    /* Larger touch footprint than visual size */
     position: relative;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .bottom-nav-item::before {
@@ -803,7 +911,6 @@ h3, .h3 {
     position: relative;
   }
 
-  /* Active indicator pill under icon */
   .bottom-nav-item.active .bottom-nav-item-icon::after {
     content: '';
     position: absolute;
@@ -826,9 +933,31 @@ h3, .h3 {
     white-space: nowrap;
   }
 
-  /* Hide desktop-only top nav links and controls */
   .desktop-nav-links { display: none !important; }
   .desktop-nav-controls { display: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RETRO PERSPECTIVE GRID
+   ════════════════════════════════════════════════════════════════════════════ */
+.retro-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(800px) rotateX(55deg) translateY(-10%);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, transparent 70%);
+  animation: grid-drift 20s linear infinite;
+  will-change: background-position;
+}
+@keyframes grid-drift {
+  from { background-position: center 0px; }
+  to   { background-position: center 60px; }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -980,6 +1109,7 @@ h3, .h3 {
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     color var(--dur-fast) var(--ease-out),
     background var(--dur-fast) var(--ease-out),
@@ -996,12 +1126,14 @@ h3, .h3 {
   position: relative;
   color: var(--color-text-muted);
   text-decoration: none;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
   transition: color var(--dur-fast) var(--ease-out);
 }
 .link-reveal::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -0.12em;
   left: 0;
   width: 0;
   height: 1px;
@@ -1029,7 +1161,7 @@ h3, .h3 {
    CTA BUTTONS — v15: Mobile-native thumb ergonomics
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* v15: min-height 48px system-wide (was 44px) — WCAG AAA touch target */
+/* min-height 48px system-wide — WCAG AAA touch target */
 .cta-primary {
   display: inline-flex;
   align-items: center;
@@ -1047,21 +1179,23 @@ h3, .h3 {
   border: 1px solid transparent;
   text-decoration: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background var(--dur-fast) var(--ease-out),
     transform var(--dur-base) var(--ease-spring),
     box-shadow var(--dur-base) var(--ease-out);
-  /* Prevent hover-dependent styles breaking touch devices */
-  -webkit-tap-highlight-color: transparent;
-}
-.cta-primary:hover {
-  background: var(--color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px -4px var(--color-accent-glow);
 }
 .cta-primary:active {
   transform: translateY(0) scale(0.98);
   transition-duration: var(--dur-instant);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta-primary:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px -4px var(--color-accent-glow);
+  }
 }
 
 /* Mobile: full-width primary CTAs for thumb comfort zone coverage */
@@ -1086,16 +1220,19 @@ h3, .h3 {
   border: 1px solid var(--glass-border);
   text-decoration: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     border-color var(--dur-fast) var(--ease-out),
     color var(--dur-fast) var(--ease-out),
     transform var(--dur-base) var(--ease-spring);
-  -webkit-tap-highlight-color: transparent;
 }
-.cta-secondary:hover {
-  border-color: var(--glass-border-hover);
-  color: var(--color-text-primary);
-  transform: translateY(-1px);
+
+@media (hover: hover) and (pointer: fine) {
+  .cta-secondary:hover {
+    border-color: var(--glass-border-hover);
+    color: var(--color-text-primary);
+    transform: translateY(-1px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -1120,7 +1257,7 @@ h3, .h3 {
 }
 .cta-ghost:hover { color: var(--color-text-primary); }
 
-/* CTA group layout */
+/* CTA group layout — mobile-first stacked, inline at 480px */
 .cta-hero-group {
   display: flex;
   flex-direction: column;
@@ -1168,6 +1305,7 @@ h3, .h3 {
   background: var(--glass-bg) !important;
   border-radius: var(--radius-lg);
   padding: clamp(1rem, 2vw, 1.5rem);
+  isolation: isolate;
   transition:
     border-color var(--dur-base) var(--ease-out),
     background var(--dur-base) var(--ease-out),
@@ -1177,7 +1315,7 @@ h3, .h3 {
   border-color: var(--glass-border-hover) !important;
   background: var(--glass-bg-hover) !important;
 }
-/* v15: Remove hover lift on mobile — avoid accidental micro-scrolls */
+/* Remove hover lift on mobile — avoid accidental micro-scrolls */
 @media (min-width: 769px) {
   .proof-card:hover { transform: translateY(-3px); }
 }
@@ -1221,6 +1359,8 @@ h3, .h3 {
   padding: clamp(1.25rem, 2vw, 1.75rem);
   box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.14) inset, 0 4px 20px -4px oklch(0% 0 0 / 0.22);
   contain: paint;
+  isolation: isolate;
+  will-change: transform;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -1348,6 +1488,32 @@ progress[data-level='expert']       { accent-color: var(--skill-expert); }
 progress[data-level='proficient']   { accent-color: var(--skill-proficient); }
 progress[data-level='foundational'] { accent-color: var(--skill-found); }
 
+progress[data-level='expert'],
+progress[data-level='proficient'],
+progress[data-level='foundational'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: var(--skill-bar-h);
+  border: 0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: var(--skill-bar-track);
+}
+
+progress::-webkit-progress-bar {
+  background: var(--skill-bar-track);
+  border-radius: var(--radius-full);
+}
+
+progress::-webkit-progress-value {
+  border-radius: var(--radius-full);
+}
+
+progress::-moz-progress-bar {
+  border-radius: var(--radius-full);
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE LAYOUT UTILITIES
    ════════════════════════════════════════════════════════════════════════════ */
@@ -1361,7 +1527,6 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
     border-right: none !important;
     border-bottom: 1px solid var(--color-border-subtle) !important;
   }
-  /* nav-links handled by bottom-nav — hide desktop list on mobile */
   .nav-links { display: none !important; }
 }
 
@@ -1380,19 +1545,22 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
 .pillar-grid-item {
   position: relative;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: oklch(100% 0 0 / 0.03);
+  border: 1px solid oklch(100% 0 0 / 0.08);
   border-radius: var(--radius-md);
+  isolation: isolate;
 }
 @media (min-width: 640px) {
   .pillar-grid-item:not(:last-child) {
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid oklch(100% 0 0 / 0.12);
   }
 }
 
 /* ── Nav links ───────────────────────────────────────────────────────────── */
 .nav-links { display: flex; gap: 24px; align-items: center; }
 .commit-message { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+.commit-message { max-width: min(28ch, 45vw); }
+@media (max-width: 640px) { .commit-message { max-width: min(16ch, 50vw); } }
 
 /* ── OSS code ────────────────────────────────────────────────────────────── */
 .glass-medium code {
@@ -1410,11 +1578,11 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -2;
   overflow: hidden;
   contain: strict;
 }
-.gradient-mesh-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.gradient-mesh-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: -1; }
 .gradient-mesh-orb {
   position: absolute;
   border-radius: 50%;
@@ -1462,6 +1630,31 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
+   HOVER TUNING — pointer-capable devices only
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  .glass-chromatic:hover,
+  .glass-elevated:hover,
+  .glass-full:hover,
+  .glass-medium:hover,
+  .glass-surface:hover,
+  .testimonial-card:hover,
+  .proof-card:hover,
+  .card-depth:hover,
+  .arch-because-cell:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.03);
+  }
+  .cta-primary:hover,
+  .cta-secondary:hover,
+  .cta-ghost:hover,
+  .tag:hover,
+  .glass-light:hover {
+    filter: saturate(1.03);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
    PRINT STYLES
    ════════════════════════════════════════════════════════════════════════════ */
 @media print {
@@ -1474,7 +1667,7 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
     background: white; border: 1px solid #ddd;
     box-shadow: none; backdrop-filter: none;
   }
-  .glass-medium::before,
+  .glass-medium::before, .glass-surface::before, .glass-surface::after,
   #open-source::before, #section-about::before,
   #section-contact::before, #section-projects::before { display: none; }
   a[href]::after { content: ' (' attr(href) ')'; font-size: 9pt; color: #555; }
@@ -1482,381 +1675,19 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   COMMIT / LIVE FEED TRUNCATION
+   PREFERS-REDUCED-MOTION — motion path killswitch
    ════════════════════════════════════════════════════════════════════════════ */
-.commit-message { max-width: min(28ch, 45vw); }
-@media (max-width: 640px) { .commit-message { max-width: min(16ch, 50vw); } }
-
-/* ══════════════════════════════════════════════════════════════
-   TOKEN BRIDGE — v16 semantic aliases for runtime use
-   ══════════════════════════════════════════════════════════════ */
-:root {
-  --color-space-black: #0a0a0f;
-  --color-space-deep: #0d0d15;
-  --color-space-mid: #111118;
-  --color-space-surface: #16161f;
-  --color-space-elevated: #1c1c28;
-  --color-accent-primary: #00c8e8;
-  --color-accent-dim: #00c8e820;
-  --color-accent-glow: #00c8e840;
-  --color-accent-text: #4dd9f0;
-  --color-error: #ef4444;
-  --color-live: #22c55e;
-  --color-text-hero: #ffffff;
-  --color-border-glass: rgba(255, 255, 255, 0.12);
-}
-
-/* ══════════════════════════════════════════════════════════════
-   v16 ENHANCEMENTS — merged overrides from the alternate sheet
-   ══════════════════════════════════════════════════════════════ */
-
-/* Ambient noise overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity: var(--noise-opacity);
-  mix-blend-mode: overlay;
-}
-
-/* Retro perspective grid */
-.retro-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 200, 232, var(--retro-grid-opacity)) 1px, transparent 1px);
-  background-size: 60px 60px;
-  transform: perspective(800px) rotateX(55deg) translateY(-10%);
-  transform-origin: center top;
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, transparent 70%);
-  animation: grid-drift 20s linear infinite;
-  will-change: background-position;
-}
-@keyframes grid-drift {
-  from { background-position: center 0px; }
-  to   { background-position: center 60px; }
-}
-
-/* Refined glass surface layer — overrides the older baseline */
-.glass-surface {
-  --glass-thickness: 1px;
-  position: relative;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-radius: var(--bento-radius);
-  border: var(--glass-thickness) solid var(--color-border-glass);
-  box-shadow: var(--shadow-liquid-resting);
-  transition: --glass-thickness 200ms ease-out, box-shadow 200ms ease-out, transform 200ms ease-out;
-}
-.glass-surface:hover { --glass-thickness: 2px; box-shadow: var(--shadow-liquid-hover); }
-
-@media (max-width: 767px) {
-  .glass-surface {
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
-  }
-}
-
-.glass-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(255,255,255,0.02) 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-.glass-surface::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border-top: 1px solid var(--border-glass-top);
-  border-left: 1px solid rgba(255,255,255,0.15);
-  border-right: 1px solid transparent;
-  border-bottom: 1px solid var(--border-glass-bottom);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.glass-surface--heavy, .glass-heavy {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-}
-
-.glass-surface--light, .glass-light {
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.glass-medium {
-  position: relative;
-  background: rgba(255,255,255,0.035);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: var(--shadow-liquid-resting);
-}
-
-.glass-full {
-  position: relative;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: var(--shadow-liquid-resting);
-  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
-}
-.glass-full:hover { box-shadow: var(--shadow-liquid-hover); }
-
-.glass-chromatic {
-  position: relative;
-  overflow: hidden;
-  background: oklch(100% 0 0 / 0.05);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  box-shadow:
-    0 1px 0 0 oklch(100% 0 0 / 0.35) inset,
-    0 -1px 0 0 oklch(100% 0 0 / 0.03) inset,
-    1px 0 0 0 oklch(100% 0 0 / 0.22) inset,
-    0 16px 64px -12px oklch(0% 0 0 / 0.6),
-    0 4px 12px -2px oklch(0% 0 0 / 0.35);
-  contain: paint;
-  border: 1px solid oklch(100% 0 0 / 0.12);
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .glass-surface, .glass-medium, .glass-full, .glass-elevated, .glass-chromatic {
-    background: rgba(22,22,31,0.92);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════════════════
-   FINAL POLISH OVERRIDES — STACKING, MOTION, AND HOVER TUNING
-   ════════════════════════════════════════════════════════════════════════════ */
-
-:root {
-  color-scheme: dark;
-  --glow-spread: min(72vw, 600px);
-  --glow-blur: 96px;
-  --noise-opacity: 0.045;
-  --retro-grid-opacity: 0.07;
-  --glass-blur: 14px;
-  --glass-sat: 160%;
-}
-
-[data-theme='light'] {
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) {
-    color-scheme: light;
-  }
-}
-
-html {
-  scrollbar-gutter: stable both-edges;
-}
-
-body {
-  position: relative;
-  isolation: isolate;
-}
-
-body::before {
-  z-index: -2;
-  mix-blend-mode: soft-light;
-}
-
-.retro-grid,
-.gradient-mesh {
-  z-index: -2;
-}
-
-.gradient-mesh-wrap {
-  z-index: -1;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-accent-primary);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(0, 200, 232, 0.16);
-}
-
-.cta-primary,
-.cta-secondary,
-.cta-ghost,
-.tag,
-.bottom-nav-item {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.glass-chromatic,
-.glass-elevated,
-.glass-full,
-.glass-medium,
-.glass-surface,
-.glass-light,
-.testimonial-card,
-.proof-card,
-.card-depth,
-.pillar-grid-item,
-.writing-row,
-.arch-because-cell {
-  isolation: isolate;
-}
-
-.glass-chromatic:hover,
-.glass-elevated:hover,
-.glass-full:hover,
-.glass-medium:hover,
-.testimonial-card:hover,
-.proof-card:hover,
-.card-depth:hover,
-.arch-because-cell:hover {
-  transform: translateY(-1px);
-}
-
-.glass-nav {
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-}
-
-.glass-nav[data-scrolled='true'] {
-  height: var(--nav-height-scrolled, 52px);
-  background: rgba(10, 10, 15, 0.88);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-.glass-surface,
-.glass-medium,
-.glass-full,
-.glass-elevated,
-.glass-chromatic,
-.glass-light,
-.testimonial-card,
-.proof-card {
-  will-change: transform;
-}
-
-.glass-surface::before,
-.glass-surface::after {
-  z-index: 0;
-}
-
-.glass-surface::before {
-  opacity: 0.95;
-}
-
-.glass-medium::before {
-  opacity: 0.85;
-}
-
-.link-reveal {
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-}
-
-.link-reveal::after {
-  bottom: -0.12em;
-}
-
-progress[data-level='expert'],
-progress[data-level='proficient'],
-progress[data-level='foundational'] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 100%;
-  height: var(--skill-bar-h);
-  border: 0;
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  background: var(--skill-bar-track);
-}
-
-progress::-webkit-progress-bar {
-  background: var(--skill-bar-track);
-  border-radius: var(--radius-full);
-}
-
-progress::-webkit-progress-value {
-  border-radius: var(--radius-full);
-}
-
-progress::-moz-progress-bar {
-  border-radius: var(--radius-full);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .cta-primary:hover,
-  .cta-secondary:hover,
-  .cta-ghost:hover,
-  .tag:hover,
-  .glass-light:hover,
-  .glass-surface:hover,
-  .glass-medium:hover,
-  .glass-full:hover,
-  .glass-chromatic:hover,
-  .glass-elevated:hover,
-  .proof-card:hover,
-  .testimonial-card:hover,
-  .card-depth:hover {
-    filter: saturate(1.03);
-  }
-}
-
-@media (max-width: 430px) {
-  :root {
-    --glass-blur: 7px;
-    --glass-sat: 120%;
-    --noise-opacity: 0.03;
-    --retro-grid-opacity: 0.035;
-    --glow-spread: 420px;
-    --glow-blur: 72px;
-  }
-
-  .gradient-mesh,
-  .gradient-mesh-wrap,
-  .cursor-glow,
-  .glass-medium::before {
-    display: none !important;
-  }
-
-  .work-surface-glow {
-    opacity: 0.55;
-    height: 360px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto; }
 
   .retro-grid,
   .gradient-mesh,
   .cursor-glow,
   .work-surface-glow,
-  .profile-glow::before,
   .shimmer-sweep::after,
   .glass-medium::before,
-  .dot-live::after,
-  .metric-pulse,
-  .kinetic-headline .char {
+  .dot-live,
+  .metric-pulse {
     animation: none !important;
     transition: none !important;
   }
