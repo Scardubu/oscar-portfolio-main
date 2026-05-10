@@ -2,8 +2,8 @@
 //
 // CHANGELOG from v13.0:
 //
-//   CRITICAL FIX: "Built in LagosLagos." — duplicated token from v12.x
-//     find/replace (Lagos → Abuja) created "LagosLagos" artifact.
+//   CRITICAL FIX: "Built in Lagos." — duplicated token from v12.x
+//     find/replace (Lagos → Abuja) created "Lagos" artifact.
 //     Corrected to "Built in Abuja. Running globally." — clean, precise.
 //
 //   REF:  Proof callout sub-line upgraded: moved "sub-150ms p99" to
@@ -244,7 +244,7 @@ export function HeroSection() {
             </m.p>
 
             {/* ── Proof callout: left-border accent, concrete metrics ─────────── */}
-            {/* v14.0 FIX: "Built in Abuja. Running globally." — was "LagosLagos" */}
+            {/* v14.0 FIX: "Built in Abuja. Running globally." — was "Lagos" */}
             <m.div variants={child} className="hero-proof-callout">
               <p
                 className="text-sm leading-relaxed"
