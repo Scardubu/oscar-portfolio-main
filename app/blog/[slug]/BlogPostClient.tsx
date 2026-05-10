@@ -50,7 +50,7 @@ export default function BlogPostClient({
         <m.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={springs.default}
+          transition={springs.snappy}
           className="mb-10"
         >
           <Link
@@ -78,7 +78,7 @@ export default function BlogPostClient({
                 key={tag}
                 className="tag"
                 whileHover={{ scale: 1.06 }}
-                transition={springs.bouncy}
+                transition={springs.snappy}
               >
                 {tag}
               </m.span>
@@ -114,7 +114,7 @@ export default function BlogPostClient({
           className="prose"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ...springs.default, delay: 0.3 }}
+          transition={{ ...springs.smooth, delay: 0.3 }}
         >
           {children}
         </m.div>
@@ -125,7 +125,7 @@ export default function BlogPostClient({
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ ...springs.default, delay: 0.2 }}
+          transition={{ ...springs.smooth, delay: 0.2 }}
         >
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
