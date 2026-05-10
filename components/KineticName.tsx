@@ -1,30 +1,44 @@
 'use client';
 
-import { m } from 'framer-motion';
-
-import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { m, useReducedMotion } from 'framer-motion';
 
 interface KineticNameProps {
-  name: string;
+  name:      string;
   className?: string;
-  id?: string;
+  id?:       string;
 }
 
-export function KineticName({ name, className, id }: KineticNameProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const nameCharacters = name.split('');
+// Stagger each character by 22ms; spring-settled within ~400ms total.
+const CHAR_TRANSITION = (i: number) => ({
+  delay:     i * 0.022,
+  type:      'spring' as const,
+  stiffness: 420,
+  damping:   32,
+  mass:      0.9,
+});
+
+export function KineticName({ name, className, id }: Readonly<KineticNameProps>) {
+  const reducedMotion = useReducedMotion();
+  const chars = name.split('');
 
   return (
-    <h1 id={id} aria-label={name} className={className}>
-      {nameCharacters.map((character, index) => (
+    <h1
+      id={id}
+      aria-label={name}
+      className={className}
+      // Prevent layout shift from inline-block spans
+      style={{ display: 'flex', flexWrap: 'wrap', columnGap: '0' }}
+    >
+      {chars.map((char, i) => (
         <m.span
-          key={index}
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.022, type: 'spring', stiffness: 400, damping: 30 }}
+          key={i}
           aria-hidden="true"
+          initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={reducedMotion ? { duration: 0 } : CHAR_TRANSITION(i)}
+          style={{ display: 'inline-block' }}
         >
-          {character === ' ' ? '\u00A0' : character}
+          {char === ' ' ? '\u00A0' : char}
         </m.span>
       ))}
     </h1>
