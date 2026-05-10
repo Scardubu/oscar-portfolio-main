@@ -1,16 +1,6 @@
-// CONVICTION ENGINE v22.0 — OpenSourceSection
-// Mobile-native: single column on mobile, 3-col on md+.
-// Lagos, Nigeria → Global.
-//
-// v22 fixes vs v21:
-//   • CRITICAL: Restored missing `<a` opening tag for GitHub CTA link — JSX
-//     syntax error that caused the GitHub link to render as orphaned attributes,
-//     producing a hydration mismatch and no visible link on production builds.
-//   • GitHub link converted from bare-href fragment to proper <a> element with
-//     full accessibility: aria-label, target, rel, focus ring, role.
-//   • Card hover whileHover: guards now check both reducedMotion AND
-//     pointer:fine via CSS `@media (hover: hover)` passthrough pattern.
-//   • CopyInstall: added whileTap scale-down for physical touch feedback.
+// CONVICTION ENGINE v21.1 — OpenSourceSection
+// FIXED (v21.1): Missing <a opening tag on GitHub CTA — broken JSX build failure.
+// Mobile-native: single column on mobile, 3-col on md+. Lagos, Nigeria → Global.
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -68,11 +58,10 @@ function CopyInstall({ text }: { text: string }) {
   }
 
   return (
-    <m.button
+    <button
       type="button"
       onClick={handleCopy}
       aria-label={`Copy install command: ${text}`}
-      whileTap={{ scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
       className="w-full flex items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3 py-3 text-left transition hover:border-white/16 active:scale-[0.98] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
       style={{ borderColor: copied ? 'oklch(73% 0.18 196 / 0.5)' : 'oklch(100% 0 0 / 0.08)' }}
     >
@@ -89,17 +78,17 @@ function CopyInstall({ text }: { text: string }) {
       >
         {copied ? '✓ Done' : 'Copy'}
       </span>
-    </m.button>
+    </button>
   );
 }
 
 export function OpenSourceSection() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const ref           = useRef<HTMLElement>(null);
+  const inView        = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
-  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
-  const child = reducedMotion ? noMotion : fadeRise;
-  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+  const container     = useMemo(() => staggerContainer(0.09, 0.05), []);
+  const child         = reducedMotion ? noMotion : fadeRise;
+  const card          = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
     <section
@@ -136,7 +125,7 @@ export function OpenSourceSection() {
             style={{ color: 'var(--color-text-secondary)' }}
           >
             Three production-hardened packages from the fintech trenches —
-            each solving a gap that general-purpose libraries don't address.
+            each solving a gap that general-purpose libraries don&apos;t address.
             Install in minutes.
           </m.p>
 
@@ -188,7 +177,7 @@ export function OpenSourceSection() {
                   <CopyInstall text={item.install} />
                 </div>
 
-                {/* GitHub CTA — restored <a opening tag */}
+                {/* FIX v21.1: restored missing <a opening tag on GitHub CTA */}
                 <a
                   href={item.href}
                   target="_blank"
@@ -215,15 +204,15 @@ export function OpenSourceSection() {
             ))}
           </div>
 
-          {/* Proof strip — metric-weight signals */}
+          {/* Proof strip */}
           <m.div
             variants={child}
             className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
           >
             {[
               { value: '15+', label: 'merged contributions', detail: 'XGBoost · scikit-learn' },
-              { value: '12', label: 'public repositories', detail: 'GitHub' },
-              { value: 'MIT', label: 'open license', detail: 'all packages' },
+              { value: '12',  label: 'public repositories',  detail: 'GitHub' },
+              { value: 'MIT', label: 'open license',         detail: 'all packages' },
             ].map(({ value, label, detail }) => (
               <div key={value + label} className="flex items-baseline gap-2">
                 <span
