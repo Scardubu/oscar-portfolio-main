@@ -109,10 +109,10 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
   const level = getCardLevel(project);
   const primaryDecision = project.decisions?.[0];
   const typeLabel = getProjectTypeLabel(project);
-  const { ref, onMouseMove, onMouseLeave, spotlightStyle } = useSpotlight();
+  const { ref, spotlightStyle } = useSpotlight();
 
   return (
-    <div className="h-full" ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
+    <div className="h-full" ref={ref}>
       <GlassCard
         as="article"
         className={`card-depth flex h-full flex-col gap-4 ${project.featured ? 'p-8' : 'p-6'}`}
@@ -122,7 +122,7 @@ export function ProjectCard({ project, revealDelay = '2' }: Readonly<ProjectCard
         data-reveal=""
         data-reveal-delay={revealDelay}
         // eslint-disable-next-line no-restricted-syntax
-        style={spotlightStyle}
+        style={spotlightStyle()}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
