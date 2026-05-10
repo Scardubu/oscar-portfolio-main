@@ -1,12 +1,39 @@
-import { AboutSection } from '@/components/AboutSection';
-import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
-import { ContactSection } from '@/components/ContactSection';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
 import { HeroSection } from '@/components/HeroSection';
-import { OpenSourceSection } from '@/components/OpenSourceSection';
-import { ProjectsSection } from '@/components/ProjectsSection';
-import { SkillsMap } from '@/components/skills/SkillsMap';
-import { WritingSection } from '@/components/WritingSection';
+import { SectionSkeleton } from '@/components/SectionSkeleton';
 import { getWritingPosts } from '@/lib/content';
+
+// Heavy sections: dynamically imported to keep initial JS lean
+const ProjectsSection = dynamic(
+  () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
+  { ssr: true }
+);
+const OpenSourceSection = dynamic(
+  () => import('@/components/OpenSourceSection').then((m) => ({ default: m.OpenSourceSection })),
+  { ssr: true }
+);
+const SkillsSection = dynamic(
+  () => import('@/components/SkillsSection').then((m) => ({ default: m.SkillsSection })),
+  { ssr: true }
+);
+const AboutSection = dynamic(
+  () => import('@/components/AboutSection').then((m) => ({ default: m.AboutSection })),
+  { ssr: true }
+);
+const WritingSection = dynamic(
+  () => import('@/components/WritingSection').then((m) => ({ default: m.WritingSection })),
+  { ssr: true }
+);
+const ContactSection = dynamic(
+  () => import('@/components/ContactSection').then((m) => ({ default: m.ContactSection })),
+  { ssr: true }
+);
+const BookmarkToastLoader = dynamic(
+  () => import('@/components/BookmarkToastLoader').then((m) => ({ default: m.BookmarkToastLoader })),
+  { ssr: false }
+);
 
 export default async function Home() {
   const posts = (await getWritingPosts()).slice(0, 6);
@@ -14,53 +41,43 @@ export default async function Home() {
   return (
     <>
       <main id="main-content" tabIndex={-1}>
+        {/* 00 — Hero: above the fold, zero lazy-loading */}
         <HeroSection />
 
-        <ProjectsSection />
+        {/* 01 — Projects */}
+        <Suspense fallback={<SectionSkeleton id="section-projects" label="Projects" height={560} />}>
+          <ProjectsSection />
+        </Suspense>
 
-        <OpenSourceSection />
+        {/* 02 — Open Source */}
+        <Suspense fallback={<SectionSkeleton id="open-source" label="Open Source" height={340} />}>
+          <OpenSourceSection />
+        </Suspense>
 
-        <section
-          id="skills"
-          aria-labelledby="skills-heading"
-          className="border-t py-[var(--section-py)]"
-          style={{ borderColor: 'var(--color-border)' }}
-        >
-          <div className="container">
-            <div className="mb-12 sm:mb-16 max-w-4xl">
-              <div className="section-kicker-row">
-                <span className="section-number" aria-hidden="true">03</span>
-                <span className="section-label">SKILLS</span>
-              </div>
+        {/* 03 — Skills */}
+        <Suspense fallback={<SectionSkeleton id="skills" label="Skills" height={480} />}>
+          <SkillsSection />
+        </Suspense>
 
-              <h2
-                id="skills-heading"
-                className="mt-[var(--space-2)]"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
-                Built for the full stack. Proven in production.
-              </h2>
+        {/* 04 — About */}
+        <Suspense fallback={<SectionSkeleton id="about" label="About" height={320} />}>
+          <AboutSection />
+        </Suspense>
 
-              <p
-                className="mt-4 max-w-[62ch] text-base leading-8"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                52 skills across architecture, infrastructure, compliance, and full-stack
-                delivery — from PostgreSQL RLS through Spring Boot, Go services, and production ML.
-              </p>
-            </div>
+        {/* 05 — Writing (conditional: only when posts exist) */}
+        {posts.length > 0 && (
+          <Suspense fallback={<SectionSkeleton id="section-writing" label="Writing" height={420} />}>
+            <WritingSection posts={posts} />
+          </Suspense>
+        )}
 
-            <SkillsMap />
-          </div>
-        </section>
-
-        <AboutSection />
-
-        {posts.length > 0 ? <WritingSection posts={posts} /> : null}
-
-        <ContactSection />
+        {/* 06 — Contact */}
+        <Suspense fallback={<SectionSkeleton id="contact" label="Contact" height={280} />}>
+          <ContactSection />
+        </Suspense>
       </main>
 
+      {/* Client-only: bookmark toast (no SSR needed) */}
       <BookmarkToastLoader />
     </>
   );
