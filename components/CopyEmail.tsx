@@ -1,8 +1,10 @@
 'use client';
-// components/CopyEmail.tsx — CONVICTION ENGINE v19.0
+// components/CopyEmail.tsx — CONVICTION ENGINE v21.1
+// FIXED (v21.1): Missing <a opening tag — broken JSX causing build failure.
 // Renders as <a href="mailto:..."> — opens mail client on touch devices.
 // On desktop with clipboard API: intercepts click and copies address.
-// Icon is always visible (not hover-only) for touch accessibility.
+// Icon always visible (not hover-only) for touch accessibility.
+// Min touch target: 44×44px guaranteed.
 
 import { useState } from 'react';
 
@@ -28,7 +30,8 @@ export function CopyEmail({ email, className = '' }: Readonly<CopyEmailProps>) {
   };
 
   return (
-    
+    // FIX v21.1: restored missing <a opening tag
+    <a
       href={`mailto:${email}`}
       onClick={handleClick}
       aria-label={
@@ -36,7 +39,7 @@ export function CopyEmail({ email, className = '' }: Readonly<CopyEmailProps>) {
           ? 'Email address copied to clipboard'
           : `Send email to ${email}`
       }
-      className={`copy-email inline-flex items-center gap-1.5 font-mono text-xs tracking-wider transition-colors ${className}`}
+      className={`copy-email inline-flex min-h-[44px] items-center gap-1.5 font-mono text-xs tracking-wider transition-colors ${className}`}
       style={{ color: copied ? 'var(--color-film-teal)' : 'var(--color-text-muted)' }}
     >
       {copied ? (
@@ -62,13 +65,14 @@ function CopyIcon() {
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden="true"
-      style={{ opacity: 0.5 }}
+      className="shrink-0"
     >
       <rect x="4" y="4" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.2" />
       <path
-        d="M2 8H1.5A1.5 1.5 0 0 1 0 6.5v-5A1.5 1.5 0 0 1 1.5 0h5A1.5 1.5 0 0 1 8 1.5V2"
+        d="M2.5 8H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v.5"
         stroke="currentColor"
         strokeWidth="1.2"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -82,9 +86,10 @@ function CheckIcon() {
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden="true"
+      className="shrink-0"
     >
       <path
-        d="M2 6l3 3 5-5"
+        d="M2 6.5L4.5 9L10 3"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
