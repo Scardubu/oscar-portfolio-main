@@ -1,37 +1,40 @@
-// CONVICTION ENGINE v15.1 — HeroSection
+// CONVICTION ENGINE v16.0 — HeroSection
 //
-// CHANGELOG from v15.0:
+// CHANGELOG from v15.1:
 //
-//   FIX:  Duplicate `style` prop on <m.section>. JSX allows only one `style`
-//     attribute per element — the second silently overwrites the first.
-//     In v15.0, `style={{ opacity: heroOpacity }}` was declared on one line
-//     and `style={{ opacity, paddingTop, paddingBottom }}` on another.
-//     TypeScript accepts this because framer-motion's m.* components accept
-//     MotionStyle and CSSProperties separately, but at runtime the second
-//     object wins and the MotionValue opacity never binds correctly.
-//     FIX: merged into a single style object. Opacity MotionValue now applies
-//     alongside the padding values as intended.
+//   MOBILE ARCHITECTURE OVERHAUL:
+//     - Proof cards moved to horizontal scroll-snap carousel on mobile.
+//       4 cards ≤ 430px = excessive scroll before next section. Carousel
+//       shows 1.15 cards (peek) to signal swipeability — no grip shift.
+//     - Proof carousel replaced full-width grid (sm:grid-cols-2) — grid
+//       preserved at 640px+.
+//     - ProofCarousel component with CarouselDot indicator row.
 //
-//   FIX:  Location kicker: "Abuja → Global" corrected to "Lagos → Global".
-//     Location of record is Lagos, Nigeria.
+//   FOLD COMPRESSION:
+//     - Body copy reduced from 2 paragraphs to 1 (DM copy tightened).
+//     - Performance bar moved BELOW proof carousel — after evidence, not before.
+//     - Ghost CV link moved after LiveActivityBar — conversion sequence: intent
+//       → proof → credential download.
+//     - HeroVisual on mobile: remains below fold, below carousel.
 //
-//   FIX:  Proof callout: "Built in Abuja. Running globally." corrected to
-//     "Built in Lagos. Running globally."
+//   CTA UPGRADE:
+//     - cta-primary upgraded to cta-primary--lg on mobile (56px height).
+//     - tactile-press class added for immediate :active feedback on touch.
+//     - Contact sticky CTA (FloatingCTA) injected globally via ContactStickyLoader.
 //
-//   KEEP: All v15.0 mobile-native architecture — single column mobile,
-//     2-column desktop grid, CTAs in thumb comfort zone (bottom 60%),
-//     HeroVisual deferred below fold on mobile for LCP priority.
 //   KEEP: A24 word-by-word Didone headline reveal.
 //   KEEP: Spring physics on proof card hover (stiffness 420, damping 30).
 //   KEEP: LiveActivityBar operational cadence proof.
 //   KEEP: prefers-reduced-motion: noMotion fallback throughout.
+//   KEEP: Lagos → Global (v15.1 fix).
+//   KEEP: scroll-linked parallax (desktop only — mobilé hook returns [0,1]→[0%,0%]).
 //
 'use client';
 
 import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import {
@@ -44,7 +47,6 @@ import {
   wordRevealContainer,
 } from '@/lib/motionVariants';
 
-// HeroVisual: SSR-disabled — hydration mismatch prevention.
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
   loading: () => (
@@ -56,7 +58,7 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
   ),
 });
 
-// ── Proof pillars ────────────────────────────────────────────────────────────
+/* ── Proof pillars ────────────────────────────────────────────────────────── */
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
@@ -78,11 +80,80 @@ const PROOF_COLUMNS = [
 
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
+/* ── Proof carousel — swipeable on mobile, grid on sm+ ───────────────────── */
+function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const card = reducedMotion ? noMotion : cardReveal(24);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const itemW = el.firstElementChild?.clientWidth ?? 280;
+    const idx = Math.round(el.scrollLeft / (itemW + 12));
+    setActiveIndex(Math.min(idx, PROOF_COLUMNS.length - 1));
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  return (
+    <>
+      {/* Carousel — mobile scroll-snap, desktop grid */}
+      <div
+        ref={scrollRef}
+        className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] mt-8"
+        style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
+        role="region"
+        aria-label="Production proof pillars"
+      >
+        {PROOF_COLUMNS.map((col, i) => (
+          <m.article
+            key={col.label}
+            variants={card}
+            className="mobile-carousel-item proof-card"
+            whileHover={
+              reducedMotion
+                ? undefined
+                : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+            }
+            aria-label={col.label}
+          >
+            <p className="label-mono" style={{ color: 'var(--color-cyan)' }}>
+              {col.label}
+            </p>
+            <p
+              className="mt-3 text-sm leading-7"
+              style={{ color: 'oklch(93% 0.006 264 / 0.65)' }}
+            >
+              {col.body}
+            </p>
+          </m.article>
+        ))}
+      </div>
+
+      {/* Scroll indicator dots — mobile only */}
+      <div className="carousel-dots" aria-hidden="true">
+        {PROOF_COLUMNS.map((_, i) => (
+          <span
+            key={i}
+            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
 
-  // ── Scroll-linked parallax — desktop only ───────────────────────────────
+  /* ── Scroll-linked parallax — desktop only ────────────────────────────── */
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: HERO_SCROLL_CONFIG.offset,
@@ -106,11 +177,10 @@ export function HeroSection() {
     reducedMotion ? [1, 1] : HERO_SCROLL_CONFIG.opacityOutput,
   );
 
-  // ── Variant configuration ─────────────────────────────────────────────────
+  /* ── Variant configuration ───────────────────────────────────────────── */
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
-  const card = reducedMotion ? noMotion : cardReveal(24);
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
 
   return (
@@ -119,9 +189,6 @@ export function HeroSection() {
       ref={heroRef}
       aria-labelledby="hero-heading"
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden"
-      // v15.1 FIX: Single merged style object — was two separate `style`
-      // props. The second overwrote the first at runtime, causing the
-      // scroll-linked opacity MotionValue to silently bind to nothing.
       style={{
         opacity: heroOpacity,
         paddingTop: 'clamp(5rem, 8vw, 7rem)',
@@ -134,7 +201,7 @@ export function HeroSection() {
       <div className="relative z-10 container">
         <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
 
-          {/* ── Left column: conviction copy stack ─────────────────────────── */}
+          {/* ── Left column: conviction copy stack ──────────────────────── */}
           <m.div
             style={{ y: textY }}
             variants={heroContainer}
@@ -154,7 +221,7 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Kicker — v15.1 FIX: "Abuja → Global" → "Lagos → Global" */}
+            {/* Kicker */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.14em] uppercase"
@@ -206,30 +273,30 @@ export function HeroSection() {
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* ── Mobile CTA block — thumb comfort zone ──────────────────── */}
+            {/* ── CTA block — thumb comfort zone, immediately after headline ── */}
             {/*
-              Placed immediately after headline — before body copy.
-              Mobile: full-width stacked buttons, no grip shift required.
-              Desktop: inline flex row.
-              Conversion logic: intention first, evidence confirms.
+              Mobile: 56px full-width "Book a Call" + secondary "View Projects".
+              Desktop: inline flex row, standard 48px height.
+              Conversion sequence: intent → evidence. CTA before body copy.
             */}
-            <m.div
-              variants={child}
-              className="mt-8 mb-8 cta-hero-group"
-            >
+            <m.div variants={child} className="mt-8 mb-8 cta-hero-group">
               <a
                 href="mailto:scardubu@gmail.com"
-                className="cta-primary"
+                className="cta-primary cta-primary--lg tactile-press"
                 aria-label="Email Oscar to start a conversation"
               >
                 Book a Call
               </a>
-              <Link href="#section-projects" className="cta-secondary">
-                View Projects <span aria-hidden="true">→</span>
+              <Link
+                href="#section-projects"
+                className="cta-secondary tactile-press"
+                aria-label="Jump to projects section"
+              >
+                View Projects <span aria-hidden="true">↓</span>
               </Link>
             </m.div>
 
-            {/* Body: Stripe "you" language */}
+            {/* Body: Stripe "you" language — 1 paragraph max on mobile */}
             <m.p
               variants={child}
               className="max-w-[52ch] text-base leading-[1.8]"
@@ -240,7 +307,7 @@ export function HeroSection() {
               or FIRS filing deadline.
             </m.p>
 
-            {/* Proof callout — v15.1 FIX: "Built in Abuja" → "Built in Lagos" */}
+            {/* Proof callout — objection: "I don't know your work" */}
             <m.div variants={child} className="hero-proof-callout">
               <p
                 className="text-sm leading-relaxed"
@@ -251,10 +318,42 @@ export function HeroSection() {
               </p>
             </m.div>
 
-            {/* Performance bar */}
+            {/* Live activity bar — operational cadence proof */}
+            <m.div variants={child} className="mt-4">
+              <LiveActivityBar />
+            </m.div>
+
+            {/* Ghost CV link */}
+            <m.div variants={child} className="mt-4 mb-2">
+              <a
+                href="/cv/oscar-ndugbu-resume.pdf"
+                download
+                className="cta-ghost tactile-press"
+                aria-label="Download Oscar's resume as PDF"
+              >
+                Download CV <span aria-hidden="true">↓</span>
+              </a>
+            </m.div>
+
+            {/* ── Proof carousel: swipeable on mobile, grid on sm+ ─────────── */}
+            {/*
+              v16: Proof cards moved out of the main stagger container.
+              They animate as a batch below the above content.
+              On mobile: horizontal snap carousel with dot indicators.
+              On sm+: 2-column grid (existing behavior preserved).
+            */}
+            <m.div
+              variants={proofContainer}
+              initial="hidden"
+              animate="visible"
+            >
+              <ProofCarousel reducedMotion={reducedMotion ?? false} />
+            </m.div>
+
+            {/* Performance bar — below proof, as validation not teaser */}
             <m.p
               variants={child}
-              className="font-mono text-[11px] tracking-widest uppercase"
+              className="mt-6 font-mono text-[11px] tracking-widest uppercase"
               style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}
               aria-label="Performance: sub-150ms API p99, 99.9% uptime, 40% ops reduction, 95% test coverage"
             >
@@ -265,74 +364,24 @@ export function HeroSection() {
                 <span style={{ color: 'var(--color-success)' }}>95%</span> test coverage
               </span>
             </m.p>
-
-            {/* Ghost CV link */}
-            <m.div variants={child} className="mt-4 mb-2">
-              <a
-                href="/cv/oscar-ndugbu-resume.pdf"
-                download
-                className="cta-ghost"
-                aria-label="Download Oscar's resume as PDF"
-              >
-                Download CV <span aria-hidden="true">↓</span>
-              </a>
-            </m.div>
-
-            {/* Live activity bar */}
-            <m.div variants={child} className="mt-4">
-              <LiveActivityBar />
-            </m.div>
-
-            {/* Proof cards grid */}
-            <m.div
-              variants={proofContainer}
-              initial="hidden"
-              animate="visible"
-              className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2"
-            >
-              {PROOF_COLUMNS.map((column) => (
-                <m.article
-                  key={column.label}
-                  variants={card}
-                  className="proof-card"
-                  whileHover={
-                    reducedMotion
-                      ? undefined
-                      : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
-                  }
-                >
-                  <p className="label-mono" style={{ color: 'var(--color-cyan)' }}>
-                    {column.label}
-                  </p>
-                  <p
-                    className="mt-3 text-sm leading-7"
-                    style={{ color: 'oklch(93% 0.006 264 / 0.65)' }}
-                  >
-                    {column.body}
-                  </p>
-                </m.article>
-              ))}
-            </m.div>
           </m.div>
 
-          {/* ── Right column: HeroVisual — desktop only ─────────────────────── */}
+          {/* ── Right column: HeroVisual — desktop only ─────────────────── */}
           <m.div style={{ y: visualY }} className="hidden lg:block">
             <HeroVisual />
           </m.div>
 
         </div>
 
-        {/* ── Mobile HeroVisual — below fold, after proof ─────────────────── */}
+        {/* ── Mobile HeroVisual — below fold, credibility reinforcement ──── */}
         {/*
-          v15: On mobile, HeroVisual renders AFTER the conversion content.
-          Preserves LCP for the text headline while still providing
-          live metrics terminal as credibility reinforcement below fold.
+          On mobile, HeroVisual renders AFTER proof carousel.
+          Preserves LCP for text headline. Terminal as secondary evidence.
           Hidden on desktop — handled by the grid column above.
         */}
         <div className="mt-10 lg:hidden">
           <HeroVisual />
         </div>
-
       </div>
     </m.section>
   );
