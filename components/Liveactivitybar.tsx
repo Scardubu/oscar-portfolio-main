@@ -1,84 +1,100 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
+// components/Liveactivitybar.tsx — CONVICTION ENGINE v19.0
+// Live GitHub commit feed strip used in hero/navbar contexts.
+// Falls back gracefully; never blocks render.
 
 import { useEffect, useState } from 'react';
 
-import { Skeleton } from '@/components/Skeleton';
-
 interface ActivityData {
-  ago: string;
-  type: string;
-  repo: string;
-  sha?: string;
+  ago:      string;
+  type:     string;
+  repo:     string;
+  sha?:     string;
   message?: string;
 }
 
-const FALLBACK_ACTIVITY: ActivityData = {
-  ago: 'Recently',
-  type: 'PushEvent',
-  repo: 'oscar-portfolio-main',
-  sha: 'unknown',
-  message: 'Recent update',
+const FALLBACK: ActivityData = {
+  ago:     'Recently',
+  type:    'PushEvent',
+  repo:    'oscar-portfolio-main',
+  message: 'Active development',
 };
 
 function typeLabel(type: string): string {
-  switch (type) {
-    case 'PushEvent':
-      return 'Active development';
-    case 'PullRequestEvent':
-      return 'Pull request';
-    case 'CreateEvent':
-      return 'Branch created';
-    case 'IssuesEvent':
-      return 'Issue activity';
-    default:
-      return 'Recent activity';
-  }
+  const map: Record<string, string> = {
+    PushEvent:        'Pushed update',
+    PullRequestEvent: 'Pull request',
+    CreateEvent:      'Branch created',
+    IssuesEvent:      'Issue activity',
+  };
+  return map[type] ?? 'Recent activity';
+}
+
+function PulseDot() {
+  return (
+    <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
+      <span
+        className="absolute inline-flex h-full w-full rounded-full opacity-75"
+        style={{
+          background: 'var(--color-live)',
+          animation: 'ping 1s cubic-bezier(0,0,0.2,1) infinite',
+        }}
+      />
+      <span
+        className="relative inline-flex h-1.5 w-1.5 rounded-full"
+        style={{ background: 'var(--color-live)' }}
+      />
+    </span>
+  );
 }
 
 export function LiveActivityBar() {
   const [activity, setActivity] = useState<ActivityData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
-    const controller = new AbortController();
+    const ctrl = new AbortController();
 
-    fetch('/api/activity', { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Activity request failed with status ${response.status}`);
-        }
-
-        return response.json();
+    fetch('/api/activity', { signal: ctrl.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json() as Promise<ActivityData>;
       })
-      .then((data: ActivityData) => {
-        setActivity(data);
+      .then((data) => {
+        if (!ctrl.signal.aborted) setActivity(data);
       })
       .catch(() => {
-        if (!controller.signal.aborted) {
-          setActivity(FALLBACK_ACTIVITY);
-        }
+        if (!ctrl.signal.aborted) setActivity(FALLBACK);
       })
       .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+        if (!ctrl.signal.aborted) setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => ctrl.abort();
   }, []);
 
   if (loading) {
     return (
-      <div aria-label="Loading recent activity">
-        <Skeleton width={280} height={16} />
+      <div
+        className="flex items-center gap-2 min-h-[24px]"
+        aria-label="Loading recent activity"
+        aria-busy="true"
+      >
+        <div
+          className="h-1.5 w-1.5 rounded-full animate-pulse"
+          style={{ background: 'var(--color-border)' }}
+        />
+        <div
+          className="h-3 w-48 rounded animate-pulse"
+          style={{ background: 'var(--color-border)' }}
+        />
       </div>
     );
   }
 
-  if (!activity) {
-    return null;
-  }
+  if (!activity) return null;
+
+  const label = activity.message ?? typeLabel(activity.type);
 
   return (
     <p
@@ -86,20 +102,35 @@ export function LiveActivityBar() {
       aria-live="polite"
       aria-atomic="false"
       aria-label="Latest commit activity"
-      className="text-text-muted mt-2 flex items-center gap-2 overflow-hidden text-sm"
+      className="flex items-center gap-2 overflow-hidden min-h-[24px]"
     >
-      <span aria-hidden="true" className="dot-live h-[6px] w-[6px]" />
-      {activity.sha && activity.sha !== 'unknown' ? (
-        <span className="text-text-secondary font-mono text-[11px] uppercase">{activity.sha}</span>
-      ) : null}
+      <PulseDot />
+
+      {activity.sha && activity.sha !== 'unknown' && (
+        <span
+          className="shrink-0 font-mono text-[11px] uppercase"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {activity.sha.slice(0, 7)}
+        </span>
+      )}
+
       <span
-        className="text-text-secondary min-w-0 flex-1 overflow-hidden leading-snug text-ellipsis whitespace-nowrap"
-        title={activity.message ?? typeLabel(activity.type)}
+        className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-snug"
+        style={{ color: 'var(--color-text-secondary)' }}
+        title={label}
       >
-        {activity.message ?? typeLabel(activity.type)}
+        {label}
       </span>
-      <span aria-hidden="true">·</span>
-      <span>{activity.ago}</span>
+
+      <span aria-hidden="true" style={{ color: 'var(--color-border)' }}>·</span>
+
+      <span
+        className="shrink-0 font-mono text-[11px]"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
+        {activity.ago}
+      </span>
     </p>
   );
 }
