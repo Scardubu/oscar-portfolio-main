@@ -1,5 +1,10 @@
 // components/ArchDecision.tsx
-// CONVICTION ENGINE v10.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v18.0
+// Changes:
+//   • Compact mode: 3-row flex on mobile (label + value inline), not grid.
+//   • Full mode: vertical stack, full width — matches mobile-native column flow.
+//   • Because cell: film-teal accent maintained, background accent on desktop.
+//   • Spacing: tightened for mobile (py-2 default, py-3 on sm+).
 
 interface ArchDecisionProps {
   chosen: string;
@@ -10,22 +15,22 @@ interface ArchDecisionProps {
 
 const ITEMS = [
   {
-    key: 'chosen',
+    key: 'chosen' as const,
     label: 'CHOSEN',
-    labelClassName: '',
-    valueClassName: '',
+    labelColor: 'var(--color-success)',
+    valueWeight: 'font-normal',
   },
   {
-    key: 'over',
+    key: 'over' as const,
     label: 'OVER',
-    labelClassName: '',
-    valueClassName: '',
+    labelColor: 'var(--color-text-muted)',
+    valueWeight: 'font-normal',
   },
   {
-    key: 'because',
+    key: 'because' as const,
     label: 'BECAUSE',
-    labelClassName: 'text-[11px]',
-    valueClassName: 'font-medium',
+    labelColor: 'var(--color-film-teal)',
+    valueWeight: 'font-medium',
   },
 ] as const;
 
@@ -40,66 +45,78 @@ export function ArchDecision({
   return (
     <section
       aria-label="Architecture decision"
-      className="arch-decision mt-5 overflow-hidden rounded-(--radius-md) border border-(--color-border)"
+      className="arch-decision overflow-hidden rounded-[var(--radius-md)] border"
+      style={{ borderColor: 'var(--color-border)' }}
     >
-      <header className="flex items-center gap-2 border-b border-(--color-border) px-4 py-3">
+      {/* ── Header ──────────────────────────────────────────────────── */}
+      <header
+        className="flex items-center gap-2 border-b px-3.5 py-2.5 sm:px-4 sm:py-3"
+        style={{ borderColor: 'var(--color-border)' }}
+      >
         <span
           aria-hidden="true"
-          className="inline-block h-1.5 w-1.5 rounded-full bg-(--color-accent)"
+          className="inline-block h-1.5 w-1.5 rounded-full"
+          style={{ background: 'var(--color-accent)' }}
         />
-
-        <span className="label text-[10px]">
-          Architecture Decision
-        </span>
+        <span className="label-mono text-[10px]">Architecture Decision</span>
       </header>
 
-      <div className={`arch-grid ${compact ? '' : 'arch-grid--full'}`}>
-        {ITEMS.map((item, index) => {
+      {/* ── Decision rows ────────────────────────────────────────────── */}
+      <div className={compact ? 'divide-y' : 'divide-y'} style={{ borderColor: 'var(--color-border-subtle)' }}>
+        {ITEMS.map((item) => {
           const value = values[item.key];
-          const compactDivider = compact && index < ITEMS.length - 1;
           const isBecause = item.key === 'because';
 
           return (
             <div
               key={item.key}
-              className={`
-                px-4 py-3
-                ${isBecause ? 'arch-because-cell' : ''}
-                ${compactDivider ? 'border-border-subtle border-b' : ''}
-              `}
+              className={`px-3.5 py-2.5 sm:px-4 sm:py-3 ${isBecause ? 'arch-because-cell' : ''}`}
             >
-              <p
-                className={`
-                  arch-label
-                  font-mono
-                  text-[10px]
-                  tracking-[0.18em]
-                  uppercase
-                  ${item.labelClassName}
-                `}
-                data-arch-key={item.key}
-              >
-                {item.label}
-              </p>
-
-              <p
-                className={`
-                  font-body
-                  mt-2
-                  max-w-none
-                  text-sm
-                  leading-6
-                  ${item.valueClassName}
-                  ${
-                    isBecause
-                      ? 'text-text-primary font-medium'
-                      : 'text-text-secondary'
-                  }
-                `}
-                data-label={item.label}
-              >
-                {value}
-              </p>
+              {compact ? (
+                /* Compact: label and value on same line */
+                <div className="flex items-start gap-2.5">
+                  <span
+                    className="arch-label font-mono text-[10px] tracking-[0.18em] uppercase shrink-0 w-14 pt-0.5"
+                    data-arch-key={item.key}
+                    style={{ color: item.labelColor }}
+                  >
+                    {item.label}
+                  </span>
+                  <span
+                    className={`text-[11px] leading-5 ${item.valueWeight}`}
+                    style={{
+                      color: isBecause
+                        ? 'var(--color-text-primary)'
+                        : 'var(--color-text-secondary)',
+                    }}
+                    data-label={item.label}
+                  >
+                    {value}
+                  </span>
+                </div>
+              ) : (
+                /* Full: stacked label above value */
+                <>
+                  <p
+                    className="arch-label font-mono text-[10px] tracking-[0.18em] uppercase mb-1.5"
+                    data-arch-key={item.key}
+                    style={{ color: item.labelColor }}
+                  >
+                    {item.label}
+                  </p>
+                  <p
+                    className={`font-body text-sm leading-6 max-w-none ${item.valueWeight}`}
+                    style={{
+                      color: isBecause
+                        ? 'var(--color-text-primary)'
+                        : 'var(--color-text-secondary)',
+                    }}
+                    data-label={item.label}
+                  >
+                    {value}
+                  </p>
+                </>
+              )}
             </div>
           );
         })}
