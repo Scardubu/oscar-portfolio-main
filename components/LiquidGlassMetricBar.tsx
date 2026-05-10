@@ -1,93 +1,93 @@
-"use client";
+'use client';
 
-/**
- * LiquidGlassMetricBar — standalone composable metric trust-signal grid
- * Full 6-layer glass physics. Horizontal 4-col / 2x2 tablet / stacked mobile.
- */
+import { m, useInView, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
 
-import { useEffect, useRef, useState } from "react";
-import { LiquidGlassRefractionSVG } from "./LiquidGlassRefractionSVG";
-
-interface MetricItem {
-  id:    string;
-  label: string;
-  value: string;
-  desc:  string;
-  pulse?: boolean;
+interface Metric {
+  label:  string;
+  value:  number;   // 0–100
+  unit?:  string;
+  color?: string;   // CSS color or variable
 }
 
-const DEFAULT_METRICS: MetricItem[] = [
-  {
-    id: 'reach',
-    label: 'Real-World Reach',
-    value: 'Production systems, live users',
-    desc: 'Working software with public surfaces, real traffic, and observable operating constraints.',
-  },
-  {
-    id: 'ai',
-    label: 'Precision AI',
-    value: 'Embedding-based, not rule-based',
-    desc: 'Retrieval, ranking, and model behavior framed around coherence under edge cases instead of brittle heuristics.',
-  },
-  {
-    id: 'on',
-    label: 'Resilient Delivery',
-    value: 'Reliable through high-traffic windows',
-    desc: 'Health checks, graceful fallback paths, and environment-scoped guardrails keep the surface usable when pressure rises.',
-  },
-  {
-    id: 'years',
-    label: '4+ Years',
-    value: 'Shipping ML at production scale',
-    desc: 'End-to-end ownership across data, inference, interface, deployment, and operating feedback loops.',
-    pulse: true,
-  },
-];
-
-export function LiquidGlassMetricBar({ items = DEFAULT_METRICS, className = "" }: { items?: MetricItem[]; className?: string }) {
-  return (
-    <div className={`hero-metric-bar ${className}`} role="list" aria-label="Core capabilities">
-      {items.map((item, i) => <MetricCard key={item.id} item={item} index={i} />)}
-    </div>
-  );
+interface LiquidGlassMetricBarProps {
+  metrics:    Metric[];
+  title?:     string;
+  className?: string;
 }
 
-function MetricCard({ item, index }: { item: MetricItem; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({ w: 0, h: 0 });
-  const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const ro = new ResizeObserver(e => {
-      const rect = e[0]?.contentRect;
-      if (rect) setSize({ w: rect.width, h: rect.height });
-    });
-    ro.observe(ref.current);
-    return () => ro.disconnect();
-  }, []);
+export function LiquidGlassMetricBar({
+  metrics,
+  title,
+  className = '',
+}: Readonly<LiquidGlassMetricBarProps>) {
+  const ref           = useRef<HTMLDivElement>(null);
+  const inView        = useInView(ref, { once: true, amount: 0.3 });
+  const reducedMotion = useReducedMotion();
 
   return (
     <div
       ref={ref}
-      role="listitem"
-      className={`glass-surface glass-chromatic-fringe metric-card-glass relative overflow-hidden ${item.pulse ? 'breath-pulse' : ''}`}
-      // eslint-disable-next-line no-restricted-syntax
-      style={{
-        padding: 'var(--bento-pad)',
-        borderRadius: 'var(--bento-radius)',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        transition: 'transform 200ms ease-out',
-        animationDelay: `${index * 80}ms`,
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={`glass-medium rounded-[var(--radius-xl)] p-5 sm:p-6 ${className}`}
     >
-      <LiquidGlassRefractionSVG width={size.w} height={size.h} scale={55} id={`lgmb-${item.id}`} />
-      <div className="relative z-10">
-        <div className="metric-label">{item.label}</div>
-        <div className="metric-value">{item.value}</div>
-        <div className="metric-desc">{item.desc}</div>
+      {title && (
+        <p
+          className="mb-4 font-mono text-[10px] tracking-widest uppercase"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {title}
+        </p>
+      )}
+
+      <div className="space-y-4">
+        {metrics.map((metric) => {
+          const accentColor = metric.color ?? 'var(--color-film-teal)';
+
+          return (
+            <div
+              key={metric.label}
+              className="flex flex-col gap-1.5 min-h-[44px] justify-center"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {metric.label}
+                </span>
+                <span
+                  className="font-mono text-sm font-semibold"
+                  style={{ color: accentColor }}
+                >
+                  {metric.value}{metric.unit ?? '%'}
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div
+                className="h-[3px] w-full overflow-hidden rounded-full"
+                style={{ background: 'var(--color-border)' }}
+                aria-label={`${metric.label}: ${metric.value}${metric.unit ?? '%'}`}
+                role="progressbar"
+                aria-valuenow={metric.value}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <m.div
+                  className="h-full rounded-full"
+                  style={{ background: accentColor }}
+                  initial={{ width: '0%' }}
+                  animate={inView ? { width: `${metric.value}%` } : { width: '0%' }}
+                  transition={
+                    reducedMotion
+                      ? { duration: 0 }
+                      : { type: 'spring', stiffness: 60, damping: 18, mass: 1.2 }
+                  }
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
