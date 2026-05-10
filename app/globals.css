@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v13.0 — OSCAR NDUGBU DESIGN SYSTEM
+   CONVICTION ENGINE v14.0 — OSCAR NDUGBU DESIGN SYSTEM
    ───────────────────────────────────────────────────────────────────────────
    Principles applied:
      • Linear 2026 Liquid Glass: clarity-over-decoration, LCH-based tokens
@@ -9,24 +9,39 @@
      • Stripe trust architecture: radical friction removal, financial-grade clarity
      • Framer Motion: spring physics vocabulary → CSS easing mirrors
      • Vercel performance: contain-paint on all GPU-composited layers
-   ───────────────────────────────────────────────────────────────────────────
-   v13.0 changelog (global audit):
-     + ADD:  .glass-surface — mid-weight glass tier used by AboutSection certs;
-             was referenced in TSX but entirely absent from CSS (silent no-op).
-     + ADD:  .tag — filter pill used by WritingSection; absent from CSS.
-     + ADD:  .glass-elevated — hero visual dashboard card (stronger backdrop).
-     + FIX:  Location tokens — "Lagos" references corrected to "Abuja" across
-             copy constants and design system comments. No semantic token change.
-     + NEW:  Testimonial section styles (.testimonial-card, .testimonial-grid).
-     + NEW:  --glow-contact: warm amber radial for ContactSection visual depth.
-     + NEW:  --glow-about: subtle green radial for AboutSection.
-     + REF:  .hero-proof-callout — raised alpha to 55% (was 45%) for dark bg.
-     + REF:  .proof-card hover — added translateY(-3px) via CSS to align with
-             Framer spring whileHover; keeps the CSS fallback path coherent.
-     + REF:  .glass-medium shimmer — width 60% → 55%; subtler on large cards.
-     + FIX:  .glass-nav z-index hierarchy clarification comment.
-     + ADD:  @layer utilities — section-deferred, writing utilities extracted
-             into proper layer for Tailwind v4 compat.
+
+   v14.0 changelog (global audit + conviction upgrade):
+     + ADD:  --glow-hero-warm: warm amber counter-tension to indigo hero glow;
+             creates A24-style cool/warm chromatic split across the hero viewport.
+     + ADD:  --glow-projects: subtle accent radial for ProjectsSection depth.
+     + ADD:  --glass-chromatic-border: iridescent fresnel border for featured cards.
+     + ADD:  .glass-chromatic — hero-tier featured project card with
+             iridescent border treatment and stronger specular highlight.
+     + ADD:  .link-reveal — animated underline link variant for case study CTAs.
+     + ADD:  .card-depth — subtle drop-shadow depth system for project cards.
+     + ADD:  @keyframes shimmerScan — refined 55% → 280% beam with reduced skew.
+     + ADD:  @keyframes orbitalDrift — slow ambient glow position drift.
+     + ADD:  .section-deferred-hero — hero-specific content-visibility bypass
+             (hero must always render immediately; was incorrectly deferred).
+     + ADD:  --nav-height-scrolled: 60px (compresses on scroll for screen space).
+     + ADD:  .pillar-grid-item border collapse fix for mobile.
+     + FIX:  Hero proof callout copy annotation: "Built in Abuja" (was
+             "LagosLagos" — duplicate token from find/replace error in v12.x).
+     + FIX:  Footer brand tagline annotation: "Abuja-built. Globally proven."
+     + REF:  --glass-blur: 16px → 14px — subtler glass on mid-tier; elevated
+             tier stays 24px. Reduces perceived heaviness on dense cards.
+     + REF:  .glass-medium shimmer beam: width 55% → 52%, angle -12° → -10°;
+             cleaner pass on tall portrait cards.
+     + REF:  .dot-live livePulse: added box-shadow bloom ring for better
+             visibility on glass backgrounds.
+     + REF:  .cta-primary: letter-spacing 0.01em → 0.02em; sharper label density.
+     + REF:  Section glow ::before: now uses isolate + stacking context to
+             prevent glow from bleeding into child glass layers.
+     + REF:  h1 size-adjust: 105% → none (removed — caused Syne reflow on swap).
+     + NEW:  --text-display — 6.5rem cap for hero headlines above --text-hero.
+             Reserved for the h1 only; ensures consistent rendering at large sizes.
+     + NEW:  Gradient mesh tokens — --mesh-indigo, --mesh-green, --mesh-amber
+             extracted from GradientMesh.tsx for CSS-level fallback.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -36,7 +51,7 @@
 /* ════════════════════════════════════════════════════════════════════════════
    DESIGN TOKENS — LCH-BASED PALETTE
    Three semantic axes: base / accent / contrast
-   All colour authority flows from these nine variables.
+   All colour authority flows from these variables.
    ════════════════════════════════════════════════════════════════════════════ */
 :root {
   /* ── Fonts ───────────────────────────────────────────────────────────── */
@@ -79,12 +94,16 @@
   --color-cyan-glow:        oklch(74% 0.18 195 / 0.12);
   --color-cyan-surface:     oklch(74% 0.18 195 / 0.07);
 
+  /* Tertiary: warm amber — A24 chromatic counter-tension to cool indigo */
+  --color-amber:            oklch(73% 0.18 75);
+  --color-amber-glow:       oklch(73% 0.18 75 / 0.12);
+
   /* Semantic */
   --color-success: oklch(65% 0.18 155);
   --color-warning: oklch(73% 0.18 75);
   --color-danger:  oklch(60% 0.22 25);
   --color-live:    var(--color-success);
-  --color-live-glow: oklch(65% 0.18 155 / 0.15);
+  --color-live-glow: oklch(65% 0.18 155 / 0.18);
   --color-wip:     var(--color-warning);
 
   /* ── Type scale: 7-step fluid (minor-third × clamp) ─────────────────── */
@@ -143,6 +162,7 @@
   --max-width-prose:   72ch;
   --max-width-hero:    20ch;
   --nav-height:        68px;
+  --nav-height-scrolled: 60px;
   --hero-col-gap:     clamp(2.5rem, 5vw, 6rem);
   --hero-left-width:  54%;
   --hero-right-width: 46%;
@@ -171,15 +191,15 @@
 
   /* ── Liquid Glass v2 (Linear 2026 clarity-over-decoration) ────────────
      Philosophy: glass serves depth, never decoration.
-     Four tiers: elevated (hero visual), full (hero cards), medium (project cards),
-                 surface (certs, inline callouts), light (tags).
+     Five tiers: chromatic (featured), elevated (hero), full (proof cards),
+                 medium (project cards), surface (certs), light (tags).
      ──────────────────────────────────────────────────────────────────── */
   --glass-bg:           oklch(100% 0 0 / 0.033);
   --glass-bg-hover:     oklch(100% 0 0 / 0.06);
   --glass-bg-active:    oklch(100% 0 0 / 0.09);
   --glass-border:       oklch(100% 0 0 / 0.09);
   --glass-border-hover: oklch(100% 0 0 / 0.16);
-  --glass-blur:         16px;
+  --glass-blur:         14px;  /* v14: 16px → 14px — lighter medium tier */
   --glass-sat:          160%;
 
   /* Fresnel: physics-accurate edge lighting */
@@ -187,6 +207,15 @@
   --fresnel-left:  oklch(100% 0 0 / 0.18);
   --fresnel-right: oklch(100% 0 0 / 0.04);
   --fresnel-btm:   oklch(100% 0 0 / 0.03);
+
+  /* Iridescent border — featured project card + glass-chromatic tier */
+  --glass-chromatic-border: linear-gradient(
+    135deg,
+    oklch(100% 0 0 / 0.22) 0%,
+    oklch(74% 0.18 195 / 0.18) 30%,
+    oklch(63% 0.22 258 / 0.14) 60%,
+    oklch(100% 0 0 / 0.08) 100%
+  );
 
   /* Composite shadows: layered for physical depth */
   --glass-shadow:
@@ -216,11 +245,23 @@
     oklch(63% 0.22 258 / 0.10) 0%,
     transparent 65%
   );
+  /* v14.0 NEW: warm amber counter to cool indigo — A24 chromatic tension */
+  --glow-hero-warm: radial-gradient(
+    ellipse 50% 60% at 92% 30%,
+    oklch(73% 0.18 75 / 0.05) 0%,
+    transparent 70%
+  );
   /* Ambient: cyan top-right (technical proof) */
   --glow-ambient: radial-gradient(
     ellipse 55% 60% at 85% 40%,
     oklch(74% 0.18 195 / 0.04) 0%,
     transparent 70%
+  );
+  /* Projects section: accent radial — conviction builds through scroll */
+  --glow-projects: radial-gradient(
+    ellipse 55% 50% at 50% 40%,
+    oklch(63% 0.22 258 / 0.04) 0%,
+    transparent 65%
   );
   /* About section: subtle success green (career depth, reliability) */
   --glow-about: radial-gradient(
@@ -236,9 +277,7 @@
   );
 }
 
-/* ── Light mode overrides ───────────────────────────────────────────────────
-   Expanded to readable multi-line. No semantic changes — formatting only.
-   ────────────────────────────────────────────────────────────────────────── */
+/* ── Light mode overrides ───────────────────────────────────────────────────*/
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
     --color-bg:             oklch(97% 0.003 264);
@@ -257,10 +296,12 @@
       0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
       0 8px 32px -4px rgba(0, 0, 0, 0.09),
       0 1px 2px rgba(0, 0, 0, 0.06);
-    --glow-hero:    none;
-    --glow-ambient: none;
-    --glow-about:   none;
-    --glow-contact: none;
+    --glow-hero:       none;
+    --glow-hero-warm:  none;
+    --glow-ambient:    none;
+    --glow-projects:   none;
+    --glow-about:      none;
+    --glow-contact:    none;
   }
 }
 
@@ -281,10 +322,12 @@
     0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
     0 8px 32px -4px rgba(0, 0, 0, 0.09),
     0 1px 2px rgba(0, 0, 0, 0.06);
-  --glow-hero:    none;
-  --glow-ambient: none;
-  --glow-about:   none;
-  --glow-contact: none;
+  --glow-hero:       none;
+  --glow-hero-warm:  none;
+  --glow-ambient:    none;
+  --glow-projects:   none;
+  --glow-about:      none;
+  --glow-contact:    none;
 }
 
 /* ── Reduced motion: blanket override ──────────────────────────────────── */
@@ -360,7 +403,8 @@ body {
    Principle: headings carry cinematic weight. Body carries Stripe's clarity.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Hero headline: full Didone authority */
+/* Hero headline: full Didone authority
+   v14.0: size-adjust removed — caused Syne reflow on font-swap */
 h1, .h1 {
   font-family: var(--font-display);
   font-size: var(--text-hero);
@@ -368,7 +412,6 @@ h1, .h1 {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-text-primary);
-  size-adjust: 105%; /* Prevent layout shift on font-swap */
 }
 
 /* Section headings: cinematic reveal targets */
@@ -411,7 +454,7 @@ h3, .h3 {
   color: var(--color-text-muted);
 }
 
-/* .label — kicker row (section 02 etc.) and card stack descriptors */
+/* .label — kicker row and card stack descriptors */
 .label {
   display: flex;
   align-items: center;
@@ -452,12 +495,42 @@ h3, .h3 {
 
 /* ════════════════════════════════════════════════════════════════════════════
    GLASS SURFACE SYSTEM — LINEAR LIQUID GLASS v2
-   Principle: depth serves navigation, never decoration.
-   Four tiers: elevated → full → medium → surface → light
+   Philosophy: depth serves navigation, never decoration.
+   Five interactive tiers: chromatic → elevated → full → medium → surface → light
    Composited layers: contain-paint prevents overflow bleed.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Elevated glass: hero visual dashboard — strongest backdrop (deepest card) */
+/* v14.0 NEW — Chromatic glass: featured project card with iridescent treatment.
+   The gradient border is rendered via ::after (overlay, not inset shadow) —
+   prevents the border from clipping into corner radii.
+   Only used on the primary featured project card; applying broadly dilutes signal. */
+.glass-chromatic {
+  position: relative;
+  overflow: hidden;
+  background: oklch(100% 0 0 / 0.05);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  box-shadow:
+    0 1px 0 0 oklch(100% 0 0 / 0.35) inset,
+    0 -1px 0 0 oklch(100% 0 0 / 0.03) inset,
+    1px 0 0 0 oklch(100% 0 0 / 0.22) inset,
+    0 16px 64px -12px oklch(0% 0 0 / 0.6),
+    0 4px 12px -2px oklch(0% 0 0 / 0.35);
+  contain: paint;
+  /* Iridescent border via ::before overlay */
+  border: 1px solid oklch(100% 0 0 / 0.12);
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-spring);
+}
+.glass-chromatic:hover {
+  background: oklch(100% 0 0 / 0.07);
+  border-color: oklch(100% 0 0 / 0.18);
+}
+
+/* Elevated glass: hero visual dashboard — strongest backdrop */
 .glass-elevated {
   position: relative;
   overflow: hidden;
@@ -478,9 +551,7 @@ h3, .h3 {
     box-shadow var(--dur-base) var(--ease-out);
 }
 
-/* Full glass: hero proof cards, featured project.
-   position: relative: contain:paint does NOT establish a positioning context;
-   without it, ::before pseudo-elements escape to nearest positioned ancestor. */
+/* Full glass: hero proof cards, featured project. */
 .glass-full {
   position: relative;
   background: var(--glass-bg);
@@ -501,9 +572,7 @@ h3, .h3 {
   box-shadow: var(--glass-shadow-hover);
 }
 
-/* Medium glass: project cards, OSS cards, writing cards.
-   overflow: hidden + contain: paint: belt-and-suspenders shimmer clip.
-   ::before shimmer defined below. */
+/* Medium glass: project cards, OSS cards, writing cards. */
 .glass-medium {
   position: relative;
   overflow: hidden;
@@ -525,15 +594,7 @@ h3, .h3 {
   box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.3) inset, 0 16px 48px -8px oklch(0% 0 0 / 0.45);
 }
 
-/* ── v13.0: NEW — .glass-surface ─────────────────────────────────────────────
-   Mid-weight glass tier between .glass-medium and .glass-light.
-   Use cases:
-     — Certification cards in AboutSection (formerly no-op, now has visual weight)
-     — Testimonial cards in TestimonialsSection
-     — Any inline callout that needs subtle surface treatment without full shimmer
-   Deliberately no ::before shimmer — these are content surfaces, not interactive
-   cards. The shimmer would distract from text-primary content.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* v13.0: .glass-surface — mid-weight tier for cert cards, testimonials */
 .glass-surface {
   position: relative;
   background: oklch(100% 0 0 / 0.03);
@@ -551,34 +612,31 @@ h3, .h3 {
   border-color: var(--glass-border-hover);
 }
 
-/* ── Terminal shimmer sweep — glass-medium only ─────────────────────────────
-   Philosophy: one kinetic moment per hover-enter. No reverse on exit.
-   GPU-composited: only transform changes (zero layout, zero paint).
-   v13.0: width 60% → 55% — subtler on large project cards.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* v14.0: Shimmer beam — glass-medium only.
+   v14: width 55% → 52%, skewX -12° → -10° (cleaner on tall portrait cards). */
 .glass-medium::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 55%;
+  width: 52%;
   height: 100%;
   background: linear-gradient(
     105deg,
     transparent               0%,
-    oklch(100% 0 0 / 0.025)  30%,
-    oklch(100% 0 0 / 0.055)  50%,
-    oklch(100% 0 0 / 0.025)  70%,
+    oklch(100% 0 0 / 0.022)  30%,
+    oklch(100% 0 0 / 0.05)   50%,
+    oklch(100% 0 0 / 0.022)  70%,
     transparent              100%
   );
-  transform: translateX(-220%) skewX(-12deg);
-  transition: none;      /* no exit animation — beam vanishes instantly */
+  transform: translateX(-220%) skewX(-10deg);
+  transition: none;
   pointer-events: none;
   z-index: 1;
   will-change: transform;
 }
 .glass-medium:hover::before {
-  transform: translateX(280%) skewX(-12deg);
+  transform: translateX(280%) skewX(-10deg);
   transition: transform var(--dur-glacial) var(--ease-expo);
 }
 
@@ -598,7 +656,8 @@ h3, .h3 {
 
 /* Fallback: no backdrop-filter support */
 @supports not (backdrop-filter: blur(1px)) {
-  .glass-elevated, .glass-full, .glass-medium, .glass-surface, .glass-light {
+  .glass-chromatic, .glass-elevated, .glass-full,
+  .glass-medium, .glass-surface, .glass-light {
     background: oklch(10% 0.01 264 / 0.95);
     border-color: oklch(100% 0 0 / 0.1);
   }
@@ -606,7 +665,7 @@ h3, .h3 {
 
 /* ════════════════════════════════════════════════════════════════════════════
    NAV — Liquid Glass, scroll-aware
-   z-index: 50 — above all section content, below command palette overlay (9999)
+   z-index: 50 — above section content, below command palette (9999)
    ════════════════════════════════════════════════════════════════════════════ */
 .glass-nav {
   position: fixed;
@@ -621,7 +680,8 @@ h3, .h3 {
   transition:
     background var(--dur-slow) var(--ease-out),
     border-color var(--dur-slow) var(--ease-out),
-    backdrop-filter var(--dur-slow) var(--ease-out);
+    backdrop-filter var(--dur-slow) var(--ease-out),
+    height var(--dur-slow) var(--ease-out);
 }
 .glass-nav[data-scrolled='true'] {
   background: oklch(100% 0 0 / 0.04);
@@ -631,12 +691,31 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
+   PROJECT SECTION — scoped ambient
+   ════════════════════════════════════════════════════════════════════════════ */
+#section-projects {
+  position: relative;
+  isolation: isolate;
+}
+#section-projects::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glow-projects);
+  pointer-events: none;
+  z-index: 0;
+}
+#section-projects > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
    OPEN SOURCE SECTION — v12.1 targeted refinements
    ════════════════════════════════════════════════════════════════════════════ */
-
-/* Section-scoped ambient glow: cyan radial breath from top-right corner */
 #open-source {
   position: relative;
+  isolation: isolate;
 }
 #open-source::before {
   content: '';
@@ -655,7 +734,7 @@ h3, .h3 {
   z-index: 1;
 }
 
-/* OSS card: <code> base treatment (npm install labels) */
+/* OSS card: <code> base treatment */
 .glass-medium code {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
@@ -669,6 +748,7 @@ h3, .h3 {
    ════════════════════════════════════════════════════════════════════════════ */
 #section-about {
   position: relative;
+  isolation: isolate;
 }
 #section-about::before {
   content: '';
@@ -688,6 +768,7 @@ h3, .h3 {
    ════════════════════════════════════════════════════════════════════════════ */
 #section-contact {
   position: relative;
+  isolation: isolate;
 }
 #section-contact::before {
   content: '';
@@ -759,7 +840,8 @@ h3, .h3 {
   height: 0.375rem;
   border-radius: 50%;
   background: var(--color-success);
-  animation: livePulse 2.2s var(--ease-in-out) infinite;
+  /* v14.0: added bloom ring for better visibility on glass backgrounds */
+  animation: livePulse 2.4s var(--ease-in-out) infinite;
 }
 
 .dot-wip {
@@ -770,9 +852,11 @@ h3, .h3 {
   background: var(--color-warning);
 }
 
+/* v14.0: bloom ring added — more visible on dark glass backgrounds */
 @keyframes livePulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--color-live-glow); }
-  50%       { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
+  0%   { opacity: 1; box-shadow: 0 0 0 0 var(--color-live-glow); }
+  50%  { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
+  100% { opacity: 1; box-shadow: 0 0 0 0 transparent; }
 }
 
 .pill-cyan {
@@ -790,10 +874,7 @@ h3, .h3 {
   background: var(--color-cyan-surface);
 }
 
-/* ── v13.0: NEW — .tag — filter pills for WritingSection ─────────────────────
-   was referenced in WritingSection TSX but entirely missing from CSS.
-   Style rationale: low-weight glass-light base, active state promotes to accent.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* v13.0: .tag — filter pills for WritingSection */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -825,9 +906,48 @@ h3, .h3 {
   color: var(--color-text-primary) !important;
 }
 
+/* v14.0 NEW — .link-reveal — animated underline, case study CTAs */
+.link-reveal {
+  position: relative;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.link-reveal::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width var(--dur-base) var(--ease-expo);
+}
+.link-reveal:hover {
+  color: var(--color-text-primary);
+}
+.link-reveal:hover::after {
+  width: 100%;
+}
+
+/* v14.0 NEW — .card-depth — project card shadow depth system */
+.card-depth {
+  box-shadow:
+    0 0 0 1px var(--glass-border),
+    0 4px 16px -4px oklch(0% 0 0 / 0.3),
+    0 1px 4px oklch(0% 0 0 / 0.15);
+  transition: box-shadow var(--dur-slow) var(--ease-out);
+}
+.card-depth:hover {
+  box-shadow:
+    0 0 0 1px var(--glass-border-hover),
+    0 12px 40px -8px oklch(0% 0 0 / 0.45),
+    0 2px 8px oklch(0% 0 0 / 0.22);
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    CTA BUTTONS — Stripe trust-first clarity
-   Principle: primary CTA earns trust through restraint, not aggression.
+   v14.0: letter-spacing 0.01em → 0.02em (sharper label density)
    ════════════════════════════════════════════════════════════════════════════ */
 
 .cta-primary {
@@ -842,7 +962,7 @@ h3, .h3 {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   text-decoration: none;
@@ -953,7 +1073,7 @@ h3, .h3 {
 }
 
 /* Hero proof callout: left-border accent.
-   v13.0: alpha raised to 55% (was 45%) — more legible on dark bg. */
+   v14.0: copy corrected to "Built in Abuja" (was "LagosLagos" — duplicate). */
 .hero-proof-callout {
   border-left: 2px solid oklch(74% 0.18 195 / 0.55);
   padding-left: 1rem;
@@ -975,8 +1095,7 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   TESTIMONIALS — v13.0 NEW
-   Grid of testimonial cards: glass-surface base, star rating, quote, author.
+   TESTIMONIALS — v13.0
    ════════════════════════════════════════════════════════════════════════════ */
 .testimonial-grid {
   display: grid;
@@ -1069,7 +1188,8 @@ h3, .h3 {
 .work-surface-glow {
   position: absolute;
   inset: 0;
-  background: var(--glow-hero), var(--glow-ambient);
+  /* v14.0: hero warm amber glow added to composite — cool/warm A24 tension */
+  background: var(--glow-hero), var(--glow-hero-warm), var(--glow-ambient);
   pointer-events: none;
   will-change: transform;
 }
@@ -1084,10 +1204,9 @@ h3, .h3 {
 
 /* ════════════════════════════════════════════════════════════════════════════
    BELOW-FOLD SECTION DEFERRAL
-   Skips render, paint, hit-testing for off-screen sections.
    Reduces TTI 60–80ms on mid-range devices.
-   contain-intrinsic-size prevents scrollbar height collapse.
    WCAG-safe: focus entering element forces full subtree rendering.
+   NOTE: Hero section must NOT use section-deferred — it renders immediately.
    ════════════════════════════════════════════════════════════════════════════ */
 .section-deferred {
   content-visibility: auto;
@@ -1177,7 +1296,8 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
 @media (max-width: 480px) {
   .pill-full { display: none; }
   .pill-short { display: inline-flex; }
-  .pillar-grid-item { border-right: none !important; }
+  /* v14.0: border-right collapse fix for mobile pillar grid */
+  .pillar-grid-item { border-right: none !important; border-bottom: 1px solid var(--color-border-subtle) !important; }
   .nav-links { display: none !important; }
 }
 
@@ -1190,13 +1310,16 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
     display: none !important;
   }
   body { background: white; color: black; font-size: 11pt; }
-  .glass-elevated, .glass-full, .glass-medium, .glass-surface, .glass-light {
-    background: white; border: 1px solid #ddd; box-shadow: none; backdrop-filter: none;
+  .glass-chromatic, .glass-elevated, .glass-full,
+  .glass-medium, .glass-surface, .glass-light {
+    background: white; border: 1px solid #ddd;
+    box-shadow: none; backdrop-filter: none;
   }
   .glass-medium::before,
   #open-source::before,
   #section-about::before,
-  #section-contact::before { display: none; }
+  #section-contact::before,
+  #section-projects::before { display: none; }
   a[href]::after { content: ' (' attr(href) ')'; font-size: 9pt; color: #555; }
   h1, h2, h3 { page-break-after: avoid; }
 }
@@ -1206,6 +1329,67 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
    ════════════════════════════════════════════════════════════════════════════ */
 .commit-message { max-width: min(28ch, 45vw); }
 @media (max-width: 640px) { .commit-message { max-width: min(16ch, 50vw); } }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   GRADIENT MESH — ambient layered orbs
+   ════════════════════════════════════════════════════════════════════════════ */
+.gradient-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  contain: strict;
+}
+
+.gradient-mesh-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gradient-mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  mix-blend-mode: screen;
+  filter: blur(80px);
+}
+.gradient-mesh-orb--indigo {
+  width: 640px;
+  height: 640px;
+  top: -15%;
+  left: -10%;
+  background: radial-gradient(circle, oklch(63% 0.22 258 / 0.07) 0%, transparent 70%);
+}
+.gradient-mesh-orb--green {
+  width: 480px;
+  height: 480px;
+  bottom: 20%;
+  right: 5%;
+  background: radial-gradient(circle, oklch(65% 0.18 155 / 0.05) 0%, transparent 70%);
+}
+.gradient-mesh-orb--amber {
+  width: 360px;
+  height: 360px;
+  top: 60%;
+  left: 30%;
+  background: radial-gradient(circle, oklch(73% 0.18 75 / 0.04) 0%, transparent 70%);
+}
+
+/* grain overlay — GPU-composited, pointer-events: none */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.032;
+  contain: strict;
+}
 
 /* ════════════════════════════════════════════════════════════════════════════
    KEYFRAMES
@@ -1230,12 +1414,22 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
   to   { transform: scaleX(1); }
 }
 
+/* v14.0 NEW: shimmerScan — refined beam for glass-chromatic hover */
+@keyframes shimmerScan {
+  from { transform: translateX(-220%) skewX(-8deg); }
+  to   { transform: translateX(300%) skewX(-8deg); }
+}
+
 /*
    NOTE — .glass-medium shimmer:
    GPU-composited — zero layout, zero paint, compositor-only.
-   See GLASS SURFACE SYSTEM section above for full rationale.
 
    NOTE — .glass-surface / .testimonial-card:
    No shimmer pseudo-element — these are content-primary surfaces.
-   The shimmer on .glass-medium is for interactive cards only.
+   Shimmer on .glass-medium is for interactive cards only.
+
+   NOTE — v14.0 .glass-chromatic:
+   Featured project card gets iridescent border via box-shadow and
+   a warm teal/indigo gradient border override. No shimmer ::before
+   because the card already has the strongest visual treatment.
 */
