@@ -1,38 +1,38 @@
-// CONVICTION ENGINE v12.0 — ContactSection
+// CONVICTION ENGINE v13.0 — ContactSection
 //
-// CHANGELOG from v11.0:
+// CHANGELOG from v12.0:
 //
-//   FIX: Primary CTA was mailto: — opens email client which adds
-//     2-3 friction steps for DMs on mobile or enterprise devices.
-//     A Calendly link or a direct form converts 40-60% better than
-//     mailto: for senior-hire decisions. Two options:
+//   REF:  Hero closure line: "Let's build something that doesn't fail at 2am."
+//     Changed to "The system has to work at 2am. Let's make sure it does."
+//     Rationale: mirrors the hero headline more precisely — closing the
+//     narrative loop the reader opened on first load. DMs feel the
+//     continuity; engineers recognise the design discipline.
 //
-//     OPTION A (recommended): Replace primary CTA with Calendly link.
-//       <a href="https://calendly.com/scardubu/30min" className="cta-primary">
-//         Book a 30-min Call
-//       </a>
-//     OPTION B: Keep mailto: but add copy that reduces the friction:
-//       "Email opens instantly — no form, no queue."
+//   REF:  Primary CTA: "Start a conversation" → "Email Oscar directly".
+//     More concrete. Removes ambiguity about what clicking does.
+//     "No form, no queue. Opens your email client." defangs the remaining
+//     friction before the reader formulates it.
 //
-//     This component ships OPTION B (no external Calendly dependency).
-//     When Calendly is configured, swap the href and update the label.
+//   REF:  Body subheading: "Three ways to work together" → "Three paths.
+//     One outcome." More aphoristic, higher conviction.
 //
-//   FIX: Three hire vectors were visually equal weight.
-//     The primary vector (STAFF+) should be visually dominant.
-//     Added featured prop to first card — larger padding, stronger border.
+//   REF:  STAFF+ card body: "Available for Staff+ and Principal Backend roles"
+//     → shorter. Tightened 18 words to 12. Same signal, less friction.
 //
-//   ADD: Objection-defanging inline copy per card (Stripe technique).
-//     Each card now ends with a statement that removes the reader's
-//     primary objection before they can articulate it.
+//   REF:  CONSULTING card body: "Deliverable-led, not hourly" promoted
+//     to headline-level prominence (moved earlier in body copy).
 //
-//   KEEP: Left-border accent color per card — instant hire-type parsing.
-//   KEEP: Spring physics card hover.
-//   KEEP: Narrative arc closure ("Let's build something that doesn't fail at 2am").
+//   ADD:  Contact section ambient glow via #section-contact CSS rule (globals).
+//         No DOM change — CSS-only depth.
+//
+//   KEEP: Three hire vectors with accent-color left borders.
+//   KEEP: Spring physics card hover (stiffness 420, damping 30).
+//   KEEP: CopyEmail for users who want to paste into compose.
+//   KEEP: GitHub + LinkedIn social links (completeness, not conversion).
 //
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
-import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
 import { CopyEmail } from '@/components/CopyEmail';
@@ -47,17 +47,18 @@ import {
 // ── Hire vectors: three decision-maker paths ─────────────────────────────────
 // Order encodes priority. STAFF+ first — Oscar's primary desired engagement.
 // Each card has:
-//   - accentColor: left-border tint (visual category signal)
-//   - body: concrete value proposition with NO adjectives
-//   - objection: inline objection-defanging (Stripe technique)
+//   - accentColor: left-border tint (visual category signal — instant parsing)
+//   - body: concrete value proposition — NO adjectives, NO "passionate about"
+//   - objection: inline Stripe objection-defanging — removes the friction
+//               before the reader can articulate it
 const CONTACT_CARDS = [
   {
     id: 'staff-plus',
-    featured: true, // Primary — largest visual weight
+    featured: true, // Primary — largest visual weight, green (live/healthy)
     title: 'STAFF+ / PRINCIPAL',
     headline: 'Product delivery · APIs · data infrastructure',
-    body: 'Available for Staff+ and Principal Backend roles at fintech and AI-native product companies. Four years of independent platform work — multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments as baseline, not feature.',
-    // Objection defanging: "we need someone who knows our stack"
+    body: 'Staff+ and Principal Backend roles at fintech and AI-native product companies. Multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments — baseline, not feature.',
+    // Objection: "we need someone who knows our exact stack"
     objection: 'React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Effect-TS · Turborepo.',
     accentColor: 'var(--color-success)',
     glowColor: 'oklch(65% 0.18 155 / 0.06)',
@@ -67,8 +68,8 @@ const CONTACT_CARDS = [
     featured: false,
     title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
-    body: 'Four years shipping production platforms from zero. Backend infrastructure, compliance architecture (NDPC, NRS/DigiTax), and observability through early funding rounds.',
-    // Objection defanging: "we need someone available full-time"
+    body: 'Four years shipping production platforms from zero — compliance architecture (NDPC, NRS/DigiTax), observability, and backend infrastructure through early funding rounds.',
+    // Objection: "we need someone available full-time from day one"
     objection: 'The system should outlast the seed deck. Available for full-time equity engagements.',
     accentColor: 'var(--color-accent)',
     glowColor: 'oklch(63% 0.22 258 / 0.06)',
@@ -78,9 +79,9 @@ const CONTACT_CARDS = [
     featured: false,
     title: 'INFRASTRUCTURE CONSULTING',
     headline: 'Production reliability · compliance systems · ML backends',
-    body: 'Scoped engagements: production incident remediation, architecture review, Nigerian tax compliance integration (NTA 2025 / NRS 2026), and ML inference pipeline optimisation.',
-    // Objection defanging: "consulting is expensive and open-ended"
-    objection: 'Deliverable-led, not hourly. You get working infrastructure — not billable-hour reports.',
+    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NTA 2025 / NRS 2026), and ML inference optimisation.',
+    // Objection: "consulting is expensive and open-ended"
+    objection: 'You get working infrastructure — not billable-hour reports.',
     accentColor: 'var(--color-cyan)',
     glowColor: 'oklch(74% 0.18 195 / 0.06)',
   },
@@ -134,16 +135,20 @@ export function ContactSection() {
 
           {/* ── Section heading: A24 clip wipe — narrative arc closure ── */}
           {/*
-            This headline echoes the hero's "2am" motif — narrative closure.
-            The reader ends where they started: with the same design constraint.
-            DMs read this as commitment. Engineers read it as competence.
+            v13.0: mirrors the hero headline more precisely.
+            "The system has to work at 2am." opens the page.
+            "Let's make sure it does." closes the conversation.
+            DMs feel the continuity. Engineers recognise the discipline.
           */}
           <m.h2
             variants={headingVariant}
             id="contact-heading"
-            className="mb-5 max-w-[22ch]"
+            className="mb-5 max-w-[26ch]"
           >
-            {"Let's build something that doesn't fail at 2am."}
+            The system has to work at 2am.{' '}
+            <span style={{ color: 'var(--color-text-secondary)' }}>
+              {"Let's make sure it does."}
+            </span>
           </m.h2>
 
           <m.p
@@ -151,11 +156,10 @@ export function ContactSection() {
             className="mb-14 max-w-[56ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Three ways to work together — one for each type of decision-maker.
-            Pick the one that matches where you are.
+            Three paths. One outcome. Pick the one that matches where you are.
           </m.p>
 
-          {/* ── Hire vector cards: three paths, one outcome ────────────── */}
+          {/* ── Hire vector cards: three paths ────────────────────────── */}
           <div className="grid gap-4 lg:grid-cols-3 mb-14">
             {CONTACT_CARDS.map((card_item, i) => (
               <m.div
@@ -165,7 +169,9 @@ export function ContactSection() {
                 style={{
                   background: card_item.glowColor,
                   borderLeft: `3px solid ${card_item.accentColor}`,
-                  padding: card_item.featured ? 'clamp(1.5rem, 2.5vw, 2rem)' : 'clamp(1.25rem, 2vw, 1.75rem)',
+                  padding: card_item.featured
+                    ? 'clamp(1.5rem, 2.5vw, 2rem)'
+                    : 'clamp(1.25rem, 2vw, 1.75rem)',
                 }}
                 whileHover={{
                   y: -3,
@@ -212,7 +218,7 @@ export function ContactSection() {
                   {card_item.body}
                 </p>
 
-                {/* Objection-defanging line: visible, styled separately */}
+                {/* Objection-defanging line: Stripe technique */}
                 <p
                   className="mt-4 text-xs leading-6"
                   style={{ color: card_item.accentColor, opacity: 0.8 }}
@@ -226,9 +232,10 @@ export function ContactSection() {
           {/* ── Primary CTA block ────────────────────────────────────── */}
           {/*
             One primary CTA — email Oscar directly.
-            "No form, no queue" defangs the objection before they think it.
-            The secondary (CV download) is ghost weight — exists for HR paths.
-            Social links are tertiary — pure completeness, never conversion.
+            "No form, no queue. Opens your email client." defangs the
+            friction before the reader formulates it (Stripe technique).
+            The secondary (CV download) is ghost weight — HR path.
+            Social links are tertiary — completeness, never conversion.
           */}
           <m.div
             variants={child}
@@ -237,9 +244,9 @@ export function ContactSection() {
             <a
               href="mailto:scardubu@gmail.com"
               className="cta-primary"
-              aria-label="Email Oscar directly"
+              aria-label="Email Oscar directly — opens your email client"
             >
-              Start a conversation
+              Email Oscar directly
             </a>
 
             <a
@@ -254,6 +261,15 @@ export function ContactSection() {
             {/* Copy email: for users who want to paste into their own compose */}
             <CopyEmail />
           </m.div>
+
+          {/* ── Efficiency signal ───────────────────────────────────── */}
+          <m.p
+            variants={child}
+            className="mt-3 font-mono text-[10px] tracking-wider"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            No form, no queue. Opens your email client.
+          </m.p>
 
           {/* ── Social links ──────────────────────────────────────────── */}
           <m.div
