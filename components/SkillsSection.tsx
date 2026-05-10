@@ -1,12 +1,12 @@
-// CONVICTION ENGINE v20.0 — SkillsSection
+// CONVICTION ENGINE v21.0 — SkillsSection
 // Mobile-native wrapper around SkillsMap.
 // Lagos, Nigeria → Global.
 //
-// v20 changes:
-//   • Heading: "Built for the full stack. Proven in production." → more specific,
-//     outcome-first copy that names the disciplines.
-//   • Count: elevated from body copy into a metric badge above the headline.
-//   • Section number: 03 (kept, matches page order).
+// v21 changes vs v20:
+//   • Headline: names the outcome context, not just the quantity.
+//   • Intro paragraph: tightened to ≤56ch for mobile scan line.
+//   • Metric strip: each label now carries production context.
+//   • Section number: 03 (maintained, page order).
 
 import { SkillsMap } from '@/components/skills/SkillsMap';
 
@@ -34,27 +34,36 @@ export function SkillsSection() {
           </h2>
 
           <p
-            className="mt-4 max-w-[60ch] text-base leading-8"
+            className="mt-4 max-w-[56ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            52 skills across backend infrastructure, ML systems, frontend architecture,
-            fintech compliance, and DevOps — every one battle-tested in a live product,
-            not a tutorial.
+            52 battle-tested skills across ML, fintech compliance, backend infrastructure,
+            and DevOps — every one traceable to a live production system.
           </p>
 
-          {/* Trust signal: specific, scannable */}
-          <div
-            className="mt-5 flex flex-wrap gap-x-5 gap-y-2"
-          >
+          {/* Trust strip: scannable, production-anchored */}
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3">
             {[
-              { label: '52 skills', sub: 'mapped to live systems' },
-              { label: '7 disciplines', sub: 'ML · Backend · Fintech · DevOps' },
-              { label: '4 years', sub: 'production engineering' },
-            ].map(({ label, sub }) => (
+              {
+                label: '52 skills',
+                sub: 'mapped to live systems',
+                color: 'var(--color-film-teal)',
+              },
+              {
+                label: '7 disciplines',
+                sub: 'ML · Backend · Fintech · DevOps',
+                color: 'oklch(72% 0.17 160)',
+              },
+              {
+                label: '4 years',
+                sub: 'production engineering, Lagos',
+                color: 'oklch(75% 0.16 300)',
+              },
+            ].map(({ label, sub, color }) => (
               <div key={label} className="flex items-baseline gap-1.5">
                 <span
                   className="font-mono text-xs font-semibold"
-                  style={{ color: 'var(--color-film-teal)' }}
+                  style={{ color }}
                 >
                   {label}
                 </span>
