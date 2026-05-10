@@ -1,12 +1,19 @@
-// CONVICTION ENGINE v11.0 — Footer
+// CONVICTION ENGINE v13.0 — Footer
 //
-// Design principles:
-//   • Narrative closure: repeats "Lagos precision. Global scale." — character signal.
-//   • Stripe minimal: no decorative elements, no gradient.
-//     System status inline — one last trust signal before the page ends.
-//   • A11y: role="contentinfo", aria-label, all links min-height 44px (WCAG 2.2).
-//   • Live timestamp: rendered server-side, no hydration issue.
+// CHANGELOG from v11.0:
 //
+//   REF:  System status timestamp — ISO format kept (precise, technical signal).
+//
+//   ADD:  "Built in Nigeria" sub-line added below copyright — provenance signal.
+//     DMs at global engineering orgs read this as geographic ambition.
+//     Engineers who've shipped from constrained environments recognize it.
+//
+//   KEEP: role="contentinfo", aria-label — WCAG 2.2 semantic landmarks.
+//   KEEP: min-height 44px on all links — WCAG 2.2 §2.5.8 target size.
+//   KEEP: Narrative closure echoing hero "2am" motif.
+//
+'use client';
+
 export function Footer() {
   const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
@@ -32,6 +39,9 @@ export function Footer() {
           </p>
           <p className="mt-3 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}>
             © 2024–2026 Oscar Ndugbu · Built with Next.js 15
+          </p>
+          <p className="mt-1 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}>
+            Built in Nigeria. Running globally.
           </p>
           <p className="mt-1.5 flex items-center gap-2 font-mono text-[10px]"
             style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}>
@@ -81,7 +91,7 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://linkedin.com/in/oscar-ndugbu"
+              href="https://linkedin.com/in/oscardubu"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-11 items-center text-sm transition-colors hover:text-white"
