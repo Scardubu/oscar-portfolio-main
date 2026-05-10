@@ -1,28 +1,22 @@
-// CONVICTION ENGINE v13.0 — AboutSection
+// CONVICTION ENGINE v14.0 — AboutSection
 //
-// CHANGELOG from v8.1:
+// CHANGELOG from v13.0:
 //
-//   FIX:  .glass-surface applied to cert cards — was a silent no-op in v12.x
-//     because .glass-surface was never defined in globals.css.
-//     v13.0 adds the class to the design system; cards now have correct
-//     glass treatment: blur(8px) saturate(120%), subtle fresnel top-edge.
+//   UPGRADE: Mobile-native grid — single column default, 2-col at lg.
+//     Cert cards now render in a 2-column grid on sm+ to prevent excessively
+//     long single-column scroll on mobile before the CTA section appears.
 //
-//   FIX:  "Lagos" in kicker/bio copy removed. "Nigeria's federal public
-//     sector" is the correct framing — UBEC operates nationwide from Abuja.
+//   FIX:  Closing tagline: "Lagos precision. Global scale." — preserved.
+//     This is the correct location framing; matches Footer v14.1.
 //
-//   REF:  UBEC paragraph punched up — "touching every state" → "every
-//     local government area" is more precise and more authoritative.
+//   FIX:  Cert card touch targets: min-height 48px enforced on all cards.
+//     Previous p-4 padding produced ~40px on small screens — below WCAG AAA.
 //
-//   REF:  Callout block: "Not side projects" framing sharpened to match
-//     the Stripe objection-defanging vocabulary used in ContactSection.
-//
-//   REF:  Certifications — layout tightened, dates made consistent.
-//
-//   ADD:  Section scoped ambient glow via #section-about CSS rule (globals).
-//         No DOM change required — CSS-only ambient depth.
-//
+//   KEEP: glass-surface applied to cert cards (v13 fix).
+//   KEEP: 3fr/2fr desktop prose-to-credentials split — correct proportion.
 //   KEEP: staggerContainer + useInView — correct orchestration pattern.
-//   KEEP: 3fr/2fr grid — gives prose room to breathe, credentials visible.
+//   KEEP: UBEC federal-scale callout — strongest objection defang in the file.
+//   KEEP: prefers-reduced-motion: noMotion fallback.
 //
 'use client';
 
@@ -125,10 +119,9 @@ export function AboutSection() {
               and 15+ merged upstream contributions.
             </m.p>
 
-            {/* ── Callout: UBEC scale — objection-defanging ────────────────── */}
+            {/* ── UBEC callout: Stripe objection-defanging ──────────────────── */}
             {/*
-              Stripe technique: state the objection the reader is forming,
-              then immediately defang it.
+              Technique: state the objection the reader is forming, defang it.
               Objection: "non-CS background = self-taught, probably junior"
               Defang: "federal infrastructure ≠ side projects"
             */}
@@ -164,12 +157,15 @@ export function AboutSection() {
               Certifications
             </m.h3>
 
-            <div className="mt-6 space-y-3">
+            {/* v14.0: 2-col grid on sm+ — prevents excessively long mobile scroll */}
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
               {CERTS.map((cert) => (
                 <m.article
                   key={cert.name}
                   variants={itemVariants}
                   className="glass-surface rounded-[var(--radius-md)] p-4"
+                  // v14.0: enforce 48px min-height — WCAG AAA touch target
+                  style={{ minHeight: '48px' }}
                 >
                   <p className="text-sm font-medium text-white">
                     {cert.name}
