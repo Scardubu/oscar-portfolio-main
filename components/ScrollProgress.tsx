@@ -13,11 +13,10 @@ export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const reducedMotion = useReducedMotion();
 
-  // Smooth the scroll progress animation
   const springProgress = useSpring(scrollYProgress, {
     stiffness: 140,
-    damping: 28,
-    mass: 0.6,
+    damping:   28,
+    mass:      0.6,
     restDelta: 0.001,
   });
 
@@ -28,7 +27,6 @@ export function ScrollProgress() {
       setProgressValue(0);
       return;
     }
-
     setProgressValue(Math.round(value * 100));
   });
 
@@ -46,6 +44,7 @@ export function ScrollProgress() {
         origin-left
         will-change-transform
         pointer-events-none
+        hidden sm:block
       "
       style={{
         scaleX: reducedMotion ? 0 : springProgress,
