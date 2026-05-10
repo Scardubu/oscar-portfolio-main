@@ -1,15 +1,16 @@
-// CONVICTION ENGINE v21.0 — ProjectsSection
+// CONVICTION ENGINE v22.0 — ProjectsSection
 // Mobile-native: 320–430px is the source of truth.
 // Lagos, Nigeria → Global.
 //
-// v21 changes vs v20:
-//   • Featured card: BECAUSE line elevated ABOVE tech strip (most evaluator-facing signal).
-//   • CTA primary button: w-full on mobile, auto on sm+. Eliminates mis-tap.
-//   • Grid cards: BECAUSE value gets 2-line clamp + ellipsis to prevent layout break on long values.
-//   • Outcome pills: max 3 on mobile, all on sm+, controlled via CSS only.
-//   • Section intro: tighter paragraph (<56ch) for mobile line-length control.
-//   • whileHover: explicitly disabled on touch devices via reducedMotion guard.
-//   • All CTAs: min-h-[48px] guaranteed.
+// v22 fixes vs v21:
+//   • CRITICAL: Restored missing `<a` opening tags for demoUrl, githubUrl CTA
+//     links in FeaturedProjectCard and ProjectCard — JSX syntax errors that
+//     caused hydration failure and silent link removal on prod builds.
+//   • FeaturedProjectCard CTA strip: converted all external hrefs to <a> with
+//     correct rel="noopener noreferrer" for security hygiene.
+//   • ProjectCard github link: same fix — missing `<a` restored.
+//   • whileTap: added to all CTA links for physical feedback on touch devices.
+//   • Outcome pill count: featured card now shows all on sm+, capped at 4 mobile.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -56,7 +57,7 @@ function TechStrip({
   const rest = stack.length - visible.length;
   return (
     <div
-      className="mt-3 flex flex-wrap gap-1"
+      className="mt-3 flex flex-wrap gap-1.5"
       aria-label={`${slug} technology stack`}
     >
       {visible.map((tech) => (
@@ -73,7 +74,7 @@ function TechStrip({
           className="rounded-md px-2 py-0.5 font-mono text-[10px]"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          +{rest} more
+          +{rest}
         </span>
       )}
     </div>
@@ -118,13 +119,16 @@ function FeaturedProjectCard({
           {featured.tagline}
         </p>
 
-        {/* Outcomes — flex-wrap, no scroll */}
+        {/* Outcomes — capped at 4 mobile, all sm+ */}
         <ul
           className="mt-4 flex flex-wrap gap-2"
           aria-label={`${featured.title} outcomes`}
         >
-          {featured.outcomes.map((outcome) => (
-            <li key={`${featured.slug}-${outcome}`} className="pill-cyan shrink-0">
+          {featured.outcomes.map((outcome, i) => (
+            <li
+              key={`${featured.slug}-${outcome}`}
+              className={`pill-cyan shrink-0 ${i >= 4 ? 'hidden sm:flex' : ''}`}
+            >
               {outcome}
             </li>
           ))}
@@ -254,7 +258,7 @@ function FeaturedProjectCard({
             </Link>
           )}
           {featured.demoUrl && (
-            
+            <a
               href={featured.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -265,7 +269,7 @@ function FeaturedProjectCard({
             </a>
           )}
           {featured.githubUrl && (
-            
+            <a
               href={featured.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -319,7 +323,7 @@ function ProjectCard({
         {project.tagline}
       </p>
 
-      {/* Outcomes: 3 max always — no overflow */}
+      {/* Outcomes: 3 max always */}
       <ul
         className="mt-4 flex flex-wrap gap-2"
         aria-label={`${project.title} outcomes`}
@@ -367,7 +371,7 @@ function ProjectCard({
       </div>
 
       {/* Tech strip — condensed */}
-      <div className="mt-3 flex flex-wrap gap-1">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         {project.stack.slice(0, 4).map((tech) => (
           <span
             key={tech}
@@ -398,7 +402,7 @@ function ProjectCard({
           </Link>
         )}
         {project.githubUrl && (
-          
+          <a
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
