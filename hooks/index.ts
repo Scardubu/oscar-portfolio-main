@@ -1,10 +1,10 @@
-"use client";
-
-/**
- * hooks/index.ts — Portfolio Reusable Hooks
- * Oscar Ndugbu | scardubu.dev
- */
-
-export { useReducedMotion } from "./useReducedMotion";
-export { useAnimatedCounter } from "./useAnimatedCounter";
-export { useInView } from "./useInView";
+export { useAnimatedCounter } from './useAnimatedCounter';
+export { useCountUp } from './useCountUp';
+export { useDraggable } from './useDraggable';
+export { useInView } from './useInView';
+export { useMagnetic } from './useMagnetic';
+export { useReadingProgress } from './useReadingProgress';
+export { useReducedMotion, useMotionSafe, useDeviceMotionTier } from './useReducedMotion';
+export { useScrollReveal } from './useScrollReveal';
+export { useSpotlight } from './useSpotlight';
+export { useTypewriter } from './useTypewriter';
