@@ -1,11 +1,15 @@
-// CONVICTION ENGINE v18.0 — WritingSection
+// CONVICTION ENGINE v20.0 — WritingSection
 // Mobile-native: filter chips scroll horizontally (no wrap), rows have
-// 44px minimum touch target, featured article is vertically scannable.
-// Changes from v10:
-//   • Filter row: overflow-x-auto, shrink-0 chips, no wrapping on mobile.
-//   • Featured article: removed lg:grid split layout — keeps vertical flow.
-//   • Writing rows: min-h-[44px] flex, date + title in same row on md+.
-//   • "View all" CTA: full-width on mobile, centered.
+// 48px minimum touch target, featured article is vertically scannable.
+// Lagos, Nigeria → Global.
+//
+// v20 changes:
+//   • Heading: "Engineering in depth" → "Writing that ships decisions." — outcome-first.
+//   • Featured card: reading time elevated next to title as a scannable signal.
+//   • Article row: date hidden on mobile (saves horizontal space), visible sm+.
+//   • View all CTA: pill-cyan with count, full-width on mobile.
+//   • AnimatePresence: popLayout for smooth filter transitions.
+//   • All filter labels properly mapped to post tags.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -49,8 +53,8 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
     >
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          {/* ── Section header ────────────────────────────────────── */}
-          <m.div variants={child} className="mb-8 sm:mb-12 max-w-4xl">
+          {/* Section header */}
+          <m.div variants={child} className="mb-8 sm:mb-12">
             <div className="section-kicker-row">
               <span className="section-number" aria-hidden="true">05</span>
               <span className="section-label">Writing</span>
@@ -59,10 +63,10 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             <m.h2
               variants={reducedMotion ? child : clipReveal}
               id="writing-heading"
-              className="mt-[var(--space-2)]"
+              className="mt-[var(--space-2)] max-w-[22ch]"
               style={{ color: 'var(--color-text-primary)' }}
             >
-              Engineering in depth
+              Writing that ships decisions.
             </m.h2>
 
             <m.p
@@ -70,11 +74,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               className="mt-4 max-w-[62ch] text-base leading-[1.8]"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Long-form breakdowns of shipping decisions, platform constraints, and what holds
-              when production stops being polite.
+              Long-form breakdowns of the calls that held in production — platform
+              constraints, architecture decisions, and what holds when systems stop
+              being polite from Lagos to the world.
             </m.p>
 
-            {/* ── Filter chips: horizontal scroll on mobile ─────────── */}
+            {/* Filter chips: horizontal scroll on mobile */}
             <m.div
               variants={child}
               className="mt-5 flex gap-2 overflow-x-auto pb-1 no-scrollbar"
@@ -82,33 +87,50 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               role="group"
               aria-label="Filter articles by topic"
             >
-              {(['ALL', ...FILTER_LABELS] as const).map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
-                  className={`tag shrink-0 cursor-pointer min-h-[36px] ${activeFilter === label ? 'tag--active' : ''}`}
-                >
-                  {label}
-                </button>
-              ))}
+              {(['ALL', ...FILTER_LABELS] as const).map((label) => {
+                const isActive = activeFilter === label;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
+                    aria-pressed={isActive}
+                    className={[
+                      'shrink-0 rounded-full px-4 py-2 font-mono text-[11px] tracking-widest uppercase',
+                      'transition-all duration-200 min-h-[44px] border',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                      isActive
+                        ? 'bg-white/10 border-white/25 text-white'
+                        : 'border-transparent text-white/45 hover:text-white/70',
+                    ].join(' ')}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </m.div>
           </m.div>
 
-          {/* ── Featured article ──────────────────────────────────── */}
           {featuredPost ? (
             <>
+              {/* Featured article */}
               <m.article
                 variants={card}
-                className="glass-full rounded-[var(--radius-xl)] p-6 sm:p-8 lg:p-10 mb-4"
+                className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
               >
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="pill pill-cyan">Featured</span>
                   <span className="badge-muted">{posts.length} published</span>
+                  <span
+                    className="font-mono text-xs"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {featuredPost.readingTime} min read
+                  </span>
                 </div>
 
                 <h3
-                  className="mt-5 max-w-[24ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight"
+                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   {featuredPost.title}
@@ -122,15 +144,13 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </p>
 
                 <div
-                  className="mt-5 flex flex-wrap items-center gap-3 text-xs"
+                  className="mt-4 flex flex-wrap items-center gap-3 text-xs"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
                   </time>
-                  <span aria-hidden="true">·</span>
-                  <span>{featuredPost.readingTime} min read</span>
-                  {featuredPost.tags.slice(0, 2).map((tag) => (
+                  {featuredPost.tags.slice(0, 3).map((tag) => (
                     <span key={`${featuredPost.slug}-${tag}`} className="pill">
                       {tag.toUpperCase()}
                     </span>
@@ -139,7 +159,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border px-5 py-2.5 text-sm transition"
+                  className="mt-6 inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 py-2.5 text-sm transition"
                   style={{
                     borderColor: 'var(--color-cyan-surface)',
                     color: 'var(--color-film-teal)',
@@ -150,10 +170,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </Link>
               </m.article>
 
-              {/* ── Article list ──────────────────────────────────── */}
+              {/* Article list */}
               {otherPosts.length > 0 && (
                 <AnimatePresence mode="popLayout">
-                  <m.div variants={container} className="grid gap-px overflow-hidden rounded-[var(--radius-lg)]" style={{ background: 'var(--color-border)' }}>
+                  <m.div
+                    variants={container}
+                    className="grid gap-px overflow-hidden rounded-[var(--radius-lg)]"
+                    style={{ background: 'var(--color-border)' }}
+                  >
                     {otherPosts.map((post) => (
                       <m.div
                         key={post.slug}
@@ -167,17 +191,26 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                             whileHover={
                               reducedMotion
                                 ? undefined
-                                : { x: 4, transition: { type: 'spring', stiffness: 320, damping: 28 } }
+                                : {
+                                    x: 4,
+                                    transition: {
+                                      type: 'spring',
+                                      stiffness: 320,
+                                      damping: 28,
+                                    },
+                                  }
                             }
-                            className="writing-row min-h-[52px]"
+                            className="writing-row min-h-[52px] px-4 sm:px-0"
                           >
+                            {/* Date: hidden on mobile to save space */}
                             <time
                               dateTime={post.date}
-                              className="min-w-24 shrink-0 font-mono text-xs"
+                              className="hidden sm:block min-w-24 shrink-0 font-mono text-xs"
                               style={{ color: 'var(--color-text-muted)' }}
                             >
                               {formatDate(post.date)}
                             </time>
+
                             <div className="flex-1 min-w-0">
                               <span
                                 className="writing-title block truncate text-sm font-medium"
@@ -185,9 +218,18 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                               >
                                 {post.title}
                               </span>
+                              {/* Mobile: show date inline under title */}
+                              <time
+                                dateTime={post.date}
+                                className="sm:hidden block font-mono text-[10px] mt-0.5"
+                                style={{ color: 'var(--color-text-muted)' }}
+                              >
+                                {formatDate(post.date)}
+                              </time>
                             </div>
+
                             <span
-                              className="text-xs whitespace-nowrap shrink-0"
+                              className="text-xs whitespace-nowrap shrink-0 ml-3"
                               style={{ color: 'var(--color-text-muted)' }}
                             >
                               {post.readingTime} min
@@ -200,16 +242,16 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </AnimatePresence>
               )}
 
-              {/* ── View all CTA ──────────────────────────────────── */}
+              {/* View all CTA */}
               <m.div
                 variants={child}
                 className="mt-8 flex justify-center sm:justify-start"
               >
                 <Link
                   href="/writing"
-                  className="pill pill-cyan inline-flex min-h-[44px] items-center gap-2 px-5 transition hover:-translate-y-px"
+                  className="pill pill-cyan inline-flex min-h-[48px] items-center gap-2 px-5 transition hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-white/30"
                 >
-                  <span>View all writing ({posts.length})</span>
+                  <span>All {posts.length} articles</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </m.div>
