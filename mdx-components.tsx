@@ -73,7 +73,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const isExternal = href?.startsWith('http');
       if (isExternal) {
         return (
-          
+          <a
             href={href}
             target="_blank"
             rel="noopener noreferrer"
