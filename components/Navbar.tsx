@@ -1,27 +1,19 @@
-// CONVICTION ENGINE v15.0 — Navbar
+// CONVICTION ENGINE v17.0 — Navbar
 //
-// v15.0 MOBILE-NATIVE REBUILD:
+// CHANGELOG from v15.0:
 //
-//   ARCH: Dual-plane navigation system.
-//     Mobile (≤768px): Minimal top identity bar (logo + emergency CTA) +
-//       fixed bottom navigation in thumb comfort zone.
-//     Desktop (>768px): Full original top nav (unchanged hierarchy).
+//   VISUAL:
+//     - All accent colors shifted from cyan to film-teal (--color-film-teal).
+//     - Bottom nav pill indicator updated to film-teal with glow.
+//     - ⌘K button: border-white/10 (was white/12) — cleaner glass appearance.
+//     - Mobile "Hire me" button: now uses film-teal text, higher contrast.
 //
-//   ADD:  BottomNav component — thumb ergonomic, 48×48px targets.
-//         5 items: Work · Writing · Skills · About · Contact
-//         Active section tracking via IntersectionObserver (shared state).
-//
-//   ADD:  Mobile top bar condensed to 52px height — reclaims vertical px.
-//         Shows only: Logo wordmark + Book a Call CTA.
-//         No hamburger menu — bottom nav replaces it entirely.
-//
-//   REF:  AnimatePresence mobile dropdown removed — replaced by bottom nav.
-//
-//   KEEP: IntersectionObserver active section tracking — shared between top + bottom.
+//   KEEP: Dual-plane architecture — minimal top bar + thumb-ergonomic bottom nav.
+//   KEEP: IntersectionObserver active section tracking.
 //   KEEP: Spring physics on desktop nav indicator (layoutId).
 //   KEEP: Scroll-activated glass: 0px → blur(20px) at 8px scroll.
 //   KEEP: SystemStatus, ThemeToggle, ⌘K on desktop.
-//   KEEP: All WCAG 2.2 compliance — focus rings, Escape handling, aria-current.
+//   KEEP: All WCAG 2.2 compliance.
 //
 'use client';
 
@@ -34,7 +26,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-// ── Section IDs — shared between top and bottom nav ──────────────────────────
 const SECTION_IDS = [
   'section-projects',
   'open-source',
@@ -44,7 +35,6 @@ const SECTION_IDS = [
   'section-contact',
 ] as const;
 
-// ── Desktop nav links (unchanged from v14) ────────────────────────────────────
 const NAV_LINKS = [
   { label: 'Projects',  href: 'section-projects' },
   { label: 'Writing',   href: 'section-writing' },
@@ -53,8 +43,6 @@ const NAV_LINKS = [
   { label: 'Contact',   href: 'section-contact' },
 ] as const;
 
-// ── Bottom nav items — 5 thumb-reachable destinations ────────────────────────
-// Ordered by conversion priority: Work first (proof), Contact last (CTA).
 const BOTTOM_NAV_ITEMS = [
   {
     label: 'Work',
@@ -122,7 +110,6 @@ function resolveSectionHref(pathname: string, section: string) {
   return pathname === '/' ? `#${section}` : `/#${section}`;
 }
 
-// ── Bottom Navigation — mobile thumb ergonomics ───────────────────────────────
 function BottomNav({
   activeSection,
   pathname,
@@ -172,14 +159,12 @@ function BottomNav({
   );
 }
 
-// ── Main NavBar ───────────────────────────────────────────────────────────────
 export function NavBar() {
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
 
-  // ── Scroll: glass activation at 8px ─────────────────────────────────────
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 8);
     window.addEventListener('scroll', handler, { passive: true });
@@ -187,7 +172,6 @@ export function NavBar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // ── IntersectionObserver: active section tracking ────────────────────────
   useEffect(() => {
     const els = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     if (!els.length) return;
@@ -208,9 +192,8 @@ export function NavBar() {
 
   return (
     <>
-      {/* ── Top header ─────────────────────────────────────────────────────── */}
+      {/* ── Top header ─────────────────────────────────────────────────── */}
       <header>
-        {/* Skip nav — WCAG 2.2 §2.4.1 */}
         <a href="#main-content" className="skip-nav">
           Skip to content
         </a>
@@ -238,7 +221,6 @@ export function NavBar() {
             </Link>
 
             {/* ── Desktop nav links ─────────────────────────────────── */}
-            {/* Hidden on mobile via CSS — bottom nav handles mobile wayfinding */}
             <div className="desktop-nav-links nav-links hidden items-center gap-1 md:flex" role="list">
               {NAV_LINKS.map(({ label, href }) => {
                 const isActive = activeSection === href;
@@ -290,12 +272,17 @@ export function NavBar() {
               </a>
             </div>
 
-            {/* ── Mobile: emergency CTA only — bottom nav handles navigation ─ */}
-            {/* Placed in top-right as secondary reinforcement, not primary action */}
+            {/* ── Mobile: emergency CTA — film teal for visibility ─────── */}
             <a
               href="mailto:scardubu@gmail.com"
-              className="flex md:hidden items-center justify-center rounded-md px-3 py-2 text-xs font-semibold text-white/80 border border-white/12 bg-white/5 transition hover:bg-white/10"
-              style={{ minHeight: '36px', minWidth: '44px' }}
+              className="flex md:hidden items-center justify-center rounded-md px-3 py-2 text-xs font-semibold transition"
+              style={{
+                minHeight: '36px',
+                minWidth: '44px',
+                color: 'var(--color-film-teal)',
+                border: '1px solid var(--color-film-teal-glow)',
+                background: 'var(--color-film-teal-surface)',
+              }}
               aria-label="Email Oscar"
             >
               Hire me
