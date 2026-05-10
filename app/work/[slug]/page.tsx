@@ -87,7 +87,7 @@ function ProjectLinksCard({
       <span className="label">Links</span>
       <div className="mt-4 flex flex-col gap-3">
         {demoUrl && (
-          
+          <a
             href={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -97,7 +97,7 @@ function ProjectLinksCard({
           </a>
         )}
         {githubUrl && (
-          
+          <a
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
