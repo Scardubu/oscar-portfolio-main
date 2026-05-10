@@ -1,17 +1,13 @@
-// CONVICTION ENGINE v20.0 — SkillsMap
+// CONVICTION ENGINE v21.0 — SkillsMap
 // Mobile-native:
-//   • Tab row: overflow-x-auto, shrink-0 tabs, min-h-[44px] touch targets.
-//   • Grid: 2-col on mobile, 3 on md, 4 on lg, 5 on xl.
-//   • Skill cards: compact on mobile (p-2.5), pillar label + context tags
-//     visible only on sm+ to reduce density.
+//   • Tab row: overflow-x-auto, shrink-0, min-h-[44px] touch targets.
+//   • Grid: 2-col mobile, 3 md, 4 lg, 5 xl.
+//   • SkillCard: level label + production tags visible on expert/proficient
+//     even on mobile (expert = must show; foundational = sm+ only).
 //   • Bar fill: spring-eased on capable devices, instant on reduced-motion.
-//   • Active tab: pill highlight with accent color, not just border change.
-//   • Live count: sr-friendly aria-live region.
-//
-// ANIMATION CONTRACT:
-//   AnimatePresence handles tab switch (key prop on grid).
-//   Inner items use initial/animate — NOT whileInView.
-//   When animate is set on a parent, Framer ignores viewport triggers.
+//   • Active tab: pill highlight with accent color.
+//   • Live count: aria-live region.
+//   • Keyboard: all tab buttons have proper type="button" + focus ring.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import { filterTransition } from '@/lib/motion';
@@ -23,17 +19,20 @@ const LEVEL_CONFIG = {
   expert: {
     label: 'Expert',
     width: '95%',
-    barColor: 'oklch(73% 0.18 196)',  // --color-film-teal equivalent
+    barColor: 'oklch(73% 0.18 196)',
+    labelColor: 'var(--color-film-teal)',
   },
   proficient: {
-    label: 'Proficient',
+    label: 'Pro',
     width: '70%',
-    barColor: 'oklch(72% 0.17 160)',  // emerald tone
+    barColor: 'oklch(72% 0.17 160)',
+    labelColor: 'oklch(72% 0.17 160)',
   },
   foundational: {
-    label: 'Foundational',
+    label: 'Found.',
     width: '35%',
     barColor: 'oklch(100% 0 0 / 0.3)',
+    labelColor: 'var(--color-text-muted)',
   },
 } as const;
 
@@ -47,6 +46,7 @@ function SkillCard({
   readonly index: number;
 }): React.ReactElement {
   const lvl = LEVEL_CONFIG[skill.level];
+  const isExpert = skill.level === 'expert';
 
   const systemTags = skill.tags
     .filter((t): t is Extract<typeof t, `used-in:${string}`> => t.startsWith('used-in:'))
@@ -54,7 +54,7 @@ function SkillCard({
 
   const metaTags = skill.tags.filter((t) => !t.startsWith('used-in:'));
   const usedInLabel = systemTags.length ? ` — used in: ${systemTags.join(', ')}` : '';
-  const cardLabel = `${skill.name} — ${lvl.label}${usedInLabel}`;
+  const cardLabel = `${skill.name} — ${LEVEL_CONFIG[skill.level].label}${usedInLabel}`;
 
   return (
     <m.div
@@ -84,13 +84,7 @@ function SkillCard({
         </span>
         <span
           className="shrink-0 text-[9px] sm:text-[10px] font-medium font-mono"
-          style={{
-            color: skill.level === 'expert'
-              ? 'var(--color-film-teal)'
-              : skill.level === 'proficient'
-              ? 'oklch(72% 0.17 160)'
-              : 'var(--color-text-muted)',
-          }}
+          style={{ color: lvl.labelColor }}
         >
           {lvl.label}
         </span>
@@ -106,7 +100,7 @@ function SkillCard({
         }
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`${skill.name} proficiency: ${lvl.label}`}
+        aria-label={`${skill.name} proficiency: ${LEVEL_CONFIG[skill.level].label}`}
       >
         <m.div
           style={{ background: lvl.barColor }}
@@ -127,10 +121,13 @@ function SkillCard({
         />
       </div>
 
-      {/* Context tags: sm+ only */}
-      {(systemTags.length > 0 || metaTags.length > 0) && (
-        <div className="hidden sm:flex flex-wrap gap-1 mt-1">
-          {systemTags.slice(0, 3).map((tag) => (
+      {/* Context tags:
+          - Expert: show on mobile (trust signal) — 1 system tag max
+          - Proficient: show on sm+ only
+          - Foundational: sm+ only */}
+      {systemTags.length > 0 && (
+        <div className={`flex flex-wrap gap-1 mt-1 ${isExpert ? '' : 'hidden sm:flex'}`}>
+          {systemTags.slice(0, isExpert ? 1 : 3).map((tag) => (
             <span
               key={`sys-${tag}`}
               className="border-border-subtle bg-surface text-cyan rounded border px-1.5 py-0.5 text-[9px] font-semibold"
@@ -139,7 +136,7 @@ function SkillCard({
               {tag}
             </span>
           ))}
-          {metaTags.slice(0, 2).map((tag) => (
+          {!isExpert && metaTags.slice(0, 2).map((tag) => (
             <span
               key={`meta-${tag}`}
               className="border-border-subtle bg-surface text-text-muted rounded border px-1.5 py-0.5 text-[9px] font-medium"
@@ -167,7 +164,7 @@ export function SkillsMap(): React.ReactElement {
 
   return (
     <div className="space-y-5">
-      {/* Tab row: overflow scroll on mobile */}
+      {/* Tab row: horizontal scroll on mobile */}
       <div
         className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
         style={{ scrollbarWidth: 'none' }}
@@ -197,7 +194,7 @@ export function SkillsMap(): React.ReactElement {
         })}
       </div>
 
-      {/* Live count: sr-friendly */}
+      {/* Live count */}
       <p
         aria-live="polite"
         aria-atomic="true"
