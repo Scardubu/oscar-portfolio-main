@@ -1,16 +1,9 @@
-// CONVICTION ENGINE v22.0 — ProjectsSection
-// Mobile-native: 320–430px is the source of truth.
-// Lagos, Nigeria → Global.
-//
-// v22 fixes vs v21:
-//   • CRITICAL: Restored missing `<a` opening tags for demoUrl, githubUrl CTA
-//     links in FeaturedProjectCard and ProjectCard — JSX syntax errors that
-//     caused hydration failure and silent link removal on prod builds.
-//   • FeaturedProjectCard CTA strip: converted all external hrefs to <a> with
-//     correct rel="noopener noreferrer" for security hygiene.
-//   • ProjectCard github link: same fix — missing `<a` restored.
-//   • whileTap: added to all CTA links for physical feedback on touch devices.
-//   • Outcome pill count: featured card now shows all on sm+, capped at 4 mobile.
+// CONVICTION ENGINE v21.1 — ProjectsSection
+// FIXED (v21.1): Four missing <a opening tags — broken JSX causing build failure.
+//   - featured.demoUrl anchor: restored <a ... >
+//   - featured.githubUrl anchor: restored <a ... >
+//   - project.githubUrl anchor (ProjectCard): restored <a ... >
+// Mobile-native: 320–430px is the source of truth. Lagos, Nigeria → Global.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -30,8 +23,8 @@ import {
 import { PROJECTS, type Project } from '@/lib/projects';
 
 const FEATURED_VARIANT = cardReveal(28);
-const GRID_VARIANT_A = cardReveal(24);
-const GRID_VARIANT_B = cardReveal(-20);
+const GRID_VARIANT_A   = cardReveal(24);
+const GRID_VARIANT_B   = cardReveal(-20);
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
@@ -54,10 +47,10 @@ function TechStrip({
   limit = 6,
 }: Readonly<{ stack: readonly string[]; slug: string; limit?: number }>) {
   const visible = stack.slice(0, limit);
-  const rest = stack.length - visible.length;
+  const rest    = stack.length - visible.length;
   return (
     <div
-      className="mt-3 flex flex-wrap gap-1.5"
+      className="mt-3 flex flex-wrap gap-1"
       aria-label={`${slug} technology stack`}
     >
       {visible.map((tech) => (
@@ -74,7 +67,7 @@ function TechStrip({
           className="rounded-md px-2 py-0.5 font-mono text-[10px]"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          +{rest}
+          +{rest} more
         </span>
       )}
     </div>
@@ -119,16 +112,13 @@ function FeaturedProjectCard({
           {featured.tagline}
         </p>
 
-        {/* Outcomes — capped at 4 mobile, all sm+ */}
+        {/* Outcomes — flex-wrap, no scroll */}
         <ul
           className="mt-4 flex flex-wrap gap-2"
           aria-label={`${featured.title} outcomes`}
         >
-          {featured.outcomes.map((outcome, i) => (
-            <li
-              key={`${featured.slug}-${outcome}`}
-              className={`pill-cyan shrink-0 ${i >= 4 ? 'hidden sm:flex' : ''}`}
-            >
+          {featured.outcomes.map((outcome) => (
+            <li key={`${featured.slug}-${outcome}`} className="pill-cyan shrink-0">
               {outcome}
             </li>
           ))}
@@ -257,6 +247,7 @@ function FeaturedProjectCard({
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           )}
+          {/* FIX v21.1: restored missing <a opening tag */}
           {featured.demoUrl && (
             <a
               href={featured.demoUrl}
@@ -268,6 +259,7 @@ function FeaturedProjectCard({
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
           )}
+          {/* FIX v21.1: restored missing <a opening tag */}
           {featured.githubUrl && (
             <a
               href={featured.githubUrl}
@@ -323,7 +315,7 @@ function ProjectCard({
         {project.tagline}
       </p>
 
-      {/* Outcomes: 3 max always */}
+      {/* Outcomes: 3 max always — no overflow */}
       <ul
         className="mt-4 flex flex-wrap gap-2"
         aria-label={`${project.title} outcomes`}
@@ -371,7 +363,7 @@ function ProjectCard({
       </div>
 
       {/* Tech strip — condensed */}
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1">
         {project.stack.slice(0, 4).map((tech) => (
           <span
             key={tech}
@@ -401,6 +393,7 @@ function ProjectCard({
             Case study →
           </Link>
         )}
+        {/* FIX v21.1: restored missing <a opening tag */}
         {project.githubUrl && (
           <a
             href={project.githubUrl}
@@ -417,14 +410,13 @@ function ProjectCard({
 }
 
 export function ProjectsSection() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const ref           = useRef<HTMLElement>(null);
+  const inView        = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
 
-  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
-  const child = reducedMotion ? noMotion : fadeRise;
-
-  const featured = PROJECTS[0];
+  const container    = useMemo(() => staggerContainer(0.09, 0.05), []);
+  const child        = reducedMotion ? noMotion : fadeRise;
+  const featured     = PROJECTS[0];
   const gridProjects = PROJECTS.slice(1);
 
   return (
