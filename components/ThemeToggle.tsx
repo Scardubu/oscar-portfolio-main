@@ -16,7 +16,14 @@ export function ThemeToggle() {
       type="button"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="text-text-muted hover:text-text-primary inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 transition hover:border-white/20"
+      className="
+        inline-flex items-center justify-center
+        min-h-[44px] min-w-[44px]
+        rounded-lg border border-white/10
+        transition hover:border-white/20
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
+      "
+      style={{ color: 'var(--color-text-muted)' }}
     >
       <AnimatePresence initial={false} mode="wait">
         {isDark ? (
@@ -56,14 +63,14 @@ export function ThemeToggle() {
             aria-hidden="true"
           >
             <circle cx="12" cy="12" r="4" />
-            <line x1="12" y1="2" x2="12" y2="4" />
+            <line x1="12" y1="2"  x2="12" y2="4"  />
             <line x1="12" y1="20" x2="12" y2="22" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64"  />
             <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="2" y1="12" x2="4" y2="12" />
+            <line x1="2"  y1="12" x2="4"  y2="12" />
             <line x1="20" y1="12" x2="22" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36" />
+            <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"  />
           </m.svg>
         )}
       </AnimatePresence>
