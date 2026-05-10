@@ -1,252 +1,202 @@
-// app/writing/[slug]/page.tsx — CONVICTION ENGINE v21.0
-// Mobile-native article page. Sidebar renders below article on mobile.
+// app/writing/page.tsx — CONVICTION ENGINE v21.1
+// FIXED: Was incorrectly populated with WritingPostPage (slug page) content.
+//   /writing route was calling notFound() on every request since params.slug
+//   is undefined at the non-dynamic segment. This is the correct list page.
+// Mobile-native: single-column list → 2-col on sm+.
 // Lagos, Nigeria → Global.
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
 import { Footer } from '@/components/Footer';
 import { NavBar } from '@/components/Navbar';
-import { ReadingProgress } from '@/components/ReadingProgress';
-import { getWritingPost, getWritingPosts } from '@/lib/content';
+import { getWritingPosts } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
-type WritingPageProps = Readonly<{
-  params: Promise<{ slug: string }>;
-}>;
+export const metadata: Metadata = {
+  title: 'Writing · Oscar Ndugbu',
+  description:
+    'Architecture decisions, ML trade-offs, and what actually held in production — technical writing by Oscar Ndugbu from Lagos.',
+  alternates: { canonical: 'https://www.scardubu.dev/writing' },
+  openGraph: {
+    title: 'Writing · Oscar Ndugbu',
+    description: 'Architecture decisions, ML trade-offs, and what held in production.',
+    url: 'https://www.scardubu.dev/writing',
+    type: 'website',
+  },
+};
 
-function getRelatedPosts(
-  currentSlug: string,
-  currentTags: string[],
-  posts: Awaited<ReturnType<typeof getWritingPosts>>
-) {
-  return posts
-    .filter((e) => e.slug !== currentSlug)
-    .map((e) => ({
-      ...e,
-      sharedTags: e.tags.filter((t) => currentTags.includes(t)).length,
-    }))
-    .sort((a, b) => {
-      if (b.sharedTags !== a.sharedTags) return b.sharedTags - a.sharedTags;
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    })
-    .slice(0, 2);
-}
-
-export async function generateStaticParams() {
+export default async function WritingPage() {
   const posts = await getWritingPosts();
-  return posts.map((p) => ({ slug: p.slug }));
-}
-
-export async function generateMetadata({ params }: WritingPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const post     = await getWritingPost(slug);
-
-  if (!post) return { title: 'Writing' };
-
-  return {
-    title: post.frontmatter.title,
-    description: post.frontmatter.summary,
-    alternates: { canonical: `https://www.scardubu.dev/writing/${slug}` },
-    openGraph: {
-      title: `${post.frontmatter.title} · Oscar Ndugbu`,
-      description: post.frontmatter.summary,
-      url: `https://www.scardubu.dev/writing/${slug}`,
-      type: 'article',
-    },
-  };
-}
-
-function articleJsonLd(title: string, summary: string, date: string, slug: string) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: title,
-    description: summary,
-    datePublished: date,
-    url: `https://www.scardubu.dev/writing/${slug}`,
-    author: {
-      '@type': 'Person',
-      name: 'Oscar Ndugbu',
-      url: 'https://www.scardubu.dev',
-    },
-  };
-}
-
-export default async function WritingPostPage({ params }: WritingPageProps) {
-  const { slug }   = await params;
-  const post       = await getWritingPost(slug);
-  const allPosts   = await getWritingPosts();
-
-  if (!post) notFound();
-
-  const relatedPosts = getRelatedPosts(slug, post.frontmatter.tags ?? [], allPosts);
-  const articleMeta  = [
-    { label: 'Published',     value: formatDate(post.frontmatter.date) },
-    { label: 'Reading time',  value: `${post.readingTime} min read` },
-  ];
+  const featured = posts.find((p) => p.featured) ?? posts[0];
+  const rest     = posts.filter((p) => p !== featured);
 
   return (
     <>
       <NavBar />
-      <ReadingProgress />
       <main id="main-content" tabIndex={-1}>
-        <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
+        <section
+          className="pt-[calc(var(--nav-height)+var(--space-12))] pb-[var(--section-py)]"
+        >
           <div className="container">
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify(
-                  articleJsonLd(
-                    post.frontmatter.title,
-                    post.frontmatter.summary,
-                    post.frontmatter.date,
-                    slug
-                  )
-                ),
-              }}
-            />
 
-            {/* Back link — thumb zone */}
-            <Link
-              href="/writing"
-              className="pill pill-cyan inline-flex min-h-[44px] items-center"
-            >
-              ← Writing
-            </Link>
-
-            {/*
-              Grid:
-              - Mobile: single column
-              - xl+: two-column sticky sidebar
-            */}
-            <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start xl:gap-10">
-              {/* Article */}
-              <div className="min-w-0">
-                <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
-                  <span className="label">Writing</span>
-                  <h1 className="mt-[var(--space-2)]">{post.frontmatter.title}</h1>
-                  <p
-                    className="mt-[var(--space-4)] text-base sm:text-lg leading-8"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
-                    {post.frontmatter.summary}
-                  </p>
-
-                  {/* Meta inline — visible immediately on mobile */}
-                  <div
-                    className="mt-[var(--space-4)] flex flex-wrap items-center gap-3 font-mono text-xs"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
-                    <time dateTime={post.frontmatter.date}>
-                      {formatDate(post.frontmatter.date)}
-                    </time>
-                    <span aria-hidden="true">·</span>
-                    <span>{post.readingTime} min read</span>
-                    {(post.frontmatter.tags ?? []).slice(0, 2).map((tag) => (
-                      <span key={tag} className="pill">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </header>
-
-                <article className="prose max-w-none pb-[var(--space-20)]">
-                  {post.content}
-                </article>
-
-                {/* Related posts */}
-                {relatedPosts.length > 0 && (
-                  <aside
-                    aria-labelledby="related-writing-heading"
-                    className="mb-[var(--space-20)] rounded-[var(--radius-xl)] border border-white/10 p-5 sm:p-6"
-                  >
-                    <span className="label">Continue reading</span>
-                    <h2 id="related-writing-heading" className="mt-[var(--space-2)]">
-                      Related articles
-                    </h2>
-                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                      {relatedPosts.map((entry) => (
-                        <article
-                          key={entry.slug}
-                          className="rounded-[var(--radius-lg)] border border-white/10 p-4 sm:p-5"
-                        >
-                          <div
-                            className="flex flex-wrap items-center gap-3 text-xs font-mono"
-                            style={{ color: 'var(--color-text-muted)' }}
-                          >
-                            <time dateTime={entry.date}>{formatDate(entry.date)}</time>
-                            <span aria-hidden="true">·</span>
-                            <span>{entry.readingTime} min read</span>
-                          </div>
-                          <h3 className="mt-3" style={{ color: 'var(--color-text-primary)' }}>
-                            {entry.title}
-                          </h3>
-                          <p
-                            className="mt-3 text-sm leading-7"
-                            style={{ color: 'var(--color-text-secondary)' }}
-                          >
-                            {entry.summary}
-                          </p>
-                          <Link
-                            href={`/writing/${entry.slug}`}
-                            className="mt-5 inline-flex min-h-[44px] items-center gap-2 text-sm transition hover:text-white"
-                            style={{ color: 'var(--color-film-teal)' }}
-                          >
-                            Read article →
-                          </Link>
-                        </article>
-                      ))}
-                    </div>
-                  </aside>
-                )}
+            {/* ── Page header ─────────────────────────────────────────────── */}
+            <div className="mb-10 sm:mb-14">
+              <div className="section-kicker-row mb-[var(--space-2)]">
+                <span className="section-number" aria-hidden="true">05</span>
+                <span className="section-label">Writing</span>
               </div>
 
-              {/* Sidebar: inline on mobile, sticky on xl+ */}
-              <aside className="space-y-4 xl:sticky xl:top-[calc(var(--nav-height)+var(--space-8))]">
-                {/* At a glance */}
-                <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
-                  <span className="label">At a glance</span>
-                  <div className="mt-4 space-y-4">
-                    {articleMeta.map(({ label, value }) => (
-                      <div key={label} className="space-y-1">
-                        <p
-                          className="text-xs tracking-[0.14em] uppercase"
-                          style={{ color: 'var(--color-text-muted)' }}
-                        >
-                          {label}
-                        </p>
-                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                          {value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+              <h1
+                className="mt-[var(--space-2)] max-w-[22ch]"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Writing that ships decisions.
+              </h1>
+
+              <p
+                className="mt-4 max-w-[56ch] text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Architecture calls, ML trade-offs, and what actually held in production —
+                from Lagos to the world.
+              </p>
+
+              <p
+                className="mt-2 font-mono text-xs tracking-widest uppercase"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                {posts.length} articles
+              </p>
+            </div>
+
+            {/* ── Featured post ────────────────────────────────────────────── */}
+            {featured && (
+              <article
+                className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
+              >
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="pill pill-cyan">Featured</span>
+                  <span
+                    className="font-mono text-xs"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {featured.readingTime} min read
+                  </span>
                 </div>
 
-                {/* Topics */}
-                {(post.frontmatter.tags ?? []).length > 0 && (
-                  <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
-                    <span className="label">Topics</span>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(post.frontmatter.tags ?? []).map((tag) => (
-                        <span key={tag} className="pill">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Browse all CTA */}
-                <Link
-                  href="/writing"
-                  className="pill pill-cyan inline-flex w-full justify-center min-h-[48px] items-center"
+                <h2
+                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight"
+                  style={{ color: 'var(--color-text-primary)' }}
                 >
-                  Browse all writing
+                  {featured.title}
+                </h2>
+
+                <p
+                  className="mt-4 max-w-[64ch] text-base leading-8"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  {featured.summary}
+                </p>
+
+                <div
+                  className="mt-4 flex flex-wrap items-center gap-3 text-xs"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  <time dateTime={featured.date} className="font-mono uppercase">
+                    {formatDate(featured.date)}
+                  </time>
+                  {featured.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="pill">
+                      {tag.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+
+                <Link
+                  href={`/writing/${featured.slug}`}
+                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                  style={{
+                    borderColor: 'var(--color-cyan-surface)',
+                    color: 'var(--color-film-teal)',
+                  }}
+                >
+                  Read article →
                 </Link>
-              </aside>
-            </div>
+              </article>
+            )}
+
+            {/* ── Article list ─────────────────────────────────────────────── */}
+            {rest.length > 0 && (
+              <div
+                className="grid gap-px overflow-hidden rounded-[var(--radius-lg)]"
+                style={{ background: 'var(--color-border)' }}
+              >
+                {rest.map((post) => (
+                  <div
+                    key={post.slug}
+                    style={{ background: 'var(--color-bg)' }}
+                  >
+                    <Link href={`/writing/${post.slug}`} className="block">
+                      <article className="writing-row min-h-[60px] py-3.5 px-4 sm:px-0 flex items-center gap-4">
+                        {/* Date: hidden on mobile — shown inline */}
+                        <time
+                          dateTime={post.date}
+                          className="hidden sm:block min-w-28 shrink-0 font-mono text-xs"
+                          style={{ color: 'var(--color-text-muted)' }}
+                        >
+                          {formatDate(post.date)}
+                        </time>
+
+                        <div className="flex-1 min-w-0">
+                          <span
+                            className="writing-title block truncate text-sm font-medium"
+                            style={{ color: 'var(--color-text-primary)' }}
+                          >
+                            {post.title}
+                          </span>
+                          <time
+                            dateTime={post.date}
+                            className="sm:hidden block font-mono text-[10px] mt-0.5"
+                            style={{ color: 'var(--color-text-muted)' }}
+                          >
+                            {formatDate(post.date)}
+                          </time>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0 ml-3">
+                          {post.tags.slice(0, 1).map((tag) => (
+                            <span
+                              key={tag}
+                              className="hidden sm:inline pill"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          <span
+                            className="text-xs whitespace-nowrap"
+                            style={{ color: 'var(--color-text-muted)' }}
+                          >
+                            {post.readingTime} min
+                          </span>
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {posts.length === 0 && (
+              <p
+                className="mt-10 text-base"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                No articles published yet. Check back soon.
+              </p>
+            )}
+
           </div>
         </section>
       </main>
