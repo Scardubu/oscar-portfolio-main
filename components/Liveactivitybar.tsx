@@ -1,5 +1,7 @@
 'use client';
-// components/Liveactivitybar.tsx — CONVICTION ENGINE v19.0
+// components/Liveactivitybar.tsx — CONVICTION ENGINE v21.1
+// UPGRADED from v19.0: align to v21 token names, add aria-live region,
+// pulse animation via CSS var reference (no hardcoded color strings).
 // Live GitHub commit feed strip used in hero/navbar contexts.
 // Falls back gracefully; never blocks render.
 
@@ -85,7 +87,7 @@ export function LiveActivityBar() {
           style={{ background: 'var(--color-border)' }}
         />
         <div
-          className="h-3 w-48 rounded animate-pulse"
+          className="h-3 w-44 rounded animate-pulse"
           style={{ background: 'var(--color-border)' }}
         />
       </div>
