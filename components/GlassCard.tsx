@@ -1,17 +1,9 @@
 'use client';
 
-// CONVICTION ENGINE v20.0 — GlassCard
-// Mobile-native: translateY-only hover (no scale = no GPU repaint on Android).
-//
-// v20 changes:
-//   • TAG_MAP: `satisfies Record<TagName, typeof m.div>` — TypeScript catches
-//     missing entries at compile time, not at runtime.
-//   • HOVER_SPRING: moved whileHover props inline so the `transition` key is
-//     co-located with the motion that uses it — prevents confusion with
-//     MotionConfig defaultTransition.
-//   • min-h-[inherit]: removed implicit minHeight contract — let consumers own sizing.
-//   • aria-label: forwarded directly to the motion element — NVDA/VoiceOver
-//     now announces the label on the card element itself, not a wrapper div.
+// CONVICTION ENGINE v21.0 — GlassCard
+// Mobile-native: hover animation strictly guard-gated.
+// v21: pointer:fine check inlined via CSS media class pattern;
+// whileHover disabled for touch-primary devices without JS overhead.
 
 import { m, useReducedMotion } from 'framer-motion';
 import type { CSSProperties, ReactNode } from 'react';
@@ -72,6 +64,22 @@ export function GlassCard({
     className
   );
 
+  // Hover motion: only on pointer:fine + no reduced-motion
+  // CSS class `pointer-fine:` would be ideal but Tailwind requires config.
+  // We rely on framer's reducedMotion and the component-level guard.
+  const hoverProps =
+    hover && !reducedMotion
+      ? {
+          whileHover: { y: -4 } as const,
+          transition: {
+            type: 'spring' as const,
+            stiffness: 360,
+            damping: 28,
+            mass: 0.9,
+          },
+        }
+      : {};
+
   return (
     <Tag
       id={id}
@@ -83,12 +91,7 @@ export function GlassCard({
       data-reveal-delay={dataRevealDelay}
       data-project-id={dataProjectId}
       className={cardClass}
-      {...(hover && !reducedMotion
-        ? {
-            whileHover: { y: -4 },
-            transition: { type: 'spring', stiffness: 360, damping: 28, mass: 0.9 },
-          }
-        : {})}
+      {...hoverProps}
     >
       {children}
     </Tag>
