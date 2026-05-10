@@ -167,11 +167,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         const code  = extractTextContent(props.children).replace(/\n$/, '');
 
         return (
-          <CodeBlockClient
-            code={code}
-            language={lang ?? 'text'}
-            className="my-6"
-          />
+          <CodeBlockClient language={lang ?? 'text'}>
+            {code}
+          </CodeBlockClient>
         );
       }
 
