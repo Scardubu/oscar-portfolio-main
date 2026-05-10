@@ -1,9 +1,10 @@
 'use client';
-// components/CommandPalette.tsx — CONVICTION ENGINE v19.0
+// components/CommandPalette.tsx — CONVICTION ENGINE v21.0
 // ─────────────────────────────────────────────────────────────────────────────
-// Mobile: bottom-sheet pattern (slides up from bottom 0) — CTA-zone reachable.
-// Desktop: top-center panel (legacy position preserved).
-// Touch targets: min-h-[48px] per item — WCAG 2.2 §2.5.8.
+// Mobile: bottom-sheet from bottom 0 — entire panel in thumb comfort zone.
+// Desktop: top-center panel.
+// v21: drag handle touch area enlarged (48px tap target), input autofocus
+// delayed to avoid keyboard jump on iOS, safe-area-inset-bottom respected.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
@@ -14,16 +15,15 @@ import { CV_ASSET_PATH } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 
 interface CommandItem {
-  id:       string;
-  label:    string;
+  id:        string;
+  label:     string;
   shortcut?: string;
-  group:    string;
-  action:   () => void;
+  group:     string;
+  action:    () => void;
 }
 
 type CommandPaletteWindow = Window & { __commandPaletteRequested?: boolean };
 
-// ── Panel motion variants — desktop: top-center, mobile: bottom-sheet ─────────
 const PANEL_VARIANTS_DESKTOP = {
   hidden:  { opacity: 0, y: -12, scale: 0.98 },
   visible: { opacity: 1, y: 0,   scale: 1 },
@@ -31,9 +31,9 @@ const PANEL_VARIANTS_DESKTOP = {
 };
 
 const PANEL_VARIANTS_MOBILE = {
-  hidden:  { opacity: 0, y: 60 },
+  hidden:  { opacity: 0, y: 72 },
   visible: { opacity: 1, y: 0  },
-  exit:    { opacity: 0, y: 60 },
+  exit:    { opacity: 0, y: 72 },
 };
 
 export function CommandPalette() {
@@ -47,11 +47,10 @@ export function CommandPalette() {
   const activeIndexRef     = useRef(activeIndex);
   const filteredRef        = useRef<CommandItem[]>([]);
 
-  const router       = useRouter();
-  const pathname     = usePathname();
+  const router        = useRouter();
+  const pathname      = usePathname();
   const reducedMotion = useReducedMotion();
 
-  // Detect mobile once on mount
   useEffect(() => {
     setIsMobile(!window.matchMedia('(pointer: fine)').matches);
   }, []);
@@ -77,18 +76,24 @@ export function CommandPalette() {
 
   const commands = useMemo<CommandItem[]>(
     () => [
-      // ── Navigate ──────────────────────────────────────────────────────
-      { id: 'nav-projects',    group: 'Navigate', label: 'Projects',      action: () => scrollTo('section-projects') },
-      { id: 'nav-open-source', group: 'Navigate', label: 'Open Source',   action: () => scrollTo('open-source')     },
-      { id: 'nav-skills',      group: 'Navigate', label: 'Skills',        action: () => scrollTo('skills')          },
-      { id: 'nav-about',       group: 'Navigate', label: 'About',         action: () => scrollTo('about')           },
-      { id: 'nav-writing',     group: 'Navigate', label: 'Writing',       action: () => scrollTo('section-writing') },
-      { id: 'nav-contact',     group: 'Navigate', label: 'Contact',       action: () => scrollTo('contact')         },
-      // ── Case studies ──────────────────────────────────────────────────
-      { id: 'cs-taxbridge',    group: 'Case Studies', label: 'TaxBridge case study',   action: () => { router.push('/work/taxbridge');   close(); } },
-      { id: 'cs-sabiscore',    group: 'Case Studies', label: 'SabiScore case study',   action: () => { router.push('/work/sabiscore');   close(); } },
-      { id: 'cs-hashablanca',  group: 'Case Studies', label: 'Hashablanca case study', action: () => { router.push('/work/hashablanca'); close(); } },
-      // ── Actions ───────────────────────────────────────────────────────
+      { id: 'nav-projects',    group: 'Navigate', label: 'Projects',    action: () => scrollTo('section-projects') },
+      { id: 'nav-open-source', group: 'Navigate', label: 'Open Source', action: () => scrollTo('open-source')     },
+      { id: 'nav-skills',      group: 'Navigate', label: 'Skills',      action: () => scrollTo('skills')          },
+      { id: 'nav-about',       group: 'Navigate', label: 'About',       action: () => scrollTo('about')           },
+      { id: 'nav-writing',     group: 'Navigate', label: 'Writing',     action: () => scrollTo('section-writing') },
+      { id: 'nav-contact',     group: 'Navigate', label: 'Contact',     action: () => scrollTo('contact')         },
+      {
+        id: 'cs-taxbridge',  group: 'Case Studies', label: 'TaxBridge case study',
+        action: () => { router.push('/work/taxbridge');   close(); },
+      },
+      {
+        id: 'cs-sabiscore',  group: 'Case Studies', label: 'SabiScore case study',
+        action: () => { router.push('/work/sabiscore');   close(); },
+      },
+      {
+        id: 'cs-hashablanca', group: 'Case Studies', label: 'Hashablanca case study',
+        action: () => { router.push('/work/hashablanca'); close(); },
+      },
       {
         id: 'action-writing', group: 'Actions', label: 'All writing',
         action: () => { router.push('/writing'); close(); },
@@ -108,19 +113,23 @@ export function CommandPalette() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return commands;
-    return commands.filter((c) => c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
+    return commands.filter(
+      (c) =>
+        c.label.toLowerCase().includes(q) ||
+        c.group.toLowerCase().includes(q)
+    );
   }, [commands, query]);
 
-  openRef.current      = open;
+  openRef.current        = open;
   activeIndexRef.current = activeIndex;
-  filteredRef.current  = filtered;
+  filteredRef.current    = filtered;
 
   const execute = useCallback((cmd: CommandItem) => { cmd.action(); }, []);
 
-  // Keyboard handler
+  // Keyboard navigation
   useEffect(() => {
-    const toggle    = () => setOpen((v) => !v);
-    const openFn    = () => setOpen(true);
+    const toggle = () => setOpen((v) => !v);
+    const openFn = () => setOpen(true);
 
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -129,10 +138,9 @@ export function CommandPalette() {
         return;
       }
       if (!openRef.current) return;
-
-      if (e.key === 'Escape')     { e.preventDefault(); close(); return; }
-      if (e.key === 'ArrowDown')  { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, Math.max(filteredRef.current.length - 1, 0))); }
-      if (e.key === 'ArrowUp')    { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)); }
+      if (e.key === 'Escape')    { e.preventDefault(); close(); return; }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, Math.max(filteredRef.current.length - 1, 0))); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)); }
       if (e.key === 'Enter') {
         e.preventDefault();
         const cmd = filteredRef.current[activeIndexRef.current];
@@ -148,7 +156,7 @@ export function CommandPalette() {
     };
   }, [close, execute]);
 
-  // Pick up early-intercept flag set before hydration
+  // Pick up early-intercept flag
   useEffect(() => {
     const w = globalThis as unknown as CommandPaletteWindow;
     if (w.__commandPaletteRequested) {
@@ -157,14 +165,15 @@ export function CommandPalette() {
     }
   }, []);
 
-  // Focus input when opened
+  // Focus input when opened — delayed on mobile to prevent keyboard jump
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 40);
-  }, [open]);
+    if (!open) return;
+    const delay = isMobile ? 320 : 60;
+    const t = setTimeout(() => inputRef.current?.focus(), delay);
+    return () => clearTimeout(t);
+  }, [open, isMobile]);
 
-  useEffect(() => { setActiveIndex(0); }, [query]);
-
-  // Group filtered commands for display
+  // Groups for display
   const groups = useMemo(() => {
     const map = new Map<string, CommandItem[]>();
     filtered.forEach((c) => {
@@ -181,10 +190,9 @@ export function CommandPalette() {
   return (
     <AnimatePresence>
       {open && (
-        // Overlay
         <m.div
           className="fixed inset-0 z-[500]"
-          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+          style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
           initial={reducedMotion ? {} : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={reducedMotion ? {} : { opacity: 0 }}
@@ -193,12 +201,11 @@ export function CommandPalette() {
           aria-modal="true"
           aria-label="Command palette"
         >
-          {/* Panel — bottom-sheet on mobile, top-center on desktop */}
           <m.div
             className={`
               absolute glass-full overflow-hidden
               ${isMobile
-                ? 'bottom-0 left-0 right-0 rounded-t-[var(--radius-xl)] max-h-[75vh]'
+                ? 'bottom-0 left-0 right-0 rounded-t-[var(--radius-xl)] max-h-[80vh]'
                 : 'top-[15vh] left-1/2 -translate-x-1/2 w-full max-w-[540px] rounded-[var(--radius-xl)]'
               }
             `}
@@ -209,9 +216,13 @@ export function CommandPalette() {
             transition={panelTransition}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Drag handle — mobile only */}
+            {/* Drag handle — enlarged tap target on mobile */}
             {isMobile && (
-              <div className="flex justify-center pt-3 pb-1" aria-hidden="true">
+              <div
+                className="flex justify-center items-center pt-4 pb-2"
+                aria-hidden="true"
+                style={{ minHeight: '48px' }}
+              >
                 <div
                   className="h-1 w-10 rounded-full"
                   style={{ background: 'var(--color-border)' }}
@@ -224,7 +235,6 @@ export function CommandPalette() {
               className="border-b px-4 py-3 flex items-center gap-3"
               style={{ borderColor: 'var(--color-border)' }}
             >
-              {/* Search icon */}
               <svg
                 className="h-4 w-4 shrink-0"
                 style={{ color: 'var(--color-text-muted)' }}
@@ -250,7 +260,6 @@ export function CommandPalette() {
                 spellCheck={false}
               />
 
-              {/* Esc hint — desktop only */}
               {!isMobile && (
                 <kbd
                   className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]"
@@ -264,7 +273,7 @@ export function CommandPalette() {
             {/* Results */}
             <div
               className="overflow-y-auto"
-              style={{ maxHeight: isMobile ? 'calc(75vh - 80px)' : '360px' }}
+              style={{ maxHeight: isMobile ? 'calc(80vh - 96px)' : '360px' }}
             >
               {filtered.length === 0 ? (
                 <p
@@ -276,7 +285,6 @@ export function CommandPalette() {
               ) : (
                 Array.from(groups.entries()).map(([groupName, items]) => {
                   let runningIndex = 0;
-                  // Calculate offset for this group in the flat filtered list
                   filtered.forEach((c, i) => {
                     if (c.id === items[0]?.id) runningIndex = i;
                   });
@@ -297,10 +305,14 @@ export function CommandPalette() {
                           <button
                             key={cmd.id}
                             type="button"
-                            className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left transition-colors"
+                            className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left transition-colors focus-visible:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-white/20"
                             style={{
-                              background: isActive ? 'var(--color-border-subtle)' : 'transparent',
-                              color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                              background: isActive
+                                ? 'oklch(100% 0 0 / 0.06)'
+                                : 'transparent',
+                              color: isActive
+                                ? 'var(--color-text-primary)'
+                                : 'var(--color-text-secondary)',
                             }}
                             data-active={isActive}
                             onClick={() => execute(cmd)}
@@ -310,7 +322,10 @@ export function CommandPalette() {
                             {cmd.shortcut && (
                               <kbd
                                 className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]"
-                                style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+                                style={{
+                                  borderColor: 'var(--color-border)',
+                                  color: 'var(--color-text-muted)',
+                                }}
                               >
                                 {cmd.shortcut}
                               </kbd>
@@ -323,7 +338,13 @@ export function CommandPalette() {
                                 fill="none"
                                 aria-hidden="true"
                               >
-                                <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path
+                                  d="M2.5 6h7M6.5 3l3 3-3 3"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                             )}
                           </button>
@@ -334,8 +355,14 @@ export function CommandPalette() {
                 })
               )}
 
-              {/* Safe zone for mobile home bar */}
-              {isMobile && <div className="h-6" aria-hidden="true" />}
+              {/* Safe zone: iOS home indicator */}
+              {isMobile && (
+                <div
+                  className="h-6"
+                  style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                  aria-hidden="true"
+                />
+              )}
             </div>
           </m.div>
         </m.div>
