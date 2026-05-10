@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const SECTION_IDS = [
   'section-projects',
@@ -161,7 +161,6 @@ function BottomNav({
 
 export function NavBar() {
   const pathname = usePathname();
-  const reducedMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
 
