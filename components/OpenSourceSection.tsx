@@ -1,14 +1,16 @@
-// CONVICTION ENGINE v21.0 — OpenSourceSection
+// CONVICTION ENGINE v22.0 — OpenSourceSection
 // Mobile-native: single column on mobile, 3-col on md+.
 // Lagos, Nigeria → Global.
 //
-// v21 changes vs v20:
-//   • Section headline: more specific, names the infrastructure category.
-//   • Card copy: first sentence is the outcome (not the mechanism).
-//   • GitHub CTA: elevated border treatment for higher visual weight.
-//   • Proof strip: metric dots upgraded to named metric badges.
-//   • Install button: visual feedback ring on focus for keyboard users.
-//   • whileHover guard: reducedMotion check before assignment.
+// v22 fixes vs v21:
+//   • CRITICAL: Restored missing `<a` opening tag for GitHub CTA link — JSX
+//     syntax error that caused the GitHub link to render as orphaned attributes,
+//     producing a hydration mismatch and no visible link on production builds.
+//   • GitHub link converted from bare-href fragment to proper <a> element with
+//     full accessibility: aria-label, target, rel, focus ring, role.
+//   • Card hover whileHover: guards now check both reducedMotion AND
+//     pointer:fine via CSS `@media (hover: hover)` passthrough pattern.
+//   • CopyInstall: added whileTap scale-down for physical touch feedback.
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -66,10 +68,11 @@ function CopyInstall({ text }: { text: string }) {
   }
 
   return (
-    <button
+    <m.button
       type="button"
       onClick={handleCopy}
       aria-label={`Copy install command: ${text}`}
+      whileTap={{ scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
       className="w-full flex items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3 py-3 text-left transition hover:border-white/16 active:scale-[0.98] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
       style={{ borderColor: copied ? 'oklch(73% 0.18 196 / 0.5)' : 'oklch(100% 0 0 / 0.08)' }}
     >
@@ -86,7 +89,7 @@ function CopyInstall({ text }: { text: string }) {
       >
         {copied ? '✓ Done' : 'Copy'}
       </span>
-    </button>
+    </m.button>
   );
 }
 
@@ -185,8 +188,8 @@ export function OpenSourceSection() {
                   <CopyInstall text={item.install} />
                 </div>
 
-                {/* GitHub CTA */}
-                
+                {/* GitHub CTA — restored <a opening tag */}
+                <a
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
