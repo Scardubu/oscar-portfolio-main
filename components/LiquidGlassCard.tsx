@@ -58,7 +58,7 @@ const TAG_MAP = {
   article: m.article,
   section: m.section,
   li:      m.li,
-} as const satisfies Record<TagName, typeof m.div>;
+} as const;
 
 const HOVER_SPRING = { type: 'spring', stiffness: 340, damping: 26, mass: 0.9 } as const;
 const TAP_SPRING   = { type: 'spring', stiffness: 400, damping: 30 } as const;
@@ -77,8 +77,8 @@ export function LiquidGlassCard({
 }: Readonly<LiquidGlassCardProps>) {
   const reducedMotion = useReducedMotion();
 
-  // Correctly resolve the polymorphic motion component from the TAG_MAP.
-  const Tag = TAG_MAP[tag];
+  // Cast to `typeof m.div` — all motion components share the same motion-prop surface.
+  const Tag = TAG_MAP[tag] as typeof m.div;
 
   const hoverProps = interactive && !reducedMotion
     ? {
