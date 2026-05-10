@@ -70,7 +70,7 @@ export default function BlogPostClient({
         </m.div>
 
         {/* Header */}
-        <m.header className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
+        <m.header className="mb-12" variants={staggerContainer()} initial="hidden" animate="visible">
           {/* Tags */}
           <m.div className="mb-4 flex flex-wrap gap-2" variants={fadeUp}>
             {tags.map((tag) => (
