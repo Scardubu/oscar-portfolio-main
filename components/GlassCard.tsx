@@ -29,12 +29,15 @@ export interface GlassCardProps {
   'data-project-id'?:   string;
 }
 
+// Each motion component has a distinct generic (HTMLDivElement, HTMLLIElement,
+// etc.) so they are not mutually assignable to `typeof m.div`.  We keep the
+// map untyped and cast only at the call-site to avoid propagating `any`.
 const TAG_MAP = {
   article: m.article,
   div:     m.div,
   li:      m.li,
   section: m.section,
-} as const satisfies Record<TagName, typeof m.div>;
+} as const;
 
 export function GlassCard({
   children,
@@ -54,7 +57,10 @@ export function GlassCard({
 }: Readonly<GlassCardProps>) {
   const reducedMotion = useReducedMotion();
 
-  const Tag = TAG_MAP[as];
+  // Cast to `typeof m.div` — all motion components share the same motion-prop
+  // surface (whileHover, transition, etc.); the HTML-element-specific generics
+  // only affect native DOM attributes which we fully enumerate in GlassCardProps.
+  const Tag = TAG_MAP[as] as typeof m.div;
 
   const cardClass = cn(
     'glass',
