@@ -10,7 +10,7 @@
  */
 
 import { m, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 
 import { cn } from '@/lib/utils';
 import { springs } from '@/lib/motionVariants';
@@ -85,7 +85,7 @@ export function KineticHeadline({
 
   return (
     <Tag
-      ref={ref}
+      ref={ref as Ref<HTMLHeadingElement>}
       aria-label={text}
       className={cn(
         SIZE_CLASS[size],
