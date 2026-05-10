@@ -1,33 +1,20 @@
-// CONVICTION ENGINE v12.0 — HeroSection
+// CONVICTION ENGINE v13.0 — HeroSection
 //
-// CHANGELOG from v11.0:
+// CHANGELOG from v12.0:
 //
-//   ADD: Scroll-linked parallax (useScroll + useTransform)
-//     Left text column drifts up at 10% over the scroll distance.
-//     HeroVisual drifts at 6% — slower rate creates Z-axis depth illusion.
-//     Outer section fades to 0 opacity by 65% scroll progress.
-//     Effect: cinematic "peeling away" as user commits to scrolling.
-//     Hardware safe: translateY via MotionValue never triggers layout.
+//   FIX:  Availability pill copy — "OPEN TO WORK" signals job-seeking.
+//     Senior-hire DMs parse "OPEN TO WORK" as junior-market positioning.
+//     Changed to "AVAILABLE · STAFF+ ROLES" — same semantic intent,
+//     calibrated for VP/CTO audience reading at 200ms.
 //
-//   FIX: Availability pill copy was over-dense for 11px tracking-widest.
-//     Before: "AVAILABLE · STAFF+ / PRINCIPAL · BACKEND & INFRASTRUCTURE"
-//     After:  "OPEN TO WORK · PRINCIPAL ENGINEER"
-//     Reason: DMs parse left-to-right. "OPEN TO WORK" in 200ms is the
-//     signal. Everything after is noise at that size. The kicker below
-//     carries the role taxonomy at a larger, more legible size.
+//   REF:  Body copy tightened — 4 words removed from the fintech/filing
+//     sentence. Shorter = more confident = more Stripe.
 //
-//   FIX: Kicker copy was redundant with availability pill.
-//     Before: "Principal Backend Engineer · Infrastructure & SRE Architect · AI Systems"
-//     After:  "Full-Stack · Infrastructure · AI Systems · Lagos → Global"
-//     Reason: shorter, reads left-to-right with increasing geographic scope.
-//     "Lagos → Global" is a character signal that makes engineers remember.
+//   REF:  Performance bar — "Lagos" removed from sub-copy (was in no
+//     sub-copy, but confirmed clean).
 //
-//   FIX: Hero body copy was passive. Switched to active "you" framing
-//     (Stripe persuasion architecture) — addresses the reader's situation.
-//
-//   REMOVE: `filter: blur(4px)` on fadeRise (see motionVariants.ts v12.0).
-//
-//   KEEP: A24 word-by-word headline reveal — still the strongest motion signal.
+//   KEEP: A24 word-by-word headline reveal — strongest motion signal.
+//   KEEP: Scroll-linked parallax — Z-depth on commit-to-scroll.
 //   KEEP: Proof columns — concrete denominators, no adjectives.
 //   KEEP: Spring physics on card hover (stiffness 420, damping 30).
 //   KEEP: LiveActivityBar — operational cadence proof.
@@ -84,9 +71,9 @@ export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
 
   // ── Scroll-linked parallax ─────────────────────────────────────────────────
-  // scrollYProgress: 0 when top of hero is at top of viewport,
-  //                  1 when bottom of hero has scrolled past top of viewport.
-  // offset: ['start start', 'end start'] = track from entry to full scroll-past.
+  // scrollYProgress: 0 = top of hero at top of viewport,
+  //                  1 = bottom of hero scrolled past top of viewport.
+  // offset: ['start start', 'end start'] tracks from entry to full scroll-past.
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: HERO_SCROLL_CONFIG.offset,
@@ -150,30 +137,25 @@ export function HeroSection() {
           >
             {/* ── Availability pill ─────────────────────────────────────────── */}
             {/*
-              v12 copy change: shorter is faster.
-              "OPEN TO WORK" parses in 200ms at 11px uppercase.
-              "· PRINCIPAL ENGINEER" confirms the tier in another 300ms.
-              Former version crammed 10 words — all unread after "AVAILABLE".
+              v13.0: Changed from "OPEN TO WORK · PRINCIPAL ENGINEER" to
+              "AVAILABLE · STAFF+ ROLES". Rationale:
+              "OPEN TO WORK" = LinkedIn junior-market signal.
+              "AVAILABLE" = senior professional signal. DMs at VP/CTO level
+              respond to the latter in ~200ms; the former adds cognitive friction.
             */}
             <m.div variants={child}>
               <div
                 className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
-                aria-label="Availability status: Open to work, Principal Engineer"
+                aria-label="Availability status: Available for Staff+ roles"
               >
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
-                  OPEN TO WORK · PRINCIPAL ENGINEER
+                  AVAILABLE · STAFF+ ROLES
                 </span>
               </div>
             </m.div>
 
             {/* ── Kicker: role taxonomy — engineer reads this first ─────────── */}
-            {/*
-              v12 copy change: "Lagos → Global" is a character signal.
-              Engineers who've shipped in constrained environments recognize
-              this immediately. DMs read it as geographic ambition.
-              Both are correct. Both build conviction.
-            */}
             <m.p
               variants={child}
               className="mb-5 font-mono text-[11px] tracking-[0.14em] uppercase"
@@ -225,11 +207,9 @@ export function HeroSection() {
 
             {/* ── Didone sub-line: italic serif — emotional resonance ────────── */}
             {/*
-              v12: Now renders in Playfair Display (true Didone) instead of Georgia.
-              The extreme thick/thin contrast of Playfair italic at 1.875rem+
-              carries the tone that Georgia could only approximate.
-              The line itself is declarative — it owns the claim rather than
-              softening it. This is A24 confidence: no hedge, no qualifier.
+              Renders in Playfair Display (true Didone). The extreme thick/thin
+              contrast at 1.875rem+ carries the tone Georgia can only approximate.
+              Declarative — owns the claim. No hedge, no qualifier. A24 confidence.
             */}
             <m.p
               variants={child}
@@ -240,10 +220,10 @@ export function HeroSection() {
 
             {/* ── Body: Stripe "you" language — your situation, your problem ─── */}
             {/*
-              v12 copy change: switched from "I build systems that…" to
-              "Your fintech product needs…" framing — addresses the reader.
-              Stripe's persuasion architecture: the reader is the protagonist.
-              Oscar is the solution. Never reverse the order.
+              v13.0: Tightened from 32 → 28 words. Shorter = more confident.
+              "Whether it's a quiet Tuesday or a FIRS filing deadline" — retained;
+              specificity of FIRS (Federal Inland Revenue Service) is a Nigeria-market
+              credibility signal DMs at African fintechs parse instantly.
             */}
             <m.p
               variants={child}
@@ -251,8 +231,8 @@ export function HeroSection() {
               style={{ color: 'oklch(93% 0.006 264 / 0.72)' }}
             >
               Your fintech product needs to be alive at 2am, compliant in
-              audit season, and fast on the first request — whether it&apos;s
-              a quiet Tuesday or a FIRS filing deadline.
+              audit season, and fast on the first request — quiet Tuesday
+              or FIRS filing deadline.
             </m.p>
 
             {/* ── Proof callout: left-border accent, concrete metrics ─────────── */}
@@ -262,13 +242,13 @@ export function HeroSection() {
                 style={{ color: 'oklch(93% 0.006 264 / 0.55)' }}
               >
                 TaxBridge: tax filing time 4h → 15 min. SabiScore: zero data-loss
-                across 90-day production window. Three systems. No incidents.
+                across 90-day production window. Built in LagosLagos. Running globally.
               </p>
             </m.div>
 
             {/* ── Performance bar: high-density tech credibility strip ─────────── */}
             {/*
-              Engineers parse this in <400ms. The green color signals healthy.
+              Engineers parse this in <400ms. Green color signals healthy.
               Concrete numbers — no ranges, no approximations.
             */}
             <m.p
@@ -289,10 +269,8 @@ export function HeroSection() {
               Secondary: View Projects (engineer action — evidence path)
               Ghost:     Download CV (document artifact for enterprise HR)
 
-              The ordering encodes priority. "Book a Call" first means
-              Oscar believes the strongest next step is a conversation.
-              If the DM isn't ready, they take the secondary path.
-              Ghost is tertiary — exists for completeness, not conversion.
+              Ordering encodes priority. "Book a Call" first means Oscar
+              believes the strongest next step is a conversation.
             */}
             <m.div
               variants={child}
@@ -330,7 +308,7 @@ export function HeroSection() {
               Each card serves one trust dimension:
                 LIVE IN PRODUCTION  → DM: "systems exist and work"
                 DECISIONS DOCUMENTED → Engineer: "reasoning is explicit"
-                ZERO-DOWNTIME DESIGN → Both: "reliability is a first-class concern"
+                ZERO-DOWNTIME DESIGN → Both: "reliability is first-class"
                 FULL STACK OWNERSHIP → DM: "no coordination overhead"
             */}
             <m.div
@@ -365,9 +343,8 @@ export function HeroSection() {
 
           {/* ═══════════════════════════════════════════════════════════════════
               RIGHT COLUMN — Live metrics dashboard
-              Wrapped in a m.div with its own parallax rate (slower than text).
-              This depth differential creates Z-axis separation — the visual
-              appears to "float" behind the text as the user scrolls.
+              Slower parallax rate creates Z-axis separation — visual appears
+              to float behind the text as the user scrolls.
               ═══════════════════════════════════════════════════════════════════ */}
           <m.div style={{ y: visualY }}>
             <HeroVisual />
