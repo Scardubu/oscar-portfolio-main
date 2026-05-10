@@ -27,23 +27,26 @@ export default async function Home() {
           style={{ borderColor: 'var(--color-border)' }}
         >
           <div className="container">
-            <div className="mb-16 max-w-4xl">
+            <div className="mb-12 sm:mb-16 max-w-4xl">
               <div className="section-kicker-row">
-                <span className="section-number" aria-hidden="true">
-                  03
-                </span>
-
+                <span className="section-number" aria-hidden="true">03</span>
                 <span className="section-label">SKILLS</span>
               </div>
 
-              <h2 id="skills-heading" className="mt-(--space-2) text-white">
+              <h2
+                id="skills-heading"
+                className="mt-[var(--space-2)]"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
                 Built for the full stack. Proven in production.
               </h2>
 
-              <p className="text-text-secondary mt-5 max-w-[62ch] text-base leading-8 sm:text-lg">
+              <p
+                className="mt-4 max-w-[62ch] text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
                 52 skills across architecture, infrastructure, compliance, and full-stack
-                delivery from PostgreSQL RLS through Spring Boot, Go services, and production
-                ML.
+                delivery — from PostgreSQL RLS through Spring Boot, Go services, and production ML.
               </p>
             </div>
 
