@@ -1,57 +1,72 @@
-import { cn } from "@/lib/utils";
-
-type ProjectStatus = 'live' | 'documented' | 'backtested' | 'snapshot';
-
-const statusConfig: Record<ProjectStatus, { label: string; className: string; pulse: boolean }> = {
-  live: {
-    label: 'Live',
-    className: 'bg-(--metric-live-dim) text-(--metric-live) border-(--metric-live-border)',
-    pulse: true,
-  },
-  documented: {
-    label: 'Documented',
-    className:
-      'bg-(--metric-documented-dim) text-(--metric-documented) border-(--metric-documented-border)',
-    pulse: false,
-  },
-  backtested: {
-    label: 'Backtested',
-    className:
-      'bg-(--metric-backtested-dim) text-(--metric-backtested) border-(--metric-backtested-border)',
-    pulse: false,
-  },
-  snapshot: {
-    label: 'Snapshot',
-    className:
-      'bg-(--metric-snapshot-dim) text-(--metric-snapshot) border-(--metric-snapshot-border)',
-    pulse: false,
-  },
-};
+import { cn } from '@/lib/utils';
+import type { MetricType } from '@/lib/portfolio-data';
 
 interface MetricBadgeProps {
-  status: ProjectStatus;
+  type:       MetricType;
+  label?:     string;
   className?: string;
 }
 
-export function MetricBadge({ status, className }: MetricBadgeProps) {
-  const config = statusConfig[status];
+const CONFIG: Record<MetricType, { label: string; colorClass: string }> = {
+  live:        { label: 'Live',        colorClass: 'metric-live'        },
+  documented:  { label: 'Documented',  colorClass: 'metric-documented'  },
+  backtested:  { label: 'Backtested',  colorClass: 'metric-backtested'  },
+  snapshot:    { label: 'Snapshot',    colorClass: 'metric-snapshot'    },
+};
+
+export function MetricBadge({ type, label, className }: Readonly<MetricBadgeProps>) {
+  const cfg  = CONFIG[type];
+  const text = label ?? cfg.label;
 
   return (
     <span
-      className={cn(
-        "badge",
-        config.className,
-        className
-      )}
+      className={cn('badge text-caption metric-dot', cfg.colorClass, className)}
+      aria-label={`Metric source: ${text}`}
     >
+      {text}
+    </span>
+  );
+}
+
+// ── MetricValue — number + label + optional badge ─────────────────────────────
+
+interface MetricValueProps {
+  value:      string | number;
+  label:      string;
+  type?:      MetricType;
+  size?:      'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const SIZE_CLASS: Record<NonNullable<MetricValueProps['size']>, string> = {
+  sm: 'text-metric',
+  md: 'text-metric',
+  lg: 'text-kinetic-metric',
+};
+
+export function MetricValue({
+  value,
+  label,
+  type,
+  size      = 'md',
+  className,
+}: Readonly<MetricValueProps>) {
+  return (
+    <div className={cn('flex flex-col gap-0.5', className)}>
       <span
         className={cn(
-          "live-dot",
-          config.pulse && "animate-ping-glow"
+          SIZE_CLASS[size],
+          'font-mono font-extrabold',
+          type === 'live' ? 'text-gradient-accent' : 'text-primary'
         )}
-        aria-hidden="true"
-      />
-      {config.label}
-    </span>
+        aria-label={`${value} — ${label}`}
+      >
+        {value}
+      </span>
+      <span className="text-caption text-muted">{label}</span>
+      {type && (
+        <MetricBadge type={type} className="mt-1 self-start" />
+      )}
+    </div>
   );
 }
