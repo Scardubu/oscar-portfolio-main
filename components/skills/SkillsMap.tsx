@@ -1,3 +1,4 @@
+'use client';
 // CONVICTION ENGINE v21.0 — SkillsMap
 // Mobile-native:
 //   • Tab row: overflow-x-auto, shrink-0, min-h-[44px] touch targets.
