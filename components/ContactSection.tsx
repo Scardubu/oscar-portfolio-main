@@ -24,7 +24,7 @@
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CopyEmail } from '@/components/CopyEmail';
 import {
