@@ -96,7 +96,7 @@ function PatternCard({
         <m.div
           className="pattern-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
           whileHover={prefersReduced ? {} : { rotate: 5, scale: 1.1 }}
-          transition={springs.bouncy}
+          transition={springs.snappy}
         >
           {Icon && <Icon color={accent.color} />}
           </m.div>
@@ -151,7 +151,7 @@ function PatternCard({
               <m.span
                 className="pattern-metric font-mono text-(length:--text-2xl) leading-none font-extrabold"
                 whileHover={prefersReduced ? {} : { scale: 1.06 }}
-                transition={springs.bouncy}
+                transition={springs.snappy}
               >
                 {metric.value}
               </m.span>
@@ -176,7 +176,7 @@ export default function ProductionPatterns() {
       <div className="container">
         <m.div
           className="mb-12"
-          variants={staggerContainer}
+          variants={staggerContainer()}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
