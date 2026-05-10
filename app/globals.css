@@ -1,47 +1,20 @@
 @import 'tailwindcss';
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v14.0 — OSCAR NDUGBU DESIGN SYSTEM
-   ───────────────────────────────────────────────────────────────────────────
-   Principles applied:
-     • Linear 2026 Liquid Glass: clarity-over-decoration, LCH-based tokens
-     • A24 Didone authority: narrow → wide cinematic reveal, editorial weight
-     • Stripe trust architecture: radical friction removal, financial-grade clarity
-     • Framer Motion: spring physics vocabulary → CSS easing mirrors
-     • Vercel performance: contain-paint on all GPU-composited layers
-
-   v14.0 changelog (global audit + conviction upgrade):
-     + ADD:  --glow-hero-warm: warm amber counter-tension to indigo hero glow;
-             creates A24-style cool/warm chromatic split across the hero viewport.
-     + ADD:  --glow-projects: subtle accent radial for ProjectsSection depth.
-     + ADD:  --glass-chromatic-border: iridescent fresnel border for featured cards.
-     + ADD:  .glass-chromatic — hero-tier featured project card with
-             iridescent border treatment and stronger specular highlight.
-     + ADD:  .link-reveal — animated underline link variant for case study CTAs.
-     + ADD:  .card-depth — subtle drop-shadow depth system for project cards.
-     + ADD:  @keyframes shimmerScan — refined 55% → 280% beam with reduced skew.
-     + ADD:  @keyframes orbitalDrift — slow ambient glow position drift.
-     + ADD:  .section-deferred-hero — hero-specific content-visibility bypass
-             (hero must always render immediately; was incorrectly deferred).
-     + ADD:  --nav-height-scrolled: 60px (compresses on scroll for screen space).
-     + ADD:  .pillar-grid-item border collapse fix for mobile.
-     + FIX:  Hero proof callout copy annotation: "Built in Abuja" (was
-             "LagosLagos" — duplicate token from find/replace error in v12.x).
-     + FIX:  Footer brand tagline annotation: "Abuja-built. Globally proven."
-     + REF:  --glass-blur: 16px → 14px — subtler glass on mid-tier; elevated
-             tier stays 24px. Reduces perceived heaviness on dense cards.
-     + REF:  .glass-medium shimmer beam: width 55% → 52%, angle -12° → -10°;
-             cleaner pass on tall portrait cards.
-     + REF:  .dot-live livePulse: added box-shadow bloom ring for better
-             visibility on glass backgrounds.
-     + REF:  .cta-primary: letter-spacing 0.01em → 0.02em; sharper label density.
-     + REF:  Section glow ::before: now uses isolate + stacking context to
-             prevent glow from bleeding into child glass layers.
-     + REF:  h1 size-adjust: 105% → none (removed — caused Syne reflow on swap).
-     + NEW:  --text-display — 6.5rem cap for hero headlines above --text-hero.
-             Reserved for the h1 only; ensures consistent rendering at large sizes.
-     + NEW:  Gradient mesh tokens — --mesh-indigo, --mesh-green, --mesh-amber
-             extracted from GradientMesh.tsx for CSS-level fallback.
+   CONVICTION ENGINE v15.0 — OSCAR NDUGBU DESIGN SYSTEM
+   MOBILE-NATIVE ARCHITECTURE — Source of truth: 320–430px
+   ─────────────────────────────────────────────────────────────────────────
+   v15.0 — Mobile-Native Rebuild:
+     + Mobile bottom navigation — thumb ergonomics, natural arc reach
+     + Bottom-zone CTAs — comfort zone reachable without grip shift
+     + Device performance tier — low/mid/high glass layer reduction
+     + Reduced section rhythm on mobile (clamp floor ↓ 40%)
+     + Body scroll padding for bottom nav clearance (80px mobile)
+     + Mobile glass simplification — blur ÷ 2 on ≤430px
+     + Touch target minimum enforced to 48×48px system-wide
+     + Ambient glow suppressed on mobile (<640px) — GPU savings
+     + Shimmer beam disabled on mobile — compositor budget
+     + Gradient mesh disabled <640px — LCP priority
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -50,55 +23,40 @@
 
 /* ════════════════════════════════════════════════════════════════════════════
    DESIGN TOKENS — LCH-BASED PALETTE
-   Three semantic axes: base / accent / contrast
-   All colour authority flows from these variables.
    ════════════════════════════════════════════════════════════════════════════ */
 :root {
   /* ── Fonts ───────────────────────────────────────────────────────────── */
   --font-display: var(--font-syne), 'Arial Black', sans-serif;
   --font-body:    var(--font-dm-sans), 'Arial', sans-serif;
   --font-mono:    var(--font-jetbrains-mono), 'Courier New', monospace;
-  /* Didone serif for cinematic pull-quotes and hero sub-lines.
-     var(--font-playfair) set by next/font in layout.tsx.
-     True Didone (~8:1 thick/thin) vs Georgia transitional (~2:1).
-     Falls back to Georgia when Google Fonts unavailable. */
   --font-didone:  var(--font-didone-var, var(--font-playfair)), Georgia, serif;
 
-  /* ── LCH colour axis: base (canvas + surface) ─────────────────────── */
-  --color-bg:             oklch(7.5% 0.008 264);  /* near-black, slight cool */
+  /* ── LCH colour axis: base ───────────────────────────────────────────── */
+  --color-bg:             oklch(7.5% 0.008 264);
   --color-surface:        oklch(10%  0.009 264);
   --color-surface-raised: oklch(12% 0.010 264);
   --color-border:         oklch(100% 0 0 / 0.07);
   --color-border-subtle:  oklch(100% 0 0 / 0.04);
   --color-border-hover:   oklch(100% 0 0 / 0.13);
-
-  /* Tailwind v3/v4 border-border compat alias */
   --border: var(--color-border);
 
-  /* ── LCH colour axis: contrast (text) ───────────────────────────────── */
-  --color-text-primary:   oklch(93% 0.006 264);   /* warm white — not harsh */
+  /* ── LCH colour axis: contrast ──────────────────────────────────────── */
+  --color-text-primary:   oklch(93% 0.006 264);
   --color-text-secondary: oklch(57% 0.005 264);
   --color-text-muted:     oklch(43% 0.005 264);
   --color-text-disabled:  oklch(100% 0 0 / 0.18);
 
-  /* ── LCH colour axis: accent (conviction → call-to-action) ─────────── */
-  /* Primary accent: vivid indigo-blue — conviction, authority */
+  /* ── LCH colour axis: accent ─────────────────────────────────────────── */
   --color-accent:           oklch(63% 0.22 258);
   --color-accent-hover:     oklch(70% 0.20 258);
   --color-accent-glow:      oklch(63% 0.22 258 / 0.22);
   --color-accent-surface:   oklch(63% 0.22 258 / 0.08);
-
-  /* Secondary accent: cyan — live metrics, technical proof */
   --color-cyan:             oklch(74% 0.18 195);
   --color-cyan-hover:       oklch(80% 0.16 195);
   --color-cyan-glow:        oklch(74% 0.18 195 / 0.12);
   --color-cyan-surface:     oklch(74% 0.18 195 / 0.07);
-
-  /* Tertiary: warm amber — A24 chromatic counter-tension to cool indigo */
   --color-amber:            oklch(73% 0.18 75);
   --color-amber-glow:       oklch(73% 0.18 75 / 0.12);
-
-  /* Semantic */
   --color-success: oklch(65% 0.18 155);
   --color-warning: oklch(73% 0.18 75);
   --color-danger:  oklch(60% 0.22 25);
@@ -106,7 +64,7 @@
   --color-live-glow: oklch(65% 0.18 155 / 0.18);
   --color-wip:     var(--color-warning);
 
-  /* ── Type scale: 7-step fluid (minor-third × clamp) ─────────────────── */
+  /* ── Type scale: fluid minor-third ──────────────────────────────────── */
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
   --text-base: 1rem;
@@ -114,10 +72,9 @@
   --text-xl:   clamp(1.25rem, 1.5vw + 0.85rem, 1.44rem);
   --text-2xl:  1.5rem;
   --text-3xl:  1.875rem;
-  /* Hero size: A24 Didone authority — wide at desktop, tight on mobile */
-  --text-hero: clamp(3rem, 5.5vw + 0.75rem, 6.25rem);
-  /* Section heading: narrow-to-wide cinematic */
-  --text-section: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+  /* v15: mobile floor raised to 2.25rem — better single-column impact */
+  --text-hero: clamp(2.25rem, 6vw + 0.75rem, 6.25rem);
+  --text-section: clamp(1.75rem, 3.5vw + 0.5rem, 3.25rem);
 
   /* ── Typographic rhythm ──────────────────────────────────────────────── */
   --weight-regular:  400;
@@ -125,90 +82,72 @@
   --weight-semibold: 600;
   --weight-bold:     700;
   --weight-black:    800;
-
   --tracking-tight:   -0.04em;
   --tracking-snug:    -0.025em;
   --tracking-normal:   0em;
   --tracking-wide:     0.055em;
   --tracking-widest:   0.15em;
   --tracking-mono:     0.08em;
-
-  --leading-tight:   1.07;  /* A24 cinematic: hero headlines */
+  --leading-tight:   1.07;
   --leading-snug:    1.25;
   --leading-normal:  1.65;
   --leading-relaxed: 1.8;
 
   /* ── 8px spatial grid ────────────────────────────────────────────────── */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
+  --space-1: 0.25rem; --space-2: 0.5rem;  --space-3: 0.75rem;
+  --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
+  --space-16: 4rem;   --space-20: 5rem;   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* ── Section rhythm ─────────────────────────────────────────────────── */
-  --section-py:     clamp(5rem, 8vw, 9rem);
-  --section-py-mid: clamp(3.5rem, 6vw, 7rem);
+  /* ── Section rhythm — v15: mobile floor ↓ 40% for vertical efficiency ─ */
+  --section-py:     clamp(3rem, 8vw, 9rem);
+  --section-py-mid: clamp(2rem, 6vw, 7rem);
 
   /* ── Layout ──────────────────────────────────────────────────────────── */
   --max-width:        1280px;
-  --max-width-prose:   72ch;
-  --max-width-hero:    20ch;
-  --nav-height:        68px;
-  --nav-height-scrolled: 60px;
+  --max-width-prose:  72ch;
+  --max-width-hero:   20ch;
+
+  /* ── Navigation — v15: dual-plane architecture ───────────────────────── */
+  /* Top bar: minimal identity on mobile, full nav on desktop */
+  --nav-height:          56px;   /* v15: 68→56 on mobile — reclaim vertical px */
+  --nav-height-scrolled: 52px;
+  /* Bottom nav: thumb ergonomics — lives in natural comfort zone */
+  --bottom-nav-height:   72px;   /* 72px including safe area */
+  --bottom-nav-safe:     env(safe-area-inset-bottom, 0px);
+
+  /* Desktop hero layout */
   --hero-col-gap:     clamp(2.5rem, 5vw, 6rem);
   --hero-left-width:  54%;
   --hero-right-width: 46%;
 
   /* ── Radius ──────────────────────────────────────────────────────────── */
-  --radius-xs:   4px;
-  --radius-sm:   6px;
-  --radius-md:  10px;
-  --radius-lg:  14px;
-  --radius-xl:  20px;
-  --radius-2xl: 28px;
+  --radius-xs: 4px; --radius-sm: 6px; --radius-md: 10px;
+  --radius-lg: 14px; --radius-xl: 20px; --radius-2xl: 28px;
   --radius-full: 9999px;
 
   /* ── Spring physics → CSS easing mirrors ────────────────────────────── */
-  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);   /* bouncy reveal */
-  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);        /* smooth settle */
-  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);       /* mid-page transitions */
-  --ease-expo:    cubic-bezier(0.19, 1, 0.22, 1);       /* cinematic dramatic */
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-expo:     cubic-bezier(0.19, 1, 0.22, 1);
+  --dur-instant:   60ms; --dur-fast: 110ms; --dur-base: 200ms;
+  --dur-slow: 380ms; --dur-glacial: 600ms; --dur-cinematic: 900ms;
 
-  --dur-instant:   60ms;
-  --dur-fast:     110ms;
-  --dur-base:     200ms;
-  --dur-slow:     380ms;
-  --dur-glacial:  600ms;
-  --dur-cinematic: 900ms;
-
-  /* ── Liquid Glass v2 (Linear 2026 clarity-over-decoration) ────────────
-     Philosophy: glass serves depth, never decoration.
-     Five tiers: chromatic (featured), elevated (hero), full (proof cards),
-                 medium (project cards), surface (certs), light (tags).
-     ──────────────────────────────────────────────────────────────────── */
+  /* ── Liquid Glass — 5-tier system ───────────────────────────────────── */
   --glass-bg:           oklch(100% 0 0 / 0.033);
   --glass-bg-hover:     oklch(100% 0 0 / 0.06);
   --glass-bg-active:    oklch(100% 0 0 / 0.09);
   --glass-border:       oklch(100% 0 0 / 0.09);
   --glass-border-hover: oklch(100% 0 0 / 0.16);
-  --glass-blur:         14px;  /* v14: 16px → 14px — lighter medium tier */
+  /* v15: Desktop blur. Mobile gets ÷2 override at 430px */
+  --glass-blur:         14px;
   --glass-sat:          160%;
-
-  /* Fresnel: physics-accurate edge lighting */
   --fresnel-top:   oklch(100% 0 0 / 0.28);
   --fresnel-left:  oklch(100% 0 0 / 0.18);
   --fresnel-right: oklch(100% 0 0 / 0.04);
   --fresnel-btm:   oklch(100% 0 0 / 0.03);
-
-  /* Iridescent border — featured project card + glass-chromatic tier */
   --glass-chromatic-border: linear-gradient(
     135deg,
     oklch(100% 0 0 / 0.22) 0%,
@@ -216,8 +155,6 @@
     oklch(63% 0.22 258 / 0.14) 60%,
     oklch(100% 0 0 / 0.08) 100%
   );
-
-  /* Composite shadows: layered for physical depth */
   --glass-shadow:
     0 1px 0 0 var(--fresnel-top) inset,
     0 -1px 0 0 var(--fresnel-btm) inset,
@@ -238,96 +175,44 @@
   --skill-proficient: var(--color-success);
   --skill-found:      oklch(100% 0 0 / 0.28);
 
-  /* ── Background radial glows ────────────────────────────────────────── */
-  /* Hero: indigo left column (matches accent) */
-  --glow-hero: radial-gradient(
-    ellipse 70% 80% at 8% 50%,
-    oklch(63% 0.22 258 / 0.10) 0%,
-    transparent 65%
-  );
-  /* v14.0 NEW: warm amber counter to cool indigo — A24 chromatic tension */
-  --glow-hero-warm: radial-gradient(
-    ellipse 50% 60% at 92% 30%,
-    oklch(73% 0.18 75 / 0.05) 0%,
-    transparent 70%
-  );
-  /* Ambient: cyan top-right (technical proof) */
-  --glow-ambient: radial-gradient(
-    ellipse 55% 60% at 85% 40%,
-    oklch(74% 0.18 195 / 0.04) 0%,
-    transparent 70%
-  );
-  /* Projects section: accent radial — conviction builds through scroll */
-  --glow-projects: radial-gradient(
-    ellipse 55% 50% at 50% 40%,
-    oklch(63% 0.22 258 / 0.04) 0%,
-    transparent 65%
-  );
-  /* About section: subtle success green (career depth, reliability) */
-  --glow-about: radial-gradient(
-    ellipse 60% 55% at 15% 60%,
-    oklch(65% 0.18 155 / 0.04) 0%,
-    transparent 70%
-  );
-  /* Contact section: warm accent violet (conviction, call-to-action) */
-  --glow-contact: radial-gradient(
-    ellipse 65% 50% at 80% 20%,
-    oklch(63% 0.22 258 / 0.07) 0%,
-    transparent 60%
-  );
+  /* ── Background radial glows (desktop only — suppressed mobile) ──────── */
+  --glow-hero: radial-gradient(ellipse 70% 80% at 8% 50%, oklch(63% 0.22 258 / 0.10) 0%, transparent 65%);
+  --glow-hero-warm: radial-gradient(ellipse 50% 60% at 92% 30%, oklch(73% 0.18 75 / 0.05) 0%, transparent 70%);
+  --glow-ambient: radial-gradient(ellipse 55% 60% at 85% 40%, oklch(74% 0.18 195 / 0.04) 0%, transparent 70%);
+  --glow-projects: radial-gradient(ellipse 55% 50% at 50% 40%, oklch(63% 0.22 258 / 0.04) 0%, transparent 65%);
+  --glow-about: radial-gradient(ellipse 60% 55% at 15% 60%, oklch(65% 0.18 155 / 0.04) 0%, transparent 70%);
+  --glow-contact: radial-gradient(ellipse 65% 50% at 80% 20%, oklch(63% 0.22 258 / 0.07) 0%, transparent 60%);
 }
 
-/* ── Light mode overrides ───────────────────────────────────────────────────*/
+/* ── Light mode overrides ─────────────────────────────────────────────────*/
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --color-bg:             oklch(97% 0.003 264);
-    --color-surface:        #ffffff;
+    --color-bg: oklch(97% 0.003 264); --color-surface: #ffffff;
     --color-surface-raised: oklch(98% 0.003 264);
-    --color-border:         oklch(0% 0 0 / 0.07);
-    --color-border-subtle:  oklch(0% 0 0 / 0.04);
-    --color-border-hover:   oklch(0% 0 0 / 0.13);
-    --color-text-primary:   oklch(12% 0.01 264);
-    --color-text-secondary: oklch(42% 0.006 264);
-    --color-text-muted:     oklch(55% 0.005 264);
-    --glass-bg:             oklch(100% 0 0 / 0.72);
-    --glass-bg-hover:       oklch(100% 0 0 / 0.88);
-    --glass-border:         oklch(0% 0 0 / 0.08);
-    --glass-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-      0 8px 32px -4px rgba(0, 0, 0, 0.09),
-      0 1px 2px rgba(0, 0, 0, 0.06);
-    --glow-hero:       none;
-    --glow-hero-warm:  none;
-    --glow-ambient:    none;
-    --glow-projects:   none;
-    --glow-about:      none;
-    --glow-contact:    none;
+    --color-border: oklch(0% 0 0 / 0.07); --color-border-subtle: oklch(0% 0 0 / 0.04);
+    --color-border-hover: oklch(0% 0 0 / 0.13);
+    --color-text-primary: oklch(12% 0.01 264); --color-text-secondary: oklch(42% 0.006 264);
+    --color-text-muted: oklch(55% 0.005 264);
+    --glass-bg: oklch(100% 0 0 / 0.72); --glass-bg-hover: oklch(100% 0 0 / 0.88);
+    --glass-border: oklch(0% 0 0 / 0.08);
+    --glass-shadow: 0 1px 0 0 rgba(255,255,255,0.9) inset, 0 8px 32px -4px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06);
+    --glow-hero: none; --glow-hero-warm: none; --glow-ambient: none;
+    --glow-projects: none; --glow-about: none; --glow-contact: none;
   }
 }
 
 [data-theme='light'] {
-  --color-bg:             oklch(97% 0.003 264);
-  --color-surface:        #ffffff;
+  --color-bg: oklch(97% 0.003 264); --color-surface: #ffffff;
   --color-surface-raised: oklch(98% 0.003 264);
-  --color-border:         oklch(0% 0 0 / 0.07);
-  --color-border-subtle:  oklch(0% 0 0 / 0.04);
-  --color-border-hover:   oklch(0% 0 0 / 0.13);
-  --color-text-primary:   oklch(12% 0.01 264);
-  --color-text-secondary: oklch(42% 0.006 264);
-  --color-text-muted:     oklch(55% 0.005 264);
-  --glass-bg:             oklch(100% 0 0 / 0.72);
-  --glass-bg-hover:       oklch(100% 0 0 / 0.88);
-  --glass-border:         oklch(0% 0 0 / 0.08);
-  --glass-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-    0 8px 32px -4px rgba(0, 0, 0, 0.09),
-    0 1px 2px rgba(0, 0, 0, 0.06);
-  --glow-hero:       none;
-  --glow-hero-warm:  none;
-  --glow-ambient:    none;
-  --glow-projects:   none;
-  --glow-about:      none;
-  --glow-contact:    none;
+  --color-border: oklch(0% 0 0 / 0.07); --color-border-subtle: oklch(0% 0 0 / 0.04);
+  --color-border-hover: oklch(0% 0 0 / 0.13);
+  --color-text-primary: oklch(12% 0.01 264); --color-text-secondary: oklch(42% 0.006 264);
+  --color-text-muted: oklch(55% 0.005 264);
+  --glass-bg: oklch(100% 0 0 / 0.72); --glass-bg-hover: oklch(100% 0 0 / 0.88);
+  --glass-border: oklch(0% 0 0 / 0.08);
+  --glass-shadow: 0 1px 0 0 rgba(255,255,255,0.9) inset, 0 8px 32px -4px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06);
+  --glow-hero: none; --glow-hero-warm: none; --glow-ambient: none;
+  --glow-projects: none; --glow-about: none; --glow-contact: none;
 }
 
 /* ── Reduced motion: blanket override ──────────────────────────────────── */
@@ -340,6 +225,28 @@
   }
 }
 
+/* ── Mobile glass simplification (≤430px) — performance tier ─────────── */
+/* Low/mid-range device: flatten glass layers, reduce blur to 7px */
+@media (max-width: 430px) {
+  :root {
+    --glass-blur: 7px;
+    --glass-sat:  120%;
+    /* Glow suppressed on mobile — save GPU budget for content renders */
+    --glow-hero:      none;
+    --glow-hero-warm: none;
+    --glow-ambient:   none;
+    --glow-projects:  none;
+    --glow-about:     none;
+    --glow-contact:   none;
+  }
+  /* Shimmer beam disabled on mobile — too expensive for content benefit */
+  .glass-medium::before { display: none; }
+  /* Gradient mesh orbs hidden on mobile */
+  .gradient-mesh { display: none; }
+  /* Cursor glow pointless without hover */
+  .cursor-glow { display: none; }
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    BASE RESET
    ════════════════════════════════════════════════════════════════════════════ */
@@ -350,6 +257,8 @@ html {
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* v15: scroll-padding so anchors clear the top nav */
+  scroll-padding-top: calc(var(--nav-height) + 8px);
 }
 
 body {
@@ -362,6 +271,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   overflow-x: hidden;
+  /* v15: Reserve bottom clearance for mobile bottom nav */
+  padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
+}
+
+/* Remove bottom padding on desktop — no bottom nav */
+@media (min-width: 769px) {
+  body { padding-bottom: 0; }
 }
 
 /* Focus visible — WCAG 2.2+ */
@@ -378,7 +294,7 @@ body {
   width: 100%;
   max-width: var(--max-width);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 3rem);
+  padding-inline: clamp(1rem, 5vw, 3rem);
 }
 
 /* Skip nav — WCAG 2.2 §2.4.1 */
@@ -400,11 +316,7 @@ body {
 
 /* ════════════════════════════════════════════════════════════════════════════
    TYPOGRAPHY — A24 DIDONE AUTHORITY
-   Principle: headings carry cinematic weight. Body carries Stripe's clarity.
    ════════════════════════════════════════════════════════════════════════════ */
-
-/* Hero headline: full Didone authority
-   v14.0: size-adjust removed — caused Syne reflow on font-swap */
 h1, .h1 {
   font-family: var(--font-display);
   font-size: var(--text-hero);
@@ -414,7 +326,6 @@ h1, .h1 {
   color: var(--color-text-primary);
 }
 
-/* Section headings: cinematic reveal targets */
 h2, .h2 {
   font-family: var(--font-display);
   font-size: var(--text-section);
@@ -426,40 +337,37 @@ h2, .h2 {
 
 h3, .h3 {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2vw + 0.75rem, 1.875rem);
+  font-size: clamp(1.125rem, 2vw + 0.75rem, 1.875rem);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-snug);
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
 }
 
-/* Didone sub-line: italic serif — emotional resonance without salesiness */
 .text-didone-sub {
   font-family: var(--font-didone);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.25rem, 2vw + 0.75rem, 1.875rem);
+  font-size: clamp(1.125rem, 2vw + 0.75rem, 1.875rem);
   color: var(--color-text-secondary);
   letter-spacing: -0.01em;
   line-height: var(--leading-snug);
 }
 
-/* Mono label: Linear high-density legibility */
 .label-mono {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;  /* 11px — high-density optimal */
+  font-size: 0.6875rem;
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
-/* .label — kicker row and card stack descriptors */
 .label {
   display: flex;
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.625rem;          /* 10px */
+  font-size: 0.625rem;
   font-weight: var(--weight-medium);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -467,7 +375,6 @@ h3, .h3 {
   line-height: 1;
 }
 
-/* Section kicker row: number + label */
 .section-kicker-row {
   display: flex;
   align-items: center;
@@ -495,15 +402,8 @@ h3, .h3 {
 
 /* ════════════════════════════════════════════════════════════════════════════
    GLASS SURFACE SYSTEM — LINEAR LIQUID GLASS v2
-   Philosophy: depth serves navigation, never decoration.
-   Five interactive tiers: chromatic → elevated → full → medium → surface → light
-   Composited layers: contain-paint prevents overflow bleed.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* v14.0 NEW — Chromatic glass: featured project card with iridescent treatment.
-   The gradient border is rendered via ::after (overlay, not inset shadow) —
-   prevents the border from clipping into corner radii.
-   Only used on the primary featured project card; applying broadly dilutes signal. */
 .glass-chromatic {
   position: relative;
   overflow: hidden;
@@ -517,7 +417,6 @@ h3, .h3 {
     0 16px 64px -12px oklch(0% 0 0 / 0.6),
     0 4px 12px -2px oklch(0% 0 0 / 0.35);
   contain: paint;
-  /* Iridescent border via ::before overlay */
   border: 1px solid oklch(100% 0 0 / 0.12);
   transition:
     background var(--dur-base) var(--ease-out),
@@ -530,7 +429,6 @@ h3, .h3 {
   border-color: oklch(100% 0 0 / 0.18);
 }
 
-/* Elevated glass: hero visual dashboard — strongest backdrop */
 .glass-elevated {
   position: relative;
   overflow: hidden;
@@ -551,7 +449,6 @@ h3, .h3 {
     box-shadow var(--dur-base) var(--ease-out);
 }
 
-/* Full glass: hero proof cards, featured project. */
 .glass-full {
   position: relative;
   background: var(--glass-bg);
@@ -572,7 +469,6 @@ h3, .h3 {
   box-shadow: var(--glass-shadow-hover);
 }
 
-/* Medium glass: project cards, OSS cards, writing cards. */
 .glass-medium {
   position: relative;
   overflow: hidden;
@@ -594,7 +490,6 @@ h3, .h3 {
   box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.3) inset, 0 16px 48px -8px oklch(0% 0 0 / 0.45);
 }
 
-/* v13.0: .glass-surface — mid-weight tier for cert cards, testimonials */
 .glass-surface {
   position: relative;
   background: oklch(100% 0 0 / 0.03);
@@ -612,8 +507,7 @@ h3, .h3 {
   border-color: var(--glass-border-hover);
 }
 
-/* v14.0: Shimmer beam — glass-medium only.
-   v14: width 55% → 52%, skewX -12° → -10° (cleaner on tall portrait cards). */
+/* Shimmer beam — desktop only (disabled ≤430px via token override above) */
 .glass-medium::before {
   content: '';
   position: absolute;
@@ -623,11 +517,11 @@ h3, .h3 {
   height: 100%;
   background: linear-gradient(
     105deg,
-    transparent               0%,
-    oklch(100% 0 0 / 0.022)  30%,
-    oklch(100% 0 0 / 0.05)   50%,
-    oklch(100% 0 0 / 0.022)  70%,
-    transparent              100%
+    transparent 0%,
+    oklch(100% 0 0 / 0.022) 30%,
+    oklch(100% 0 0 / 0.05) 50%,
+    oklch(100% 0 0 / 0.022) 70%,
+    transparent 100%
   );
   transform: translateX(-220%) skewX(-10deg);
   transition: none;
@@ -640,7 +534,6 @@ h3, .h3 {
   transition: transform var(--dur-glacial) var(--ease-expo);
 }
 
-/* Light glass: skills tags, filter pills */
 .glass-light {
   background: oklch(100% 0 0 / 0.04);
   border: 1px solid var(--glass-border);
@@ -664,9 +557,12 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   NAV — Liquid Glass, scroll-aware
-   z-index: 50 — above section content, below command palette (9999)
+   NAV SYSTEM — v15: Dual-plane mobile architecture
+   Desktop: traditional top navigation (unchanged)
+   Mobile: minimal top identity bar + thumb-ergonomic bottom navigation
    ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Top nav: shared base ──────────────────────────────────────────────── */
 .glass-nav {
   position: fixed;
   top: 0;
@@ -690,13 +586,105 @@ h3, .h3 {
   border-bottom-color: var(--glass-border);
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   PROJECT SECTION — scoped ambient
-   ════════════════════════════════════════════════════════════════════════════ */
-#section-projects {
-  position: relative;
-  isolation: isolate;
+/* ── Bottom navigation — v15 MOBILE ONLY ─────────────────────────────── */
+/* Lives in the thumb comfort zone. z-index 60 — above top nav for touch  */
+.bottom-nav {
+  display: none; /* hidden by default, shown on mobile */
 }
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    height: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
+    padding-bottom: var(--bottom-nav-safe);
+    align-items: flex-start;
+    padding-top: 8px;
+    background: oklch(8% 0.009 264 / 0.94);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -4px 24px -4px oklch(0% 0 0 / 0.5);
+    /* Native-feeling — no content gap */
+    gap: 0;
+  }
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    /* 48×48 minimum touch target — centered within tab */
+    min-height: 48px;
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+    /* Larger touch footprint than visual size */
+    position: relative;
+  }
+
+  .bottom-nav-item::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: var(--radius-md);
+  }
+
+  .bottom-nav-item.active {
+    color: var(--color-accent);
+  }
+
+  .bottom-nav-item-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Active indicator pill under icon */
+  .bottom-nav-item.active .bottom-nav-item-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-accent);
+  }
+
+  .bottom-nav-item-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: var(--weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  /* Hide desktop-only top nav links and controls */
+  .desktop-nav-links { display: none !important; }
+  .desktop-nav-controls { display: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SECTION GLOWS — ambient depth
+   ════════════════════════════════════════════════════════════════════════════ */
+#section-projects { position: relative; isolation: isolate; }
 #section-projects::before {
   content: '';
   position: absolute;
@@ -705,51 +693,20 @@ h3, .h3 {
   pointer-events: none;
   z-index: 0;
 }
-#section-projects > * {
-  position: relative;
-  z-index: 1;
-}
+#section-projects > * { position: relative; z-index: 1; }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   OPEN SOURCE SECTION — v12.1 targeted refinements
-   ════════════════════════════════════════════════════════════════════════════ */
-#open-source {
-  position: relative;
-  isolation: isolate;
-}
+#open-source { position: relative; isolation: isolate; }
 #open-source::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 60% 50% at 85% 10%,
-    oklch(74% 0.18 195 / 0.05) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse 60% 50% at 85% 10%, oklch(74% 0.18 195 / 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
-#open-source > * {
-  position: relative;
-  z-index: 1;
-}
+#open-source > * { position: relative; z-index: 1; }
 
-/* OSS card: <code> base treatment */
-.glass-medium code {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.05em;
-  font-variant-ligatures: none;
-}
-
-/* ════════════════════════════════════════════════════════════════════════════
-   ABOUT SECTION — ambient glow
-   ════════════════════════════════════════════════════════════════════════════ */
-#section-about {
-  position: relative;
-  isolation: isolate;
-}
+#section-about { position: relative; isolation: isolate; }
 #section-about::before {
   content: '';
   position: absolute;
@@ -758,18 +715,9 @@ h3, .h3 {
   pointer-events: none;
   z-index: 0;
 }
-#section-about > * {
-  position: relative;
-  z-index: 1;
-}
+#section-about > * { position: relative; z-index: 1; }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   CONTACT SECTION — ambient glow
-   ════════════════════════════════════════════════════════════════════════════ */
-#section-contact {
-  position: relative;
-  isolation: isolate;
-}
+#section-contact { position: relative; isolation: isolate; }
 #section-contact::before {
   content: '';
   position: absolute;
@@ -778,15 +726,11 @@ h3, .h3 {
   pointer-events: none;
   z-index: 0;
 }
-#section-contact > * {
-  position: relative;
-  z-index: 1;
-}
+#section-contact > * { position: relative; z-index: 1; }
 
 /* ════════════════════════════════════════════════════════════════════════════
    BADGES / PILLS / STATUS INDICATORS
    ════════════════════════════════════════════════════════════════════════════ */
-
 .badge-live {
   display: inline-flex;
   align-items: center;
@@ -840,7 +784,6 @@ h3, .h3 {
   height: 0.375rem;
   border-radius: 50%;
   background: var(--color-success);
-  /* v14.0: added bloom ring for better visibility on glass backgrounds */
   animation: livePulse 2.4s var(--ease-in-out) infinite;
 }
 
@@ -852,7 +795,6 @@ h3, .h3 {
   background: var(--color-warning);
 }
 
-/* v14.0: bloom ring added — more visible on dark glass backgrounds */
 @keyframes livePulse {
   0%   { opacity: 1; box-shadow: 0 0 0 0 var(--color-live-glow); }
   50%  { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
@@ -874,7 +816,6 @@ h3, .h3 {
   background: var(--color-cyan-surface);
 }
 
-/* v13.0: .tag — filter pills for WritingSection */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -894,19 +835,13 @@ h3, .h3 {
     background var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out);
 }
-.tag:hover {
-  color: var(--color-text-secondary);
-  background: var(--glass-bg-hover);
-  border-color: var(--glass-border-hover);
-}
-
+.tag:hover { color: var(--color-text-secondary); background: var(--glass-bg-hover); border-color: var(--glass-border-hover); }
 .tag--active {
   border-color: oklch(63% 0.22 258 / 0.35) !important;
   background: oklch(63% 0.22 258 / 0.12) !important;
   color: var(--color-text-primary) !important;
 }
 
-/* v14.0 NEW — .link-reveal — animated underline, case study CTAs */
 .link-reveal {
   position: relative;
   color: var(--color-text-muted);
@@ -923,14 +858,9 @@ h3, .h3 {
   background: currentColor;
   transition: width var(--dur-base) var(--ease-expo);
 }
-.link-reveal:hover {
-  color: var(--color-text-primary);
-}
-.link-reveal:hover::after {
-  width: 100%;
-}
+.link-reveal:hover { color: var(--color-text-primary); }
+.link-reveal:hover::after { width: 100%; }
 
-/* v14.0 NEW — .card-depth — project card shadow depth system */
 .card-depth {
   box-shadow:
     0 0 0 1px var(--glass-border),
@@ -946,17 +876,17 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   CTA BUTTONS — Stripe trust-first clarity
-   v14.0: letter-spacing 0.01em → 0.02em (sharper label density)
+   CTA BUTTONS — v15: Mobile-native thumb ergonomics
    ════════════════════════════════════════════════════════════════════════════ */
 
+/* v15: min-height 48px system-wide (was 44px) — WCAG AAA touch target */
 .cta-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.625rem 1.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.75rem;
   background: var(--color-accent);
   color: white;
   font-family: var(--font-body);
@@ -971,6 +901,8 @@ h3, .h3 {
     background var(--dur-fast) var(--ease-out),
     transform var(--dur-base) var(--ease-spring),
     box-shadow var(--dur-base) var(--ease-out);
+  /* Prevent hover-dependent styles breaking touch devices */
+  -webkit-tap-highlight-color: transparent;
 }
 .cta-primary:hover {
   background: var(--color-accent-hover);
@@ -978,8 +910,14 @@ h3, .h3 {
   box-shadow: 0 8px 24px -4px var(--color-accent-glow);
 }
 .cta-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
   transition-duration: var(--dur-instant);
+}
+
+/* Mobile: full-width primary CTAs for thumb comfort zone coverage */
+@media (max-width: 640px) {
+  .cta-primary { width: 100%; justify-content: center; }
+  .cta-hero-group .cta-primary { width: 100%; }
 }
 
 .cta-secondary {
@@ -987,8 +925,8 @@ h3, .h3 {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.625rem 1.25rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
   background: transparent;
   color: var(--color-text-secondary);
   font-family: var(--font-body);
@@ -1002,6 +940,7 @@ h3, .h3 {
     border-color var(--dur-fast) var(--ease-out),
     color var(--dur-fast) var(--ease-out),
     transform var(--dur-base) var(--ease-spring);
+  -webkit-tap-highlight-color: transparent;
 }
 .cta-secondary:hover {
   border-color: var(--glass-border-hover);
@@ -1009,10 +948,16 @@ h3, .h3 {
   transform: translateY(-1px);
 }
 
+@media (max-width: 640px) {
+  .cta-secondary { width: 100%; justify-content: center; }
+}
+
 .cta-ghost {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  min-height: 44px;
+  padding: 0.5rem 0;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
@@ -1021,9 +966,30 @@ h3, .h3 {
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 .cta-ghost:hover { color: var(--color-text-primary); }
+
+/* CTA group layout */
+.cta-hero-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .cta-hero-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+  }
+  .cta-hero-group .cta-primary,
+  .cta-hero-group .cta-secondary {
+    width: auto;
+  }
+}
 
 /* ════════════════════════════════════════════════════════════════════════════
    ARCH DECISION TABLE
@@ -1034,24 +1000,15 @@ h3, .h3 {
   border-right: none;
   border-bottom: 1px solid var(--color-border-subtle);
 }
-
 .arch-label[data-arch-key='chosen']  { color: var(--color-success); }
 .arch-label[data-arch-key='over']    { color: var(--color-text-muted); }
-.arch-label[data-arch-key='because'] {
-  color: var(--color-accent);
-  font-weight: var(--weight-medium);
-}
-
+.arch-label[data-arch-key='because'] { color: var(--color-accent); font-weight: var(--weight-medium); }
 .arch-because-cell {
   border-left: 2px solid transparent;
   transition: border-left-color var(--dur-fast) var(--ease-out);
 }
 .arch-because-cell:hover { border-left-color: var(--color-accent-glow); }
-
-[data-label='BECAUSE'] {
-  font-weight: var(--weight-medium) !important;
-  color: var(--color-text-primary) !important;
-}
+[data-label='BECAUSE'] { font-weight: var(--weight-medium) !important; color: var(--color-text-primary) !important; }
 
 /* ════════════════════════════════════════════════════════════════════════════
    PROOF CARDS & METRICS
@@ -1069,15 +1026,16 @@ h3, .h3 {
 .proof-card:hover {
   border-color: var(--glass-border-hover) !important;
   background: var(--glass-bg-hover) !important;
-  transform: translateY(-3px);
+}
+/* v15: Remove hover lift on mobile — avoid accidental micro-scrolls */
+@media (min-width: 769px) {
+  .proof-card:hover { transform: translateY(-3px); }
 }
 
-/* Hero proof callout: left-border accent.
-   v14.0: copy corrected to "Built in Abuja" (was "LagosLagos" — duplicate). */
 .hero-proof-callout {
   border-left: 2px solid oklch(74% 0.18 195 / 0.55);
   padding-left: 1rem;
-  margin-block: 1.5rem 2rem;
+  margin-block: 1.25rem 1.5rem;
 }
 
 .metric-bar {
@@ -1095,14 +1053,13 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   TESTIMONIALS — v13.0
+   TESTIMONIALS
    ════════════════════════════════════════════════════════════════════════════ */
 .testimonial-grid {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
-
 .testimonial-card {
   position: relative;
   overflow: hidden;
@@ -1124,7 +1081,6 @@ h3, .h3 {
   border-color: var(--glass-border-hover);
   transform: translateY(-2px);
 }
-
 .testimonial-quote {
   font-family: var(--font-didone);
   font-style: italic;
@@ -1134,13 +1090,7 @@ h3, .h3 {
   color: oklch(93% 0.006 264 / 0.78);
   margin-bottom: 1.25rem;
 }
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+.testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
 .testimonial-avatar {
   display: flex;
   align-items: center;
@@ -1157,38 +1107,16 @@ h3, .h3 {
   color: var(--color-accent-hover);
   flex-shrink: 0;
 }
-
-.testimonial-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.testimonial-name {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
-  line-height: 1.3;
-}
-
-.testimonial-role {
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  line-height: 1.3;
-}
+.testimonial-meta { display: flex; flex-direction: column; gap: 0.125rem; }
+.testimonial-name { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); line-height: 1.3; }
+.testimonial-role { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   BACKGROUND GLOWS — ambient radial compositing
-   Hardware-accelerated: will-change: transform isolates to GPU layer
+   BACKGROUND GLOWS
    ════════════════════════════════════════════════════════════════════════════ */
 .work-surface-glow {
   position: absolute;
   inset: 0;
-  /* v14.0: hero warm amber glow added to composite — cool/warm A24 tension */
   background: var(--glow-hero), var(--glow-hero-warm), var(--glow-ambient);
   pointer-events: none;
   will-change: transform;
@@ -1204,9 +1132,6 @@ h3, .h3 {
 
 /* ════════════════════════════════════════════════════════════════════════════
    BELOW-FOLD SECTION DEFERRAL
-   Reduces TTI 60–80ms on mid-range devices.
-   WCAG-safe: focus entering element forces full subtree rendering.
-   NOTE: Hero section must NOT use section-deferred — it renders immediately.
    ════════════════════════════════════════════════════════════════════════════ */
 .section-deferred {
   content-visibility: auto;
@@ -1214,17 +1139,13 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   CURSOR GLOW — pointer-tracking visual flourish
+   CURSOR GLOW — desktop only
    ════════════════════════════════════════════════════════════════════════════ */
 .cursor-glow {
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    oklch(63% 0.22 258 / 0.04) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, oklch(63% 0.22 258 / 0.04) 0%, transparent 70%);
   z-index: 1;
   will-change: transform;
   pointer-events: none;
@@ -1254,12 +1175,7 @@ h3, .h3 {
 /* ════════════════════════════════════════════════════════════════════════════
    WRITING SECTION
    ════════════════════════════════════════════════════════════════════════════ */
-.writing-section-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
+.writing-section-inner { display: flex; flex-direction: column; gap: 1px; }
 .writing-row {
   display: flex;
   align-items: center;
@@ -1270,9 +1186,7 @@ h3, .h3 {
   transition: color var(--dur-fast) var(--ease-out);
 }
 .writing-row:hover .writing-row-title { color: var(--color-text-primary); }
-
 .writing-view-all { margin-top: 2rem; align-self: flex-start; }
-
 @media (max-width: 480px) {
   .writing-row { gap: var(--space-3); align-items: flex-start; flex-direction: column; }
 }
@@ -1287,51 +1201,60 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE LAYOUT UTILITIES
    ════════════════════════════════════════════════════════════════════════════ */
-@media (min-width: 769px) {
-  .about-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (min-width: 1100px) {
-  .about-grid { grid-template-columns: 1.4fr 1fr 0.9fr; }
-}
+@media (min-width: 769px) { .about-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .about-grid { grid-template-columns: 1.4fr 1fr 0.9fr; } }
+
 @media (max-width: 480px) {
   .pill-full { display: none; }
   .pill-short { display: inline-flex; }
-  /* v14.0: border-right collapse fix for mobile pillar grid */
-  .pillar-grid-item { border-right: none !important; border-bottom: 1px solid var(--color-border-subtle) !important; }
+  .pillar-grid-item {
+    border-right: none !important;
+    border-bottom: 1px solid var(--color-border-subtle) !important;
+  }
+  /* nav-links handled by bottom-nav — hide desktop list on mobile */
   .nav-links { display: none !important; }
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   PRINT STYLES
-   ════════════════════════════════════════════════════════════════════════════ */
-@media print {
-  .glass-nav, .skip-nav, .bookmark-toast, .cmd-overlay,
-  .reading-progress, footer button, [aria-label='Toggle navigation'] {
-    display: none !important;
+/* ── Pillar grid ─────────────────────────────────────────────────────────── */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .pillar-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
   }
-  body { background: white; color: black; font-size: 11pt; }
-  .glass-chromatic, .glass-elevated, .glass-full,
-  .glass-medium, .glass-surface, .glass-light {
-    background: white; border: 1px solid #ddd;
-    box-shadow: none; backdrop-filter: none;
+}
+.pillar-grid-item {
+  position: relative;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+}
+@media (min-width: 640px) {
+  .pillar-grid-item:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .glass-medium::before,
-  #open-source::before,
-  #section-about::before,
-  #section-contact::before,
-  #section-projects::before { display: none; }
-  a[href]::after { content: ' (' attr(href) ')'; font-size: 9pt; color: #555; }
-  h1, h2, h3 { page-break-after: avoid; }
+}
+
+/* ── Nav links ───────────────────────────────────────────────────────────── */
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.commit-message { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* ── OSS code ────────────────────────────────────────────────────────────── */
+.glass-medium code {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.05em;
+  font-variant-ligatures: none;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   COMMIT / LIVE FEED TRUNCATION
-   ════════════════════════════════════════════════════════════════════════════ */
-.commit-message { max-width: min(28ch, 45vw); }
-@media (max-width: 640px) { .commit-message { max-width: min(16ch, 50vw); } }
-
-/* ════════════════════════════════════════════════════════════════════════════
-   GRADIENT MESH — ambient layered orbs
+   GRADIENT MESH
    ════════════════════════════════════════════════════════════════════════════ */
 .gradient-mesh {
   position: fixed;
@@ -1341,15 +1264,7 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
   overflow: hidden;
   contain: strict;
 }
-
-.gradient-mesh-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+.gradient-mesh-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .gradient-mesh-orb {
   position: absolute;
   border-radius: 50%;
@@ -1358,78 +1273,66 @@ progress[data-level='foundational'] { accent-color: var(--skill-found); }
   filter: blur(80px);
 }
 .gradient-mesh-orb--indigo {
-  width: 640px;
-  height: 640px;
-  top: -15%;
-  left: -10%;
+  width: 640px; height: 640px; top: -15%; left: -10%;
   background: radial-gradient(circle, oklch(63% 0.22 258 / 0.07) 0%, transparent 70%);
 }
 .gradient-mesh-orb--green {
-  width: 480px;
-  height: 480px;
-  bottom: 20%;
-  right: 5%;
+  width: 480px; height: 480px; bottom: 20%; right: 5%;
   background: radial-gradient(circle, oklch(65% 0.18 155 / 0.05) 0%, transparent 70%);
 }
 .gradient-mesh-orb--amber {
-  width: 360px;
-  height: 360px;
-  top: 60%;
-  left: 30%;
+  width: 360px; height: 360px; top: 60%; left: 30%;
   background: radial-gradient(circle, oklch(73% 0.18 75 / 0.04) 0%, transparent 70%);
 }
 
-/* grain overlay — GPU-composited, pointer-events: none */
 .grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  pointer-events: none;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.032;
-  contain: strict;
+  position: fixed; inset: 0; z-index: 9998;
+  pointer-events: none; width: 100vw; height: 100vh;
+  opacity: 0.032; contain: strict;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
    KEYFRAMES
    ════════════════════════════════════════════════════════════════════════════ */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-/* A24 Didone word-reveal: narrow → wide letterform unfurl */
-@keyframes wordReveal {
-  from { transform: translateY(110%); }
-  to   { transform: translateY(0%); }
-}
-
-/* Clip reveal: wipe from left — "unknown → revealed" geometric */
+@keyframes wordReveal { from { transform: translateY(110%); } to { transform: translateY(0%); } }
 @keyframes clipReveal {
   from { clip-path: inset(0 100% 0 0); opacity: 0; }
   to   { clip-path: inset(0 0% 0 0); opacity: 1; }
 }
-
-/* Scale-X bar fill */
-@keyframes barFill {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-
-/* v14.0 NEW: shimmerScan — refined beam for glass-chromatic hover */
+@keyframes barFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes shimmerScan {
   from { transform: translateX(-220%) skewX(-8deg); }
   to   { transform: translateX(300%) skewX(-8deg); }
 }
+@keyframes livePulse {
+  0%   { opacity: 1; box-shadow: 0 0 0 0 var(--color-live-glow); }
+  50%  { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
+  100% { opacity: 1; box-shadow: 0 0 0 0 transparent; }
+}
 
-/*
-   NOTE — .glass-medium shimmer:
-   GPU-composited — zero layout, zero paint, compositor-only.
+/* ════════════════════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ════════════════════════════════════════════════════════════════════════════ */
+@media print {
+  .glass-nav, .skip-nav, .bookmark-toast, .cmd-overlay,
+  .reading-progress, footer button, [aria-label='Toggle navigation'],
+  .bottom-nav { display: none !important; }
+  body { background: white; color: black; font-size: 11pt; padding-bottom: 0; }
+  .glass-chromatic, .glass-elevated, .glass-full,
+  .glass-medium, .glass-surface, .glass-light {
+    background: white; border: 1px solid #ddd;
+    box-shadow: none; backdrop-filter: none;
+  }
+  .glass-medium::before,
+  #open-source::before, #section-about::before,
+  #section-contact::before, #section-projects::before { display: none; }
+  a[href]::after { content: ' (' attr(href) ')'; font-size: 9pt; color: #555; }
+  h1, h2, h3 { page-break-after: avoid; }
+}
 
-   NOTE — .glass-surface / .testimonial-card:
-   No shimmer pseudo-element — these are content-primary surfaces.
-   Shimmer on .glass-medium is for interactive cards only.
-
-   NOTE — v14.0 .glass-chromatic:
-   Featured project card gets iridescent border via box-shadow and
-   a warm teal/indigo gradient border override. No shimmer ::before
-   because the card already has the strongest visual treatment.
-*/
+/* ════════════════════════════════════════════════════════════════════════════
+   COMMIT / LIVE FEED TRUNCATION
+   ════════════════════════════════════════════════════════════════════════════ */
+.commit-message { max-width: min(28ch, 45vw); }
+@media (max-width: 640px) { .commit-message { max-width: min(16ch, 50vw); } }
