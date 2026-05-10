@@ -1,13 +1,19 @@
-// CONVICTION ENGINE v11.0 — Navbar
+// CONVICTION ENGINE v13.0 — Navbar
 //
-// Design principles:
-//   • Linear 2026 Liquid Glass: transparent at top, glass-blur on scroll
-//     JS adds data-scrolled="true" at 8px — CSS handles the transition.
-//   • Spring physics: hamburger bars use spring rotation, not tween.
-//   • WCAG 2.2+ §2.4.11: all interactive targets ≥24×24px CSS.
-//   • Mobile: AnimatePresence slide-down, Escape/outside-click closes.
-//   • Tagline always visible desktop; "Open to work" pill on scroll=0.
-//   • IntersectionObserver links active section (not click-state).
+// CHANGELOG from v11.0:
+//
+//   FIX:  Logo sub-tagline location — no direct location string existed in
+//     the Navbar, but the component is audited clean as part of the global
+//     Lagos→Abuja correction pass. No copy changed here.
+//
+//   REF:  Logo wordmark — font-bold upgraded to font-extrabold for stronger
+//     display-type authority at the nav scale (12px Syne 800 vs 700).
+//
+//   KEEP: All WCAG 2.2 compliance — min 36px targets, focus rings, Escape close.
+//   KEEP: IntersectionObserver active section tracking — correct architecture.
+//   KEEP: Spring physics hamburger bars — snappy spring, not tween.
+//   KEEP: Scroll-activated glass: 0px → blur(20px) at 8px scroll.
+//   KEEP: AnimatePresence mobile slide-down.
 //
 'use client';
 
@@ -150,7 +156,7 @@ export function NavBar() {
           {/* ── Logo / wordmark ──────────────────────────────────────── */}
           <Link href="/" className="flex flex-col leading-none group" aria-label="Oscar Ndugbu — home">
             <span
-              className="font-display text-sm font-bold tracking-tight"
+              className="font-display text-sm font-extrabold tracking-tight"
               style={{ color: 'var(--color-text-primary)' }}
             >
               Oscar Ndugbu
@@ -278,8 +284,11 @@ export function NavBar() {
                   </m.li>
                 ))}
 
-                <m.li variants={reducedMotion ? undefined : mobileMenuItem} className="pt-4 border-t"
-                  style={{ borderColor: 'var(--glass-border)' }}>
+                <m.li
+                  variants={reducedMotion ? undefined : mobileMenuItem}
+                  className="pt-4 border-t"
+                  style={{ borderColor: 'var(--glass-border)' }}
+                >
                   <a
                     href="mailto:scardubu@gmail.com"
                     className="cta-primary w-full justify-center"
