@@ -1,7 +1,7 @@
-// CONVICTION ENGINE v20.0 — Home Page
+// CONVICTION ENGINE v21.0 — Home Page
 // Mobile-native: Hero → Projects → OSS → Skills → About → Writing → Contact.
 // Render priority: HeroSection is above-the-fold, zero lazy-loading.
-// All heavy sections: dynamic import (ssr: true) to reduce initial JS bundle.
+// Heavy sections: dynamic import (ssr: true) to reduce initial JS bundle.
 // Location: Lagos, Nigeria → Global.
 
 import dynamic from 'next/dynamic';
@@ -11,7 +11,7 @@ import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
 import { getWritingPosts } from '@/lib/content';
 
-// Heavy sections — lazy-loaded to keep initial JS lean.
+// Heavy sections — deferred JS, SSR-rendered HTML.
 // ssr: true preserves SEO and prevents layout shift on hydration.
 const ProjectsSection = dynamic(
   () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
@@ -76,7 +76,7 @@ export default async function Home() {
           <AboutSection />
         </Suspense>
 
-        {/* 05 — Writing: deep expertise signal (conditional on post existence) */}
+        {/* 05 — Writing: deep expertise signal */}
         {posts.length > 0 && (
           <Suspense
             fallback={<SectionSkeleton id="section-writing" label="Writing" height={420} />}
