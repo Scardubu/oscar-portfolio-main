@@ -1,183 +1,249 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Rocket, GitCommit, FileText, TrendingUp, Activity, ChevronRight } from "lucide-react";
-
-type IconType = typeof Rocket;
+import { m, useReducedMotion } from 'framer-motion';
+import { Activity, FileText, GitCommit, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ActivityItem {
   id: string;
-  type: "deployment" | "blog" | "commit" | "metric";
+  type: 'deployment' | 'blog' | 'commit' | 'metric';
   title: string;
   timestamp: string;
-  icon: IconType;
-  color: string;
+  icon: typeof GitCommit;
+  accentClass: string;
+}
+
+function getRelativeTime(timestamp: string): string {
+  const diff = Date.now() - new Date(timestamp).getTime();
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return 'Just now';
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
+
+function SkeletonRow() {
+  return (
+    <div className="flex items-start gap-3 px-4 py-3 min-h-[52px]">
+      <div className="h-4 w-4 shrink-0 mt-0.5 rounded animate-pulse" style={{ background: 'var(--color-border)' }} />
+      <div className="flex-1 space-y-1.5">
+        <div className="h-3.5 w-3/4 rounded animate-pulse" style={{ background: 'var(--color-border)' }} />
+        <div className="h-2.5 w-1/4 rounded animate-pulse" style={{ background: 'var(--color-border-subtle)' }} />
+      </div>
+    </div>
+  );
 }
 
 export function LiveBuildFeed() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
+  const [state, setState] = useState<'loading' | 'done' | 'error'>('loading');
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    let cancelled = false;
+
+    async function fetchAll() {
       try {
         const [githubRes, blogRes, metricsRes] = await Promise.allSettled([
-          fetch("https://api.github.com/users/scardubu/events/public"),
-          fetch("/api/recent-blog-posts"),
-          fetch("/api/live-metrics"),
+          fetch('https://api.github.com/users/Scardubu/events/public'),
+          fetch('/api/recent-blog-posts'),
+          fetch('/api/live-metrics'),
         ]);
 
-        const combinedActivities: ActivityItem[] = [];
+        if (cancelled) return;
 
-        // Parse GitHub commits
-        if (githubRes.status === "fulfilled" && githubRes.value.ok) {
-          const githubData = await githubRes.value.json();
-          const commits = (githubData as Array<{ id: string; type: string; repo: { name: string }; created_at: string }>)
-            .filter((event) => event.type === "PushEvent")
+        const combined: ActivityItem[] = [];
+
+        if (githubRes.status === 'fulfilled' && githubRes.value.ok) {
+          type GHEvent = { id: string; type: string; repo: { name: string }; created_at: string };
+          const events = (await githubRes.value.json()) as GHEvent[];
+          events
+            .filter((e) => e.type === 'PushEvent')
             .slice(0, 3)
-            .map((event) => ({
-              id: event.id,
-              type: "commit" as const,
-              title: `Pushed to ${event.repo.name.split("/")[1]}`,
-              timestamp: event.created_at,
-              icon: GitCommit,
-              color: "text-blue-400",
-            }));
-          combinedActivities.push(...commits);
+            .forEach((e) =>
+              combined.push({
+                id: e.id,
+                type: 'commit',
+                title: `Pushed to ${e.repo.name.split('/')[1]}`,
+                timestamp: e.created_at,
+                icon: GitCommit,
+                accentClass: 'text-blue-400',
+              })
+            );
         }
 
-        // Parse blog posts
-        if (blogRes.status === "fulfilled" && blogRes.value.ok) {
-          const blogData = await blogRes.value.json();
-          const blogs = (blogData as Array<{ slug: string; title: string; date: string }>)
-            .slice(0, 2)
-            .map((post) => ({
-              id: post.slug,
-              type: "blog" as const,
-              title: `Published: ${post.title.length > 40 ? post.title.substring(0, 40) + "..." : post.title}`,
-              timestamp: post.date,
+        if (blogRes.status === 'fulfilled' && blogRes.value.ok) {
+          type BlogPost = { slug: string; title: string; date: string };
+          const posts = (await blogRes.value.json()) as BlogPost[];
+          posts.slice(0, 2).forEach((p) =>
+            combined.push({
+              id: p.slug,
+              type: 'blog',
+              title: p.title.length > 48 ? p.title.slice(0, 48) + '…' : p.title,
+              timestamp: p.date,
               icon: FileText,
-              color: "text-purple-400",
-            }));
-          combinedActivities.push(...blogs);
+              accentClass: 'text-purple-400',
+            })
+          );
         }
 
-        // Parse live metrics
-        if (metricsRes.status === "fulfilled" && metricsRes.value.ok) {
-          const metricsData = await metricsRes.value.json();
-          if (metricsData?.todayPredictions) {
-            combinedActivities.push({
-              id: "metric-today",
-              type: "metric",
-              title: "SabiScore is serving fresh match intelligence right now",
+        if (metricsRes.status === 'fulfilled' && metricsRes.value.ok) {
+          const data = (await metricsRes.value.json()) as { todayPredictions?: number };
+          if (data?.todayPredictions) {
+            combined.push({
+              id: 'metric-live',
+              type: 'metric',
+              title: 'SabiScore serving live match intelligence',
               timestamp: new Date().toISOString(),
               icon: TrendingUp,
-              color: "text-green-400",
+              accentClass: 'text-emerald-400',
             });
           }
         }
 
-        // Sort by timestamp
-        const sorted = combinedActivities
-          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-          .slice(0, 5);
-
-        setActivities(sorted);
+        if (!cancelled) {
+          setActivities(
+            combined
+              .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+              .slice(0, 5)
+          );
+          setState('done');
+        }
       } catch {
-        setFetchError(true);
-      } finally {
-        setIsLoading(false);
+        if (!cancelled) setState('error');
       }
-    };
+    }
 
-    fetchActivities();
-    const interval = setInterval(fetchActivities, 300000); // Refresh every 5 min
-    return () => clearInterval(interval);
+    void fetchAll();
+    const timer = setInterval(() => void fetchAll(), 300_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, []);
 
-  const getRelativeTime = (timestamp: string) => {
-    const now = new Date();
-    const then = new Date(timestamp);
-    const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
-
-    if (seconds < 60) return "Fresh now";
-    if (seconds < 3600) return "Moments ago";
-    if (seconds < 86400) return "Earlier today";
-    return "Recently";
-  };
-
-  if (isLoading) {
-    return (
-      <div className="liquid-glass mouse-refraction rounded-[2rem] border border-white/10 p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Activity className="h-5 w-5 text-accent-primary" />
-          <h3 className="text-sm font-semibold text-white">Live Build Activity</h3>
-        </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg p-2">
-              <div className="h-4 w-4 animate-pulse rounded bg-white/10" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 animate-pulse rounded bg-white/10" />
-                <div className="h-3 w-1/4 animate-pulse rounded bg-white/10" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
-      <div className="liquid-glass mouse-refraction rounded-[2rem] border border-white/10 p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <Activity className="h-5 w-5 text-accent-primary" />
-          <h3 className="text-sm font-semibold text-white">Live Build Activity</h3>
-        <span className="ml-auto flex items-center gap-1">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+    <div
+      className="glass-medium rounded-[var(--radius-xl)] overflow-hidden"
+      aria-label="Live build activity"
+    >
+      {/* Header */}
+      <div
+        className="flex items-center gap-2.5 px-4 py-3 border-b"
+        style={{ borderColor: 'var(--color-border)' }}
+      >
+        <Activity
+          className="h-4 w-4 shrink-0"
+          style={{ color: 'var(--color-accent)' }}
+          aria-hidden="true"
+        />
+        <h3
+          className="text-sm font-semibold flex-1"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          Live Build Activity
+        </h3>
+
+        {/* Live indicator */}
+        <span className="flex items-center gap-1.5" role="status" aria-label="Feed is live">
+          <span className="relative flex h-1.5 w-1.5 shrink-0">
+            <span
+              className="absolute inline-flex h-full w-full rounded-full opacity-75"
+              style={{ background: 'var(--color-live)', animation: 'ping 1s cubic-bezier(0,0,0.2,1) infinite' }}
+            />
+            <span
+              className="relative inline-flex h-1.5 w-1.5 rounded-full"
+              style={{ background: 'var(--color-live)' }}
+            />
           </span>
-          <span className="text-xs text-gray-400">Live</span>
+          <span
+            className="font-mono text-[10px] tracking-wider uppercase"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Live
+          </span>
         </span>
       </div>
 
-      <div className="max-h-64 space-y-2 overflow-y-auto">
-        {fetchError ? (
-          <p className="text-sm text-gray-400">Activity feed unavailable — check back soon.</p>
-        ) : activities.length === 0 ? (
-          <p className="text-sm text-gray-400">No recent activity</p>
-        ) : (
-          activities.map((activity) => {
-            const Icon = activity.icon;
-            return (
-              <div
-                key={activity.id}
-                  className="flex items-start gap-3 rounded-2xl p-3 transition hover:bg-white/5"
-              >
-                <Icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${activity.color}`} />
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm text-gray-200">{activity.title}</p>
-                  <p className="mt-0.5 text-xs text-gray-500">{getRelativeTime(activity.timestamp)}</p>
-                </div>
-              </div>
-            );
-          })
+      {/* Body */}
+      <div className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+        {state === 'loading' && (
+          <>
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+          </>
         )}
+
+        {state === 'error' && (
+          <p
+            className="px-4 py-4 text-sm"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Activity feed unavailable — check back soon.
+          </p>
+        )}
+
+        {state === 'done' && activities.length === 0 && (
+          <p
+            className="px-4 py-4 text-sm"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            No recent activity.
+          </p>
+        )}
+
+        {state === 'done' &&
+          activities.map((item) => {
+            const Icon = item.icon;
+            return (
+              <m.div
+                key={item.id}
+                initial={reducedMotion ? false : { opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                className="flex items-start gap-3 px-4 py-3 min-h-[52px] transition-colors"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                <Icon
+                  className={`mt-0.5 h-4 w-4 shrink-0 ${item.accentClass}`}
+                  aria-hidden="true"
+                />
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-sm leading-snug line-clamp-2"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
+                    {item.title}
+                  </p>
+                  <p
+                    className="mt-0.5 font-mono text-[10px] tracking-wide"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {getRelativeTime(item.timestamp)}
+                  </p>
+                </div>
+              </m.div>
+            );
+          })}
       </div>
 
-      <div className="mt-3 border-t border-white/10 pt-3 text-center">
-        <a
-          href="https://github.com/scardubu"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-accent-primary hover:text-accent-primary/80"
-        >
-          View all on GitHub
-          <ChevronRight className="h-3 w-3" />
-        </a>
-      </div>
+      {/* Footer CTA: 44px touch target */}
+      
+        href="https://github.com/Scardubu"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 min-h-[44px] border-t font-mono text-[11px] tracking-widest uppercase transition hover:opacity-80"
+        style={{
+          borderColor: 'var(--color-border)',
+          color: 'var(--color-film-teal)',
+        }}
+      >
+        View all on GitHub
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-current" aria-hidden="true">
+          <path d="M8 0a8 8 0 0 0-2.529 15.59c.4.074.546-.173.546-.385v-1.353c-2.221.483-2.689-.959-2.689-.959-.363-.922-.886-1.168-.886-1.168-.725-.495.055-.485.055-.485 .802.056 1.225.823 1.225.823.712 1.22 1.869.868 2.325.664.072-.516.279-.868.508-1.068-1.775-.202-3.641-.888-3.641-3.952 0-.874.313-1.588.823-2.147-.082-.202-.357-1.016.078-2.117 0 0 .671-.215 2.198.82a7.657 7.657 0 0 1 2-.269 7.657 7.657 0 0 1 2 .269c1.527-1.035 2.198-.82 2.198-.82.435 1.101.16 1.915.079 2.117.51.559.822 1.273.822 2.147 0 3.072-1.869 3.748-3.65 3.946.288.248.544.737.544 1.485v2.201c0 .214.144.463.55.385A8.001 8.001 0 0 0 8 0Z" />
+        </svg>
+      </a>
     </div>
   );
 }
