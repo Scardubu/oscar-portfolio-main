@@ -111,7 +111,7 @@ function ProjectLinksCard({
   );
 }
 
-function StackCard({ tags }: Readonly<{ tags: string[] }>) {
+function StackCard({ tags }: Readonly<{ tags: readonly string[] }>) {
   if (!tags.length) return null;
   return (
     <div className="rounded-[var(--radius-xl)] border border-white/10 p-5">
