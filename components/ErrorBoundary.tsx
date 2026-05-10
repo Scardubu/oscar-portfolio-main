@@ -1,61 +1,67 @@
-// CONVICTION ENGINE v9.0 — FULL REPLACEMENT
-// components/ErrorBoundary.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Class-based React error boundary. Required for all dynamic() import boundaries.
-// ABORT-6: Live data without a fallback = blank section = broken conviction.
-// ─────────────────────────────────────────────────────────────────────────────
+'use client';
 
-import React from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
-interface ErrorBoundaryProps {
-  /** Fallback UI to render when an error is caught. */
-  fallback: React.ReactNode;
-  children: React.ReactNode;
+interface Props {
+  children:  ReactNode;
+  fallback?: ReactNode;
 }
 
-interface ErrorBoundaryState {
+interface State {
   hasError: boolean;
+  message:  string;
 }
 
-function isChunkLoadError(error: Error): boolean {
-  return (
-    error.name === 'ChunkLoadError' ||
-    error.message.includes('Loading chunk') ||
-    error.message.includes('Failed to fetch dynamically imported module')
-  );
-}
-
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state: ErrorBoundaryState = { hasError: false };
-
-  static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true };
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, message: '' };
   }
 
-  componentDidCatch(error: Error, info: React.ErrorInfo): void {
-    // Auto-recover from chunk load failures (CDN propagation hiccup on fresh deploy).
-    // sessionStorage guard prevents an infinite reload loop.
-    if (isChunkLoadError(error) && typeof window !== 'undefined') {
-      const attempts = parseInt(
-        window.sessionStorage.getItem('chunk-reload-attempts') ?? '0'
-      );
-      if (attempts < 1) {
-        window.sessionStorage.setItem('chunk-reload-attempts', String(attempts + 1));
-        window.location.reload();
-        return;
-      }
-    }
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, message: error.message };
+  }
 
-    // Surface errors in development only — never log user-visible errors to console in prod.
+  componentDidCatch(error: Error, info: ErrorInfo) {
     if (process.env.NODE_ENV === 'development') {
-      console.error('[ErrorBoundary]', error, info);
+      console.error('[ErrorBoundary]', error, info.componentStack);
     }
   }
 
-  render(): React.ReactNode {
+  handleReset = () => {
+    this.setState({ hasError: false, message: '' });
+  };
+
+  render() {
     if (this.state.hasError) {
-      return this.props.fallback;
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      return (
+        <div
+          role="alert"
+          className="flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 text-center"
+          style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-surface)' }}
+        >
+          <p
+            className="text-sm font-medium"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            Something went wrong rendering this section.
+          </p>
+          <button
+            type="button"
+            onClick={this.handleReset}
+            className="inline-flex min-h-[44px] items-center rounded-full border px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition"
+            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+          >
+            Try again
+          </button>
+        </div>
+      );
     }
+
     return this.props.children;
   }
 }
