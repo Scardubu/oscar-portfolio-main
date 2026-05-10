@@ -74,7 +74,7 @@ export function generatePersonSchema() {
     alternateName: "scardubu",
     jobTitle: "Fullstack Engineer",
     description:
-      "Fullstack engineer and platform architect building production-grade fintech systems, backend infrastructure, and AI pipelines. Based in Nigeria, shipping for teams worldwide.",
+      "Fullstack engineer and platform architect building production-grade fintech systems, backend infrastructure, and AI pipelines. Based in Lagos, Nigeria, shipping for teams worldwide.",
     url: "https://www.scardubu.dev",
     image: "https://www.scardubu.dev/headshot.webp",
     sameAs: [
@@ -84,7 +84,8 @@ export function generatePersonSchema() {
     address: {
       "@type": "PostalAddress",
       addressCountry: "NG",
-      addressRegion: "Abuja",
+      // v14.1 FIX: "Abuja" → "Lagos" — location of record
+      addressRegion: "Lagos",
     },
     knowsAbout: [
       "Machine Learning",
