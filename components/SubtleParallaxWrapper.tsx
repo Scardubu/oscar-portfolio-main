@@ -1,23 +1,21 @@
+'use client';
 /**
- * SubtleParallaxWrapper.tsx
- * ─────────────────────────────────────────────────────────────────────────────
- * CSS-native scroll-driven parallax using transform only (GPU-safe).
- * Falls back to static positioning on reduced-motion / unsupported browsers.
+ * SubtleParallaxWrapper.tsx — CONVICTION ENGINE v19.0
+ * CSS-native scroll-driven parallax (transform only, GPU-safe).
  *
- * Design intent: background decorative elements (orbs, grids) drift at a
- * slower rate than the scroll, creating depth without WebGL overhead.
- * ─────────────────────────────────────────────────────────────────────────────
+ * MOBILE: Completely disabled. At <768px viewport widths the vertical
+ * scroll distance is too short for parallax to register meaningfully,
+ * and the passive scroll listener still adds per-frame overhead on
+ * mid-tier Android. Falls through to static positioning.
  */
 
-"use client";
-
-import React, { useRef, useEffect, useCallback } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface SubtleParallaxWrapperProps {
   children:   React.ReactNode;
-  speed?:     number;    // 0 = static, 0.2 = subtle, 0.5 = medium. Default 0.2
-  direction?: "up" | "down";
+  speed?:     number;
+  direction?: 'up' | 'down';
   className?: string;
   disabled?:  boolean;
 }
@@ -25,40 +23,42 @@ interface SubtleParallaxWrapperProps {
 export function SubtleParallaxWrapper({
   children,
   speed     = 0.2,
-  direction = "up",
+  direction = 'up',
   className,
   disabled  = false,
-}: SubtleParallaxWrapperProps) {
-  const ref = useRef<HTMLDivElement | null>(null);
+}: Readonly<SubtleParallaxWrapperProps>) {
+  const ref            = useRef<HTMLDivElement | null>(null);
+  const [active, setActive] = useState(false);
+
+  // Only activate on desktop pointer:fine (non-touch) devices
+  useEffect(() => {
+    const pointerFine  = window.matchMedia('(pointer: fine)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setActive(pointerFine && !reducedMotion && !disabled);
+  }, [disabled]);
 
   const handleScroll = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-    const rect   = el.parentElement?.getBoundingClientRect();
-    const viewH  = window.innerHeight;
+    const rect  = el.parentElement?.getBoundingClientRect();
+    const viewH = window.innerHeight;
     if (!rect) return;
     const offset = (rect.top / viewH) * speed * 100;
-    const y      = direction === "up" ? -offset : offset;
+    const y      = direction === 'up' ? -offset : offset;
     el.style.transform = `translateY(${y.toFixed(2)}px)`;
   }, [speed, direction]);
 
   useEffect(() => {
-    const prefersReduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (disabled || prefersReduced) return;
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    if (!active) return;
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll, disabled]);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [active, handleScroll]);
 
   return (
     <div
       ref={ref}
-      className={cn("will-change-transform", className)}
+      className={cn(active && 'will-change-transform', className)}
       aria-hidden="true"
     >
       {children}
