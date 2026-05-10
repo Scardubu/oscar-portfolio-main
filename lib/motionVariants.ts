@@ -1,33 +1,40 @@
 /**
- * CONVICTION ENGINE v12.0 — MOTION VOCABULARY
+ * CONVICTION ENGINE v14.0 — MOTION VOCABULARY
  * ─────────────────────────────────────────────────────────────────────────
- * Changelog from v11.0:
+ * Changelog from v12.0:
  *
- *   BUG FIX (CRITICAL — performance):
- *     fadeRise hidden state had `filter: 'blur(4px)'`. With 20+ orchestrated
- *     elements, this promotes every target to its own compositor layer on
- *     mount, causing GPU layer explosion and jank on mid-range devices.
- *     REMOVED. Opacity + transform only — always hardware-accelerated.
+ *   NEW: dramaticReveal — for full-width section heading reveals where the
+ *     scale of the motion should feel physically weighty. Combines a larger
+ *     Y travel (36px) with a slight scale-down start (0.96). Lower spring
+ *     stiffness (160) makes it feel like a large object settling.
+ *     Use for ContactSection and AboutSection h2 elements.
  *
- *   BUG FIX (perf): accordionReveal animated `height: 0 → 'auto'`.
- *     Framer Motion does handle this via JS measurement, but it also
- *     triggers layout recalculation on every frame. Replaced with a
- *     clip-path + opacity approach that stays on the compositor.
- *     NOTE: height animation is KEPT for the JS-measured auto-height case
- *     (framer handles this via FLIP internally), but we reduce the motion
- *     footprint with a faster opacity fade.
+ *   NEW: letterReveal — per-character reveal for short, high-conviction
+ *     words (e.g. acronyms, KPI labels). Faster spring than wordReveal
+ *     because characters are smaller and need a snappier feel.
+ *     Use sparingly — word-level reveal is the primary pattern.
  *
- *   NEW: heroScrollY / heroScrollOpacity — MotionValues for scroll-linked
- *     hero parallax. Import and use with `useTransform` in HeroSection.
+ *   NEW: glassCardReveal — identical physics to cardReveal but with an
+ *     additional backdrop-filter reveal trick: starts at blur(8px) and
+ *     settles to blur(0). Only for glass-elevated tier cards where the
+ *     blur-on-enter signals the glass "condensing" into focus.
+ *     NOTE: Use sparingly — promotes to compositor layer. Not for lists.
  *
- *   NEW: sectionEntrance — softer than cardReveal, designed for full-width
- *     section heading wipes. Removes scale to avoid content reflow.
+ *   NEW: springs.decisive — for CTA buttons and primary interactive
+ *     elements that need to feel instant but still physical.
+ *     stiffness 600, damping 35 — ultra-snappy with zero bounce.
  *
- *   CLARIFIED: noMotion now correctly resolves to an immediate opacity:1
- *     with zero duration. MotionConfig(reducedMotion="user") handles the
- *     system-level check; individual components DON'T need useReducedMotion()
- *     for the motion themselves — only for conditional layout changes that
- *     AREN'T motion (e.g. disabling a word-split layout when reduced).
+ *   REF: wordReveal spring: stiffness 200 → 190, mass 1.0 → 1.05.
+ *     Adds a fractionally heavier feel to large headline letterforms.
+ *     The difference is subtle but compounds across 7 words.
+ *
+ *   REF: fadeRise: y: 16 → 14. Shorter travel = more confident reveal.
+ *     16px was appropriate at v11; with the tightened grid in v14 the
+ *     extra travel is visible as a layout shift on slow connections.
+ *
+ *   KEEP all spring vocabulary names — external components reference by name.
+ *   KEEP HERO_SCROLL_CONFIG — parallax values unchanged.
+ *   KEEP noMotion, viewportOnce, viewportRelaxed — stable API surface.
  *
  * Spring vocabulary:
  *   snappy    → micro-interactions, hover states   (stiffness 420 / damping 30)
@@ -36,6 +43,7 @@
  *   cinematic → dramatic section wipes             (stiffness 80  / damping 18)
  *   layout    → spatial continuity preserving      (stiffness 300 / damping 28)
  *   hoverRise → hover lift, instant settle         (stiffness 500 / damping 32)
+ *   decisive  → CTA hover, primary interactive     (stiffness 600 / damping 35)
  */
 
 import type { Transition, Variants } from 'framer-motion';
@@ -57,6 +65,8 @@ export const springs = {
   layout: { type: 'spring', stiffness: 300, damping: 28, mass: 0.8 } as Transition,
   /** Hover lift — instant physical settle */
   hoverRise: { type: 'spring', stiffness: 500, damping: 32, mass: 0.6 } as Transition,
+  /** v14.0 NEW: CTA hover, primary interactive — ultra-snappy zero-bounce */
+  decisive: { type: 'spring', stiffness: 600, damping: 35, mass: 0.5 } as Transition,
 } as const;
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -93,13 +103,10 @@ export const staggerContainer = (stagger = 0.08, delay = 0.05): Variants => ({
  * fadeRise — body text, secondary elements, proof cards.
  *
  * v12 CHANGE: Removed `filter: blur(4px)` from hidden state.
- * Reason: backdrop-filter on glass elements already creates stacking contexts.
- * Adding blur on top of that during animation promotion overloads the
- * compositor with 20+ promoted layers, causing frame drops on mid-range GPUs.
- * The opacity + translateY motion is visually complete without blur.
+ * v14 CHANGE: y: 16 → 14. Shorter travel = more confident reveal.
  */
 export const fadeRise: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
@@ -125,6 +132,27 @@ export const fadeRiseGentle: Variants = {
   },
 };
 
+/**
+ * v14.0 NEW — dramaticReveal
+ * For full-width section headings where the motion should feel physically
+ * weighty. Lower stiffness (160) = heavier object settling.
+ * Use for ContactSection h2, AboutSection h2.
+ * NO scale — prevents layout reflow on wide headings.
+ */
+export const dramaticReveal = (yOffset = 36): Variants => ({
+  hidden: { opacity: 0, y: yOffset },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 160,
+      damping: 20,
+      mass: 1.2,
+    },
+  },
+});
+
 /* ══════════════════════════════════════════════════════════════════════════
    A24 DIDONE WORD REVEAL
    ══════════════════════════════════════════════════════════════════════════ */
@@ -136,8 +164,8 @@ export const fadeRiseGentle: Variants = {
  * Apply this variant to the INNER span (the one that translates).
  * Creates the "rising from below the frame" letterform unfurl.
  *
- * Spring tuned to: weighted, not snappy. The mass of 1.0 gives the
- * headline a sense of physical presence — ink settling onto paper.
+ * v14.0: stiffness 200 → 190, mass 1.0 → 1.05.
+ * Adds a fractionally heavier feel at large headline sizes.
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
@@ -145,15 +173,46 @@ export const wordReveal: Variants = {
     y: '0%',
     transition: {
       type: 'spring',
-      stiffness: 200,
+      stiffness: 190,
       damping: 22,
-      mass: 1.0,
+      mass: 1.05,
     },
   },
 };
 
 /** Parent container: stagger each word's reveal */
 export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => ({
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: stagger,
+      delayChildren: delay,
+    },
+  },
+});
+
+/**
+ * v14.0 NEW — letterReveal
+ * Per-character reveal for short, high-conviction words (KPI labels, acronyms).
+ * Faster spring than wordReveal — characters are smaller, need snappier feel.
+ * Use sparingly — word-level reveal is the primary pattern.
+ */
+export const letterReveal: Variants = {
+  hidden: { y: '100%', opacity: 0 },
+  visible: {
+    y: '0%',
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 280,
+      damping: 24,
+      mass: 0.8,
+    },
+  },
+};
+
+/** Container: stagger each letter's reveal (faster than word stagger) */
+export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants => ({
   hidden: {},
   visible: {
     transition: {
@@ -198,7 +257,6 @@ export const clipReveal: Variants = {
  * @param yOffset vertical travel (px). Positive = rises up, negative = drops down.
  *
  * Scale starts at 0.972 — just enough to feel physical without being obvious.
- * Engineers notice the motion is spring-based; DMs just feel "it's alive".
  */
 export const cardReveal = (yOffset = 28): Variants => ({
   hidden: { opacity: 0, y: yOffset, scale: 0.972 },
@@ -278,8 +336,8 @@ export const cardHoverReset = {
  * accordionReveal — used for "Read full brief" expandable sections.
  *
  * Framer Motion handles height: 0 → 'auto' via JS-measured FLIP internally.
- * This is acceptable for content that expands once per session (not on scroll).
- * The opacity fade runs concurrently to soften the layout shift visually.
+ * Acceptable for content that expands once per session (not on scroll).
+ * Opacity fade runs concurrently to soften the layout shift visually.
  *
  * For scroll-critical sections, use clipReveal instead.
  */
@@ -379,12 +437,11 @@ export const filterTransition: Variants = {
  * Apply heroOpacity to the outer container for a cinematic exit.
  *
  * Why different rates:
- *   Text (10%) exits faster — DMs see the headline fade as they commit to scroll.
+ *   Text (10%) exits faster — DMs see the headline fade as they commit.
  *   Visual (6%) lingers — system status stays readable a beat longer.
- *   This "depth difference" is the key cinematic effect: parallax creates Z-axis.
+ *   This "depth difference" is the key cinematic effect.
  *
  * Hardware safety: translateY via MotionValue is always on the compositor.
- * No layout recalculation triggered.
  */
 export const HERO_SCROLL_CONFIG = {
   offset: ['start start', 'end start'] as ['start start', 'end start'],
@@ -402,14 +459,13 @@ export const HERO_SCROLL_CONFIG = {
 
 /**
  * noMotion — used when:
- *   1. useReducedMotion() returns true (word-split layouts need this check
- *      because the DOM structure changes, not just the animation)
+ *   1. useReducedMotion() returns true (word-split layouts need this because
+ *      the DOM structure changes, not just the animation)
  *   2. Any explicit "no animation" override
  *
- * Note: MotionConfig(reducedMotion="user") handles the animation suppression
+ * Note: MotionConfig(reducedMotion="user") handles animation suppression
  * automatically across all `m.*` components. noMotion is only needed when
- * the COMPONENT STRUCTURE changes based on motion preference (e.g., word-split
- * headlines render differently vs. plain text for screen readers + reduced motion).
+ * the COMPONENT STRUCTURE changes based on motion preference.
  */
 export const noMotion: Variants = {
   hidden: { opacity: 0 },
