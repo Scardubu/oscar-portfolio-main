@@ -5,6 +5,7 @@
  *   fetchWithTimeout — cancels after n ms (default 8s). Prevents indefinite
  *     loading spinners on intermittent Lagos / mobile networks.
  *   withRetry — exponential backoff for transient API failures.
+ *   fetchWithCache — Next.js ISR-aware fetch with revalidate + cache tags.
  */
 
 /**
@@ -74,4 +75,37 @@ export async function safeFetchJson<T>(
   } catch {
     return null;
   }
+}
+
+/**
+ * Next.js ISR-aware fetch with automatic JSON parsing.
+ *
+ * Wraps the native `fetch` extended by Next.js to support:
+ *   - `revalidate` — ISR TTL in seconds (passed as `next.revalidate`)
+ *   - `tags`       — on-demand revalidation tags (passed as `next.tags`)
+ *
+ * Throws on non-OK responses so callers can use .catch() for fallbacks.
+ *
+ * @param url     - Request URL
+ * @param options - Cache options: revalidate (seconds) and/or tags
+ */
+export async function fetchWithCache<T>(
+  url: string,
+  options: {
+    revalidate?: number | false;
+    tags?: string[];
+  } = {}
+): Promise<T> {
+  const res = await fetch(url, {
+    next: {
+      revalidate: options.revalidate,
+      tags: options.tags,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`fetchWithCache: ${res.status} ${res.statusText} — ${url}`);
+  }
+
+  return res.json() as Promise<T>;
 }
