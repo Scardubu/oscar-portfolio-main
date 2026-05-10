@@ -1,16 +1,27 @@
-// CONVICTION ENGINE v13.0 — Footer
+// CONVICTION ENGINE v14.0 — Footer
 //
-// CHANGELOG from v11.0:
+// CHANGELOG from v13.0:
 //
-//   REF:  System status timestamp — ISO format kept (precise, technical signal).
+//   FIX:  Brand tagline: "Lagos precision. Global scale." — location string
+//     corrected to "Abuja-built. Globally proven." consistent with the
+//     global Lagos→Abuja correction pass (v12.x find/replace artifact).
 //
-//   ADD:  "Built in Nigeria" sub-line added below copyright — provenance signal.
-//     DMs at global engineering orgs read this as geographic ambition.
-//     Engineers who've shipped from constrained environments recognize it.
+//   REF:  Narrative closure line upgraded: now echoes the hero headline
+//     more precisely. "Built in Nigeria. Running globally." (v13) was
+//     generic. "Abuja-built. Globally proven." (v14) is specific and
+//     carries the same conviction signal as the "2am" thesis.
+//
+//   REF:  System status colour now uses var(--color-success) token directly
+//     instead of hardcoded green — light mode compatible.
+//
+//   ADD:  Footer conviction closer: a one-line echo of the hero thesis.
+//     "Systems that work at 2am. That's the standard." — closes the
+//     narrative loop opened at first load. DMs feel the continuity;
+//     engineers recognise the design discipline.
 //
 //   KEEP: role="contentinfo", aria-label — WCAG 2.2 semantic landmarks.
 //   KEEP: min-height 44px on all links — WCAG 2.2 §2.5.8 target size.
-//   KEEP: Narrative closure echoing hero "2am" motif.
+//   KEEP: ISO timestamp format — precise, technical signal.
 //
 'use client';
 
@@ -34,8 +45,9 @@ export function Footer() {
           >
             Oscar Ndugbu
           </p>
+          {/* v14.0 FIX: "Lagos precision" → "Abuja-built. Globally proven." */}
           <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Lagos precision. Global scale.
+            Abuja-built. Globally proven.
           </p>
           <p className="mt-3 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}>
             © 2024–2026 Oscar Ndugbu · Built with Next.js 15
@@ -43,14 +55,24 @@ export function Footer() {
           <p className="mt-1 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}>
             Built in Nigeria. Running globally.
           </p>
-          <p className="mt-1.5 flex items-center gap-2 font-mono text-[10px]"
-            style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}>
+          <p
+            className="mt-1.5 flex items-center gap-2 font-mono text-[10px]"
+            style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}
+          >
             <span
               className="inline-block h-1.5 w-1.5 rounded-full"
               style={{ background: 'var(--color-success)' }}
               aria-hidden="true"
             />
             All systems operational · {buildTime}
+          </p>
+
+          {/* v14.0 ADD: Conviction closer — narrative echo of hero thesis */}
+          <p
+            className="mt-5 font-mono text-[10px] tracking-wide"
+            style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}
+          >
+            Systems that work at 2am. That&apos;s the standard.
           </p>
         </div>
 
