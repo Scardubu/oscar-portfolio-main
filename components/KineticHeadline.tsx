@@ -84,7 +84,6 @@ export function KineticHeadline({
   }, [once, reducedMotion]);
 
   return (
-    // @ts-expect-error — polymorphic ref on a union of HTML element types
     <Tag
       ref={ref}
       aria-label={text}
