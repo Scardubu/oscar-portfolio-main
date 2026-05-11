@@ -1,4 +1,4 @@
-// CONVICTION ENGINE v14.0 — HeroVisual
+// CONVICTION ENGINE v15.0 — HeroVisual
 //
 // CHANGELOG from v11.0:
 //
@@ -14,8 +14,10 @@
 //   ADD:  Panel 4 (Deploy feed) — deploy items now render a latency badge
 //     on the first item to anchor the p99 number to a concrete event.
 //
-//   REF:  Panel 3 (Architecture) BECAUSE field: slightly tightened to fit
-//     within the card without overflow at 390px viewport.
+//   v15: Panel 1 SYSTEMS: hashblanca → swarmxq with live uptime.
+//   v15: Panel 3 architecture rotated to SwarmXQ triadic dispatch decision.
+//   v15: Deploy feed updated — SwarmXQ routing event replaces hashblanca.
+//   v15: 'audit trail' latency bar → 'agent route' for semantic accuracy.
 //
 //   REF:  Ambient glow: terminal-ambient-glow → uses var(--color-cyan-glow)
 //     directly for token coherence.
@@ -36,7 +38,7 @@ import { cardReveal } from '@/lib/motionVariants';
 const SYSTEMS = [
   { name: 'sabiscore',  uptime: '99.94%', healthy: true },
   { name: 'taxbridge',  uptime: '99.91%', healthy: true },
-  { name: 'hashblanca', uptime: '99.87%', healthy: true },
+  { name: 'swarmxq',    uptime: '99.82%', healthy: true },
 ] as const;
 
 // ── API latency bars: concrete p99 numbers ──────────────────────────────────
@@ -44,7 +46,7 @@ const LATENCY_BARS = [
   { label: 'inference',   ms: 48,  maxMs: 200 },
   { label: 'tax calc',    ms: 87,  maxMs: 200 },
   { label: 'filing job',  ms: 124, maxMs: 200 },
-  { label: 'audit trail', ms: 31,  maxMs: 200 },
+  { label: 'agent route', ms: 31,  maxMs: 200 },
 ] as const;
 
 // ── Sparkline data: 7-day normalised latency trend (0–1) ────────────────────
@@ -56,7 +58,7 @@ const SPARKLINE_POINTS = [0.35, 0.42, 0.38, 0.31, 0.44, 0.36, 0.29] as const;
 const RECENT_DEPLOYS = [
   { time: '23 min ago', msg: 'SabiScore · inference latency patch · p99 48ms', ok: true, perf: 'p99 48ms' },
   { time: '6 hr ago',   msg: 'TaxBridge · NRS rate-limit guard · BullMQ',      ok: true, perf: null },
-  { time: '1 day ago',  msg: 'hashblanca · audit chain integrity check',         ok: true, perf: null },
+  { time: '1 day ago',  msg: 'SwarmXQ · triadic dispatch · DeepSeek-R1 routing', ok: true, perf: null },
 ] as const;
 
 function SystemStatusRow({
@@ -305,7 +307,7 @@ export function HeroVisual() {
           className="flex items-center justify-between px-4 py-3 border-b"
           style={{ borderColor: 'oklch(100% 0 0 / 0.06)' }}
         >
-          <span className="label-mono">Architecture · TaxBridge · Multi-tenancy</span>
+          <span className="label-mono">Architecture · SwarmXQ · Model Dispatch</span>
         </div>
 
         <div className="px-4 py-4 flex flex-col gap-3">
@@ -315,7 +317,7 @@ export function HeroVisual() {
               CHOSEN
             </div>
             <div className="text-[13px]" style={{ color: 'oklch(93% 0.006 264 / 0.62)' }}>
-              PostgreSQL Row-Level Security
+              Triadic local GGUF dispatch (Ollama)
             </div>
           </div>
 
@@ -323,7 +325,7 @@ export function HeroVisual() {
           <div>
             <div className="label-mono mb-1">OVER</div>
             <div className="text-[13px]" style={{ color: 'oklch(93% 0.006 264 / 0.32)' }}>
-              Application-layer tenant filtering
+              Single large remote LLM API per task
             </div>
           </div>
 
@@ -344,8 +346,8 @@ export function HeroVisual() {
               data-label="BECAUSE"
               style={{ color: 'oklch(93% 0.006 264 / 0.82)', fontWeight: 500 }}
             >
-              NRS audit scrutiny demands engine-level proof that tenant data
-              cannot cross-contaminate — RLS enforces this at the DB, not the app.
+              Specialist small models routed by task class beat one large model on
+              latency, cost, and offline resilience — zero cloud egress required.
             </div>
           </div>
         </div>
