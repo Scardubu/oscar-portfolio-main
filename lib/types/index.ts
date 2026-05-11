@@ -29,7 +29,8 @@ export type BadgeType = 'live' | 'documented' | 'backtested' | 'snapshot'
 export type SystemId =
   | 'sabiscore'
   | 'taxbridge'
-  | 'hashablanca'
+  | 'swarmxq'
+  | 'swarmxq'
   | 'ubec'
 
 // ─── Compliance tags ──────────────────────────────────────────────────────────
@@ -57,6 +58,7 @@ export type SkillPillar =
   | 'Data & Storage'
   | 'DevOps & SRE'
   | 'Frontend & Full-Stack'
+  | 'AI Agent Orchestration'
   | 'Blockchain & Web3'
 
 /**
