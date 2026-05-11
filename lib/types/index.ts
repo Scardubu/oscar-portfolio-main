@@ -30,7 +30,7 @@ export type SystemId =
   | 'sabiscore'
   | 'taxbridge'
   | 'swarmxq'
-  | 'swarmxq'
+  | 'hashablanca'
   | 'ubec'
 
 // ─── Compliance tags ──────────────────────────────────────────────────────────
