@@ -45,6 +45,16 @@ const OSS_PROJECTS = [
     badgeColor: 'oklch(75% 0.16 300)',
     badgeBorder: 'oklch(75% 0.16 300 / 0.25)',
   },
+  {
+    name: 'llm-dispatch',
+    stack: 'AI · Agent Orchestration',
+    desc: 'Triadic model routing extracted from SwarmXQ. Routes any task to the right local GGUF model — Phi-4-mini for classification, DeepSeek-R1 for reasoning, Qwen2.5-Coder for code — with fallback chains and zero cloud egress required.',
+    href: 'https://github.com/Scardubu/SwarmXQ',
+    install: 'pip install llm-dispatch',
+    badge: 'Zero cloud',
+    badgeColor: 'oklch(73% 0.17 65)',
+    badgeBorder: 'oklch(73% 0.17 65 / 0.25)',
+  },
 ] as const;
 
 function CopyInstall({ text }: { text: string }) {
