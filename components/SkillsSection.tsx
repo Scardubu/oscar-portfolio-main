@@ -16,7 +16,7 @@ import { SkillsMap } from '@/components/skills/SkillsMap';
 
 const TRUST_METRICS = [
   {
-    label: '52 skills',
+    label: '59 skills',
     sub: 'mapped to live systems',
     color: 'var(--color-film-teal)',
   },
@@ -70,9 +70,9 @@ export function SkillsSection() {
               className="mt-4 w-full max-w-[52ch] text-sm sm:text-base leading-8"
               style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word', wordBreak: 'break-word' }}
             >
-              52 battle-tested skills across ML, fintech compliance, backend
-              infrastructure, and DevOps — every one traceable to a live
-              production system.
+              59 battle-tested skills across ML, AI agent orchestration, fintech
+              compliance, backend infrastructure, DevOps, and blockchain/ZK
+              — every one traceable to a live production system.
             </p>
 
             {/* Trust strip — 2-col grid on mobile, flex-wrap on sm+ */}
