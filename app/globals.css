@@ -329,6 +329,19 @@ html { scrollbar-gutter: stable; }
     --glow-spread: 300px;
     --glow-blur: 50px;
     --section-py: clamp(2rem, 5vw, 3rem);
+    /* Prevent hero headline overflow at narrow mobile viewports */
+    --text-hero: clamp(1.875rem, 7.5vw, 2.375rem);
+    --text-section: clamp(1.5rem, 6vw, 2rem);
+  }
+  /* Prevent heading and paragraph overflow on mobile */
+  h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  p {
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
   .glass-medium::before { display: none; }
   .gradient-mesh, .gradient-mesh-wrap, .cursor-glow { display: none !important; }
@@ -348,6 +361,8 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--nav-height) + 8px);
+  /* iOS Safari: overflow-x on body alone is insufficient — must be on html too */
+  overflow-x: hidden;
 }
 
 body {
