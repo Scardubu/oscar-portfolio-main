@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     template: '%s · Oscar Ndugbu',
   },
   description:
-    'Oscar Ndugbu (Scardubu) is a principal full-stack engineer based in Lagos, Nigeria — building production-grade fintech platforms with React Native, Next.js 15, Java/Spring Boot, FastAPI, Effect-TS, Turborepo, sub-150ms APIs, 99.9%+ uptime, PostgreSQL RLS multi-tenancy, and NRS-compliant audit trails.',
+    'Staff+ Full-Stack · Infra · ML Engineer based in Lagos, Nigeria. TaxBridge cut Nigerian SME tax filing from 4h to 15min. SabiScore holds 99.9%+ uptime across a 90-day Prometheus window. SwarmXQ orchestrates self-improving AI agents with zero cloud dependency. Production systems that stay alive when it matters most.',
   metadataBase: new URL('https://www.scardubu.dev'),
   keywords: [
     'Full-Stack Engineer',
@@ -114,6 +114,11 @@ export const metadata: Metadata = {
     'ML Engineer',
     'Oscar Ndugbu',
     'scardubu',
+    'SwarmXQ',
+    'AI Agent Orchestration',
+    'Ollama',
+    'LLM Routing',
+    'Staff+ Engineer',
   ],
   openGraph: {
     type: 'website',
@@ -121,7 +126,7 @@ export const metadata: Metadata = {
     siteName: 'Oscar Ndugbu',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     description:
-      'Principal full-stack engineer, Lagos. TaxBridge · SabiScore · Hashablanca. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
+      'Principal full-stack engineer, Lagos. TaxBridge · SabiScore · SwarmXQ. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
@@ -156,7 +161,7 @@ const personJsonLd = {
   url: 'https://www.scardubu.dev',
   jobTitle: 'Principal Full-Stack Engineer',
   description:
-    'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, Hashablanca.',
+    'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, SwarmXQ.',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Lagos',
@@ -168,6 +173,9 @@ const personJsonLd = {
     'Expo',
     'TypeScript',
     'Java',
+    'AI Agent Orchestration',
+    'LLM Routing',
+    'SwarmXQ',
     'Spring Boot',
     'FastAPI',
     'Python',
