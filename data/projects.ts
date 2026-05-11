@@ -1,122 +1,141 @@
-export type ProjectStatus = "live" | "wip" | "archived";
-
-export interface Decision {
-  chosen: string;
-  rejected: string;
-  reason: string;
-}
+// CONVICTION ENGINE v23.0 — Projects Data
+// SwarmXQ is the third flagship project — AI Agent Orchestration platform.
+// SwarmXQ: Self-improving multi-agent operator platform — autonomous evolution
+// layer, live dashboard, workflow orchestration, production-grade AI agent fleet.
+// GitHub: https://github.com/Scardubu/SwarmXQ
+//
+// Order: TaxBridge (featured) → SabiScore (live ML) → SwarmXQ (AI platform)
 
 export interface Project {
-  id: string;
-  title: string;
-  tagline: string;
-  description: string;
-  context?: string;
-  decisions?: Decision[];
-  status: ProjectStatus;
-  featured: boolean;
-  tags: string[];    // Max 6
-  demoUrl?: string;  // REQUIRED if status === "live" — must resolve before ship
-  repoUrl?: string;
-  image?: string;    // /projects/[id].webp
+  readonly slug: string;
+  readonly title: string;
+  readonly tagline: string;
+  readonly status: 'live' | 'wip' | 'case-study';
+  readonly type: string;
+  readonly description: string;
+  readonly constraint: string;
+  readonly stack: readonly string[];
+  readonly outcomes: readonly string[];
+  readonly chosen: string;
+  readonly over: string;
+  readonly because: string;
+  readonly demoUrl?: string;
+  readonly githubUrl?: string;
+  readonly caseStudy?: string;
 }
 
-export const projects: Project[] = [
+export const PROJECTS: readonly Project[] = [
   {
-    id: 'sabiscore',
-    title: 'SabiScore',
-    tagline: 'Production sports intelligence platform for live decision windows.',
-    description:
-      'End-to-end sports intelligence pipeline processing match, form, and market signals through ' +
-      'an ensemble scoring stack, served via FastAPI with real-time monitoring and drift alerts.',
-    context:
-      'Needed real-time prediction under infrastructure constraints common in sub-Saharan Africa while ' +
-      'serving a global audience through high-traffic concurrent events.',
-    decisions: [
-      {
-        chosen: 'Ensemble meta-learner across gradient-boosted models.',
-        rejected: 'Single-model prediction pipeline',
-        reason:
-          'Improved calibration across varied operating conditions without making the serving layer opaque.',
-      },
-      {
-        chosen: 'Redis caching in front of repeat inference reads.',
-        rejected: 'Direct Postgres reads per request',
-        reason:
-          'Direct reads exceeded 200ms during peak windows; cache eliminated latency spikes without scaling infrastructure prematurely.',
-      },
-      {
-        chosen: 'Embedding-based feature retrieval.',
-        rejected: 'Rule-based heuristics',
-        reason: 'Generalized more reliably across event types than handcrafted rules.',
-      },
-      {
-        chosen: 'FastAPI inference with Redis caching and Postgres-backed features.',
-        rejected: 'LLM-style request-time inference',
-        reason:
-          'Kept the system cheaper to run, easier to debug, and more predictable under sustained usage.',
-      },
-    ],
-    status: 'live',
-    featured: true,
-    tags: ['Python', 'FastAPI', 'XGBoost', 'PostgreSQL', 'Redis', 'Next.js'],
-    demoUrl: 'https://sabiscore.vercel.app',
-    repoUrl: 'https://github.com/Scardubu/sabiscore',
-    image: '/projects/sabiscore.webp',
-  },
-  {
-    id: 'hashablanca',
-    title: 'Hashablanca',
-    tagline: 'Real-time blockchain transaction analytics platform.',
-    description:
-      'Streaming pipeline ingesting on-chain data to surface anomalies and transaction patterns ' +
-      'for compliance teams. Built on Kafka, dbt, and React.',
-    context:
-      'Data products for teams that need event-stream visibility, repeatable modeling, ' +
-      'and business-readable outputs across volatile blockchain data.',
-    decisions: [
-      {
-        chosen: 'Kafka event streaming with dbt transformation layers.',
-        rejected: 'Batch SQL pipelines with scheduled refreshes',
-        reason:
-          'Event-level granularity enables real-time anomaly detection that batch windows miss entirely.',
-      },
-    ],
-    status: 'wip',
-    featured: false,
-    tags: ['TypeScript', 'Kafka', 'dbt', 'React', 'Python', 'Ethereum'],
-    image: '/projects/hashablanca.webp',
-  },
-  {
-    id: 'taxbridge',
+    slug: 'taxbridge',
     title: 'TaxBridge',
-    tagline: 'Offline-first tax operations platform for OCR intake, rule-safe computation, and immutable audit trails.',
+    type: 'Compliance Platform · Fintech',
+    status: 'case-study',
+    tagline:
+      'Nigerian SME tax filing from 4 hours to 15 minutes — NRS-integrated, audit-ready.',
     description:
-      'Multi-tenant tax workflow handling OCR extraction, jurisdiction-specific computation, and ' +
-      'append-only audit events with database-enforced tenant isolation.',
-    context:
-      'Needed offline-first intake, regulator-readable traceability, and strict tenant isolation without ' +
-      'turning every request into a fragile cross-service orchestration problem.',
-    decisions: [
-      {
-        chosen: 'Java 17 and Spring Boot 3 for the tax computation engine.',
-        rejected: 'Python for the full OCR and rule-compute stack',
-        reason:
-          'Jurisdiction rules needed compile-time guarantees so invalid deduction states fail before deployment instead of surfacing as runtime computation defects.',
-      },
-      {
-        chosen: 'Append-only audit events enforced at the database layer.',
-        rejected: 'Application-level structured logs only',
-        reason:
-          'An immutable audit surface keeps regulator-facing history intact even when app logs rotate, fail, or are queried out of context.',
-      },
+      'Full tax compliance workflow automation for Nigerian small businesses — VAT, withholding tax, and annual returns. PostgreSQL RLS isolates each tenant at the database level. Real-time calculations under <150ms at load. Idempotent BullMQ job queue ensures no submission is ever double-processed — even through mid-request server failure. Hash-chained immutable audit trail. 95% test coverage.',
+    chosen: 'PostgreSQL Row-Level Security for multi-tenancy',
+    over: 'Application-layer tenant filtering',
+    because:
+      'NRS audit scrutiny demands proof that tenant data cannot cross-contaminate — RLS enforces this at the database engine level, not the application layer',
+    constraint:
+      'NRS API rate limits: 30 req/min per TIN. BullMQ queue must manage burst filing windows without client-visible failure.',
+    outcomes: [
+      '4hrs → 15min filing',
+      'sub-150ms under load',
+      '95% test coverage',
+      'zero data-loss record',
     ],
-    status: 'wip',
-    featured: false,
-    tags: ['Java 17', 'Spring Boot 3', 'PostgreSQL', 'FastAPI', 'Redis', 'Tesseract OCR'],
-    image: '/projects/taxbridge.webp',
+    stack: [
+      'Fastify 5',
+      'Java 17',
+      'Spring Boot 3',
+      'PostgreSQL 15 RLS',
+      'Redis 7',
+      'BullMQ',
+      'React Native',
+      'Turborepo',
+      'GraphQL',
+      'Prisma',
+      'TypeScript',
+    ],
+    githubUrl: 'https://github.com/Scardubu/taxbridge',
+    caseStudy: '/work/taxbridge',
+  },
+  {
+    slug: 'sabiscore',
+    title: 'SabiScore',
+    type: 'ML Platform · Observability',
+    status: 'live',
+    tagline:
+      'Production ML prediction and self-monitoring platform for live decision windows.',
+    description:
+      'Ensemble credit and prediction scoring (XGBoost, LightGBM, CatBoost) with real-time output quality monitoring. Alerts engineers the moment a model begins degrading — before any user is affected. 99.9%+ uptime (Prometheus · 90-day window). ~30% inference latency reduction via query optimisation and Redis caching. 45% MTTD improvement over reactive alerting baseline.',
+    chosen: 'FastAPI + Redis Pub/Sub for inference serving',
+    over: 'Synchronous REST with database polling',
+    because:
+      'Sub-50ms event fan-out at sustained load with dead-letter recovery — impossible with polling under concurrent sessions',
+    constraint:
+      'Ensemble inference must complete in <120ms p99 at peak load with no model warmup on cold start.',
+    outcomes: [
+      '30% inference latency reduction',
+      '99.9%+ uptime',
+      '45% MTTD improvement',
+      'Prometheus 90-day proof',
+    ],
+    stack: [
+      'FastAPI',
+      'XGBoost',
+      'LightGBM',
+      'CatBoost',
+      'Redis Pub/Sub',
+      'Prometheus',
+      'Grafana',
+      'PostgreSQL',
+    ],
+    demoUrl: 'https://sabiscore.scardubu.dev',
+    githubUrl: 'https://github.com/Scardubu/Sabiscore',
+    caseStudy: '/work/sabiscore',
+  },
+  {
+    slug: 'swarmxq',
+    title: 'SwarmXQ',
+    type: 'AI Platform · Agent Orchestration',
+    status: 'live',
+    tagline:
+      'Self-improving multi-agent operator platform — autonomous evolution, live dashboard, production-grade AI fleet management.',
+    description:
+      'SwarmXQ is a full-stack AI agent orchestration platform built for reliability under resource constraints. Features an autonomous evolution layer that continuously improves agent behaviour from production signals, a live ops dashboard for real-time fleet monitoring, and a workflow engine that coordinates heterogeneous agent types across long-horizon tasks. Triadic GGUF model dispatch: Phi-4-mini for routing, DeepSeek-R1 for reasoning, Qwen2.5-Coder for code generation — all served via Ollama with zero cloud dependency.',
+    chosen: 'Local GGUF triadic model dispatch via Ollama',
+    over: 'Single large remote LLM API call per task',
+    because:
+      'Specialised small models routed by task class outperform a single large model on latency, cost, and offline resilience — critical for production Lagos infrastructure where cloud egress is metered',
+    constraint:
+      'Full agent fleet must operate on 8 GB VRAM with zero cloud API dependency — Ollama + GGUF quantisation enforced as a hard constraint throughout.',
+    outcomes: [
+      'autonomous agent evolution',
+      'live ops dashboard',
+      'zero cloud dependency',
+      'triadic model routing',
+    ],
+    stack: [
+      'Python 3.12',
+      'Ollama',
+      'Phi-4-mini',
+      'DeepSeek-R1',
+      'Qwen2.5-Coder',
+      'Typer',
+      'Rich',
+      'FastAPI',
+      'BullMQ',
+      'PostgreSQL',
+      'TypeScript',
+    ],
+    githubUrl: 'https://github.com/Scardubu/SwarmXQ',
+    caseStudy: '/work/swarmxq',
   },
 ];
 
-// FORBIDDEN in any field:
-//   Self-reported ROI/accuracy claims · Betting references · First-person language
+export function getProject(slug: string): Project | undefined {
+  return PROJECTS.find((project) => project.slug === slug);
+}
