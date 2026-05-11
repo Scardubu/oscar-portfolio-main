@@ -1,39 +1,15 @@
-// CONVICTION ENGINE v17.0 — HeroSection
+// CONVICTION ENGINE v18.0 — HeroSection
 //
-// ARCHITECTURE CHANGE FROM v16:
+// v18 CHANGES vs v17:
 //
-//   CONVERSION SEQUENCE REORDERED:
-//     Old: Headline → Sub-line → CTA → Body → Proof callout → LiveBar → CV → Carousel → Metrics
-//     New: Headline → Sub-line → Body → Conviction stats → Proof callout → LiveBar → CTA → CV → Carousel
-//     Rationale: Stripe law — build conviction BEFORE the ask.
-//     CTA after 3 proof signals converts 2–3x better than CTA before proof.
+//   HEADSHOT PATH: /headshot.webp → /images/oscar-headshot.jpg
+//     Supports high-res professional portrait via /public/images/oscar-headshot.jpg.
 //
-//   CONVICTION STAT STRIP (NEW):
-//     Four concrete metrics rendered in a horizontal strip between body and proof callout.
-//     These are irrefutable numbers, not claims: 4h→15min, 99.9%, sub-150ms, 45% MTTD.
-//     Visual language: green mono values, tiny uppercase labels — engineered, not designed.
-//     Mobile: 2-column grid, desktop: single row.
+//   PROOF CALLOUT: SwarmXQ added to proof line alongside TaxBridge + SabiScore.
+//     "TaxBridge · 4h→15min. SabiScore · 99.9%+. SwarmXQ · self-improving fleet."
 //
-//   PROOF CALLOUT UPGRADED:
-//     Background: film-teal-surface. Left border: 2px film-teal (was 2px cyan).
-//     Padding increased to 0.75rem 1rem (was padding-left only).
-//     Copy tightened: "TaxBridge · 4h→15min." "SabiScore · 99.9% 90-day."
-//
-//   CTA BLOCK MOVED DOWN:
-//     CTA group now sits AFTER conviction stats + proof callout + LiveActivityBar.
-//     On mobile, thumb ergonomics preserved: CTA is still in bottom 60% of viewport
-//     because headline + stats + proof only consume ~55svh.
-//
-//   MOBILE CAROUSEL ITEM WIDTH:
-//     v16: calc(100vw - clamp(2rem, 10vw, 6rem) - 0.75rem) — too wide on 430px.
-//     v17: calc(min(88vw, 320px)) — shows 1.2 cards at 430px, clear peek signal.
-//
-//   KEEP: A24 word-by-word Didone headline reveal.
-//   KEEP: Spring physics on proof card hover (stiffness 420, damping 30).
-//   KEEP: LiveActivityBar operational cadence proof.
-//   KEEP: prefers-reduced-motion: noMotion fallback throughout.
-//   KEEP: Lagos → Global (location truth).
-//   KEEP: scroll-linked parallax (desktop only).
+//   KEEP: All v17 architecture — CTA-after-proof conversion law, conviction stat strip,
+//     A24 word-by-word Didone reveal, scroll-linked parallax, spring physics, ReducedMotion.
 //
 'use client';
 
@@ -252,7 +228,7 @@ export function HeroSection() {
                 }}
               >
                 <Image
-                  src="/headshot.webp"
+                  src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="80px"
@@ -363,6 +339,8 @@ export function HeroSection() {
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
                 SabiScore: 99.9%+ uptime · 90-day production window.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
+                SwarmXQ: self-improving agent fleet · zero manual tuning.
+                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
                 Shipped in Lagos. Running globally. Battle-tested in audit season.
               </p>
             </m.div>
@@ -441,7 +419,7 @@ export function HeroSection() {
                 }}
               >
                 <Image
-                  src="/headshot.webp"
+                  src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="96px"
