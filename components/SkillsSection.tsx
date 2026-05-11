@@ -1,12 +1,10 @@
 'use client';
-// CONVICTION ENGINE v22.0 — SkillsSection
-// Mobile-native wrapper around SkillsMap. Lagos → Global.
-//
-// v22 vs v21:
-//   • Trust strip: grid on mobile (2-col), flex-wrap on sm+ — never overflows 320px
-//   • Intro paragraph: max-w-[52ch] tightened for 320px scan comfort
-//   • Section number corrected to 03 in page order
-//   • Added motion reveal on section header
+// CONVICTION ENGINE v23.0 — SkillsSection
+// v23 upgrades vs v22:
+//   • Full-stack signal foregrounded: trust metrics updated to show frontend + backend parity
+//   • Intro copy updated: explicitly names React/Next.js/React Native alongside backend
+//   • Subtitle pill added: "Full-Stack · Frontend · Backend · ML · Infra"
+//   • Trust strip: 3-col on mobile (was 2-col), flex-wrap on sm+
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
@@ -16,18 +14,18 @@ import { SkillsMap } from '@/components/skills/SkillsMap';
 
 const TRUST_METRICS = [
   {
-    label: '59 skills',
-    sub: 'mapped to live systems',
+    label: '62 skills',
+    sub: 'frontend · backend · ML · infra',
     color: 'var(--color-film-teal)',
   },
   {
-    label: '7 disciplines',
-    sub: 'ML · Backend · Fintech · DevOps',
+    label: '8 disciplines',
+    sub: 'React · Next.js · FastAPI · ML · DevOps',
     color: 'oklch(72% 0.17 160)',
   },
   {
     label: '4 years',
-    sub: 'production, Lagos',
+    sub: 'production, Lagos → global',
     color: 'oklch(75% 0.16 300)',
   },
 ] as const;
@@ -63,16 +61,16 @@ export function SkillsSection() {
               className="mt-3 max-w-[22ch]"
               style={{ color: 'var(--color-text-primary)' }}
             >
-              The stack behind the systems.
+              Full-stack. Every layer.
             </h2>
 
             <p
               className="mt-4 w-full max-w-[52ch] text-sm sm:text-base leading-8"
               style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word', wordBreak: 'break-word' }}
             >
-              59 battle-tested skills across ML, AI agent orchestration, fintech
-              compliance, backend infrastructure, DevOps, and blockchain/ZK
-              — every one traceable to a live production system.
+              React 19 · Next.js 15 · React Native through FastAPI · PostgreSQL
+              · XGBoost — 62 battle-tested skills, every one traceable to a
+              production system shipped from Lagos.
             </p>
 
             {/* Trust strip — 2-col grid on mobile, flex-wrap on sm+ */}
