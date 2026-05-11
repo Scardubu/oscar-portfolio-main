@@ -1,21 +1,23 @@
-// CONVICTION ENGINE v14.1 — AboutSection
+// CONVICTION ENGINE v15.0 — AboutSection
 //
-// CHANGELOG from v14.0:
+// v15 CHANGES vs v14.1:
 //
-//   UPGRADE: Cert cards — teal left border accent + provider badge pill.
-//     Each cert now has a two-character provider shortcode (AWS / GCP / JS /
-//     PG) rendered as a teal-tinted mono badge on the right. The border-l-2
-//     gives the right visual hierarchy weight against the flat glass surface.
+//   FULL-STACK SIGNAL UPGRADE:
+//     - Headline body copy now explicitly names React Native, Next.js 15,
+//       and Tailwind v4 alongside FastAPI and PostgreSQL.
+//       Objection defanged: "Is he really full-stack or just backend + some React?"
+//       Answer: React Native (TaxBridge), Next.js 15 dashboards (SabiScore, SwarmXQ,
+//       portfolio), Framer Motion, Tailwind v4 — all production, all public.
 //
-//   FIX:  grid-cols-1 on mobile / sm:grid-cols-2 on sm+ / lg:grid-cols-1 on
-//     lg+ — kept from v14.0. Prevents excessive scroll on 390px viewports.
+//   STACK STRIP: Added horizontal icon strip showing the full-stack range —
+//     React · Next.js · React Native · FastAPI · Python · PostgreSQL · Redis.
+//     Renders at the bottom of the narrative column, above the UBEC callout.
+//     Quick scan without requiring reading.
 //
-//   KEEP: glass-surface applied to cert cards (v13 fix).
-//   KEEP: 3fr/2fr desktop prose-to-credentials split — correct proportion.
-//   KEEP: staggerContainer + useInView — correct orchestration pattern.
-//   KEEP: UBEC federal-scale callout — strongest objection defang in the file.
-//   KEEP: prefers-reduced-motion: noMotion fallback.
-//   KEEP: All aria-label, role, and WCAG 2.2 landmark semantics.
+//   NARRATIVE: Third paragraph updated to name "React Native mobile app"
+//     and "Next.js 15 dashboard" explicitly for TaxBridge and SwarmXQ.
+//
+//   KEEP: All v14.1 cert cards, UBEC callout, grid layout, motion config.
 //
 'use client';
 
@@ -49,6 +51,18 @@ const CERTS = [
     date: 'Mar 2024',
     provider: 'PG',
   },
+] as const;
+
+// Stack strip — full-stack range in one visual scan
+const STACK_STRIP = [
+  { name: 'React Native',   cat: 'Mobile' },
+  { name: 'Next.js 15',     cat: 'Web' },
+  { name: 'React 19',       cat: 'UI' },
+  { name: 'TypeScript',     cat: 'Language' },
+  { name: 'FastAPI',        cat: 'API' },
+  { name: 'PostgreSQL',     cat: 'Data' },
+  { name: 'Python 3.11+',   cat: 'ML' },
+  { name: 'Redis',          cat: 'Cache' },
 ] as const;
 
 export function AboutSection() {
@@ -103,14 +117,17 @@ export function AboutSection() {
               Full-stack delivery.
             </m.p>
 
+            {/* v15: Explicitly full-stack — not "some frontend, mostly backend" */}
             <m.p
               variants={itemVariants}
               className="mt-6 max-w-[var(--max-width-prose)] text-base leading-8 text-white/80"
             >
               Fullstack engineer and platform architect with four years of
-              independent product and consulting work — shipping a tax
-              compliance platform, an AI-powered observability tool, and an
-              a self-improving AI agent orchestration platform (SwarmXQ).
+              independent product and consulting work. TaxBridge ships as a
+              React Native mobile app backed by a Fastify API and PostgreSQL
+              RLS. SabiScore serves ensemble ML inference behind a Next.js 15
+              dashboard. SwarmXQ orchestrates self-improving AI agents with a
+              live ops dashboard in Next.js 15 and Tailwind v4.
             </m.p>
 
             <m.p
@@ -134,12 +151,43 @@ export function AboutSection() {
               and 15+ merged upstream contributions.
             </m.p>
 
-            {/* ── UBEC callout: Stripe objection-defanging ──────────────────── */}
             {/*
-              Technique: state the objection the reader is forming, defang it.
-              Objection: "non-CS background = self-taught, probably junior"
-              Defang: "federal infrastructure ≠ side projects"
+              v15: STACK STRIP — full-stack range in 8 chips.
+              Appears before the UBEC callout to establish full-stack breadth
+              before the "federal scale" depth signal.
             */}
+            <m.div
+              variants={itemVariants}
+              className="mt-7 flex flex-wrap gap-2"
+              aria-label="Technology stack"
+            >
+              {STACK_STRIP.map(({ name, cat }) => (
+                <div
+                  key={name}
+                  className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    background: 'oklch(100% 0 0 / 0.03)',
+                  }}
+                  title={cat}
+                >
+                  <span
+                    className="font-mono text-[9px] tracking-widest uppercase"
+                    style={{ color: 'var(--color-film-teal)', opacity: 0.7 }}
+                  >
+                    {cat}
+                  </span>
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
+                    {name}
+                  </span>
+                </div>
+              ))}
+            </m.div>
+
+            {/* UBEC callout: strongest objection defang */}
             <m.div
               variants={itemVariants}
               className="glass-surface mt-8 rounded-[var(--radius-lg)] border-l-2 p-4 sm:p-6"
@@ -172,12 +220,6 @@ export function AboutSection() {
               Certifications
             </m.h3>
 
-            {/*
-              v14.1 UPGRADE: Cert cards — teal left border + provider badge.
-              border-l-2 with film-teal creates scannable visual hierarchy.
-              Provider badge (AWS/GCP/JS/PG) adds instant recognition at glance.
-              2-col grid on sm+ prevents excessive mobile scroll.
-            */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
               {CERTS.map((cert) => (
                 <m.article
@@ -193,7 +235,6 @@ export function AboutSection() {
                     <p className="text-sm font-medium text-white leading-snug">
                       {cert.name}
                     </p>
-                    {/* Provider badge — instant credential scan */}
                     <span
                       className="mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-widest uppercase"
                       style={{
@@ -216,6 +257,26 @@ export function AboutSection() {
                 </m.article>
               ))}
             </div>
+
+            {/* Shipped in Lagos trust signal */}
+            <m.div
+              variants={itemVariants}
+              className="mt-8 rounded-[var(--radius-md)] border p-4"
+              style={{
+                borderColor: 'var(--color-border)',
+                background: 'oklch(100% 0 0 / 0.02)',
+              }}
+            >
+              <p
+                className="font-mono text-[10px] tracking-widest uppercase mb-2"
+                style={{ color: 'var(--color-film-teal)' }}
+              >
+                Trust signal
+              </p>
+              <p className="text-xs leading-6 text-white/60">
+                Shipped in Lagos · Running globally · Battle-tested in audit season
+              </p>
+            </m.div>
           </aside>
         </m.div>
       </div>
