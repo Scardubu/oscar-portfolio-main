@@ -220,7 +220,7 @@ export function SkillsMap(): React.ReactElement {
               : (filterTransition as Parameters<typeof m.div>[0]['transition'])
           }
         >
-          <ul className="grid list-none grid-cols-2 gap-2 p-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <ul className="grid list-none grid-cols-1 gap-2 p-0 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filtered.map((skill, i) => (
               <li key={skill.id} className="h-full">
                 <SkillCard
