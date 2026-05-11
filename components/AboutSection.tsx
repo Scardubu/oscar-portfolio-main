@@ -1,22 +1,21 @@
-// CONVICTION ENGINE v14.0 — AboutSection
+// CONVICTION ENGINE v14.1 — AboutSection
 //
-// CHANGELOG from v13.0:
+// CHANGELOG from v14.0:
 //
-//   UPGRADE: Mobile-native grid — single column default, 2-col at lg.
-//     Cert cards now render in a 2-column grid on sm+ to prevent excessively
-//     long single-column scroll on mobile before the CTA section appears.
+//   UPGRADE: Cert cards — teal left border accent + provider badge pill.
+//     Each cert now has a two-character provider shortcode (AWS / GCP / JS /
+//     PG) rendered as a teal-tinted mono badge on the right. The border-l-2
+//     gives the right visual hierarchy weight against the flat glass surface.
 //
-//   FIX:  Closing tagline: "Lagos precision. Global scale." — preserved.
-//     This is the correct location framing; matches Footer v14.1.
-//
-//   FIX:  Cert card touch targets: min-height 48px enforced on all cards.
-//     Previous p-4 padding produced ~40px on small screens — below WCAG AAA.
+//   FIX:  grid-cols-1 on mobile / sm:grid-cols-2 on sm+ / lg:grid-cols-1 on
+//     lg+ — kept from v14.0. Prevents excessive scroll on 390px viewports.
 //
 //   KEEP: glass-surface applied to cert cards (v13 fix).
 //   KEEP: 3fr/2fr desktop prose-to-credentials split — correct proportion.
 //   KEEP: staggerContainer + useInView — correct orchestration pattern.
 //   KEEP: UBEC federal-scale callout — strongest objection defang in the file.
 //   KEEP: prefers-reduced-motion: noMotion fallback.
+//   KEEP: All aria-label, role, and WCAG 2.2 landmark semantics.
 //
 'use client';
 
@@ -30,10 +29,26 @@ import {
 } from '@/lib/motionVariants';
 
 const CERTS = [
-  { name: 'AWS Certified Developer', date: 'Dec 2023' },
-  { name: 'GCP Associate Cloud Engineer', date: 'Aug 2023' },
-  { name: 'OpenJS Node.js Services Developer (JSNSD)', date: 'May 2024' },
-  { name: 'PostgreSQL 14 Associate', date: 'Mar 2024' },
+  {
+    name: 'AWS Certified Developer',
+    date: 'Dec 2023',
+    provider: 'AWS',
+  },
+  {
+    name: 'GCP Associate Cloud Engineer',
+    date: 'Aug 2023',
+    provider: 'GCP',
+  },
+  {
+    name: 'OpenJS Node.js Services Developer (JSNSD)',
+    date: 'May 2024',
+    provider: 'JS',
+  },
+  {
+    name: 'PostgreSQL 14 Associate',
+    date: 'Mar 2024',
+    provider: 'PG',
+  },
 ] as const;
 
 export function AboutSection() {
@@ -157,21 +172,45 @@ export function AboutSection() {
               Certifications
             </m.h3>
 
-            {/* v14.0: 2-col grid on sm+ — prevents excessively long mobile scroll */}
+            {/*
+              v14.1 UPGRADE: Cert cards — teal left border + provider badge.
+              border-l-2 with film-teal creates scannable visual hierarchy.
+              Provider badge (AWS/GCP/JS/PG) adds instant recognition at glance.
+              2-col grid on sm+ prevents excessive mobile scroll.
+            */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
               {CERTS.map((cert) => (
                 <m.article
                   key={cert.name}
                   variants={itemVariants}
-                  className="glass-surface rounded-[var(--radius-md)] p-4"
-                  // v14.0: enforce 48px min-height — WCAG AAA touch target
-                  style={{ minHeight: '48px' }}
+                  className="glass-surface rounded-[var(--radius-md)] border-l-2 p-4"
+                  style={{
+                    borderLeftColor: 'var(--color-film-teal)',
+                    minHeight: '56px',
+                  }}
                 >
-                  <p className="text-sm font-medium text-white">
-                    {cert.name}
-                  </p>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm font-medium text-white leading-snug">
+                      {cert.name}
+                    </p>
+                    {/* Provider badge — instant credential scan */}
+                    <span
+                      className="mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-widest uppercase"
+                      style={{
+                        borderColor: 'var(--color-film-teal-glow)',
+                        color: 'var(--color-film-teal)',
+                        background: 'var(--color-film-teal-surface)',
+                      }}
+                      aria-label={`Provider: ${cert.provider}`}
+                    >
+                      {cert.provider}
+                    </span>
+                  </div>
 
-                  <p className="mt-1 font-mono text-[11px] text-white/55">
+                  <p
+                    className="mt-1.5 font-mono text-[11px]"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
                     {cert.date}
                   </p>
                 </m.article>
