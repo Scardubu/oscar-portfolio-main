@@ -1011,6 +1011,22 @@ h3, .h3 {
   100% { opacity: 1; box-shadow: 0 0 0 0 transparent; }
 }
 
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  white-space: nowrap;
+}
+
 .pill-cyan {
   display: inline-flex; align-items: center;
   font-family: var(--font-mono); font-size: 0.625rem;
