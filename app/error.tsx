@@ -1,4 +1,8 @@
 'use client';
+// CONVICTION ENGINE v2.0 — Error Boundary Page
+// v2: Glass card treatment, film-teal accents, on-brand micro-copy.
+//     ChunkLoadError: auto-reload preserved.
+//     v1 was a bare centered div — inconsistent with every other page.
 
 import { useEffect } from 'react';
 
@@ -40,43 +44,94 @@ export default function ErrorPage({
   }, [chunkError]);
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center px-6"
+    <main
+      className="flex min-h-screen flex-col items-center justify-center px-6"
       role="alert"
+      aria-live="assertive"
     >
-      <div className="max-w-sm w-full text-center space-y-5">
-        <h2
-          className="text-2xl font-bold"
-          style={{ color: 'var(--color-film-teal)' }}
+      {/* Ambient glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background: chunkError
+            ? 'radial-gradient(ellipse 55% 45% at 50% 40%, oklch(70% 0.21 188 / 0.05) 0%, transparent 65%)'
+            : 'radial-gradient(ellipse 55% 45% at 50% 40%, oklch(60% 0.22 25 / 0.04) 0%, transparent 65%)',
+        }}
+      />
+
+      <div
+        className="glass-surface w-full max-w-sm rounded-[var(--radius-2xl)] p-8 sm:p-10 text-center"
+        style={{
+          borderTop: `1px solid ${chunkError ? 'oklch(70% 0.21 188 / 0.22)' : 'oklch(60% 0.22 25 / 0.18)'}`,
+        }}
+      >
+        {/* Kicker */}
+        <p
+          className="font-mono text-[10px] tracking-[0.22em] uppercase mb-5"
+          style={{ color: chunkError ? 'var(--color-film-teal)' : 'var(--color-warning)' }}
         >
-          {chunkError ? 'Fetching latest assets…' : 'Something went wrong'}
+          {chunkError ? 'Assets updating…' : 'Runtime error'}
+        </p>
+
+        {/* Headline */}
+        <h2
+          className="mb-3 font-display text-2xl font-extrabold tracking-tight"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          {chunkError ? 'Fetching latest assets.' : 'Something went wrong.'}
         </h2>
 
         <p
-          className="text-base leading-relaxed"
+          className="mb-2 font-didone text-sm italic"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           {chunkError
-            ? 'A resource failed to load. Reloading automatically — or tap below.'
-            : 'An error occurred while loading this page.'}
+            ? "A new deployment landed while you were here — reloading automatically."
+            : "An unexpected error occurred. The system logs have it."}
         </p>
+
+        {/* Digest (dev mode / production debugging) */}
+        {error.digest && (
+          <p
+            className="mb-6 font-mono text-[10px] tracking-widest"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Digest: {error.digest}
+          </p>
+        )}
+
+        <div
+          className="my-6 h-px w-full"
+          style={{ background: 'var(--color-border-subtle)' }}
+          aria-hidden="true"
+        />
 
         <button
           type="button"
           onClick={chunkError ? () => window.location.reload() : reset}
-          className="
-            inline-flex w-full min-h-[48px] items-center justify-center
-            rounded-full font-mono text-xs font-semibold tracking-wider uppercase
-            transition active:scale-[0.98]
-          "
-          style={{
-            background: 'var(--color-film-teal)',
-            color:      'var(--color-bg)',
-          }}
+          className="cta-primary cta-primary--lg tactile-press w-full"
+          style={{ justifyContent: 'center' }}
         >
           {chunkError ? 'Reload page' : 'Try again'}
         </button>
+
+        {/* Fallback email link */}
+        {!chunkError && (
+          <p
+            className="mt-5 font-mono text-[10px] tracking-wide"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Still stuck?{' '}
+            <a
+              href="mailto:scardubu@gmail.com"
+              className="underline underline-offset-2 transition-colors hover:text-white"
+            >
+              scardubu@gmail.com
+            </a>
+          </p>
+        )}
       </div>
-    </div>
+    </main>
   );
 }
