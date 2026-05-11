@@ -23,7 +23,7 @@ The Airflow DAG uses per-state task isolation as its fundamental design decision
 
 Schema normalisation maps ministry-specific column names to a canonical schema before any downstream processing sees the data. "School Name", "SCHOOL_NM", and "schname" all map to `school_name` at the ingest boundary. Downstream logic never handles raw column names.
 
-Probabilistic deduplication uses dedupe.io with a blocking pass on `school_id + LGA + year` to reduce the comparison space from O(n²) to a tractable candidate set. Fuzzy scoring then handles name variation within each block. The <2% false-positive rate was validated against a manual review sample before production deployment.
+Probabilistic deduplication uses dedupe.io with a blocking pass on `school_id + LGA + year` to reduce the comparison space from O(n²) to a tractable candidate set. Fuzzy scoring then handles name variation within each block. The {'<'}2% false-positive rate was validated against a manual review sample before production deployment.
 
 Great Expectations runs cross-state consistency checks as a validation gate. A state that passes internal normalisation but fails cross-state checks — implausible enrollment numbers, missing LGA codes — is flagged for manual review and excluded from the current reporting cycle. It is not silently accepted.
 
