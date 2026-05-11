@@ -240,8 +240,8 @@ export function HeroSection() {
             {/* Kicker */}
             <m.p
               variants={child}
-              className="mb-4 font-mono text-[11px] tracking-[0.14em] uppercase"
-              style={{ color: 'var(--color-film-teal)' }}
+              className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed"
+              style={{ color: 'var(--color-film-teal)', wordBreak: 'break-word', overflowWrap: 'break-word' }}
             >
               Full-Stack · Infrastructure · AI Systems · Lagos → Global
             </m.p>
@@ -249,7 +249,8 @@ export function HeroSection() {
             {/* Hero headline: A24 Didone word-by-word reveal */}
             <h1
               id="hero-heading"
-              className="max-w-[18ch] text-balance"
+              className="w-full text-balance"
+              style={{ maxWidth: 'min(100%, 22rem)' }}
               aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
               <m.span
@@ -297,8 +298,8 @@ export function HeroSection() {
             */}
             <m.p
               variants={child}
-              className="mt-6 max-w-[52ch] text-base leading-[1.8]"
-              style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
+              className="mt-6 w-full text-base leading-[1.8]"
+              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)', overflowWrap: 'break-word' }}
             >
               Your fintech product needs to be alive at 2am, compliant in
               audit season, and fast on the first request — quiet Tuesday
