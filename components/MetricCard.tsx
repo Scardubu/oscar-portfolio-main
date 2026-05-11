@@ -1,24 +1,17 @@
-// CONVICTION ENGINE v20.0 — MetricCard
-// Mobile-native: consistent padding token, accessible labelling.
-//
-// v20 changes:
-//   • Padding: `p-5 sm:p-6` → `p-4 sm:p-5 lg:p-6` — tighter on small mobile.
-//   • Label: moved from <p> to <header> with aria-label on article for
-//     screen reader clarity — label is announced once, not twice.
-//   • Body: leading-[1.75] instead of leading-7 — clamp-safe on all sizes.
-//   • accent border: kept at border-t-2 but uses --color-border as fallback
-//     so no AccentColor is never undefined in the rendered style.
-//   • icon: wrapped in aria-hidden container with role="presentation" — prevents
-//     Chromium / NVDA from announcing decorative SVGs.
+// components/MetricCard.tsx — CONVICTION ENGINE v22.0
+// Mobile-native: consistent spacing scale, accessible article structure.
+// Used as a standalone card in any section needing a labelled metric display.
 
 import type { CSSProperties, ReactNode } from 'react';
 
-type MetricAccent = 'live' | 'accent' | 'wip';
+type MetricAccent = 'teal' | 'amber' | 'live' | 'accent' | 'wip';
 
 const ACCENT_COLOR: Record<MetricAccent, string> = {
+  teal:   'var(--color-film-teal)',
+  amber:  'var(--color-film-amber)',
   live:   'var(--color-live)',
   accent: 'var(--color-accent)',
-  wip:    'var(--color-wip)',
+  wip:    'var(--color-warning)',
 };
 
 interface MetricCardProps {
@@ -38,7 +31,7 @@ export function MetricCard({
   breath = false,
   accent,
 }: Readonly<MetricCardProps>) {
-  const accentColor  = accent ? ACCENT_COLOR[accent] : 'var(--color-border)';
+  const accentColor = accent ? ACCENT_COLOR[accent] : 'var(--color-border)';
 
   const borderStyle: CSSProperties = { borderTopColor: accentColor };
   const labelStyle:  CSSProperties = accent
@@ -47,15 +40,15 @@ export function MetricCard({
 
   return (
     <article
-      className={`glass glass-medium metric-card h-full border-t-2 p-4 sm:p-5 lg:p-6 ${breath ? 'metric-breath' : ''}`}
+      className={`glass glass-medium h-full border-t-2 p-4 sm:p-5 lg:p-6${breath ? ' metric-breath' : ''}`}
       aria-label={label}
-      data-pillar="true"
+      data-metric="true"
       style={borderStyle}
     >
       {icon ? (
         <div
           className="mb-3"
-          style={{ color: 'var(--color-accent)' }}
+          style={{ color: accentColor }}
           aria-hidden="true"
           role="presentation"
         >
@@ -64,7 +57,7 @@ export function MetricCard({
       ) : null}
 
       <p
-        className="label mb-2 text-[10px] tracking-widest uppercase font-mono"
+        className="mb-2 font-mono text-[10px] tracking-widest uppercase"
         style={labelStyle}
       >
         {label}
