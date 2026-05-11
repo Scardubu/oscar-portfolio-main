@@ -1,10 +1,19 @@
 'use client';
+// components/ThemeToggle.tsx — CONVICTION ENGINE v22.0
+// Sun/Moon toggle with spring-physics icon swap.
+// Min touch target: 48×48px (WCAG 2.2 §2.5.8).
+// Imports: framer-motion directly, no legacy bridge.
 
-import { AnimatePresence, m } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 
 import { useTheme } from '@/components/ThemeProvider';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { springConfig } from '@/lib/motion';
+
+const SPRING = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping:   24,
+  mass:      0.9,
+};
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -16,13 +25,7 @@ export function ThemeToggle() {
       type="button"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="
-        inline-flex items-center justify-center
-        min-h-[44px] min-w-[44px]
-        rounded-lg border border-white/10
-        transition hover:border-white/20
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-      "
+      className="inline-flex items-center justify-center min-h-[48px] min-w-[48px] rounded-lg border border-white/10 transition hover:border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.96]"
       style={{ color: 'var(--color-text-muted)' }}
     >
       <AnimatePresence initial={false} mode="wait">
@@ -37,10 +40,10 @@ export function ThemeToggle() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            initial={reducedMotion ? false : { opacity: 0, rotate: -20, scale: 0.9 }}
+            initial={reducedMotion ? false : { opacity: 0, rotate: -20, scale: 0.85 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={reducedMotion ? {} : { opacity: 0, rotate: 20, scale: 0.9 }}
-            transition={springConfig}
+            exit={reducedMotion ? {} : { opacity: 0, rotate: 20, scale: 0.85 }}
+            transition={SPRING}
             aria-hidden="true"
           >
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
@@ -56,10 +59,10 @@ export function ThemeToggle() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            initial={reducedMotion ? false : { opacity: 0, rotate: 20, scale: 0.9 }}
+            initial={reducedMotion ? false : { opacity: 0, rotate: 20, scale: 0.85 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={reducedMotion ? {} : { opacity: 0, rotate: -20, scale: 0.9 }}
-            transition={springConfig}
+            exit={reducedMotion ? {} : { opacity: 0, rotate: -20, scale: 0.85 }}
+            transition={SPRING}
             aria-hidden="true"
           >
             <circle cx="12" cy="12" r="4" />
