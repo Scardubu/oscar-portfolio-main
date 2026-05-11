@@ -1,3 +1,4 @@
+'use client';
 // CONVICTION ENGINE v22.0 — SkillsSection
 // Mobile-native wrapper around SkillsMap. Lagos → Global.
 //
