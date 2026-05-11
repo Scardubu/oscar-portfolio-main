@@ -1,13 +1,12 @@
-// CONVICTION ENGINE v21.0 — WritingSection
-// Mobile-native: filter chips scroll horizontally, rows 52px min touch target.
-// Lagos, Nigeria → Global.
+// CONVICTION ENGINE v22.0 — WritingSection
+// Mobile-native: 320–430px is the source of truth. Lagos → Global.
 //
-// v21 changes vs v20:
-//   • Featured card: min-h-[52px] read CTA for thumb zone; title line-clamp-3 mobile.
-//   • Article row: explicit min-h-[52px] + py-3 for reliable tap target.
-//   • Filter pill active: solid bg + border for maximum contrast outdoors.
-//   • Section copy: tightened to ≤56ch for mobile line-length.
-//   • "View all" CTA: w-full on mobile.
+// v22 vs v21:
+//   • Filter chips: scroll-snap-x mandatory for crisp swipe stops
+//   • Featured card: read CTA always full-width on mobile
+//   • Article rows: guaranteed min-h-[52px], date always visible (stacked on mobile)
+//   • AnimatePresence mode="popLayout" for filter transitions
+//   • Section number: 04 (corrected page order)
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -51,10 +50,11 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
     >
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          {/* Section header */}
+
+          {/* ── Section header ────────────────────────────────────────────── */}
           <m.div variants={child} className="mb-8 sm:mb-12">
             <div className="section-kicker-row">
-              <span className="section-number" aria-hidden="true">05</span>
+              <span className="section-number" aria-hidden="true">04</span>
               <span className="section-label">Writing</span>
             </div>
 
@@ -69,18 +69,18 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
             <m.p
               variants={child}
-              className="mt-4 max-w-[56ch] text-base leading-[1.8]"
+              className="mt-4 max-w-[52ch] text-sm sm:text-base leading-[1.8]"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Architecture calls, ML trade-offs, and what actually held in production —
-              from Lagos to the world.
+              Architecture calls, ML trade-offs, and what actually held in
+              production — from Lagos to the world.
             </m.p>
 
-            {/* Filter chips: horizontal scroll on mobile */}
+            {/* Filter chips: scroll-snap on mobile */}
             <m.div
               variants={child}
-              className="mt-5 flex gap-2 overflow-x-auto pb-1 no-scrollbar"
-              style={{ scrollbarWidth: 'none' }}
+              className="mt-5 -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
+              style={{ scrollbarWidth: 'none', scrollSnapType: 'x mandatory' }}
               role="group"
               aria-label="Filter articles by topic"
             >
@@ -92,12 +92,14 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                     type="button"
                     onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
                     aria-pressed={isActive}
+                    style={{ scrollSnapAlign: 'start' }}
                     className={[
-                      'shrink-0 rounded-full px-4 py-2 font-mono text-[11px] tracking-widest uppercase',
-                      'transition-all duration-200 min-h-[44px] border',
+                      'shrink-0 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase',
+                      'transition-all duration-200 min-h-[48px] border',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                      'active:scale-[0.97]',
                       isActive
-                        ? 'bg-white/12 border-white/30 text-white shadow-sm'
+                        ? 'bg-white/10 border-white/28 text-white'
                         : 'border-white/10 text-white/45 hover:text-white/70 hover:border-white/20',
                     ].join(' ')}
                   >
@@ -110,12 +112,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
           {featuredPost ? (
             <>
-              {/* Featured article */}
+              {/* ── Featured article ───────────────────────────────────────── */}
               <m.article
                 variants={card}
                 className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
               >
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <span className="pill pill-cyan">Featured</span>
                   <span className="badge-muted">{posts.length} published</span>
                   <span
@@ -134,7 +136,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </h3>
 
                 <p
-                  className="mt-4 max-w-[64ch] text-base leading-8"
+                  className="mt-3 max-w-[64ch] text-sm sm:text-base leading-8"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
                   {featuredPost.summary}
@@ -156,9 +158,9 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.97]"
                   style={{
-                    borderColor: 'var(--color-cyan-surface)',
+                    borderColor: 'var(--color-film-teal-glow)',
                     color: 'var(--color-film-teal)',
                   }}
                 >
@@ -167,7 +169,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </Link>
               </m.article>
 
-              {/* Article list */}
+              {/* ── Article list ───────────────────────────────────────────── */}
               {otherPosts.length > 0 && (
                 <AnimatePresence mode="popLayout">
                   <m.div
@@ -179,38 +181,36 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                       <m.div
                         key={post.slug}
                         variants={card}
-                        exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                        exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                         layout
                         style={{ background: 'var(--color-bg)' }}
                       >
-                        <Link href={`/writing/${post.slug}`} className="block">
+                        <Link href={`/writing/${post.slug}`} className="block group">
                           <m.article
                             whileHover={
                               reducedMotion
                                 ? undefined
                                 : {
                                     x: 4,
-                                    transition: {
-                                      type: 'spring',
-                                      stiffness: 320,
-                                      damping: 28,
-                                    },
+                                    transition: { type: 'spring', stiffness: 320, damping: 28 },
                                   }
                             }
-                            className="writing-row min-h-[52px] py-3 px-4 sm:px-0"
+                            className="flex min-h-[52px] items-center gap-3 px-4 py-3.5"
                           >
-                            {/* Date: hidden on mobile — shown inline below title */}
-                            <time
-                              dateTime={post.date}
-                              className="hidden sm:block min-w-24 shrink-0 font-mono text-xs"
-                              style={{ color: 'var(--color-text-muted)' }}
-                            >
-                              {formatDate(post.date)}
-                            </time>
+                            {/* Date — stacked on mobile, inline on sm+ */}
+                            <div className="hidden sm:block min-w-24 shrink-0">
+                              <time
+                                dateTime={post.date}
+                                className="font-mono text-xs"
+                                style={{ color: 'var(--color-text-muted)' }}
+                              >
+                                {formatDate(post.date)}
+                              </time>
+                            </div>
 
                             <div className="flex-1 min-w-0">
                               <span
-                                className="writing-title block truncate text-sm font-medium"
+                                className="block text-sm font-medium truncate transition group-hover:text-white"
                                 style={{ color: 'var(--color-text-primary)' }}
                               >
                                 {post.title}
@@ -225,7 +225,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                             </div>
 
                             <span
-                              className="text-xs whitespace-nowrap shrink-0 ml-3"
+                              className="text-xs whitespace-nowrap shrink-0"
                               style={{ color: 'var(--color-text-muted)' }}
                             >
                               {post.readingTime} min
@@ -238,16 +238,17 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </AnimatePresence>
               )}
 
-              {/* View all CTA: full-width on mobile */}
-              <m.div
-                variants={child}
-                className="mt-8"
-              >
+              {/* ── View all CTA: full-width on mobile ─────────────────────── */}
+              <m.div variants={child} className="mt-8">
                 <Link
                   href="/writing"
-                  className="pill pill-cyan inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 px-5 transition hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-white/30"
+                  className="inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-6 py-3 font-mono text-[11px] tracking-widest uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.97]"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    color: 'var(--color-film-teal)',
+                  }}
                 >
-                  <span>All {posts.length} articles</span>
+                  All {posts.length} articles
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </m.div>
