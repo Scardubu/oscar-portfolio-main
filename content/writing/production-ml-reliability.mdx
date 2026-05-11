@@ -1,0 +1,60 @@
+---
+title: 'Production ML Reliability: What 99.9% Uptime Actually Requires'
+date: '2025-09-20'
+summary: 'What SabiScore taught me about building ML systems that hold correctness under load — ensemble design, cache strategy, drift detection, and the difference between a model that works in a notebook and one that holds 99.9%+ uptime over 90 days.'
+tags:
+  - 'ML Systems'
+  - 'Reliability'
+  - 'Production Systems'
+featured: false
+---
+
+## The gap between a working model and a reliable system
+
+A model that achieves 71% prediction accuracy in a notebook is a research result. A model that achieves 71% accuracy in production — over 90 days, under concurrent load, across live match windows — is a different engineering problem entirely.
+
+SabiScore required both. The model work was necessary. The infrastructure work was where the real constraints lived.
+
+## Why ensemble over a single model
+
+The initial build used a single XGBoost model. Accuracy was acceptable but inconsistent — variance across match types was higher than the system could tolerate for user-facing predictions.
+
+The ensemble approach — XGBoost and LightGBM as base models, with LogisticRegression(C=0.1) as the meta-learner — reduced this variance. Each base model captures different aspects of the feature space. The meta-learner, regularised to prevent overfitting on the small OOF feature set, produces calibrated probabilities that are more consistent than any single model's output.
+
+The meta-learner choice was LogisticRegression, not an MLP. An MLP meta-learner introduced overfitting on the out-of-fold feature space of only two base model outputs. LogisticRegression with L2 regularisation is robust to this low-dimensional input and produces calibrated probabilities without Platt scaling. Simple because the problem required simple, not because simple was the first idea.
+
+## Time-based splits as a correctness constraint
+
+The train/test split was time-based — 80th percentile date as the boundary — not random shuffle. This matters more than most ML write-ups acknowledge.
+
+Random shuffling allows future match statistics to leak into training data for any row before the split boundary. Sports outcomes are non-stationary; team form, injury status, and competition stage change over time. The model must generalise forward in time, not across a random partition.
+
+A model trained with random shuffle will report better cross-validation accuracy than the time-split model. But it will underperform in production, because production is always forward in time.
+
+## Redis caching as latency infrastructure
+
+87ms median inference latency. This requires the cache hit path to be fast — and it is, at 73% hit rate.
+
+The cache key strategy: Redis TTL keyed on `match_id + model_version`. The match_id component is obvious. The model_version component is the critical part.
+
+A cache keyed on `match_id` alone produces stale predictions after a model retrain. The old predictions remain cached, and users receive yesterday's model output for today's matches. Keying on `model_version` enables precise cache invalidation on retrain without flushing predictions for unchanged matches — only matches that overlap with the retrained model version expire.
+
+73% hit rate means 73% of requests never touch the inference layer. At peak traffic, this difference is the margin between sub-100ms and multi-second response times.
+
+## Drift detection as an alerting primitive
+
+The most common ML system failure mode is silent: the model continues responding, but response quality degrades. Users experience worse predictions before any infrastructure alert fires.
+
+SabiScore tracks Brier score and PSI (Population Stability Index) per match-week. An alert fires if Brier score degrades beyond 0.03 from the established baseline. This is a model performance alert, not a system health alert — it fires before any user-visible quality degradation, not after.
+
+The 45% MTTD improvement over reactive alerting is the direct consequence of this: detecting degradation on a per-match-week cadence rather than waiting for user reports or SLO breaches.
+
+## What 99.9% uptime requires
+
+Uptime is not an infrastructure metric in isolation. It is the product of the inference serving layer, the cache layer, the model serving process, and the alerting system that catches degradation before it becomes an outage.
+
+In practice: FastAPI handles predictable concurrent request routing; Redis provides the latency buffer that keeps p99 under 200ms even when the inference layer is under load; the drift detector catches silent degradation before it compounds into visible failure; health checks and process restart logic ensure the serving process recovers from transient crashes without manual intervention.
+
+99.9%+ uptime over a 90-day Prometheus window means the system tolerated all of the above — concurrent load, model retrains, third-party data unavailability — without extended downtime.
+
+That is not a consequence of a good model. It is a consequence of treating infrastructure reliability as a design constraint from the start.
