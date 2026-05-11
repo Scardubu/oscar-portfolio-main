@@ -1407,3 +1407,149 @@ h3, .h3 {
     background-size: unset !important;
   }
 }
+
+}
+/* ════════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v18 ADDITIONS — CONTACT FORM + POLISH
+   Appended by v18 upgrade. ContactSection inline form utilities.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Contact form field system ──────────────────────────────────────────── */
+.contact-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.contact-field-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.contact-field-optional {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.contact-field-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: oklch(100% 0 0 / 0.03);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.contact-field-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.55;
+}
+
+.contact-field-input:hover:not(:disabled) {
+  border-color: var(--glass-border-hover);
+  background: oklch(100% 0 0 / 0.05);
+}
+
+.contact-field-input:focus:not(:disabled) {
+  border-color: oklch(70% 0.21 188 / 0.55);
+  background: oklch(100% 0 0 / 0.05);
+  box-shadow: 0 0 0 3px oklch(70% 0.21 188 / 0.10);
+}
+
+.contact-field-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contact-field-input:invalid:not(:placeholder-shown) {
+  border-color: oklch(60% 0.22 25 / 0.45);
+}
+
+.contact-field-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2355556a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+}
+
+.contact-field-select option {
+  background-color: var(--color-space-mid);
+  color: var(--color-text-primary);
+}
+
+.contact-field-textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+/* ── Writing section row hover ──────────────────────────────────────────── */
+.writing-row {
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.writing-row:hover {
+  background: oklch(100% 0 0 / 0.03);
+}
+
+.writing-row:hover .writing-title {
+  color: var(--color-text-primary);
+}
+
+/* ── Loading spinner keyframes (contact form) ──────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.75s linear infinite;
+}
+
+/* ── Focus-visible global polish ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid oklch(70% 0.21 188 / 0.6);
+  outline-offset: 2px;
+}
+
+/* Skip nav focus reveal */
+.skip-nav:focus-visible {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: var(--z-modal);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--color-film-teal);
+  color: var(--color-space-black);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  outline: none;
+}
+
+/* ── Text selection colour ──────────────────────────────────────────────── */
+::selection {
+  background: oklch(70% 0.21 188 / 0.25);
+  color: var(--color-text-primary);
+}
