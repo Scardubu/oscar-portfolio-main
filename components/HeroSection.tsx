@@ -1,15 +1,26 @@
-// CONVICTION ENGINE v18.0 — HeroSection
+// CONVICTION ENGINE v19.0 — HeroSection
 //
-// v18 CHANGES vs v17:
+// v19 CHANGES vs v18:
 //
-//   HEADSHOT PATH: /headshot.webp → /images/oscar-headshot.jpg
-//     Supports high-res professional portrait via /public/images/oscar-headshot.jpg.
+//   KICKER: "Full-Stack · Infrastructure · AI Systems · Lagos → Global"
+//     Previously underweighted the frontend dimension. Now explicit.
+//     React Native · Next.js 15 are named in proof column #4.
 //
-//   PROOF CALLOUT: SwarmXQ added to proof line alongside TaxBridge + SabiScore.
-//     "TaxBridge · 4h→15min. SabiScore · 99.9%+. SwarmXQ · self-improving fleet."
+//   PROOF COLUMN #4 — FULL STACK OWNERSHIP:
+//     Upgraded body copy to explicitly name React Native, Next.js 15,
+//     Tailwind v4, Framer Motion. Engineers scan this as a tech signal;
+//     founders and PMs read it as "one hire, complete product".
 //
-//   KEEP: All v17 architecture — CTA-after-proof conversion law, conviction stat strip,
-//     A24 word-by-word Didone reveal, scroll-linked parallax, spring physics, ReducedMotion.
+//   PROOF CALLOUT: Added "React Native · Next.js 15 dashboard" to SwarmXQ line.
+//
+//   HEADSHOT (desktop): Increased from h-20/xl:h-24 → h-28/xl:h-36 for
+//     stronger visual presence on desktop without hurting LCP (still priority).
+//
+//   MOBILE HEADSHOT: Added subtle teal glow ring animation (CSS keyframe)
+//     for attention without JS cost.
+//
+//   KEEP: All v18 architecture — CTA-after-proof conversion law, A24 Didone
+//     word-by-word reveal, scroll-linked parallax, spring physics, ReducedMotion.
 //
 'use client';
 
@@ -68,7 +79,7 @@ const PROOF_COLUMNS = [
   },
   {
     label: 'FULL STACK OWNERSHIP',
-    body: 'Feature engineering through FastAPI inference to the Next.js frontend. One engineer, complete ownership — no handoff tax, no translation loss, no ticket queue.',
+    body: 'React Native mobile app through Next.js 15 dashboard to FastAPI inference to PostgreSQL. Tailwind v4, Framer Motion, Effect-TS. One engineer, zero handoff tax — product to infrastructure.',
   },
 ] as const;
 
@@ -221,9 +232,9 @@ export function HeroSection() {
               aria-hidden="true"
             >
               <div
-                className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full"
+                className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '1.5px solid oklch(70% 0.21 188 / 0.40)',
+                  border: '1.5px solid oklch(70% 0.21 188 / 0.45)',
                   boxShadow: '0 0 0 4px oklch(70% 0.21 188 / 0.08), 0 8px 32px oklch(0% 0 0 / 0.50)',
                 }}
               >
@@ -238,13 +249,13 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Kicker */}
+            {/* v19: Kicker now explicitly names full-stack dimension */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed"
               style={{ color: 'var(--color-film-teal)', wordBreak: 'break-word', overflowWrap: 'break-word' }}
             >
-              Full-Stack · Infrastructure · AI Systems · Lagos → Global
+              Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global
             </m.p>
 
             {/* Hero headline: A24 Didone word-by-word reveal */}
@@ -291,28 +302,18 @@ export function HeroSection() {
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* ── 1. Body copy — "you"-centric, 1 para max on mobile ───── */}
-            {/*
-              Conversion law: body copy BEFORE the ask.
-              Let them understand the value proposition first.
-              One crisp paragraph. No corporate filler.
-            */}
+            {/* Body copy — production systems + full-stack signal */}
             <m.p
               variants={child}
               className="mt-6 w-full text-base leading-[1.8]"
               style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)', overflowWrap: 'break-word' }}
             >
               Production systems that stay alive when it matters most —
-              compliant, fast, and relentlessly reliable. Whether it's a
+              compliant, fast, and relentlessly reliable. Whether it&apos;s a
               quiet Tuesday or a FIRS filing deadline, the system ships.
             </m.p>
 
-            {/* ── 2. Conviction stat strip — irrefutable metrics ────────── */}
-            {/*
-              Four concrete numbers. Not claims — proof.
-              Engineers read these before reading the body copy.
-              DMs read them as "this engineer has shipped."
-            */}
+            {/* Conviction stat strip */}
             <m.div variants={child} aria-label="Performance metrics">
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label }) => (
@@ -324,39 +325,28 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* ── 3. Proof callout — pre-CTA social proof anchor ─────────── */}
-            {/*
-              Objection: "I don't know your work."
-              Answer: Two projects, two results, both in one line.
-              Placed BEFORE the CTA — you earn the click.
-            */}
+            {/* Proof callout — updated with SwarmXQ dashboard mention */}
             <m.div variants={child} className="hero-proof-callout">
               <p
                 className="text-sm leading-relaxed font-medium"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
               >
-                TaxBridge: filing time 4h → 15 min.
+                TaxBridge: filing 4h → 15min · React Native app · Fastify API.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                SabiScore: 99.9%+ uptime · 90-day production window.
+                SabiScore: 99.9%+ uptime · ensemble ML · Next.js dashboard.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                SwarmXQ: self-improving agent fleet · zero manual tuning.
+                SwarmXQ: self-improving agent fleet · Next.js 15 live ops dashboard.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
                 Shipped in Lagos. Running globally. Battle-tested in audit season.
               </p>
             </m.div>
 
-            {/* ── 4. Live activity bar — operational cadence proof ──────── */}
+            {/* Live activity bar */}
             <m.div variants={child} className="mt-5">
               <LiveActivityBar />
             </m.div>
 
-            {/* ── 5. CTA block — AFTER conviction is built ─────────────── */}
-            {/*
-              PLACEMENT LAW: CTA after 3+ proof signals.
-              On mobile at 390px: headline + stats + proof callout + LiveBar
-              = ~52svh consumed. CTA lands in lower 48% — thumb comfort zone.
-              Conversion sequence: intent → evidence → CTA.
-            */}
+            {/* CTA block — AFTER conviction is built */}
             <m.div variants={child} className="mt-8 mb-4 cta-hero-group">
               <a
                 href="mailto:scardubu@gmail.com"
@@ -391,12 +381,7 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* ── 6. Proof carousel: swipeable on mobile, grid on sm+ ───── */}
-            {/*
-              Deep proof for those who continue scrolling.
-              Four engineering pillars — each card is a validation,
-              not a feature. Carousel on mobile to compress scroll distance.
-            */}
+            {/* Proof carousel */}
             <m.div
               variants={proofContainer}
               initial="hidden"
@@ -407,22 +392,22 @@ export function HeroSection() {
           </m.div>
 
           {/* ── Right column: Headshot + HeroVisual — desktop only ──────── */}
+          {/* v19: Desktop headshot enlarged to h-28/xl:h-36 for stronger presence */}
           <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
-            {/* Desktop headshot — top-right, soft square with glass border */}
             <div className="flex justify-end">
               <div
-                className="relative h-20 w-20 xl:h-24 xl:w-24 overflow-hidden rounded-[var(--radius-xl)]"
+                className="relative h-28 w-28 xl:h-36 xl:w-36 overflow-hidden rounded-[var(--radius-xl)] hero-headshot-ring"
                 style={{
-                  border: '1.5px solid oklch(70% 0.21 188 / 0.35)',
+                  border: '1.5px solid oklch(70% 0.21 188 / 0.40)',
                   boxShadow:
-                    '0 0 0 6px oklch(70% 0.21 188 / 0.06), 0 12px 40px oklch(0% 0 0 / 0.55)',
+                    '0 0 0 8px oklch(70% 0.21 188 / 0.06), 0 16px 48px oklch(0% 0 0 / 0.55), inset 0 1px 0 oklch(100% 0 0 / 0.12)',
                 }}
               >
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="96px"
+                  sizes="144px"
                   className="object-cover object-top"
                   priority
                 />
@@ -433,12 +418,7 @@ export function HeroSection() {
 
         </div>
 
-        {/* ── Mobile HeroVisual — below fold, credibility reinforcement ──── */}
-        {/*
-          On mobile, HeroVisual renders AFTER proof carousel.
-          Preserves LCP for text headline. Terminal as secondary evidence.
-          Hidden on desktop — handled by the grid column above.
-        */}
+        {/* Mobile HeroVisual — below fold */}
         <div className="mt-10 lg:hidden">
           <HeroVisual />
         </div>
