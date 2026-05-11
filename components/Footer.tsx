@@ -34,13 +34,13 @@ export function Footer() {
           </p>
           {/* v14.1 FIX: "Abuja-built" → "Lagos-built" */}
           <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Lagos-built. Globally proven.
+            Lagos-built. Globally deployed. Battle-tested.
           </p>
           <p className="mt-3 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}>
             © 2024–2026 Oscar Ndugbu · Built with Next.js 15
           </p>
           <p className="mt-1 font-mono text-[11px]" style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}>
-            Built in Nigeria. Running globally.
+            TaxBridge · SabiScore · SwarmXQ
           </p>
           <p
             className="mt-1.5 flex items-center gap-2 font-mono text-[10px]"
@@ -59,7 +59,8 @@ export function Footer() {
             className="mt-5 font-mono text-[10px] tracking-wide"
             style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}
           >
-            Systems that work at 2am. That&apos;s the standard.
+            Shipped in Lagos · Running globally
+            · Battle-tested in audit season.
           </p>
         </div>
 
