@@ -1,23 +1,24 @@
-// CONVICTION ENGINE v15.0 — AboutSection
+// CONVICTION ENGINE v16.0 — AboutSection
 //
-// v15 CHANGES vs v14.1:
+// v16 CHANGES vs v15:
+//   IMPACT STAT STRIP: Added 3 scannable outcome numbers above the narrative —
+//     "4h → 15min", "99.9%+ uptime", "3 production platforms" — instant
+//     credibility for non-technical founders who don't read body copy.
 //
-//   FULL-STACK SIGNAL UPGRADE:
-//     - Headline body copy now explicitly names React Native, Next.js 15,
-//       and Tailwind v4 alongside FastAPI and PostgreSQL.
-//       Objection defanged: "Is he really full-stack or just backend + some React?"
-//       Answer: React Native (TaxBridge), Next.js 15 dashboards (SabiScore, SwarmXQ,
-//       portfolio), Framer Motion, Tailwind v4 — all production, all public.
+//   UBEC CALLOUT: Reframed from qualifier ("Before that…") to proof-of-scale —
+//     "Federal infrastructure. 36 states. Real money moving." — stronger signal.
 //
-//   STACK STRIP: Added horizontal icon strip showing the full-stack range —
-//     React · Next.js · React Native · FastAPI · Python · PostgreSQL · Redis.
-//     Renders at the bottom of the narrative column, above the UBEC callout.
-//     Quick scan without requiring reading.
+//   NARRATIVE: Third paragraph tightened: names all three platforms with their
+//     frontend layer explicitly. Removes hedging language ("some frontend").
 //
-//   NARRATIVE: Third paragraph updated to name "React Native mobile app"
-//     and "Next.js 15 dashboard" explicitly for TaxBridge and SwarmXQ.
+//   SIDEBAR: Replaced generic "Trust signal" box with an availability chip
+//     matching the hero pill — consistent visual language across the page.
 //
-//   KEEP: All v14.1 cert cards, UBEC callout, grid layout, motion config.
+//   QUICK-FACTS GRID (desktop): Added 3-col stat grid in sidebar below certs —
+//     "4 cloud certs", "15+ OSS contributions", "4+ years production" —
+//     scannable proof at a glance.
+//
+//   KEEP: All v15 stack strip, cert cards, grid layout, motion config.
 //
 'use client';
 
@@ -31,48 +32,41 @@ import {
 } from '@/lib/motionVariants';
 
 const CERTS = [
-  {
-    name: 'AWS Certified Developer',
-    date: 'Dec 2023',
-    provider: 'AWS',
-  },
-  {
-    name: 'GCP Associate Cloud Engineer',
-    date: 'Aug 2023',
-    provider: 'GCP',
-  },
-  {
-    name: 'OpenJS Node.js Services Developer (JSNSD)',
-    date: 'May 2024',
-    provider: 'JS',
-  },
-  {
-    name: 'PostgreSQL 14 Associate',
-    date: 'Mar 2024',
-    provider: 'PG',
-  },
+  { name: 'AWS Certified Developer',                  date: 'Dec 2023', provider: 'AWS' },
+  { name: 'GCP Associate Cloud Engineer',             date: 'Aug 2023', provider: 'GCP' },
+  { name: 'OpenJS Node.js Services Developer (JSNSD)',date: 'May 2024', provider: 'JS'  },
+  { name: 'PostgreSQL 14 Associate',                  date: 'Mar 2024', provider: 'PG'  },
 ] as const;
 
-// Stack strip — full-stack range in one visual scan
+// v15: Full-stack range in one visual scan — mobile → web → API → data → ML
 const STACK_STRIP = [
-  { name: 'React Native',   cat: 'Mobile' },
-  { name: 'Next.js 15',     cat: 'Web' },
-  { name: 'React 19',       cat: 'UI' },
-  { name: 'TypeScript',     cat: 'Language' },
-  { name: 'FastAPI',        cat: 'API' },
-  { name: 'PostgreSQL',     cat: 'Data' },
-  { name: 'Python 3.11+',   cat: 'ML' },
-  { name: 'Redis',          cat: 'Cache' },
+  { name: 'React Native',  cat: 'Mobile'   },
+  { name: 'Next.js 15',    cat: 'Web'      },
+  { name: 'React 19',      cat: 'UI'       },
+  { name: 'TypeScript',    cat: 'Language' },
+  { name: 'FastAPI',       cat: 'API'      },
+  { name: 'PostgreSQL',    cat: 'Data'     },
+  { name: 'Python 3.11+',  cat: 'ML'       },
+  { name: 'Redis',         cat: 'Cache'    },
+] as const;
+
+// v16: Impact stats — outcome numbers for non-technical founders
+const IMPACT_STATS = [
+  { value: '4h → 15min', label: 'tax filing time',       color: 'var(--color-film-teal)' },
+  { value: '99.9%+',     label: 'sustained uptime',      color: 'oklch(72% 0.17 160)'    },
+  { value: '3',          label: 'production platforms',  color: 'oklch(75% 0.16 300)'    },
+] as const;
+
+// v16: Quick facts for the sidebar — scannable proof at a glance
+const QUICK_FACTS = [
+  { value: '4',   label: 'Cloud certs' },
+  { value: '15+', label: 'OSS merged'  },
+  { value: '4+',  label: 'Years prod.' },
 ] as const;
 
 export function AboutSection() {
   const ref = useRef<HTMLElement>(null);
-
-  const inView = useInView(ref, {
-    once: true,
-    margin: '-80px',
-  });
-
+  const inView = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
 
   const containerVariants = staggerContainer(0.09, 0.05);
@@ -92,70 +86,81 @@ export function AboutSection() {
           animate={inView ? 'visible' : 'hidden'}
           className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start"
         >
-          {/* LEFT COLUMN — narrative */}
+          {/* ── LEFT COLUMN — narrative ─────────────────────────────────── */}
           <div>
-            <m.p
-              variants={itemVariants}
-              className="label-mono text-[var(--color-cyan)]"
-            >
+            <m.p variants={itemVariants} className="label-mono" style={{ color: 'var(--color-cyan)' }}>
               BACKGROUND
             </m.p>
 
             <m.h2
               variants={itemVariants}
               id="about-heading"
-              className="mt-4 text-white"
+              className="mt-4"
+              style={{ color: 'var(--color-text-primary)' }}
             >
               A decade of infrastructure. Four years of product.
             </m.h2>
 
             <m.p
               variants={itemVariants}
-              className="mt-3 max-w-[42ch] text-xl text-[var(--color-text-secondary)]"
+              className="mt-3 max-w-[42ch] text-xl"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
               Non-CS background. Federal-scale engineering. Production ML.
               Full-stack delivery.
             </m.p>
 
-            {/* v15: Explicitly full-stack — not "some frontend, mostly backend" */}
+            {/* v16: Impact stat strip — outcome numbers before the narrative */}
+            <m.div
+              variants={itemVariants}
+              className="mt-7 flex flex-wrap gap-x-6 gap-y-4 border-t border-b py-5"
+              style={{ borderColor: 'var(--color-border-subtle)' }}
+              aria-label="Impact stats"
+            >
+              {IMPACT_STATS.map(({ value, label, color }) => (
+                <div key={label} className="flex flex-col gap-0.5">
+                  <span
+                    className="font-mono text-base font-semibold tracking-tight"
+                    style={{ color }}
+                  >
+                    {value}
+                  </span>
+                  <span
+                    className="font-mono text-[10px] tracking-widest uppercase"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </m.div>
+
+            {/* Narrative paragraphs */}
             <m.p
               variants={itemVariants}
-              className="mt-6 max-w-[var(--max-width-prose)] text-base leading-8 text-white/80"
+              className="mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
+              style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
             >
               Fullstack engineer and platform architect with four years of
-              independent product and consulting work. TaxBridge ships as a
-              React Native mobile app backed by a Fastify API and PostgreSQL
-              RLS. SabiScore serves ensemble ML inference behind a Next.js 15
-              dashboard. SwarmXQ orchestrates self-improving AI agents with a
-              live ops dashboard in Next.js 15 and Tailwind v4.
+              independent product work. TaxBridge ships as a React Native mobile
+              app backed by a Fastify 5 API and PostgreSQL 15 RLS. SabiScore
+              serves ensemble ML inference behind a Next.js 15 dashboard.
+              SwarmXQ orchestrates a self-improving AI agent fleet with a live
+              ops dashboard in Next.js 15 and Tailwind v4.
             </m.p>
 
             <m.p
               variants={itemVariants}
-              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8 text-white/72"
+              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
+              style={{ color: 'var(--color-text-primary)', opacity: 0.72 }}
             >
-              Before that, over a decade building and maintaining critical data
-              infrastructure within Nigeria&apos;s federal public sector —
-              UBEC — managing ETL pipelines, dashboards, and state-level federal
-              budget allocation systems across every state and local government
-              area in the country, with reach extending into West Africa and Europe.
+              Non-CS academic background (B.Tech Environmental Technology, FUTO).
+              Technical credibility built through a decade of production-grade
+              engineering, four active cloud certifications, and 15+ merged
+              upstream open-source contributions.
             </m.p>
 
-            <m.p
-              variants={itemVariants}
-              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8 text-white/72"
-            >
-              Non-CS academic background (B.Tech Environmental Technology,
-              FUTO, 2006–2011). Technical credibility built through a decade of
-              production-grade engineering, four active cloud certifications,
-              and 15+ merged upstream contributions.
-            </m.p>
-
-            {/*
-              v15: STACK STRIP — full-stack range in 8 chips.
-              Appears before the UBEC callout to establish full-stack breadth
-              before the "federal scale" depth signal.
-            */}
+            {/* Stack strip */}
             <m.div
               variants={itemVariants}
               className="mt-7 flex flex-wrap gap-2"
@@ -187,40 +192,60 @@ export function AboutSection() {
               ))}
             </m.div>
 
-            {/* UBEC callout: strongest objection defang */}
+            {/* v16: UBEC callout reframed as proof-of-scale */}
             <m.div
               variants={itemVariants}
-              className="glass-surface mt-8 rounded-[var(--radius-lg)] border-l-2 p-4 sm:p-6"
-              style={{
-                borderLeftColor: 'var(--color-cyan)',
-              }}
+              className="glass-surface mt-8 rounded-[var(--radius-lg)] border-l-2 p-5 sm:p-6"
+              style={{ borderLeftColor: 'var(--color-cyan)' }}
             >
-              <p className="text-sm leading-7 text-white/78">
-                At Nigeria&apos;s Universal Basic Education Commission, I built
-                the data systems that tracked school funding across every Nigerian
-                state and territory — federal-scale infrastructure processing
-                real allocations, not academic exercises.
+              <p
+                className="mb-2 font-mono text-[10px] tracking-widest uppercase font-semibold"
+                style={{ color: 'var(--color-film-teal)' }}
+              >
+                Federal infrastructure · UBEC
+              </p>
+              <p className="text-sm leading-7" style={{ color: 'var(--color-text-secondary)' }}>
+                Over a decade building the data systems that tracked school
+                funding across all 36 Nigerian states — ETL pipelines,
+                dashboards, and budget allocation infrastructure processing
+                real allocations at federal scale, with reach into West Africa
+                and Europe. Not an academic exercise.
               </p>
             </m.div>
 
             <m.p
               variants={itemVariants}
-              className="mt-8 text-lg text-white/80"
+              className="mt-8 text-lg font-semibold"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}
             >
               Lagos precision. Global scale.
             </m.p>
           </div>
 
-          {/* RIGHT COLUMN — certifications */}
-          <aside aria-label="Professional certifications">
+          {/* ── RIGHT COLUMN — certifications + quick facts ─────────────── */}
+          <aside aria-label="Professional certifications and facts">
+            {/* Availability chip — v16: matches hero pill */}
+            <m.div variants={itemVariants} className="mb-6">
+              <div
+                className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                aria-label="Availability status"
+              >
+                <span className="dot-live" aria-hidden="true" />
+                <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
+                  Available · Staff+ Roles
+                </span>
+              </div>
+            </m.div>
+
             <m.h3
               variants={itemVariants}
-              className="font-body text-sm uppercase tracking-widest text-white/80"
+              className="font-body text-sm uppercase tracking-widest"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
               Certifications
             </m.h3>
 
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
               {CERTS.map((cert) => (
                 <m.article
                   key={cert.name}
@@ -232,7 +257,7 @@ export function AboutSection() {
                   }}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-medium text-white leading-snug">
+                    <p className="text-sm font-medium leading-snug" style={{ color: 'var(--color-text-primary)' }}>
                       {cert.name}
                     </p>
                     <span
@@ -247,7 +272,6 @@ export function AboutSection() {
                       {cert.provider}
                     </span>
                   </div>
-
                   <p
                     className="mt-1.5 font-mono text-[11px]"
                     style={{ color: 'var(--color-text-muted)' }}
@@ -258,24 +282,35 @@ export function AboutSection() {
               ))}
             </div>
 
-            {/* Shipped in Lagos trust signal */}
+            {/* v16: Quick facts grid */}
             <m.div
               variants={itemVariants}
-              className="mt-8 rounded-[var(--radius-md)] border p-4"
-              style={{
-                borderColor: 'var(--color-border)',
-                background: 'oklch(100% 0 0 / 0.02)',
-              }}
+              className="mt-6 grid grid-cols-3 gap-3"
+              aria-label="Quick facts"
             >
-              <p
-                className="font-mono text-[10px] tracking-widest uppercase mb-2"
-                style={{ color: 'var(--color-film-teal)' }}
-              >
-                Trust signal
-              </p>
-              <p className="text-xs leading-6 text-white/60">
-                Shipped in Lagos · Running globally · Battle-tested in audit season
-              </p>
+              {QUICK_FACTS.map(({ value, label }) => (
+                <div
+                  key={label}
+                  className="rounded-[var(--radius-md)] border p-3 text-center"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    background: 'oklch(100% 0 0 / 0.02)',
+                  }}
+                >
+                  <p
+                    className="font-mono text-base font-semibold"
+                    style={{ color: 'var(--color-film-teal)' }}
+                  >
+                    {value}
+                  </p>
+                  <p
+                    className="mt-0.5 font-mono text-[9px] tracking-wide uppercase"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {label}
+                  </p>
+                </div>
+              ))}
             </m.div>
           </aside>
         </m.div>
