@@ -120,7 +120,7 @@ export function FloatingContactCTA() {
         style={{ background: 'var(--color-success)', flexShrink: 0 }}
         aria-hidden="true"
       />
-      Book a Call
+      Start a conversation
     </a>
   );
 }
