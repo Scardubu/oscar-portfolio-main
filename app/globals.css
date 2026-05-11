@@ -1228,3 +1228,182 @@ h3, .h3 {
     background-size: unset !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE — GLOBALS.CSS ADDITIONS
+   APPEND THIS ENTIRE BLOCK TO THE VERY END OF app/globals.css
+   ═══════════════════════════════════════════════════════════════════════════
+
+   WHAT THIS FIXES:
+   1. .gradient-mesh / .gradient-mesh-wrap / .gradient-mesh-orb — These
+      classes are referenced by GradientMesh.tsx but were completely absent
+      from globals.css. The component rendered invisible: valid DOM nodes
+      with no dimensions, no position, no color. Every page's background
+      mesh orbs were silently missing since the first deployment.
+
+   2. .pill — Base pill class used in app/work/[slug]/page.tsx (case study
+      pages: tech stack tags, status pills, related case study links).
+      Only .pill-cyan was defined. All .pill usage in work pages rendered
+      with no styling — plain unstyled inline spans.
+
+   3. .skeleton-shimmer — Shimmer animation for the upgraded loading.tsx
+      skeleton. Uses a CSS-only gradient sweep — zero JS, compositor-safe.
+
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ════ GRADIENT MESH BACKGROUND ════
+   Ambient multi-orb background used in GradientMesh.tsx.
+   Three independently-animated orbs create spatial depth behind content.
+   All orbs: pointer-events: none, z-index: -1, fixed positioning.
+   Mobile: orbs are simpler and static (no orbital CSS animation injected).
+   Desktop: orbital CSS animations injected by GradientMesh.tsx itself
+   (orb-cw / orb-ccw / orb-slow keyframes via dangerouslySetInnerHTML).
+*/
+.gradient-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.gradient-mesh-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Individual orb: absolutely positioned blob */
+.gradient-mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  pointer-events: none;
+  filter: blur(80px);
+}
+
+/* ── Indigo orb: top-left quadrant ─────────────────────────────────────── */
+.gradient-mesh-orb--indigo {
+  width: clamp(380px, 55vw, 780px);
+  height: clamp(380px, 55vw, 780px);
+  top: -10%;
+  left: -8%;
+  background: radial-gradient(
+    ellipse at center,
+    oklch(63% 0.22 258 / 0.11) 0%,
+    oklch(63% 0.22 258 / 0.05) 40%,
+    transparent 70%
+  );
+}
+@media (max-width: 767px) {
+  .gradient-mesh-orb--indigo {
+    width: 320px; height: 320px;
+    background: radial-gradient(ellipse at center, oklch(63% 0.22 258 / 0.07) 0%, transparent 70%);
+    filter: blur(60px);
+  }
+}
+
+/* ── Green/teal orb: center-right ──────────────────────────────────────── */
+.gradient-mesh-orb--green {
+  width: clamp(320px, 48vw, 680px);
+  height: clamp(320px, 48vw, 680px);
+  top: 25%;
+  right: -10%;
+  background: radial-gradient(
+    ellipse at center,
+    oklch(70% 0.21 188 / 0.09) 0%,
+    oklch(70% 0.21 188 / 0.04) 40%,
+    transparent 70%
+  );
+}
+@media (max-width: 767px) {
+  .gradient-mesh-orb--green {
+    width: 280px; height: 280px;
+    background: radial-gradient(ellipse at center, oklch(70% 0.21 188 / 0.06) 0%, transparent 70%);
+    filter: blur(50px);
+  }
+}
+
+/* ── Amber orb: bottom-left ─────────────────────────────────────────────── */
+.gradient-mesh-orb--amber {
+  width: clamp(280px, 40vw, 560px);
+  height: clamp(280px, 40vw, 560px);
+  bottom: 5%;
+  left: 20%;
+  background: radial-gradient(
+    ellipse at center,
+    oklch(73% 0.17 65 / 0.07) 0%,
+    oklch(73% 0.17 65 / 0.03) 40%,
+    transparent 70%
+  );
+}
+@media (max-width: 767px) {
+  .gradient-mesh-orb--amber {
+    width: 240px; height: 240px;
+    background: radial-gradient(ellipse at center, oklch(73% 0.17 65 / 0.05) 0%, transparent 70%);
+    filter: blur(50px);
+  }
+}
+
+/* Disable all mesh orb transforms under reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-mesh-orb { will-change: auto; filter: blur(80px) !important; }
+}
+
+/* ════ PILL BASE CLASS ════
+   Base utility pill used in case study pages (app/work/[slug]/page.tsx)
+   for tech stack tags, status indicators, and navigation chips.
+   .pill-cyan extends this base with teal color treatment.
+*/
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.625rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-muted);
+  background: var(--glass-bg);
+  white-space: nowrap;
+  min-height: 26px;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.pill:is(a, button):hover {
+  border-color: var(--glass-border-hover);
+  color: var(--color-text-secondary);
+}
+
+/* ════ SKELETON SHIMMER ════
+   CSS-only sweep animation for loading skeletons.
+   Gradient sweeps left→right once on a 1.6s loop.
+   Uses compositor-safe transform — zero layout recalculation.
+*/
+@keyframes skeleton-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    oklch(100% 0 0 / 0.06) 50%,
+    var(--color-border) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-sweep 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none !important;
+    background: var(--color-border) !important;
+    background-size: unset !important;
+  }
+}
