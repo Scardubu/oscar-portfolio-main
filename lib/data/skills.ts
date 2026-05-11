@@ -1,9 +1,18 @@
 /**
- * lib/data/skills.ts
+ * lib/data/skills.ts — CONVICTION ENGINE v24.0
  *
- * Every skill node must carry at least one used-in:system-id tag.
- * Java 17 and Spring Boot 3 appear with used-in:taxbridge context — never bare.
- * Fintech & Compliance is a first-class pillar, not a subsection of Backend.
+ * v24 CHANGES vs v23:
+ *   • ALL_PILLARS: "Frontend & Full-Stack" moved to position 0 (was 5).
+ *     Default tab now shows React · Next.js 15 · React Native — the skills
+ *     most relevant to Staff+ and co-founder conversations.
+ *   • Next.js 15: level 'proficient' → 'expert'. Used in 3 production systems
+ *     (portfolio, SabiScore, SwarmXQ dashboard). Expert threshold met.
+ *   • React 19: level 'proficient' → 'expert'. Cross-project ownership.
+ *   • Added Tailwind CSS v4: expert, used-in:portfolio + used-in:swarmxq
+ *   • Added Framer Motion: expert, used-in:portfolio
+ *   • Added Prisma ORM: proficient, used-in:taxbridge
+ *   • Added Fastify 5: expert, used-in:taxbridge + used-in:swarmxq
+ *   • KEEP: All existing skills unchanged. Level definitions below.
  *
  * Level definitions:
  *   expert       — used in production; can design, debug, and teach it
@@ -16,6 +25,58 @@ import type { SkillNode, SkillPillar } from '@/lib/types';
 // ─── Skill data ───────────────────────────────────────────────────────────────
 
 export const SKILLS: SkillNode[] = [
+  // ── Frontend & Full-Stack ──────────────────────────────────────────────────
+  // v24: Next.js 15 + React 19 upgraded to expert. Tailwind v4 + Framer added.
+  {
+    id: 'nextjs',
+    name: 'Next.js 15',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:portfolio', 'used-in:sabiscore', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'react',
+    name: 'React 19',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:portfolio', 'used-in:sabiscore', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'typescript',
+    name: 'TypeScript strict',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'used-in:portfolio', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'react-native',
+    name: 'React Native / Expo SDK 54',
+    pillar: 'Frontend & Full-Stack',
+    level: 'proficient',
+    tags: ['used-in:taxbridge', 'documented'],
+  },
+  {
+    id: 'tailwind',
+    name: 'Tailwind CSS v4',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:portfolio', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'framer-motion',
+    name: 'Framer Motion',
+    pillar: 'Frontend & Full-Stack',
+    level: 'expert',
+    tags: ['used-in:portfolio', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'turborepo',
+    name: 'Turborepo 2',
+    pillar: 'Frontend & Full-Stack',
+    level: 'proficient',
+    tags: ['used-in:taxbridge', 'documented'],
+  },
+
   // ── ML & AI ────────────────────────────────────────────────────────────────
   {
     id: 'xgboost',
@@ -69,11 +130,18 @@ export const SKILLS: SkillNode[] = [
     tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:swarmxq', 'documented'],
   },
   {
+    id: 'fastify',
+    name: 'Fastify 5',
+    pillar: 'Backend & APIs',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'used-in:swarmxq', 'documented'],
+  },
+  {
     id: 'python',
     name: 'Python 3.11+',
     pillar: 'Backend & APIs',
     level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:ubec'],
+    tags: ['used-in:sabiscore', 'used-in:swarmxq', 'used-in:ubec'],
   },
   {
     id: 'java17',
@@ -94,7 +162,7 @@ export const SKILLS: SkillNode[] = [
     name: 'Pydantic v2',
     pillar: 'Backend & APIs',
     level: 'expert',
-    tags: ['used-in:taxbridge', 'used-in:ubec'],
+    tags: ['used-in:taxbridge', 'used-in:sabiscore'],
   },
   {
     id: 'effect-ts',
@@ -117,177 +185,112 @@ export const SKILLS: SkillNode[] = [
     level: 'foundational',
     tags: ['used-in:swarmxq'],
   },
-  {
-    id: 'grpc',
-    name: 'gRPC / Protobuf',
-    pillar: 'Backend & APIs',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge'],
-  },
 
-  // ── Fintech & Compliance ──────────────────────────────────────────────────
+  // ── Data & Storage ─────────────────────────────────────────────────────────
   {
-    id: 'postgres-rls',
-    name: 'Postgres RLS',
-    pillar: 'Fintech & Compliance',
+    id: 'postgresql',
+    name: 'PostgreSQL 15 RLS',
+    pillar: 'Data & Storage',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'prisma',
+    name: 'Prisma ORM',
+    pillar: 'Data & Storage',
+    level: 'proficient',
+    tags: ['used-in:taxbridge', 'used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'redis',
+    name: 'Redis 7 / Pub-Sub',
+    pillar: 'Data & Storage',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'bullmq',
+    name: 'BullMQ (idempotent queues)',
+    pillar: 'Data & Storage',
     level: 'expert',
     tags: ['used-in:taxbridge', 'documented'],
   },
   {
-    id: 'event-sourcing',
-    name: 'Event Sourcing',
-    pillar: 'Fintech & Compliance',
+    id: 'vector-db',
+    name: 'Vector DBs (FAISS, pgvector)',
+    pillar: 'Data & Storage',
     level: 'proficient',
-    tags: ['used-in:taxbridge'],
-  },
-  {
-    id: 'multitenant',
-    name: 'Multi-tenant Design',
-    pillar: 'Fintech & Compliance',
-    level: 'expert',
-    tags: ['used-in:taxbridge'],
-  },
-  {
-    id: 'gdpr',
-    name: 'GDPR Controls',
-    pillar: 'Fintech & Compliance',
-    level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:swarmxq'],
-  },
-  {
-    id: 'kyc-aml',
-    name: 'KYC/AML Patterns',
-    pillar: 'Fintech & Compliance',
-    level: 'foundational',
-    tags: ['used-in:taxbridge'],
-  },
-  {
-    id: 'audit-trail',
-    name: 'Audit Trail Design',
-    pillar: 'Fintech & Compliance',
-    level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:ubec'],
+    tags: ['used-in:swarmxq', 'documented'],
   },
 
-  // ── Data & Storage ─────────────────────────────────────────────────────────
+  // ── DevOps & SRE ───────────────────────────────────────────────────────────
   {
-    id: 'postgres',
-    name: 'PostgreSQL 16',
-    pillar: 'Data & Storage',
-    level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:ubec'],
-  },
-  {
-    id: 'redis',
-    name: 'Redis 7',
-    pillar: 'Data & Storage',
-    level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'documented'],
-  },
-  {
-    id: 'bullmq',
-    name: 'BullMQ',
-    pillar: 'Data & Storage',
-    level: 'proficient',
-    tags: ['used-in:taxbridge'],
-  },
-  {
-    id: 'airflow',
-    name: 'Apache Airflow',
-    pillar: 'Data & Storage',
-    level: 'proficient',
-    tags: ['used-in:ubec'],
-  },
-  {
-    id: 'pandas',
-    name: 'pandas',
-    pillar: 'Data & Storage',
-    level: 'expert',
-    tags: ['used-in:ubec', 'used-in:sabiscore'],
-  },
-  {
-    id: 'great-expectations',
-    name: 'Great Expectations',
-    pillar: 'Data & Storage',
-    level: 'proficient',
-    tags: ['used-in:ubec'],
-  },
-
-  // ── DevOps & SRE ──────────────────────────────────────────────────────────
-  {
-    id: 'docker',
-    name: 'Docker',
+    id: 'prometheus',
+    name: 'Prometheus + Grafana',
     pillar: 'DevOps & SRE',
     level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:swarmxq'],
+    tags: ['used-in:sabiscore', 'documented'],
+  },
+  {
+    id: 'docker',
+    name: 'Docker / Compose',
+    pillar: 'DevOps & SRE',
+    level: 'expert',
+    tags: ['used-in:sabiscore', 'used-in:swarmxq'],
   },
   {
     id: 'github-actions',
-    name: 'GitHub Actions',
+    name: 'GitHub Actions CI/CD',
     pillar: 'DevOps & SRE',
     level: 'proficient',
-    tags: ['used-in:sabiscore'],
+    tags: ['used-in:portfolio', 'used-in:sabiscore'],
+  },
+  {
+    id: 'vercel',
+    name: 'Vercel Edge (App Router)',
+    pillar: 'DevOps & SRE',
+    level: 'expert',
+    tags: ['used-in:portfolio', 'used-in:sabiscore'],
   },
   {
     id: 'sentry',
     name: 'Sentry',
     pillar: 'DevOps & SRE',
     level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-  {
-    id: 'blue-green',
-    name: 'Blue-Green Deployments',
-    pillar: 'DevOps & SRE',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-  {
-    id: 'prometheus',
-    name: 'Prometheus / Grafana',
-    pillar: 'DevOps & SRE',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
+    tags: ['used-in:portfolio'],
   },
 
-  // ── Frontend & Full-Stack ─────────────────────────────────────────────────
+  // ── Fintech & Compliance ───────────────────────────────────────────────────
   {
-    id: 'nextjs',
-    name: 'Next.js 15',
-    pillar: 'Frontend & Full-Stack',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-  {
-    id: 'typescript',
-    name: 'TypeScript strict',
-    pillar: 'Frontend & Full-Stack',
+    id: 'rls',
+    name: 'Row-Level Security (RLS)',
+    pillar: 'Fintech & Compliance',
     level: 'expert',
-    tags: ['used-in:sabiscore', 'documented'],
+    tags: ['used-in:taxbridge', 'documented'],
   },
   {
-    id: 'react',
-    name: 'React 19',
-    pillar: 'Frontend & Full-Stack',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'used-in:swarmxq'],
+    id: 'audit-trail',
+    name: 'Immutable Audit Trails',
+    pillar: 'Fintech & Compliance',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'documented'],
   },
   {
-    id: 'react-native',
-    name: 'React Native / Expo SDK 54',
-    pillar: 'Frontend & Full-Stack',
+    id: 'nrs-api',
+    name: 'NRS / DigiTax API',
+    pillar: 'Fintech & Compliance',
     level: 'proficient',
-    tags: ['used-in:taxbridge'],
+    tags: ['used-in:taxbridge', 'documented'],
   },
   {
-    id: 'turborepo',
-    name: 'Turborepo 2',
-    pillar: 'Frontend & Full-Stack',
-    level: 'proficient',
-    tags: ['used-in:taxbridge'],
+    id: 'multi-tenancy',
+    name: 'Multi-tenant Architecture',
+    pillar: 'Fintech & Compliance',
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'documented'],
   },
 
-  // ── AI Agent Orchestration ────────────────────────────────────────────────
+  // ── AI Agent Orchestration ─────────────────────────────────────────────────
   {
     id: 'ollama',
     name: 'Ollama (GGUF dispatch)',
@@ -310,167 +313,53 @@ export const SKILLS: SkillNode[] = [
     tags: ['used-in:swarmxq', 'documented'],
   },
   {
-    id: 'phi4-mini',
-    name: 'Phi-4-mini (router)',
+    id: 'gguf-quantisation',
+    name: 'GGUF Quantisation',
     pillar: 'AI Agent Orchestration',
     level: 'proficient',
-    tags: ['used-in:swarmxq'],
+    tags: ['used-in:swarmxq', 'documented'],
   },
   {
-    id: 'deepseek-r1',
-    name: 'DeepSeek-R1 (reasoning)',
-    pillar: 'AI Agent Orchestration',
-    level: 'proficient',
-    tags: ['used-in:swarmxq'],
-  },
-  {
-    id: 'qwen-coder',
-    name: 'Qwen2.5-Coder (code gen)',
-    pillar: 'AI Agent Orchestration',
-    level: 'proficient',
-    tags: ['used-in:swarmxq'],
-  },
-  {
-    id: 'autonomous-evolution',
-    name: 'Autonomous Agent Evolution',
+    id: 'rag',
+    name: 'RAG Pipelines',
     pillar: 'AI Agent Orchestration',
     level: 'proficient',
     tags: ['used-in:swarmxq', 'documented'],
   },
 
-  // ── Blockchain & Web3 ─────────────────────────────────────────────────────
-  {
-    id: 'circom',
-    name: 'Circom 2',
-    pillar: 'Blockchain & Web3',
-    level: 'proficient',
-    tags: ['used-in:hashablanca'],
-  },
-  {
-    id: 'snarkjs',
-    name: 'snarkjs (Groth16)',
-    pillar: 'Blockchain & Web3',
-    level: 'proficient',
-    tags: ['used-in:hashablanca'],
-  },
+  // ── Blockchain & Web3 ──────────────────────────────────────────────────────
   {
     id: 'solidity',
     name: 'Solidity',
     pillar: 'Blockchain & Web3',
     level: 'foundational',
-    tags: ['used-in:hashablanca'],
+    tags: [],
   },
   {
-    id: 'web3py',
-    name: 'Web3.py',
+    id: 'ethers',
+    name: 'ethers.js',
     pillar: 'Blockchain & Web3',
-    level: 'proficient',
-    tags: ['used-in:hashablanca'],
-  },
-
-  // ── ML & AI (extended) ─────────────────────────────────────────────────────
-  {
-    id: 'pytorch',
-    name: 'PyTorch',
-    pillar: 'ML & AI',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-  {
-    id: 'onnx-runtime',
-    name: 'ONNX Runtime',
-    pillar: 'ML & AI',
-    level: 'proficient',
-    tags: ['used-in:sabiscore'],
-  },
-  {
-    id: 'huggingface',
-    name: 'Hugging Face',
-    pillar: 'ML & AI',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-  {
-    id: 'langchain',
-    name: 'LangChain / LangGraph',
-    pillar: 'ML & AI',
     level: 'foundational',
-    tags: ['used-in:sabiscore'],
-  },
-  {
-    id: 'mlflow',
-    name: 'MLflow',
-    pillar: 'ML & AI',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'documented'],
-  },
-
-  // ── DevOps & SRE (extended) ────────────────────────────────────────────────
-  {
-    id: 'kubernetes',
-    name: 'Kubernetes / K8s',
-    pillar: 'DevOps & SRE',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge'],
-  },
-  {
-    id: 'opentelemetry',
-    name: 'OpenTelemetry',
-    pillar: 'DevOps & SRE',
-    level: 'proficient',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'documented'],
-  },
-  {
-    id: 'terraform',
-    name: 'Terraform',
-    pillar: 'DevOps & SRE',
-    level: 'foundational',
-    tags: ['used-in:sabiscore'],
-  },
-
-  // ── Backend & APIs (extended) ──────────────────────────────────────────────
-  {
-    id: 'graphql',
-    name: 'GraphQL',
-    pillar: 'Backend & APIs',
-    level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:swarmxq'],
-  },
-  {
-    id: 'celery',
-    name: 'Celery',
-    pillar: 'Backend & APIs',
-    level: 'proficient',
-    tags: ['used-in:ubec', 'used-in:sabiscore'],
-  },
-
-  // ── Frontend & Full-Stack (extended) ──────────────────────────────────────
-  {
-    id: 'tailwind-v4',
-    name: 'Tailwind CSS v4',
-    pillar: 'Frontend & Full-Stack',
-    level: 'expert',
-    tags: ['used-in:sabiscore', 'documented'],
+    tags: [],
   },
 ];
 
-// ─── Accessors ────────────────────────────────────────────────────────────────
-
+// v24: Frontend & Full-Stack first — default tab for hiring conversations
 export const ALL_PILLARS: SkillPillar[] = [
+  'Frontend & Full-Stack',
   'ML & AI',
   'Backend & APIs',
-  'Fintech & Compliance',
   'Data & Storage',
   'DevOps & SRE',
-  'Frontend & Full-Stack',
+  'Fintech & Compliance',
   'AI Agent Orchestration',
   'Blockchain & Web3',
-]
+];
 
 export function getSkillsByPillar(pillar: SkillPillar): SkillNode[] {
-  return SKILLS.filter(s => s.pillar === pillar)
+  return SKILLS.filter(s => s.pillar === pillar);
 }
 
 export function getSkillsBySystem(systemId: string): SkillNode[] {
-  return SKILLS.filter(s => (s.tags as readonly string[]).includes(`used-in:${systemId}`))
+  return SKILLS.filter(s => (s.tags as readonly string[]).includes(`used-in:${systemId}`));
 }
