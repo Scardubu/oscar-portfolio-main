@@ -1,12 +1,8 @@
-// CONVICTION ENGINE v15.0 — Footer
-//
-// v15 CHANGES vs v14.1:
-//   CTA: "Book a Call" → "Start a conversation" — consistent with ContactSection v17.
-//   LINKS: Added scardubu.dev as a direct portfolio link in the social block.
-//   BRAND: Tagline upgraded to "Lagos-built. Globally deployed. Battle-tested in audit season."
-//   PROJECTS: Hashablanca added back alongside TaxBridge · SabiScore · SwarmXQ.
-//   KEEP: All WCAG 2.2 min-height 44px link targets, ISO timestamp, aria landmarks.
-//
+// CONVICTION ENGINE v15.1 — Footer
+// v15.1 FIX: Restored missing <a opening tags on ALL anchor elements
+//   (nav list items, social links, resume download, CTA). JSX syntax error
+//   caused Vercel build failure on every anchor in this component.
+// v15 FEATURES: "Start a conversation" CTA, scardubu.dev link, all WCAG 2.2 targets.
 'use client';
 
 export function Footer() {
@@ -68,7 +64,7 @@ export function Footer() {
               { label: 'Contact',  href: '#section-contact'  },
             ].map(({ label, href }) => (
               <li key={href} role="listitem">
-                
+                <a
                   href={href}
                   className="inline-flex min-h-11 items-center px-3 py-3 text-sm transition-colors hover:text-white"
                   style={{ color: 'var(--color-text-muted)' }}
@@ -83,7 +79,7 @@ export function Footer() {
         {/* ── Social + CTA ─────────────────────────────────────────── */}
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
-            
+            <a
               href="https://github.com/Scardubu"
               target="_blank"
               rel="noopener noreferrer"
@@ -93,7 +89,7 @@ export function Footer() {
             >
               GitHub
             </a>
-            
+            <a
               href="https://linkedin.com/in/oscardubu"
               target="_blank"
               rel="noopener noreferrer"
@@ -103,7 +99,7 @@ export function Footer() {
             >
               LinkedIn
             </a>
-            
+            <a
               href="https://scardubu.dev"
               target="_blank"
               rel="noopener noreferrer"
@@ -113,7 +109,7 @@ export function Footer() {
             >
               scardubu.dev
             </a>
-            
+            <a
               href="/cv/oscar-ndugbu-resume.pdf"
               download
               className="inline-flex min-h-11 items-center text-sm transition-colors hover:text-white"
@@ -123,7 +119,7 @@ export function Footer() {
               Resume ↓
             </a>
           </div>
-          
+          <a
             href="mailto:scardubu@gmail.com"
             className="cta-primary"
             style={{ alignSelf: 'flex-start' }}
