@@ -32,6 +32,7 @@ export type SystemId =
   | 'swarmxq'
   | 'hashablanca'
   | 'ubec'
+  | 'portfolio'   // v25: added — portfolio site is a production system, used in SkillTag tracing
 
 // ─── Compliance tags ──────────────────────────────────────────────────────────
 
