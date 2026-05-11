@@ -4,14 +4,14 @@
 
 export const siteConfig = {
   name: "Oscar Scardubu",
-  title: "Oscar Scardubu — Full-Stack + AI/ML Engineer",
+  title: "Oscar Ndugbu — Staff+ Full-Stack · Infra · ML Engineer",
   description:
-    "I build AI systems that ship to production. Sports intelligence, ML pipelines, and full-stack platforms — from infra to UI.",
+    "Production systems that stay alive when it matters most. TaxBridge cut Nigerian SME tax filing from 4 hours to 15 minutes. SabiScore holds 99.9%+ uptime across a 90-day window. SwarmXQ orchestrates self-improving AI agents with zero cloud dependency. Shipped in Lagos. Running globally.",
   url: "https://www.scardubu.dev",
   ogImage: "/og-image.png",
   location: "Lagos, Nigeria",
   timezone: "WAT (UTC+1)",
-  status: "Open to Senior ML / Full-Stack Roles & Consulting",
+  status: "Available · Staff+ / Principal roles · Technical Co-founder · Consulting",
   available: true,
 } as const;
 
