@@ -42,6 +42,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import Image from 'next/image';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import {
   HERO_SCROLL_CONFIG,
@@ -237,6 +238,30 @@ export function HeroSection() {
               </div>
             </m.div>
 
+            {/* Headshot — mobile only: centered below pill, above kicker */}
+            <m.div
+              variants={child}
+              className="mb-6 flex lg:hidden justify-start"
+              aria-hidden="true"
+            >
+              <div
+                className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full"
+                style={{
+                  border: '1.5px solid oklch(70% 0.21 188 / 0.40)',
+                  boxShadow: '0 0 0 4px oklch(70% 0.21 188 / 0.08), 0 8px 32px oklch(0% 0 0 / 0.50)',
+                }}
+              >
+                <Image
+                  src="/headshot.webp"
+                  alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+                  fill
+                  sizes="80px"
+                  className="object-cover object-top"
+                  priority
+                />
+              </div>
+            </m.div>
+
             {/* Kicker */}
             <m.p
               variants={child}
@@ -301,9 +326,9 @@ export function HeroSection() {
               className="mt-6 w-full text-base leading-[1.8]"
               style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)', overflowWrap: 'break-word' }}
             >
-              Your fintech product needs to be alive at 2am, compliant in
-              audit season, and fast on the first request — quiet Tuesday
-              or FIRS filing deadline.
+              Production systems that stay alive when it matters most —
+              compliant, fast, and relentlessly reliable. Whether it's a
+              quiet Tuesday or a FIRS filing deadline, the system ships.
             </m.p>
 
             {/* ── 2. Conviction stat strip — irrefutable metrics ────────── */}
@@ -336,9 +361,9 @@ export function HeroSection() {
               >
                 TaxBridge: filing time 4h → 15 min.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                SabiScore: zero data-loss across 90-day production window.
+                SabiScore: 99.9%+ uptime · 90-day production window.
                 <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                Built in Lagos. Running globally.
+                Shipped in Lagos. Running globally. Battle-tested in audit season.
               </p>
             </m.div>
 
@@ -365,7 +390,7 @@ export function HeroSection() {
                   style={{ background: 'var(--color-success)' }}
                   aria-hidden="true"
                 />
-                Book a Call
+                Email Oscar
               </a>
               <Link
                 href="#section-projects"
@@ -403,8 +428,28 @@ export function HeroSection() {
             </m.div>
           </m.div>
 
-          {/* ── Right column: HeroVisual — desktop only ─────────────────── */}
-          <m.div style={{ y: visualY }} className="hidden lg:block">
+          {/* ── Right column: Headshot + HeroVisual — desktop only ──────── */}
+          <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
+            {/* Desktop headshot — top-right, soft square with glass border */}
+            <div className="flex justify-end">
+              <div
+                className="relative h-20 w-20 xl:h-24 xl:w-24 overflow-hidden rounded-[var(--radius-xl)]"
+                style={{
+                  border: '1.5px solid oklch(70% 0.21 188 / 0.35)',
+                  boxShadow:
+                    '0 0 0 6px oklch(70% 0.21 188 / 0.06), 0 12px 40px oklch(0% 0 0 / 0.55)',
+                }}
+              >
+                <Image
+                  src="/headshot.webp"
+                  alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+                  fill
+                  sizes="96px"
+                  className="object-cover object-top"
+                  priority
+                />
+              </div>
+            </div>
             <HeroVisual />
           </m.div>
 
