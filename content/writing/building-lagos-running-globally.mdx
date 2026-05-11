@@ -1,0 +1,50 @@
+---
+title: 'Building in Lagos, Running Globally: Infrastructure That Works Under Constraint'
+date: '2026-01-10'
+summary: 'Why building production systems from Lagos — with unreliable power, variable network, and strict regulatory requirements — produces more resilient infrastructure than systems built in ideal conditions. Constraint is a design tool.'
+tags:
+  - 'Architecture'
+  - 'Production Systems'
+  - 'Reliability'
+featured: true
+---
+
+## The constraint nobody talks about
+
+Every system works in a data center. The question is whether it holds when the conditions outside the data center are nothing like the conditions inside it.
+
+Building production systems from Lagos means you learn this early. Power is unreliable. Network latency is variable, sometimes dramatically. Third-party APIs designed for European or American infrastructure have higher failure rates on African network paths. The operating environment is not a controlled lab — it is the real thing.
+
+This shapes architecture in ways that building in an ideal environment does not.
+
+## Why constraint produces better systems
+
+When a system must tolerate an unreliable network, you build retry logic into every external call from day one. When it must recover from power interruption, you build checkpoint-based state recovery rather than assuming in-memory state will always be there. When it must handle burst traffic despite rate-limited external APIs, you build idempotent queues rather than synchronous request paths.
+
+These are not advanced techniques. They are the obvious solutions to obvious problems — once you have experienced those problems. Engineers who build in comfortable conditions have to imagine failure modes. Engineers who build under constraint encounter them early.
+
+The result: systems built under constraint tend to hold better under load, recover faster from failure, and behave more predictably when things go wrong. Not because the engineers are better. Because the operating environment made certain choices non-optional.
+
+## Three specific examples from production
+
+**TaxBridge**: The NRS API enforces rate limits that become relevant during filing windows when many businesses submit simultaneously. Building for this constraint from the start produced idempotent BullMQ queues with stable job identifiers and deduplication logic. The system handles burst traffic without client-visible failure. A system built assuming reliable API availability would have needed the same solution retrofitted after the first incident.
+
+**SabiScore**: Inference latency is higher on African network paths than European ones. This constraint produced a Redis cache layer with a 73% hit rate — 73% of requests never touch the model at all. Under constrained network conditions, caching is not a performance optimization. It is a correctness constraint: if inference is slow enough, predictions arrive after the match starts, and they are useless.
+
+**SwarmXQ**: Agents that call external services must hold correctness when those services are temporarily unavailable. Building under Lagos network conditions meant treating third-party API unavailability as a normal condition, not an edge case. Every external call has retry semantics, timeout budgets, and graceful degradation logic. The system holds partial state rather than propagating failure.
+
+## The global deployment consequence
+
+These constraints produce systems that deploy globally without adjustment. The retry logic, the idempotent queues, the graceful degradation, the checkpoint-based recovery — these are not Africa-specific features. They are correct system design.
+
+When a system built under Lagos constraints deploys to AWS infrastructure in Frankfurt or GCP in us-central1, it performs well there too — because the failure modes it was designed to handle are universal. Partial network failure happens everywhere. Rate-limited APIs are universal. Burst traffic is a global phenomenon.
+
+The constraint becomes an advantage.
+
+## What this means for hiring
+
+An engineer who built three production platforms under real operating constraints — not simulated, not in comfortable infrastructure — has encountered failure modes that engineers building in ideal conditions must imagine.
+
+The architecture decisions in TaxBridge, SabiScore, and SwarmXQ are not theoretical. They are the product of operating environments that made certain correctness guarantees non-optional. That is not a disadvantage of where the work was done. It is a feature of the engineer who did it.
+
+Systems that work at 2am in Lagos will work at 2am anywhere.
