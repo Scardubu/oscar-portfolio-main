@@ -1,0 +1,67 @@
+---
+title: 'Zero-Downtime Design: The Baseline Every Production System Needs'
+date: '2025-08-05'
+summary: 'Health checks, idempotent queues, circuit breakers, and rate-limit scoping are not features. They are baseline infrastructure. Here is why retrofitting them after the first 3am incident always costs more than building them in.'
+tags:
+  - 'Reliability'
+  - 'Architecture'
+  - 'Production Systems'
+featured: false
+---
+
+## Why "we will add reliability later" fails
+
+The systems that cause 3am incidents almost never had reliability designed out of them. They had reliability deferred. The decision-making at the time was reasonable: move fast, ship the feature, add the safety net once the business validates the direction.
+
+What nobody models in that decision: the cost of the first incident that could have been avoided. Not just the engineering time. The customer trust. The audit trail that now shows a gap. The data state that is now inconsistent and needs manual correction.
+
+Zero-downtime design does not mean never deploying. It means the deployment itself does not cause downtime — and when something fails, the failure is bounded, detectable, and recoverable.
+
+## Health checks as a first-class contract
+
+Health checks are the simplest reliability primitive, and the most commonly done wrong.
+
+A health check that returns 200 when the application process is running is not a health check. It is a process check. A health check that validates the database connection, the cache layer, and the external API dependencies is a health check. The difference: one tells the load balancer the process is alive; the other tells the load balancer the process is capable of handling requests.
+
+The implementation: each dependency gets a connectivity check with a tight timeout. If any dependency is unreachable, the health check returns 503. The load balancer removes the instance from rotation. A new instance starts and must pass the full health check before receiving traffic.
+
+This sequence sounds simple. It requires explicit timeout budgets on every external connection, a health check endpoint that actually validates dependencies, and a load balancer configuration that acts on the 503. All three must be correct simultaneously.
+
+## Idempotent queues as a correctness primitive
+
+Every queued job should be safe to execute more than once. This is not a theoretical concern — network failures, process restarts, and deployment rollouts all create situations where a job executes partially and must retry.
+
+A non-idempotent job that retries produces duplicate side effects: duplicate API calls, duplicate database records, duplicate charges. The downstream systems that receive these duplicates do not know they are duplicates. They act on them.
+
+The implementation: every job carries a stable identifier derived from the job content. Before execution, the worker checks whether this identifier has already been successfully processed. If it has, the job is marked complete without re-executing. If it has not, execution proceeds and the identifier is recorded.
+
+This pattern is standard in payment processing and compliance systems because the cost of a duplicate charge or a duplicate tax submission is immediately visible. It should be standard in every system with external side effects.
+
+## Circuit breakers as blast radius limiters
+
+A circuit breaker limits how far a failure can propagate. When a downstream service begins failing or responding slowly, the circuit breaker opens, and requests to that service fail immediately rather than accumulating. This bounds the blast radius: one degraded dependency does not cascade into the entire request path timing out.
+
+The standard three-state model — closed, open, half-open — works well in practice. Closed: all requests pass through. Open: requests fail immediately. Half-open: a test request passes through; if it succeeds, the circuit closes; if it fails, the circuit stays open.
+
+The threshold for opening is the critical configuration. Too sensitive and the circuit opens on brief transient failures, creating false positives. Too permissive and a degraded service accumulates timeouts before the circuit opens, causing cascading latency. The right threshold is derived from the service's historical p99 and error rate — not from a default.
+
+## Rate-limit scoping as a queue management strategy
+
+External APIs enforce rate limits. This is a constraint, not a problem. The problem is handling burst traffic without exceeding the rate limit and without propagating failure to clients.
+
+The naive approach: let requests hit the API until they 429, then backoff. This works until concurrent requests are high enough that the backoff window accumulates enough pending requests to cause visible latency.
+
+The correct approach: scope rate limiting upstream. Maintain a token bucket for each external API. Before each request, acquire a token. If no token is available, the request waits in the queue. Clients see consistent latency (queue wait time) rather than visible failure (429 error) under burst traffic.
+
+This requires knowing the rate limit before you hit it — which means reading the API documentation rather than discovering it in production.
+
+## The cost of retrofitting
+
+Every component described here is cheaper to build before the first incident than to retrofit after. Not marginally cheaper — substantially cheaper, because retrofitting requires:
+
+- Reconstructing the state machine of every job that may have run non-idempotently
+- Identifying which database records are duplicates and resolving the conflict
+- Adding health check infrastructure to a system whose deployment pipeline was not designed for it
+- Explaining to the customer why their data is inconsistent
+
+Zero-downtime design is not a premium feature. It is the baseline cost of operating a system that other people depend on. The choice is not whether to pay it — it is whether you pay it before or after the incident.
