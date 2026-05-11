@@ -1,13 +1,18 @@
 'use client';
-// CONVICTION ENGINE v24.0 — SkillsSection
-// v24 CHANGES vs v23:
-//   • FEATURED STACK ROW: 6 hero skills shown before the tabs — instant
-//     full-stack signal for recruiters who don't click through tabs.
-//     TypeScript · React 19 · Next.js 15 · React Native · FastAPI · PostgreSQL
-//   • Tab default: "Frontend & Full-Stack" is now pillar[0] (lib/data/skills.ts).
-//   • Trust metrics updated: "6 expert frontend skills" replaces "8 disciplines".
-//   • Intro copy: "React Native to Fastify to Python ML" — explicit range.
-//   • KEEP: All v23 mobile ergonomics, SkillsMap, reduced-motion.
+// CONVICTION ENGINE v25.0 — SkillsSection
+// v25 CHANGES vs v24:
+//   HEADING: "Full-stack. Every layer." → "The stack behind the systems."
+//     More precise — references the actual shipped systems, not a claim.
+//   BODY COPY: "React Native to Fastify to Python ML — 62 skills" →
+//     outcome-first rewrite for non-technical founders: what these skills
+//     delivered, not just their names.
+//   TRUST STRIP: Rewritten as outcome-first — "4h→15min (TaxBridge)",
+//     "99.9%+ uptime (SabiScore)", "Self-improving agents (SwarmXQ)".
+//     Previous version listed tool names — useful for engineers,
+//     opaque for founders. Both audiences now served.
+//   FEATURED SKILL CARDS: Now show the primary project each skill is traced to.
+//     Turns "Expert" label into "Expert — used in TaxBridge" — defensible, not decorative.
+//   KEEP: All v24 SkillsMap, reduced-motion, stagger config.
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
@@ -17,31 +22,33 @@ import { SkillsMap } from '@/components/skills/SkillsMap';
 
 const TRUST_METRICS = [
   {
-    label: '6 expert frontend skills',
-    sub: 'React · Next.js 15 · TypeScript · Tailwind v4',
+    value: '4h → 15min',
+    label: 'tax filing time',
+    sub: 'TaxBridge · Fastify 5 · PostgreSQL 15 RLS',
     color: 'var(--color-film-teal)',
   },
   {
-    label: '4 production ML models',
-    sub: 'XGBoost · LightGBM · CatBoost · Feature Eng',
+    value: '99.9%+',
+    label: 'sustained uptime',
+    sub: 'SabiScore · XGBoost · LightGBM · Prometheus',
     color: 'oklch(72% 0.17 160)',
   },
   {
-    label: '4+ years production',
-    sub: 'Lagos → global, battle-tested',
+    value: 'Self-improving',
+    label: 'AI agent fleet',
+    sub: 'SwarmXQ · Next.js 15 · FastAPI · BullMQ',
     color: 'oklch(75% 0.16 300)',
   },
 ] as const;
 
-// Top 6 skills — instant credibility scan for Staff+ and founder conversations.
-// Chosen to show the full-stack range: mobile → web → API → DB.
+// v25: Each card now shows the primary system the skill is traced to
 const FEATURED_SKILLS = [
-  { name: 'TypeScript strict',        level: 'Expert',    color: 'oklch(73% 0.18 196)' },
-  { name: 'React 19',                 level: 'Expert',    color: 'oklch(73% 0.18 196)' },
-  { name: 'Next.js 15',               level: 'Expert',    color: 'oklch(73% 0.18 196)' },
-  { name: 'React Native / Expo 54',   level: 'Pro',       color: 'oklch(72% 0.17 160)' },
-  { name: 'FastAPI',                  level: 'Expert',    color: 'oklch(73% 0.18 196)' },
-  { name: 'PostgreSQL 15 RLS',        level: 'Expert',    color: 'oklch(73% 0.18 196)' },
+  { name: 'TypeScript strict',       level: 'Expert', project: 'TaxBridge · SwarmXQ', color: 'oklch(73% 0.18 196)' },
+  { name: 'React 19',                level: 'Expert', project: 'SabiScore · portfolio', color: 'oklch(73% 0.18 196)' },
+  { name: 'Next.js 15',              level: 'Expert', project: 'SabiScore · SwarmXQ',  color: 'oklch(73% 0.18 196)' },
+  { name: 'React Native / Expo 54',  level: 'Pro',    project: 'TaxBridge mobile app', color: 'oklch(72% 0.17 160)' },
+  { name: 'FastAPI',                 level: 'Expert', project: 'SabiScore · SwarmXQ',  color: 'oklch(73% 0.18 196)' },
+  { name: 'PostgreSQL 15 RLS',       level: 'Expert', project: 'TaxBridge',            color: 'oklch(73% 0.18 196)' },
 ] as const;
 
 export function SkillsSection() {
@@ -75,47 +82,59 @@ export function SkillsSection() {
               className="mt-3 max-w-[22ch]"
               style={{ color: 'var(--color-text-primary)' }}
             >
-              Full-stack. Every layer.
+              The stack behind the systems.
             </h2>
 
             <p
               className="mt-4 w-full max-w-[52ch] text-sm sm:text-base leading-8"
-              style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word', wordBreak: 'break-word' }}
+              style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word' }}
             >
-              React Native to Next.js 15 to FastAPI to PostgreSQL — 62 skills,
-              every one traceable to a production system shipped from Lagos.
-              Frontend and backend held to the same standard.
+              62 battle-tested skills across ML, AI agent orchestration, fintech
+              compliance, backend infrastructure, DevOps, and blockchain/ZK —
+              every one traceable to a live production system.
             </p>
 
-            {/* Trust strip */}
+            {/* v25: Trust strip — outcome-first for non-technical founders */}
             <div
-              className="mt-5 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-3"
-              aria-label="Skills summary"
+              className="mt-6 grid gap-4 sm:grid-cols-3"
+              aria-label="System outcomes"
             >
-              {TRUST_METRICS.map(({ label, sub, color }) => (
-                <div key={label} className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-1.5">
-                  <span
-                    className="font-mono text-xs font-semibold"
+              {TRUST_METRICS.map(({ value, label, sub, color }) => (
+                <div
+                  key={label}
+                  className="rounded-[var(--radius-md)] border p-4"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    background: 'oklch(100% 0 0 / 0.02)',
+                    borderTop: `2px solid ${color}30`,
+                  }}
+                >
+                  <p
+                    className="font-mono text-sm font-semibold"
                     style={{ color }}
                   >
+                    {value}
+                  </p>
+                  <p
+                    className="mt-0.5 text-xs font-medium"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
                     {label}
-                  </span>
-                  <span
-                    className="font-mono text-[10px]"
+                  </p>
+                  <p
+                    className="mt-1 font-mono text-[9px] tracking-wide"
                     style={{ color: 'var(--color-text-muted)' }}
                   >
                     {sub}
-                  </span>
+                  </p>
                 </div>
               ))}
             </div>
           </m.div>
 
           {/*
-            FEATURED STACK ROW — v24 addition.
-            Renders BEFORE the tab-based SkillsMap so recruiters get the
-            full-stack snapshot on first glance, even if they don't interact.
-            6 cards in a 2-col mobile / 3-col sm / 6-col xl grid.
+            FEATURED STACK ROW — instant credibility scan.
+            v25: each card now shows the project where the skill is used.
           */}
           <m.div
             variants={child}
@@ -123,7 +142,7 @@ export function SkillsSection() {
             aria-label="Top skills — featured"
             role="list"
           >
-            {FEATURED_SKILLS.map(({ name, level, color }) => (
+            {FEATURED_SKILLS.map(({ name, level, project, color }) => (
               <div
                 key={name}
                 role="listitem"
@@ -142,6 +161,13 @@ export function SkillsSection() {
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   {name}
+                </span>
+                {/* v25: project trace */}
+                <span
+                  className="font-mono text-[8px] leading-tight"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  {project}
                 </span>
                 {/* Level bar */}
                 <div
