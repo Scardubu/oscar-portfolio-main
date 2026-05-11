@@ -251,7 +251,7 @@ function FeaturedProjectCard({
           )}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
             {featured.demoUrl && (
-              
+              <a
                 href={featured.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -262,7 +262,7 @@ function FeaturedProjectCard({
               </a>
             )}
             {featured.githubUrl && (
-              
+              <a
                 href={featured.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -396,7 +396,7 @@ function ProjectCard({
           </Link>
         )}
         {project.githubUrl && (
-          
+          <a
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
