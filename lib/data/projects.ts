@@ -267,95 +267,96 @@ const taxBridgeCompliance: ComplianceTag[] = [
   'KYC/AML',
 ]
 
-// ─── Hashablanca ─────────────────────────────────────────────────────────────
+// ─── SwarmXQ ─────────────────────────────────────────────────────────────────
 
-const hashablancaMetrics: SystemMetric[] = [
+const swarmxqMetrics: SystemMetric[] = [
   {
-    value:       'Groth16',
-    label:       'ZK proof scheme',
+    value:       'self-improving',
+    label:       'agent evolution layer',
     badge:       'documented',
-    sourceLabel: 'Circom circuit implementation',
-    sublabel:    'snarkjs + Circom — proof generated off-chain, verified on-chain',
+    sourceLabel: 'SwarmXQ architecture docs',
+    sublabel:    'agents autonomously refine task strategies between runs',
   },
   {
-    value:       'Sepolia',
-    label:       'verifier contract network',
+    value:       'live',
+    label:       'orchestration dashboard',
     badge:       'documented',
-    sourceLabel: 'Sepolia Etherscan',
-    sublabel:    'ZK verifier contract deployed and verified',
+    sourceLabel: 'production deployment',
+    sublabel:    'real-time fleet visibility — task state, agent health, queue depth',
   },
   {
-    value:       '4',
-    label:       'supported chains',
+    value:       'multi-agent',
+    label:       'workflow orchestration',
     badge:       'documented',
-    sourceLabel: 'project documentation',
-    sublabel:    'Ethereum · Polygon · BSC · StarkNet',
+    sourceLabel: 'SwarmXQ architecture docs',
+    sublabel:    'parallel agent dispatch with dependency resolution and retry semantics',
   },
   {
-    value:       '4 GB+',
-    label:       'streaming file capacity',
+    value:       'resource-constrained',
+    label:       'production reliability target',
     badge:       'documented',
-    sourceLabel: 'integration test suite',
-    sublabel:    'CBOR chunked streaming — no full-load memory requirement',
+    sourceLabel: 'design constraint',
+    sublabel:    'built to hold reliability under Lagos network conditions',
   },
 ]
 
-const hashablancaArc: ArcStage[] = [
+const swarmxqArc: ArcStage[] = [
   {
     id:          '1',
-    label:       'Eligibility Request',
-    description: 'User requests a proof of balance eligibility. No balance value is transmitted — only the intent to prove.',
-    tech:        'FastAPI endpoint',
+    label:       'Task Ingestion',
+    description: 'Operators submit tasks via REST API or scheduled triggers. Tasks are validated, classified by type, and queued with priority weighting.',
+    tech:        'FastAPI + BullMQ',
   },
   {
     id:          '2',
-    label:       'Circuit Witness',
-    description: 'Circom circuit generates a witness from private inputs (balance) and public inputs (threshold). Private inputs never leave the client.',
-    tech:        'Circom 2 + snarkjs',
+    label:       'Agent Dispatch',
+    description: 'Orchestrator selects the optimal agent(s) for each task based on current load, capability index, and historical performance scores.',
+    tech:        'Python scheduler + Redis',
   },
   {
     id:          '3',
-    label:       'Groth16 Proof',
-    description: 'Off-chain Groth16 proof generated. Proof size is constant regardless of circuit complexity — important for on-chain gas costs.',
-    tech:        'snarkjs groth16.prove()',
+    label:       'Parallel Execution',
+    description: 'Agent fleet executes tasks concurrently with dependency graph resolution. Failed sub-tasks trigger targeted retries — not full workflow restarts.',
+    tech:        'Async worker pool',
   },
   {
     id:          '4',
-    label:       'On-Chain Verification',
-    description: 'Solidity verifier contract on Sepolia checks proof validity. Token transfer executes only on a verified proof.',
-    tech:        'Solidity + ethers.js',
+    label:       'Autonomous Evolution',
+    description: 'After each run, the evolution layer scores agent strategies against outcome quality. Low-performing strategies are replaced via guided mutation.',
+    tech:        'LLM-guided strategy rewriter',
   },
   {
     id:          '5',
-    label:       'CBOR Distribution',
-    description: 'Distribution lists up to 4 GB streamed via CBOR chunked reads. No full-file load in memory at any point in the pipeline.',
-    tech:        'CBOR + chunked stream',
+    label:       'Live Dashboard',
+    description: 'Real-time visibility into fleet state: task queue depth, agent health, completion rates, and evolution cycle status — all without a page reload.',
+    tech:        'Next.js + WebSocket',
+  },
+  {
+    id:          '6',
+    label:       'Audit & Replay',
+    description: 'Every agent action is logged with inputs, outputs, and elapsed time. Failed workflows can be replayed from any checkpoint without re-running completed steps.',
+    tech:        'PostgreSQL append-only log',
   },
 ]
 
-const hashablancaDecisions: DecisionRecord[] = [
+const swarmxqDecisions: DecisionRecord[] = [
   {
-    decision: 'Privacy mechanism',
-    rejected: 'Merkle tree membership proof',
-    chosen:   'Groth16 ZK-SNARK via Circom',
+    decision: 'Agent improvement mechanism',
+    rejected: 'Static agent configurations with manual tuning',
+    chosen:   'Autonomous evolution layer with LLM-guided strategy mutation',
     reason:
-      'A Merkle proof reveals the tree root and can leak timing information about which branch was traversed. A Groth16 ZK-SNARK proves eligibility with zero knowledge of the underlying balance value — the verifier learns only that the prover knows a value satisfying the circuit constraints.',
+      'Manual tuning of agent strategies requires domain knowledge of every task type and cannot adapt to novel inputs. An autonomous evolution layer scores strategies against real outcomes and rewrites low performers — the system improves between runs without engineering intervention.',
   },
   {
-    decision: 'Distribution file format',
-    rejected: 'JSON with full in-memory parse',
-    chosen:   'CBOR chunked streaming',
+    decision: 'Retry granularity',
+    rejected: 'Full workflow restart on any sub-task failure',
+    chosen:   'Checkpoint-based partial replay with targeted sub-task retry',
     reason:
-      'Distribution lists can exceed 4 GB. A full JSON parse requires loading the entire file into memory before any processing can begin. CBOR chunked streaming processes records as they arrive, with a constant memory footprint regardless of file size.',
+      'Full restarts waste compute on already-completed steps and create duplicate side effects in downstream systems. Checkpoint replay restarts only the failed sub-task from its last consistent state — idempotency enforced at each agent boundary.',
   },
 ]
 
-const hashablancaCompliance: ComplianceTag[] = [
-  'ZK Privacy',
-  'Sepolia Verified',
-  'GDPR',
-  'CBOR',
-]
+const swarmxqCompliance: ComplianceTag[] = ['Audit Trail', 'GDPR']
 
 // ─── UBEC Pipeline ───────────────────────────────────────────────────────────
 
@@ -488,28 +489,28 @@ export const PROJECTS: ProjectData[] = [
     contextNote: 'Internal engagement — source code available on request',
   },
   {
-    id: 'hashablanca',
-    name: 'Hashablanca',
-    tagline: 'ZK proof verification on Sepolia — privacy-preserving token distribution',
-    featured: false,
+    id: 'swarmxq',
+    name: 'SwarmXQ',
+    tagline: 'Self-improving multi-agent operator platform — autonomous evolution, live dashboard, production-grade fleet management',
+    featured: true,
     description:
-      'Distributed ledger for multi-chain token distribution. Groth16 ZK-SNARKs verify account balance eligibility without disclosing the balance. Verifier contract deployed on Sepolia. CBOR streaming handles 4 GB+ distribution lists without full-file memory loading.',
+      'Multi-agent orchestration platform with an autonomous evolution layer. Agents improve their own task strategies between runs by scoring outcomes and mutating low-performing configurations. Live dashboard surfaces real-time fleet state — task queue depth, agent health, completion rates. Built for reliability under resource constraints.',
     stack: [
       'FastAPI',
-      'Circom 2',
-      'snarkjs',
-      'Solidity',
-      'Web3.py',
+      'Python',
+      'BullMQ',
+      'Redis',
       'PostgreSQL',
-      'React',
+      'Next.js',
+      'WebSocket',
       'Docker',
     ],
-    metrics: hashablancaMetrics,
-    arc: hashablancaArc,
-    decisions: hashablancaDecisions,
-    compliance: hashablancaCompliance,
+    metrics: swarmxqMetrics,
+    arc: swarmxqArc,
+    decisions: swarmxqDecisions,
+    compliance: swarmxqCompliance,
     blog: undefined,
-    contextNote: 'Testnet deployment — Sepolia contract verifiable on Etherscan',
+    repoUrl: 'https://github.com/Scardubu/SwarmXQ',
   },
   {
     id: 'ubec',
