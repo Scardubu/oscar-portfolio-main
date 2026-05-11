@@ -123,6 +123,70 @@ export const PROJECTS: readonly Project[] = [
     githubUrl: 'https://github.com/Scardubu/SwarmXQ',
     caseStudy: '/work/swarmxq',
   },
+  {
+    slug: 'hashablanca',
+    title: 'Hashablanca',
+    type: 'Blockchain · ZK Privacy',
+    status: 'case-study',
+    featured: false,
+    tagline: 'ZK proofs for document integrity verification — confidentiality and verifiability as simultaneous properties, not a tradeoff.',
+    description:
+      'Privacy-preserving blockchain infrastructure using Circom 2 circuits and Groth16 proofs. Any verifier can confirm a document existed and was unmodified at a given timestamp without seeing the document. Multi-chain token distribution across Ethereum, Polygon, BSC, and StarkNet via per-chain adapters. CBOR streaming handles 4GB+ file archives. 90%+ test coverage. GDPR-compliant PII detection and anonymisation.',
+    chosen: 'Groth16 ZK proofs with off-chain proving',
+    over: 'Database timestamp signatures',
+    because:
+      'Database timestamps are mutable — ZK proofs provide cryptographic verifiability of document existence and integrity without exposing content',
+    constraint:
+      'Proof generation must complete off-chain and fit within on-chain verifier gas limits across four EVM-compatible networks.',
+    outcomes: [
+      'ZK proof integrity layer',
+      '4 chain networks',
+      '4GB+ file processing',
+      '90%+ test coverage',
+    ],
+    stack: [
+      'Circom 2',
+      'snarkjs (Groth16)',
+      'Solidity',
+      'FastAPI',
+      'Web3.py',
+      'PostgreSQL',
+      'Docker',
+    ],
+    caseStudy: '/work/hashablanca',
+  },
+  {
+    slug: 'ubec',
+    title: 'UBEC Data Pipeline',
+    type: 'Federal Infrastructure · Data Engineering',
+    status: 'case-study',
+    featured: false,
+    tagline: 'Federal-scale education data across 36 Nigerian states — probabilistic deduplication, per-state retry semantics, ministry-grade reporting.',
+    description:
+      'Batch ingestion pipeline for the Universal Basic Education Commission. Processes multi-ministry reporting data from all 36 Nigerian states with heterogeneous column schemas. Probabilistic deduplication (dedupe.io + PostgreSQL) achieves <2% false-positive rate — exact-match alone misses 15–20% of true duplicates. Per-state DAG tasks mean one late state submission does not block reporting for the other 35. Great Expectations validation gate flags anomalies before they enter ministry reports.',
+    chosen: 'Blocking + probabilistic record linkage (dedupe.io)',
+    over: 'Exact-match deduplication on school_name',
+    because:
+      'State submissions use inconsistent school name spellings across ministries — exact match misses 15–20% of true duplicates in validation runs',
+    constraint:
+      'Partial state submissions are the rule, not the exception. The pipeline must produce accurate reporting for submitted states without waiting for all 36.',
+    outcomes: [
+      '36 state sources ingested',
+      '<2% dedup false-positive rate',
+      'per-state retry semantics',
+      'ministry-grade audit trail',
+    ],
+    stack: [
+      'Python 3.11',
+      'Apache Airflow',
+      'pandas',
+      'PostgreSQL',
+      'Great Expectations',
+      'dedupe.io',
+      'Docker',
+    ],
+    caseStudy: '/work/ubec',
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
