@@ -1,17 +1,7 @@
-// CONVICTION ENGINE v17.0 — ContactSection
-//
-// v17 CHANGES vs v16:
-//   MICRO-COPY UPGRADE:
-//     - Section heading: "Let's build systems that work at 2am." (was "The system has to work at 2am.")
-//       More directive. Puts the recruiter/founder in the action.
-//     - Primary CTA label: "Start a conversation" (dot + label, with email as aria detail).
-//       Per conviction engine brief: "Start a conversation" > generic "Contact".
-//       "Email Oscar" preserved as the href (mailto:) — still a direct email link.
-//     - Trust badge strip added above CTAs: "Shipped in Lagos · Running globally · Battle-tested in audit season"
-//       Converts trust signals from prose to scannable badges.
-//     - FloatingContactCTA: label upgraded to "Let's build → start here" on wider breakpoints.
-//   KEEP: All v16 spring physics, 3-card hire vectors, floating pill, CopyEmail, social links.
-//
+// CONVICTION ENGINE v17.1 — ContactSection
+// v17.1 FIX: Restored missing <a opening tags on all anchor elements (FloatingContactCTA,
+//   primary CTAs, and social links). JSX syntax error caused Vercel build failure.
+// v17 FEATURES: Trust badge strip, outcome-first contact cards, spring physics, reduced motion.
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -99,7 +89,7 @@ export function FloatingContactCTA() {
   }, []);
 
   return (
-    
+    <a
       href="mailto:scardubu@gmail.com"
       className="contact-sticky-cta"
       data-hidden={hidden ? 'true' : 'false'}
@@ -186,7 +176,7 @@ export function ContactSection() {
 
           {/* ── Primary CTA — full-width on mobile, row on sm+ ────── */}
           <m.div variants={child} className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            
+            <a
               href="mailto:scardubu@gmail.com"
               className="cta-primary cta-primary--lg tactile-press"
               aria-label="Email Oscar Ndugbu to start a conversation"
@@ -198,7 +188,7 @@ export function ContactSection() {
               />
               Start a conversation
             </a>
-            
+            <a
               href="/cv/oscar-ndugbu-resume.pdf"
               download
               className="cta-secondary tactile-press"
@@ -284,7 +274,7 @@ export function ContactSection() {
             className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-4">
-              
+              <a
                 href="https://github.com/Scardubu"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -295,7 +285,7 @@ export function ContactSection() {
                 <GitHubIcon />
                 <span className="hidden sm:inline">GitHub</span>
               </a>
-              
+              <a
                 href="https://linkedin.com/in/oscardubu"
                 target="_blank"
                 rel="noopener noreferrer"
