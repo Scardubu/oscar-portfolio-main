@@ -6,6 +6,7 @@
 //   • Intro paragraph: max-w-[52ch] tightened for 320px scan comfort
 //   • Section number corrected to 03 in page order
 //   • Added motion reveal on section header
+'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
