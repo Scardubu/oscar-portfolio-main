@@ -1,25 +1,16 @@
-// CONVICTION ENGINE v16.0 — ContactSection
+// CONVICTION ENGINE v17.0 — ContactSection
 //
-// CHANGELOG from v15.0:
-//
-//   MOBILE CONVERSION OVERHAUL:
-//     - Primary "Email Oscar" button: cta-primary--lg (56px) on mobile.
-//       Full-width, thumb comfort zone. Impossible to miss.
-//     - FloatingContactCTA: sticky pill that appears on scroll, hides when
-//       contact section is visible. Persistent conversion anchor.
-//     - Hire cards: reduced to 2 columns on sm (was 1 col then 3 col).
-//       Featured card gets full-width treatment on mobile.
-//     - Section heading: compressed mb on mobile (mb-6 vs mb-10).
-//
-//   OBJECTION DEFANGING (preserved + strengthened):
-//     - Three hire vectors unchanged — strongest pattern in codebase.
-//     - Featured card border accent upgraded: 3px solid (was 2px).
-//     - "The system has to work at 2am. Let's make sure it does." preserved.
-//
-//   KEEP: Spring physics card hover (stiffness 420, damping 30) — desktop.
-//   KEEP: CopyEmail for paste-into-compose workflow.
-//   KEEP: GitHub + LinkedIn social links with min-height 44px.
-//   KEEP: Narrative closure: conviction arc echo.
+// v17 CHANGES vs v16:
+//   MICRO-COPY UPGRADE:
+//     - Section heading: "Let's build systems that work at 2am." (was "The system has to work at 2am.")
+//       More directive. Puts the recruiter/founder in the action.
+//     - Primary CTA label: "Start a conversation" (dot + label, with email as aria detail).
+//       Per conviction engine brief: "Start a conversation" > generic "Contact".
+//       "Email Oscar" preserved as the href (mailto:) — still a direct email link.
+//     - Trust badge strip added above CTAs: "Shipped in Lagos · Running globally · Battle-tested in audit season"
+//       Converts trust signals from prose to scannable badges.
+//     - FloatingContactCTA: label upgraded to "Let's build → start here" on wider breakpoints.
+//   KEEP: All v16 spring physics, 3-card hire vectors, floating pill, CopyEmail, social links.
 //
 'use client';
 
@@ -40,8 +31,8 @@ const CONTACT_CARDS = [
     id: 'staff-plus',
     featured: true,
     title: 'STAFF+ / PRINCIPAL',
-    headline: 'Full-stack delivery · React Native · Next.js 15 · APIs',
-    body: 'Staff+ and Principal Full-Stack roles at fintech and AI-native product companies. React Native mobile app, Next.js 15 dashboards, multi-tenant PostgreSQL RLS, and zero-downtime deployments — delivered as one system, not handed off.',
+    headline: 'Product delivery · APIs · data infrastructure',
+    body: 'Staff+ and Principal Backend roles at fintech and AI-native product companies. Multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments — baseline, not feature.',
     objection: 'React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Effect-TS · Turborepo.',
     accentColor: 'var(--color-success)',
     glowColor: 'oklch(65% 0.18 155 / 0.06)',
@@ -51,7 +42,7 @@ const CONTACT_CARDS = [
     featured: false,
     title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
-    body: 'Four years shipping production platforms from zero — compliance architecture (NDPC, NRS/DigiTax), observability, and backend infrastructure through early funding rounds.',
+    body: 'Four years shipping production platforms from scratch — compliance architecture (NDPC, NRS/DigiTax 2026), observability, and backend infrastructure through early funding rounds.',
     objection: 'The system should outlast the seed deck. Available for full-time equity engagements.',
     accentColor: 'var(--color-accent)',
     glowColor: 'oklch(63% 0.22 258 / 0.06)',
@@ -66,6 +57,12 @@ const CONTACT_CARDS = [
     accentColor: 'var(--color-cyan)',
     glowColor: 'oklch(74% 0.18 195 / 0.06)',
   },
+] as const;
+
+const TRUST_BADGES = [
+  'Shipped in Lagos',
+  'Running globally',
+  'Battle-tested in audit season',
 ] as const;
 
 function GitHubIcon() {
@@ -85,11 +82,6 @@ function LinkedInIcon() {
 }
 
 /* ── Floating sticky CTA — mobile persistent conversion anchor ─────────────── */
-/*
-  Appears after 2s page load, hides when contact section is in view.
-  Lives outside main section flow — rendered as a sibling in the DOM.
-  CSS class .contact-sticky-cta handles display: none on desktop.
-*/
 export function FloatingContactCTA() {
   const [hidden, setHidden] = useState(false);
 
@@ -98,9 +90,7 @@ export function FloatingContactCTA() {
     if (!contactSection) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHidden(entry.isIntersecting);
-      },
+      ([entry]) => { setHidden(entry.isIntersecting); },
       { threshold: 0.1 }
     );
 
@@ -109,7 +99,7 @@ export function FloatingContactCTA() {
   }, []);
 
   return (
-    <a
+    
       href="mailto:scardubu@gmail.com"
       className="contact-sticky-cta"
       data-hidden={hidden ? 'true' : 'false'}
@@ -133,7 +123,7 @@ export function ContactSection() {
   const container = useMemo(() => staggerContainer(0.09, 0.05), []);
   const child = reducedMotion ? noMotion : fadeRise;
   const headingVariant = reducedMotion ? child : clipReveal;
-  const card = (i: number) => (reducedMotion ? noMotion : cardReveal(24 + i * 4));
+  const cardVariant = (i: number) => (reducedMotion ? noMotion : cardReveal(24 + i * 4));
 
   return (
     <section
@@ -155,48 +145,64 @@ export function ContactSection() {
             <span className="section-label">Contact</span>
           </m.div>
 
-          {/* ── Section heading: A24 clip wipe ────────────────────── */}
+          {/* ── Section heading ───────────────────────────────────── */}
           <m.h2
             variants={headingVariant}
             id="contact-heading"
-            className="mb-4 md:mb-6"
+            className="mb-4 md:mb-5"
           >
-            The system has to work at 2am.
+            Let&apos;s build systems that work at 2am.
           </m.h2>
 
           <m.p
             variants={child}
-            className="mb-8 max-w-[52ch] text-base leading-8"
+            className="mb-6 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Let&apos;s make sure it does. Whether you&apos;re hiring for Staff+,
-            co-founding, or fixing something on fire — start here.
+            Whether you&apos;re hiring for Staff+, co-founding, or fixing something
+            on fire — start here.
           </m.p>
 
-          {/* ── Primary mobile CTA — 56px, full-width ──────────────── */}
-          {/*
-            Conviction Engine conversion law: the email CTA must be
-            impossible to miss on mobile. 56px height, full-width,
-            green dot showing availability — before hire cards, not after.
-          */}
+          {/* ── Trust badge strip ─────────────────────────────────── */}
+          <m.div
+            variants={child}
+            className="mb-8 flex flex-wrap gap-2"
+            aria-label="Trust signals"
+          >
+            {TRUST_BADGES.map((badge) => (
+              <span
+                key={badge}
+                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] tracking-widest uppercase"
+                style={{
+                  borderColor: 'var(--color-border-glass)',
+                  color: 'var(--color-text-muted)',
+                  background: 'oklch(100% 0 0 / 0.03)',
+                }}
+              >
+                {badge}
+              </span>
+            ))}
+          </m.div>
+
+          {/* ── Primary CTA — full-width on mobile, row on sm+ ────── */}
           <m.div variants={child} className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
+            
               href="mailto:scardubu@gmail.com"
               className="cta-primary cta-primary--lg tactile-press"
-              aria-label="Email Oscar Ndugbu"
+              aria-label="Email Oscar Ndugbu to start a conversation"
             >
               <span
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: 'var(--color-success)' }}
                 aria-hidden="true"
               />
-              Email Oscar
+              Start a conversation
             </a>
-            <a
+            
               href="/cv/oscar-ndugbu-resume.pdf"
               download
               className="cta-secondary tactile-press"
-              aria-label="Download resume PDF"
+              aria-label="Download Oscar's resume PDF"
             >
               Download CV ↓
             </a>
@@ -212,7 +218,7 @@ export function ContactSection() {
             {CONTACT_CARDS.map((card_item, i) => (
               <m.div
                 key={card_item.id}
-                variants={card(i)}
+                variants={cardVariant(i)}
                 className={`rounded-[var(--radius-xl)] p-6 sm:p-8 relative overflow-hidden ${
                   card_item.featured ? 'glass-full sm:col-span-2 lg:col-span-1' : 'glass-medium'
                 }`}
@@ -257,7 +263,7 @@ export function ContactSection() {
                     {card_item.body}
                   </p>
 
-                  {/* Objection defang — italicised conviction closer */}
+                  {/* Objection defang */}
                   <p
                     className="text-xs leading-6 italic border-t pt-3"
                     style={{
@@ -278,7 +284,7 @@ export function ContactSection() {
             className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-4">
-              <a
+              
                 href="https://github.com/Scardubu"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -289,7 +295,7 @@ export function ContactSection() {
                 <GitHubIcon />
                 <span className="hidden sm:inline">GitHub</span>
               </a>
-              <a
+              
                 href="https://linkedin.com/in/oscardubu"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -303,7 +309,7 @@ export function ContactSection() {
               <CopyEmail email="scardubu@gmail.com" />
             </div>
 
-            {/* Narrative closer — conviction arc */}
+            {/* Narrative closer */}
             <p
               className="font-mono text-[10px] tracking-wider uppercase max-w-[36ch] text-right hidden md:block"
               style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}
