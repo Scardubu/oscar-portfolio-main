@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server';
 export const runtime = 'edge';
 export const revalidate = 3600; // 1 hour
 
-const GITHUB_REPOS = ['Scardubu/taxbridge', 'Scardubu/sabiscore', 'Scardubu/hashablanca'];
+const GITHUB_REPOS = ['Scardubu/taxbridge', 'Scardubu/sabiscore', 'Scardubu/SwarmXQ', 'Scardubu/hashablanca'];
 
 interface RepoData {
   repo: string;
