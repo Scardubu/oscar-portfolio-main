@@ -1,0 +1,50 @@
+---
+title: 'UBEC Data Pipeline'
+summary: 'Federal-scale education data engineering — 36 Nigerian states, probabilistic deduplication, per-state retry semantics, and ministry-grade reporting under partial submission conditions.'
+tags:
+  - 'Python 3.11'
+  - 'Apache Airflow'
+  - 'pandas'
+  - 'PostgreSQL'
+  - 'Great Expectations'
+  - 'dedupe.io'
+  - 'Docker'
+---
+
+## Problem shape
+
+Federal reporting systems inherit the messiness of their source data. Nigeria's Universal Basic Education Commission receives school funding submissions from 36 state ministries — each with different column naming conventions, different file formats (CSV, Excel, XML), and different submission timelines. Some states submit late. Some submit partial data. The pipeline must produce accurate ministry-level reporting under all of these conditions, not just the clean path.
+
+Deduplication is the second hard problem. The same school can appear under "Sunrise Primary School", "SUNRISE PRM SCH", and "sunrise prmry sch" in submissions from different states. Exact-match deduplication produces a false-negative rate of 15–20% on real data — meaning 15–20% of true duplicate records survive into ministry reports as separate entries.
+
+## Approach
+
+The Airflow DAG uses per-state task isolation as its fundamental design decision. Each state's ingestion, normalisation, validation, and deduplication runs as an independent task group. A failure in Lagos state does not block Kano state. A late submission from Rivers state does not delay reporting for the 35 states that submitted on time. Partial output flags clearly mark which states are pending without suppressing the completed ones.
+
+Schema normalisation maps ministry-specific column names to a canonical schema before any downstream processing sees the data. "School Name", "SCHOOL_NM", and "schname" all map to `school_name` at the ingest boundary. Downstream logic never handles raw column names.
+
+Probabilistic deduplication uses dedupe.io with a blocking pass on `school_id + LGA + year` to reduce the comparison space from O(n²) to a tractable candidate set. Fuzzy scoring then handles name variation within each block. The <2% false-positive rate was validated against a manual review sample before production deployment.
+
+Great Expectations runs cross-state consistency checks as a validation gate. A state that passes internal normalisation but fails cross-state checks — implausible enrollment numbers, missing LGA codes — is flagged for manual review and excluded from the current reporting cycle. It is not silently accepted.
+
+## Key decisions
+
+**Per-state DAG tasks over a single-state-blocking pipeline**
+
+A pipeline that waits for all 36 states before producing output creates a single bottleneck. One delayed submission — common in federal reporting — holds every ministry waiting. Per-state independence means 35 states can receive accurate, timely reports while the 36th is flagged and followed up separately.
+
+**Probabilistic record linkage over exact-match deduplication**
+
+Exact-match is simple and wrong. Real ministry data contains 15–20% of true duplicate schools that would survive exact-match deduplication as separate entries. The probablistic approach adds complexity at the deduplication layer but removes error at the output layer — ministry reports that are accurate are worth more than ministry reports that are fast to produce.
+
+**Great Expectations validation gate over silent acceptance**
+
+A state file that passes schema normalisation may still contain implausible data — school enrollment counts that exceed the LGA's population, LGA codes that don't exist in the reference dataset. Silently accepting these creates errors that are invisible until a ministry queries a specific record. The validation gate makes the error surface explicit and keeps it at the ingest boundary, not in the report.
+
+## Context
+
+This is a government engagement and is not open source. Source code is available to verified prospective employers on request.
+
+## Delivery signal
+
+The UBEC pipeline demonstrates what federal-scale data engineering actually requires: not a fast happy path, but a system that handles partial submissions, heterogeneous schemas, and noisy data without producing silent errors in outputs that inform real budget allocations. The same reliability thinking — explicit failure surfaces, per-unit retry semantics, validation before acceptance — appears in every system that followed.
