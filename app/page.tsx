@@ -1,4 +1,4 @@
-// CONVICTION ENGINE v21.0 — Home Page
+// CONVICTION ENGINE v22.0 — Home Page
 // Mobile-native: Hero → Projects → OSS → Skills → About → Writing → Contact.
 // Render priority: HeroSection is above-the-fold, zero lazy-loading.
 // Heavy sections: dynamic import (ssr: true) to reduce initial JS bundle.
@@ -9,14 +9,9 @@ import { Suspense } from 'react';
 
 import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
-// BookmarkToastLoader is already 'use client' + dynamic internally —
-// static import is correct here; no ssr:false wrapper needed or allowed
-// in a Server Component.
 import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { getWritingPosts } from '@/lib/content';
 
-// Heavy sections — deferred JS, SSR-rendered HTML.
-// ssr: true preserves SEO and prevents layout shift on hydration.
 const ProjectsSection = dynamic(
   () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
   { ssr: true }
@@ -51,31 +46,33 @@ export default async function Home() {
         {/* 00 — Hero: LCP target; zero deferred loading */}
         <HeroSection />
 
-        {/* 01 — Projects: primary proof section, highest conviction value */}
+        {/* 01 — Projects: primary depth proof, highest conviction value */}
         <Suspense
           fallback={<SectionSkeleton id="section-projects" label="Projects" height={560} />}
         >
           <ProjectsSection />
         </Suspense>
 
-        {/* 02 — Open Source: second-order trust signal */}
+        {/* 02 — Open Source: secondary trust signal, installable artifacts */}
         <Suspense
           fallback={<SectionSkeleton id="open-source" label="Open Source" height={340} />}
         >
           <OpenSourceSection />
         </Suspense>
 
-        {/* 03 — Skills: breadth signal after depth is established */}
+        {/* 03 — Skills: breadth established after depth is proven */}
         <Suspense fallback={<SectionSkeleton id="skills" label="Skills" height={480} />}>
           <SkillsSection />
         </Suspense>
 
-        {/* 04 — About: human story anchors the technical proof */}
-        <Suspense fallback={<SectionSkeleton id="about" label="About" height={320} />}>
+        {/* 04 — About: human story anchors the technical record */}
+        <Suspense
+          fallback={<SectionSkeleton id="section-about" label="About" height={320} />}
+        >
           <AboutSection />
         </Suspense>
 
-        {/* 05 — Writing: deep expertise signal */}
+        {/* 05 — Writing: deep expertise and decision-making signal */}
         {posts.length > 0 && (
           <Suspense
             fallback={<SectionSkeleton id="section-writing" label="Writing" height={420} />}
@@ -84,13 +81,18 @@ export default async function Home() {
           </Suspense>
         )}
 
-        {/* 06 — Contact: conversion endpoint */}
-        <Suspense fallback={<SectionSkeleton id="contact" label="Contact" height={280} />}>
+        {/* 06 — Contact: conversion endpoint, always last */}
+        <Suspense
+          fallback={<SectionSkeleton id="section-contact" label="Contact" height={280} />}
+        >
           <ContactSection />
         </Suspense>
       </main>
 
-      {/* Client-only: bookmark toast — rendered client-side inside BookmarkToastLoader */}
+      {/*
+        BookmarkToast: client-only, outside <main> to avoid polluting
+        the main landmark with a transient notification region.
+      */}
       <BookmarkToastLoader />
     </>
   );
