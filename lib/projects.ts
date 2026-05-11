@@ -95,13 +95,13 @@ export const PROJECTS: readonly Project[] = [
     type: 'AI Agent Platform · Orchestration',
     status: 'live',
     featured: true,
-    tagline: 'Multi-agent operator platform that improves itself between runs — autonomous evolution, live fleet dashboard.',
+    tagline: 'Self-improving multi-agent operator platform — autonomous evolution layer, live fleet dashboard, production-grade reliability under resource constraints.',
     description:
-      'Multi-agent orchestration platform where agents autonomously improve their own task strategies between runs. The evolution layer scores outcomes, replaces low-performing configurations, and produces measurable quality gains without manual tuning. Live dashboard surfaces real-time fleet visibility — task queue depth, agent health, completion rates. Built for reliability under resource constraints; checkpoint-based replay means failed sub-tasks restart from the last consistent state, not from scratch.',
+      'Multi-agent orchestration platform where agents autonomously improve their own task strategies between runs. The evolution layer scores outcomes against quality benchmarks, replaces low-performing configurations via LLM-guided mutation, and produces measurable gains without engineering intervention. Live dashboard surfaces real-time fleet visibility — task queue depth, agent health, completion rates, evolution cycle status. Checkpoint-based replay means failed sub-tasks restart from the last consistent state, not from scratch. Built to hold correctness under Lagos network conditions: unreliable connectivity, variable latency, intermittent API availability.',
     chosen: 'Autonomous evolution layer with LLM-guided strategy mutation',
     over: 'Static agent configurations with manual tuning cycles',
     because:
-      'Manual tuning cannot adapt to novel inputs at scale — autonomous evolution scores strategies against real outcomes and rewrites low performers between runs',
+      'Manual tuning cannot adapt to novel inputs at scale — autonomous evolution scores strategies against real outcomes and rewrites low performers between runs, compounding quality without engineering intervention',
     constraint:
       'Agents must hold correctness under Lagos network conditions — unreliable connectivity, variable latency, and intermittent API availability.',
     outcomes: [
