@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   metadataBase:  new URL(siteConfig.url),
   title:         { default: siteConfig.title, template: `%s — ${siteConfig.name}` },
   description:   siteConfig.description,
-  keywords:      ["Full-Stack Engineer", "AI Engineer", "ML Engineer", "Next.js", "Python", "SabiScore", "Nigeria", "Remote"],
+  keywords:      ["Full-Stack Engineer", "Staff+ Engineer", "AI Engineer", "ML Engineer", "Agent Orchestration", "Next.js", "Python", "SabiScore", "TaxBridge", "SwarmXQ", "Lagos", "Nigeria", "Remote", "Fintech Infrastructure"],
   authors:       [{ name: siteConfig.name, url: siteConfig.url }],
   creator:       siteConfig.name,
   openGraph: {
