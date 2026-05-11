@@ -1,41 +1,44 @@
 'use client';
 // components/PageWrapper.tsx
-// CONVICTION ENGINE v19.0
-// Page transitions removed from mobile path — they add ~120ms perceived latency
-// on Android mid-range. Scroll-reveal IntersectionObserver retained.
+// CONVICTION ENGINE v22.0
+// Mobile-native page shell: bottom-nav padding, scroll-reveal init,
+// reduced-motion safety. Page transitions removed from mobile path —
+// they add ~120ms perceived latency on Android mid-range.
 
 import { useReducedMotion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 
-export default function PageWrapper({ children }: Readonly<{ children: ReactNode }>) {
-  const pathname = usePathname();
+interface PageWrapperProps {
+  readonly children: React.ReactNode;
+}
+
+export function PageWrapper({ children }: PageWrapperProps) {
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+    // iOS Safari: prevent elastic overscroll from exposing raw background
+    document.documentElement.style.overscrollBehaviorY = 'none';
 
+    // Apply reduced-motion class for CSS fallbacks
     if (reducedMotion) {
-      els.forEach((el) => el.classList.add('is-visible'));
-      return;
+      document.documentElement.setAttribute('data-reduced-motion', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-reduced-motion');
     }
+  }, [reducedMotion]);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-    );
-
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [pathname, reducedMotion]);
-
-  return <>{children}</>;
+  return (
+    <div
+      id="page-wrapper"
+      className="relative flex min-h-[100svh] flex-col"
+      style={{
+        // Ensure content never overflows viewport on mobile
+        overflowX: 'hidden',
+        // Isolate stacking context — prevents z-index bleed from fixed Navbar
+        isolation: 'isolate',
+      }}
+    >
+      {children}
+    </div>
+  );
 }
