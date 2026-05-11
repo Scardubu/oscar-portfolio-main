@@ -66,7 +66,7 @@ export const SKILLS: SkillNode[] = [
     name: 'FastAPI',
     pillar: 'Backend & APIs',
     level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:hashablanca', 'documented'],
+    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:swarmxq', 'documented'],
   },
   {
     id: 'python',
@@ -115,7 +115,7 @@ export const SKILLS: SkillNode[] = [
     name: 'Rust',
     pillar: 'Backend & APIs',
     level: 'foundational',
-    tags: ['used-in:hashablanca'],
+    tags: ['used-in:swarmxq'],
   },
   {
     id: 'grpc',
@@ -152,7 +152,7 @@ export const SKILLS: SkillNode[] = [
     name: 'GDPR Controls',
     pillar: 'Fintech & Compliance',
     level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:hashablanca'],
+    tags: ['used-in:taxbridge', 'used-in:swarmxq'],
   },
   {
     id: 'kyc-aml',
@@ -219,7 +219,7 @@ export const SKILLS: SkillNode[] = [
     name: 'Docker',
     pillar: 'DevOps & SRE',
     level: 'expert',
-    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:hashablanca'],
+    tags: ['used-in:sabiscore', 'used-in:taxbridge', 'used-in:swarmxq'],
   },
   {
     id: 'github-actions',
@@ -270,7 +270,7 @@ export const SKILLS: SkillNode[] = [
     name: 'React 19',
     pillar: 'Frontend & Full-Stack',
     level: 'proficient',
-    tags: ['used-in:sabiscore', 'used-in:hashablanca'],
+    tags: ['used-in:sabiscore', 'used-in:swarmxq'],
   },
   {
     id: 'react-native',
@@ -285,6 +285,57 @@ export const SKILLS: SkillNode[] = [
     pillar: 'Frontend & Full-Stack',
     level: 'proficient',
     tags: ['used-in:taxbridge'],
+  },
+
+  // ── AI Agent Orchestration ────────────────────────────────────────────────
+  {
+    id: 'ollama',
+    name: 'Ollama (GGUF dispatch)',
+    pillar: 'AI Agent Orchestration',
+    level: 'expert',
+    tags: ['used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'llm-routing',
+    name: 'Triadic LLM Routing',
+    pillar: 'AI Agent Orchestration',
+    level: 'expert',
+    tags: ['used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'agent-orchestration',
+    name: 'Multi-Agent Orchestration',
+    pillar: 'AI Agent Orchestration',
+    level: 'expert',
+    tags: ['used-in:swarmxq', 'documented'],
+  },
+  {
+    id: 'phi4-mini',
+    name: 'Phi-4-mini (router)',
+    pillar: 'AI Agent Orchestration',
+    level: 'proficient',
+    tags: ['used-in:swarmxq'],
+  },
+  {
+    id: 'deepseek-r1',
+    name: 'DeepSeek-R1 (reasoning)',
+    pillar: 'AI Agent Orchestration',
+    level: 'proficient',
+    tags: ['used-in:swarmxq'],
+  },
+  {
+    id: 'qwen-coder',
+    name: 'Qwen2.5-Coder (code gen)',
+    pillar: 'AI Agent Orchestration',
+    level: 'proficient',
+    tags: ['used-in:swarmxq'],
+  },
+  {
+    id: 'autonomous-evolution',
+    name: 'Autonomous Agent Evolution',
+    pillar: 'AI Agent Orchestration',
+    level: 'proficient',
+    tags: ['used-in:swarmxq', 'documented'],
   },
 
   // ── Blockchain & Web3 ─────────────────────────────────────────────────────
@@ -383,7 +434,7 @@ export const SKILLS: SkillNode[] = [
     name: 'GraphQL',
     pillar: 'Backend & APIs',
     level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:hashablanca'],
+    tags: ['used-in:taxbridge', 'used-in:swarmxq'],
   },
   {
     id: 'celery',
@@ -412,6 +463,7 @@ export const ALL_PILLARS: SkillPillar[] = [
   'Data & Storage',
   'DevOps & SRE',
   'Frontend & Full-Stack',
+  'AI Agent Orchestration',
   'Blockchain & Web3',
 ]
 
