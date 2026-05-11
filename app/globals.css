@@ -87,7 +87,7 @@
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────────── */
-html { scrollbar-gutter: stable both-edges; }
+html { scrollbar-gutter: stable; }
 * { scrollbar-width: thin; scrollbar-color: rgba(0,200,232,0.30) var(--color-space-black); }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-space-black); }
