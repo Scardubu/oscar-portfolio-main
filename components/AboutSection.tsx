@@ -110,7 +110,7 @@ export function AboutSection() {
               Fullstack engineer and platform architect with four years of
               independent product and consulting work — shipping a tax
               compliance platform, an AI-powered observability tool, and an
-              encrypted blockchain data system.
+              a self-improving AI agent orchestration platform (SwarmXQ).
             </m.p>
 
             <m.p
