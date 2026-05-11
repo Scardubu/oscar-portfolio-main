@@ -1,0 +1,62 @@
+---
+title: 'SwarmXQ: How Self-Improving Agents Replace Manual Configuration at Scale'
+date: '2025-12-08'
+summary: 'The architecture behind SwarmXQ — autonomous strategy evolution, checkpoint-based fault recovery, and real-time fleet visibility. Why static agent configs fail at scale and how outcome-scored mutation solves it.'
+tags:
+  - 'AI Systems'
+  - 'Architecture'
+  - 'Production Systems'
+featured: false
+---
+
+## The problem with static agent configurations
+
+Every multi-agent system eventually faces the same failure mode: task variety grows faster than anyone can manually tune configurations for it.
+
+An agent that performs excellently on document summarisation begins producing lower-quality outputs on code review tasks. Without per-run outcome scoring, the system has no mechanism to detect this drift — let alone correct it. The only available remedy is manual inspection, and manual inspection does not scale across a fleet operating across dozens of task types.
+
+SwarmXQ was built to solve this without requiring engineering intervention between runs.
+
+## Separating dispatch from strategy evolution
+
+Most orchestration platforms conflate two concerns: routing tasks to agents and improving the strategies those agents use. SwarmXQ separates them.
+
+The dispatch layer is conventional. It routes tasks to agents based on current load, capability index, and historical performance scores. This part is not novel.
+
+The evolution layer is distinct. After each completed run, a scoring function evaluates agent output quality against measurable outcome criteria. Strategies that underperform are rewritten via a guided mutation pass — the system produces a candidate replacement, runs it against a validation set, and promotes the new strategy only if quality improves. No engineering time required.
+
+The key insight: quality improvement should be a property of the system, not a consequence of manual tuning sprints.
+
+## Why checkpoints instead of full restarts
+
+When step 12 of a 15-step workflow fails, restarting from step 1 is simple to implement. It is expensive in practice.
+
+Every completed step re-executes. Any step with external side effects — API calls, database writes, file outputs — produces duplicate records in downstream systems. The simplicity of the restart model transfers complexity directly onto every downstream consumer.
+
+SwarmXQ uses checkpoint-based replay instead. Every agent boundary writes an idempotency record before executing. If a sub-task fails, the replay logic restarts from the last consistent checkpoint state, not from the beginning of the workflow.
+
+This requires idempotency enforcement at each agent boundary — harder to build. But it is the only model that holds correctness when agents are running against third-party APIs that have their own rate limits, side effects, and no concept of your workflow's internal retry logic.
+
+## Constraint: Lagos network conditions
+
+The constraint that shaped every reliability decision was the operating environment: unreliable connectivity, variable API latency, and intermittent availability from third-party endpoints.
+
+Agents that assume stable network conditions degrade catastrophically when those conditions disappear. Every external call in SwarmXQ is wrapped with retry semantics, timeout budgets, and circuit breaker logic. Agents are designed to degrade gracefully — holding partial state rather than propagating failure into downstream systems that already received earlier steps.
+
+This constraint is not unique to Lagos. It is the operating reality of any distributed system where third-party infrastructure is outside your control. The difference is that building in an environment where it fails frequently forces you to solve it correctly rather than defer it.
+
+## The live dashboard as an operator contract
+
+The dashboard is not instrumentation added after the system was built. It was designed as the primary operator interface.
+
+Real-time fleet visibility — task queue depth by type, agent health signals, completion rates, evolution cycle status — is streamed via WebSocket so operators see changes as they happen. The alternative is polling a metrics endpoint, which introduces lag and requires the operator to interpret state from snapshots rather than from a live view.
+
+The design principle: operators should be able to assess system health in one glance, not by correlating multiple dashboards. That is the standard for production operations tooling, and it applied here.
+
+## What this architecture proves
+
+A self-improving agent fleet is not a research project. It is a system design problem with clear primitives: outcome scoring, guided mutation, validation gates, and promotion logic.
+
+The hard part is not the AI component. It is the surrounding infrastructure that makes autonomous improvement safe — the checkpoint model that prevents partial state from corrupting downstream systems, the validation gates that prevent a worse strategy from being promoted, and the observability layer that lets you trust what the system is doing without watching every task.
+
+SwarmXQ demonstrates that all of this is buildable under resource constraints, without cloud-native infrastructure, and without a team of more than one.
