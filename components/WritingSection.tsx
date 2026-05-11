@@ -1,12 +1,11 @@
-// CONVICTION ENGINE v22.0 — WritingSection
+// CONVICTION ENGINE v22.1 — WritingSection
 // Mobile-native: 320–430px is the source of truth. Lagos → Global.
 //
-// v22 vs v21:
-//   • Filter chips: scroll-snap-x mandatory for crisp swipe stops
-//   • Featured card: read CTA always full-width on mobile
-//   • Article rows: guaranteed min-h-[52px], date always visible (stacked on mobile)
-//   • AnimatePresence mode="popLayout" for filter transitions
-//   • Section number: 04 (corrected page order)
+// v22.1 vs v22.0:
+//   • Filter chips: trailing spacer ensures right-edge padding shows after
+//     horizontal scroll — FINTECH no longer clipped on 390px viewport.
+//     (overflow-x: auto ignores padding-right without explicit spacer element)
+//   • All other behaviour preserved verbatim from v22.0.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -76,7 +75,13 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               production — from Lagos to the world.
             </m.p>
 
-            {/* Filter chips: scroll-snap on mobile */}
+            {/*
+              Filter chips: horizontal scroll on mobile.
+              v22.1 FIX: trailing <span> spacer ensures the right-side padding
+              (restored by px-[clamp(...)]) actually appears after scrolling.
+              Without it, overflow-x:auto clips the padding-right of the flex
+              container, visually cutting off the last chip ("FINTECH").
+            */}
             <m.div
               variants={child}
               className="mt-5 -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
@@ -107,6 +112,13 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   </button>
                 );
               })}
+
+              {/* v22.1: Trailing spacer — gives scroll room for right-side chip padding */}
+              <span
+                aria-hidden="true"
+                className="shrink-0 pointer-events-none"
+                style={{ width: 'clamp(1rem, 5vw, 3rem)' }}
+              />
             </m.div>
           </m.div>
 
