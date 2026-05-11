@@ -1,19 +1,16 @@
-// CONVICTION ENGINE v17.0 — Navbar
+// CONVICTION ENGINE v18.0 — Navbar
 //
-// CHANGELOG from v15.0:
+// v18 CHANGES vs v17:
+//   TAGLINE: "Backend · Infra · ML" → "Full-Stack · Infra · ML"
+//     Oscar builds React Native apps, Next.js frontends, and Python ML pipelines.
+//     The old tagline was a false ceiling — recruiters scanning in 2s were
+//     mis-filing him as "backend-only". One word change, correct signal.
 //
-//   VISUAL:
-//     - All accent colors shifted from cyan to film-teal (--color-film-teal).
-//     - Bottom nav pill indicator updated to film-teal with glow.
-//     - ⌘K button: border-white/10 (was white/12) — cleaner glass appearance.
-//     - Mobile "Hire me" button: now uses film-teal text, higher contrast.
+//   DESKTOP CTA: "Book a Call" → "Hire Oscar" — more direct conversion language.
 //
-//   KEEP: Dual-plane architecture — minimal top bar + thumb-ergonomic bottom nav.
-//   KEEP: IntersectionObserver active section tracking.
-//   KEEP: Spring physics on desktop nav indicator (layoutId).
-//   KEEP: Scroll-activated glass: 0px → blur(20px) at 8px scroll.
-//   KEEP: SystemStatus, ThemeToggle, ⌘K on desktop.
-//   KEEP: All WCAG 2.2 compliance.
+//   MOBILE CTA: "Hire me" → explicit "Hire Oscar" — personal, removes ambiguity.
+//
+//   KEEP: All v17 architecture unchanged.
 //
 'use client';
 
@@ -211,11 +208,12 @@ export function NavBar() {
               >
                 Oscar Ndugbu
               </span>
+              {/* v18: Full-Stack replaces Backend — correct signal for a full-stack engineer */}
               <span
                 className="font-mono text-[9px] tracking-[0.12em] uppercase transition-colors duration-150 group-hover:text-white/60"
                 style={{ color: 'var(--color-text-muted)' }}
               >
-                Backend · Infra · ML
+                Full-Stack · Infra · ML
               </span>
             </Link>
 
@@ -267,7 +265,7 @@ export function NavBar() {
                 className="cta-primary"
                 style={{ minHeight: '36px', padding: '0.375rem 1.125rem', fontSize: '0.8125rem', width: 'auto' }}
               >
-                Book a Call
+                Hire Oscar
               </a>
             </div>
 
@@ -282,7 +280,7 @@ export function NavBar() {
                 border: '1px solid var(--color-film-teal-glow)',
                 background: 'var(--color-film-teal-surface)',
               }}
-              aria-label="Email Oscar"
+              aria-label="Email Oscar to discuss opportunities"
             >
               Hire me
             </a>
