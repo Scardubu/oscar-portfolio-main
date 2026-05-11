@@ -1,0 +1,53 @@
+---
+title: 'SwarmXQ'
+summary: 'Self-improving multi-agent orchestration platform built for reliability under resource constraints — autonomous evolution, live fleet dashboard, checkpoint-based fault recovery.'
+tags:
+  - 'FastAPI'
+  - 'Python'
+  - 'BullMQ'
+  - 'Redis'
+  - 'PostgreSQL'
+  - 'Next.js'
+  - 'WebSocket'
+  - 'Docker'
+---
+
+## Problem shape
+
+Multi-agent systems degrade silently. An agent that performs well on task type A begins producing lower-quality outputs on task type B, but without per-run outcome scoring, the system has no mechanism to detect or correct the drift. The only remedy is manual inspection and manual config tuning — which does not scale across a fleet.
+
+A second problem: partial failure in a multi-step workflow typically restarts the entire execution. When step 12 of 15 fails, restarting from step 1 creates duplicate side effects in every upstream system that already received step 1 through 11.
+
+## Approach
+
+SwarmXQ separates two concerns that most orchestration platforms conflate: *task dispatch* and *strategy improvement*.
+
+The dispatch layer routes tasks to agents based on current load, capability index, and historical performance scores. This is conventional orchestration. The evolution layer is distinct: after each completed run, a scoring function evaluates agent output quality against measurable outcome criteria. Strategies that underperform are rewritten via a guided mutation pass — the system produces a candidate replacement, runs it against a validation set, and promotes it only if quality improves. No engineering intervention required.
+
+Fault recovery uses checkpoints instead of full restarts. Every agent boundary writes an idempotency record before executing. If a sub-task fails, the replay logic restarts from the last consistent checkpoint state — not from the beginning of the workflow.
+
+The live dashboard exposes real-time fleet visibility: task queue depth by type, agent health signals, completion rates, and evolution cycle status. State is streamed via WebSocket so operators see changes as they happen, without page refresh.
+
+## Key decisions
+
+**Autonomous evolution over manual configuration**
+
+Static agent configurations require a domain expert to tune parameters for every task type that enters the system. As task variety grows, manual tuning becomes a maintenance bottleneck. The evolution layer removes this ceiling: strategies are scored against real outcomes and rewritten automatically. Quality improves between runs without engineering time.
+
+**Checkpoint-based replay over full workflow restart**
+
+Full restarts on partial failure are tempting because they are simple to implement. They are expensive in practice: completed steps execute twice, and any step with external side effects (API calls, database writes, file outputs) produces duplicate records in downstream systems. Checkpoint-based replay requires idempotency enforcement at each agent boundary — harder to build, but the only approach that holds correctness at scale.
+
+**Python orchestrator with Next.js dashboard**
+
+The orchestrator and agent runtime are Python to keep LLM integration surface minimal — most inference SDKs target Python first. The dashboard is Next.js because real-time UI state management over WebSocket is more ergonomic in React than in any Python framework, and the dashboard is the primary operator interface, not a side concern.
+
+## Constraint
+
+Agents must hold correctness under Lagos network conditions: unreliable connectivity, variable API latency, and intermittent availability from third-party endpoints. Every external call is wrapped with retry semantics and timeout budgets. Agents are designed to degrade gracefully rather than propagate partial state into downstream systems.
+
+## Delivery signal
+
+SwarmXQ demonstrates that an agent fleet can improve itself without manual intervention — the architecture answer to the question every AI-native team eventually faces: how do you maintain quality as task variety grows beyond what any individual can monitor?
+
+The checkpoint-based fault model and live dashboard reflect production-grade reliability thinking, not prototype assumptions. Both are built for the conditions where AI systems actually run: constrained hardware, unreliable networks, and operators who cannot watch every task in real time.
