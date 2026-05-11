@@ -211,7 +211,7 @@ export const ACTIVITY_FEED = [
   { id: "a1", event: "SabiScore prediction model retrained",        time: "2h ago",  type: "ml"      as const },
   { id: "a2", event: "New user registered on SabiScore",           time: "4h ago",  type: "user"    as const },
   { id: "a3", event: "Portfolio Lighthouse score: 99/100",         time: "1d ago",  type: "perf"    as const },
-  { id: "a4", event: "Hashablanca ZK proof verification passed",   time: "2d ago",  type: "infra"   as const },
+  { id: "a4", event: "SwarmXQ agent evolution cycle completed",    time: "2d ago",  type: "infra"   as const },
   { id: "a5", event: "Consulting client ML pipeline shipped",      time: "3d ago",  type: "shipped" as const },
   { id: "a6", event: "XGBoost model v3.2 deployed to production",  time: "5d ago",  type: "ml"      as const },
   { id: "a7", event: "Portfolio deployed: new bento grid layout",  time: "1w ago",  type: "shipped" as const },
