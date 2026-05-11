@@ -1,5 +1,3 @@
-'use client';
-
 // CONVICTION ENGINE v22.0 — SkillsSection
 // Mobile-native wrapper around SkillsMap. Lagos → Global.
 //
@@ -68,8 +66,8 @@ export function SkillsSection() {
             </h2>
 
             <p
-              className="mt-4 max-w-[52ch] text-sm sm:text-base leading-8"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="mt-4 w-full max-w-[52ch] text-sm sm:text-base leading-8"
+              style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word', wordBreak: 'break-word' }}
             >
               52 battle-tested skills across ML, fintech compliance, backend
               infrastructure, and DevOps — every one traceable to a live
