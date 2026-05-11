@@ -1,0 +1,64 @@
+---
+title: 'TaxBridge: Compressing 4 Hours of Nigerian SME Tax Filing to 15 Minutes'
+date: '2025-10-15'
+summary: 'How PostgreSQL Row-Level Security, idempotent job queues, and NRS API rate-limit scoping combined to make Nigerian SME tax compliance fast, safe, and auditable by design — not as an afterthought.'
+tags:
+  - 'Architecture'
+  - 'Fintech'
+  - 'Production Systems'
+featured: false
+---
+
+## The filing experience before TaxBridge
+
+Nigerian SME tax filing in 2024 was a manual, error-prone process that routinely consumed four hours of an accountant's working day per client. The friction was not just time — it was the risk of errors compounding through multiple manual data entry steps, the absence of any machine-readable audit trail, and the near-impossibility of confirming successful submission to the NRS within a predictable window.
+
+TaxBridge was built to compress that to 15 minutes. Not by making the interface faster, but by automating the error-prone steps and making correctness a property of the system.
+
+## Why Row-Level Security at the database engine, not the application
+
+The first design decision was the one that mattered most: multi-tenancy enforcement.
+
+Every tax filing platform handles data from multiple clients. The question is where the boundary between tenants is enforced. Application-layer filtering — adding a `WHERE tenant_id = ?` clause to every query — is fragile. An application bug, a missed WHERE clause, or an ORM quirk can silently expose one tenant's records to another.
+
+TaxBridge enforces isolation at the PostgreSQL engine level via Row-Level Security. Even if the application sends a query without a tenant filter, the database rejects it. Tenant data is mathematically invisible across boundaries, not just conditionally filtered.
+
+The reason this matters: NRS audit scrutiny demands proof that tenant data cannot cross-contaminate. "We filter in the application" is not proof. RLS policy attached to the database schema is.
+
+## Idempotent job queues for NRS API rate limits
+
+The NRS API enforces a rate limit of 30 requests per minute per TIN. TaxBridge handles multiple concurrent filing requests, and filing windows — the periods when many SMEs file simultaneously — create burst traffic that exceeds this limit.
+
+The naive approach: queue requests and retry on 429. This works until a job fails mid-execution, because the retry re-sends the same request and the NRS API processes it again, producing a duplicate submission.
+
+BullMQ queues in TaxBridge are idempotent by design. Each job carries a stable identifier derived from the submission content. Before execution, the worker checks whether this identifier has already been successfully processed. If it has, the job is marked complete without re-submitting. If it has not, submission proceeds and the identifier is recorded.
+
+The outcome: burst filing windows are handled without client-visible failure, and no submission is ever double-processed, even through mid-request server failure.
+
+## Sub-150ms real-time tax calculations
+
+VAT, withholding tax, and annual return calculations are computationally inexpensive but latency-sensitive — users see the result in real time as they enter figures, so each calculation must complete within a perceptible threshold.
+
+The implementation uses Redis as the computation cache for jurisdiction-specific rule lookups. Tax rules change infrequently; caching the rule set per jurisdiction per tax period means the calculation path is a pure function on cached data, with no database round-trips on the hot path.
+
+p99 latency under load: sub-150ms. This holds at peak concurrent filing traffic because the calculation layer is stateless and horizontally scalable independent of the NRS submission queue.
+
+## Hash-chained audit trail
+
+The NRS requires an immutable audit trail for every submitted return. An audit trail that can be retroactively edited is not an audit trail — it is a log with deletion access.
+
+TaxBridge implements a hash-chained record structure. Every audit event is cryptographically bound to the previous event's hash. Any retroactive modification breaks the chain at the point of modification, producing a chain-break that is detectable without access to the original data.
+
+This is the same principle used in append-only ledger systems. Applied here, it means the audit trail is a first-class correctness property of the data model, not a reporting layer added after submission.
+
+## 95% test coverage as a compliance artifact
+
+95% test coverage is not a quality metric here — it is a compliance artifact. NRS audits require evidence that the tax calculation logic has been validated. The test suite is that evidence.
+
+Every jurisdiction rule, every edge case in withholding rate calculation, and every state transition in the submission lifecycle has a corresponding test. The coverage figure is high because the audit surface is high, not because a coverage target was set in a sprint.
+
+## What TaxBridge demonstrates
+
+Nigerian SME tax filing is a hard problem because it sits at the intersection of unreliable external APIs, strict audit requirements, and users who will not tolerate a slow or opaque system.
+
+The architecture answer: enforce correctness at the database layer, make every external API call idempotent, cache computation aggressively, and build the audit trail into the data model rather than on top of it. Each of these is a general principle for compliance-critical systems. TaxBridge applies them in combination, against a specific real-world constraint set.
