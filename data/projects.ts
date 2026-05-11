@@ -7,7 +7,7 @@
 //   • Hashablanca: preserved as a historical reference, archived status.
 //   • KEEP: All project slugs, repoUrls, caseStudy paths unchanged.
 
-export type ProjectStatus = 'live' | 'wip' | 'archived' | 'case-study';
+export type ProjectStatus = 'live' | 'wip' | 'archived';
 
 export interface DecisionRecord {
   readonly chosen: string;
