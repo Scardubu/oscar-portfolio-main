@@ -924,3 +924,128 @@ h3, .h3 {
   .glass-nav, .bottom-nav, .floating-hire-cta, .contact-sticky-cta, .retro-grid, .work-surface-glow { display: none !important; }
   body { background: white; color: black; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v24.0 — GLOBALS.CSS ADDITIONS
+   APPEND THIS BLOCK TO THE END OF app/globals.css
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ════ HERO HEADSHOT RING — v24 ════
+   Subtle animated glow ring on the headshot.
+   Mobile: gentle pulse on the teal border.
+   Desktop: static — motion belongs to scroll parallax, not decorative pulses.
+   prefers-reduced-motion: glow stays, animation removed.
+*/
+.hero-headshot-ring {
+  animation: headshot-ring-pulse 4s ease-in-out infinite;
+}
+@keyframes headshot-ring-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px oklch(70% 0.21 188 / 0.08),
+      0 8px 32px oklch(0% 0 0 / 0.50);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px oklch(70% 0.21 188 / 0.14),
+      0 8px 40px oklch(0% 0 0 / 0.55);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-ring { animation: none !important; }
+}
+
+/* ════ FEATURED STACK ROW — v24 ════
+   The 6-skill quick-scan grid in SkillsSection.
+   Inherits glass-surface styles; just adds hover border-top color transition.
+*/
+.featured-skill-card {
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .featured-skill-card:hover {
+    background: var(--glass-bg-hover);
+    transform: translateY(-2px);
+  }
+}
+
+/* ════ STACK STRIP — v24 (AboutSection) ════
+   The technology chip strip in the About section narrative.
+   Small pill chips, no hover needed — visual scan only.
+*/
+.stack-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: oklch(100% 0 0 / 0.03);
+  font-size: var(--text-xs);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.stack-chip:hover { border-color: var(--glass-border-hover); }
+
+/* ════ NAV TAGLINE UPDATE — v24 ════
+   ".nav-tagline" used in Navbar wordmark subtitle.
+   Ensures the "Full-Stack · Infra · ML" line doesn't overflow on very small screens.
+*/
+.nav-tagline {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* ════ MOBILE HIGH-CONTRAST BOOST — v24 Lagos outdoor use ════
+   Under direct sunlight at 390px, text-secondary at oklch(57%) reads poorly.
+   Lift secondary text to 65% luminance on mobile for outdoor legibility.
+   Desktop unchanged — dark office environments don't need this.
+*/
+@media (max-width: 640px) {
+  .text-secondary-boost {
+    color: oklch(68% 0.005 264) !important;
+  }
+  .conviction-stat-label {
+    color: oklch(54% 0.005 264) !important;
+  }
+}
+
+/* ════ SKILL BAR TRANSITION — v24 ════
+   The featured stack row uses inline width transitions.
+   Ensure the transition fires correctly after inView triggers.
+*/
+.featured-skill-bar {
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--skill-bar-track, oklch(100% 0 0 / 0.07));
+  overflow: hidden;
+}
+.featured-skill-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  width: 0%;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+.featured-skill-bar-fill.visible {
+  width: var(--bar-width, 95%);
+}
+
+/* ════ PROOF CALLOUT REFINEMENT — v24 ════
+   The hero-proof-callout already exists; this adds a subtle shimmer on mount
+   to draw attention to the key project names.
+   Fires once on load, not on hover.
+*/
+.hero-proof-callout {
+  animation: callout-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+}
+@keyframes callout-reveal {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-proof-callout { animation: none !important; }
+}
