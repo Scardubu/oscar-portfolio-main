@@ -1,21 +1,46 @@
 ---
 title: 'Hashablanca'
-summary: 'Blockchain analytics infrastructure focused on streaming visibility, anomaly detection, and business-readable operational outputs.'
+summary: 'Privacy-preserving blockchain infrastructure — ZK proofs for document integrity verification, multi-chain token distribution across Ethereum, Polygon, BSC, and StarkNet.'
 tags:
-  - 'Kafka'
-  - 'dbt'
-  - 'React'
-  - 'Python'
+  - 'Circom 2'
+  - 'snarkjs'
+  - 'Solidity'
+  - 'FastAPI'
+  - 'Web3.py'
+  - 'PostgreSQL'
+  - 'Docker'
 ---
 
 ## Problem shape
 
-Blockchain analytics systems become noisy quickly. The challenge is not only ingesting event volume. The harder problem is turning volatile, low-context data into views that operations and compliance teams can act on.
+Document authenticity is easy to claim and hard to prove. A timestamp in a database can be altered. A signature on a file proves the signer existed but not that the file existed at a specific moment without modification. For legal and financial evidence chains, that gap matters: the verifier needs proof that a document existed at a given time and was not changed since — without seeing the document.
+
+The second problem is distribution: token allocation across multiple chains creates coordination complexity. Different chains have different finality windows, gas models, and error surfaces. A distribution system that works reliably on one chain fails in subtle ways on another.
 
 ## Approach
 
-Hashablanca centers the data pipeline first: event ingestion, transformation discipline, and interface clarity. The product surface is designed to reduce interpretation cost instead of increasing dashboard density.
+Hashablanca uses zero-knowledge proofs for document integrity verification. A Circom 2 circuit takes a document hash sequence and produces a proof that the sequence existed at the committed timestamp — without exposing the document itself. Any verifier can validate the proof on-chain using the Groth16 verifier contract without requiring access to the underlying content. Confidentiality and verifiability are simultaneous properties, not a tradeoff.
+
+For multi-chain token distribution, the system uses Web3.py with per-chain configuration objects that encapsulate finality parameters, gas estimation strategy, and retry semantics appropriate for each network. A common abstraction layer handles the distribution logic; network-specific adapters handle chain differences without leaking them upward.
+
+CBOR streaming handles large file processing without loading entire documents into memory — a practical requirement when the system needs to handle 4GB+ files for legal archives.
+
+## Key decisions
+
+**Groth16 over PLONK for on-chain verification**
+
+Groth16 proofs are larger to generate but cheaper to verify on-chain. For a system where documents need to be verified frequently by many parties, the per-verification cost matters more than the one-time proving cost. The tradeoff is justified by the access pattern.
+
+**Off-chain proving, on-chain verification**
+
+ZK proof generation is computationally expensive and inappropriate for on-chain execution. Hashablanca generates proofs off-chain and submits only the succinct proof and public inputs to the verifier contract. This keeps gas costs constant regardless of document size — the proof size is fixed by the Groth16 scheme, not by the content being proven.
+
+**Per-chain adapter pattern over unified multi-chain library**
+
+Generic multi-chain libraries smooth over chain differences in ways that obscure failure modes. A transaction that appears successful on Polygon may require different confirmation depth logic on Ethereum. The adapter pattern makes chain-specific behaviour explicit and testable — incorrect assumptions about one chain don't silently affect another.
 
 ## Delivery signal
 
-The project demonstrates event-stream thinking, infrastructure-aware interface design, and the ability to map technical anomalies into workflows that non-specialist stakeholders can follow.
+Hashablanca demonstrates that privacy and verifiability are not architectural opposites. The ZK proof layer was chosen because it is the correct answer to the problem — not because it is novel. The same architecture discipline applies across the distribution system: reliable delivery under real network conditions, with failure modes that are visible rather than hidden.
+
+The blockchain and ZK skills developed here feed directly into SwarmXQ's audit and replay layer, where cryptographic integrity of agent action logs follows the same append-only, tamper-evident model.
