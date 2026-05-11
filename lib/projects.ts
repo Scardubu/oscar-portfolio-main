@@ -11,6 +11,7 @@ export interface Project {
   readonly chosen: string;
   readonly over: string;
   readonly because: string;
+  readonly featured?: boolean;
   readonly demoUrl?: string;
   readonly githubUrl?: string;
   readonly caseStudy?: string;
@@ -22,7 +23,8 @@ export const PROJECTS: readonly Project[] = [
     title: 'TaxBridge',
     type: 'Compliance Platform · Fintech',
     status: 'case-study',
-    tagline: 'Nigerian SME tax filing from 4 hours to 15 minutes — NRS-integrated, audit-ready.',
+    featured: true,
+    tagline: '4 hours of Nigerian SME tax filing compressed to 15 minutes — NRS-integrated, audit-ready, zero data-loss.',
     description:
       'Full tax compliance workflow automation for Nigerian small businesses — VAT, withholding tax, and annual returns. PostgreSQL RLS isolates each tenant at the database level. Real-time calculations under <150ms at load. Idempotent BullMQ job queue ensures no submission is ever double-processed — even through mid-request server failure. Hash-chained immutable audit trail. 95% test coverage.',
     chosen: 'PostgreSQL Row-Level Security for multi-tenancy',
@@ -57,7 +59,8 @@ export const PROJECTS: readonly Project[] = [
     title: 'SabiScore',
     type: 'ML Platform · Observability',
     status: 'live',
-    tagline: 'Production ML prediction and self-monitoring platform for live decision windows.',
+    featured: true,
+    tagline: '99.9%+ uptime. 45% MTTD improvement. Ensemble ML that alerts before users notice.',
     description:
       'Ensemble credit and prediction scoring (XGBoost, LightGBM, CatBoost) with real-time output quality monitoring. Alerts engineers the moment a model begins degrading — before any user is affected. 99.9%+ uptime (Prometheus · 90-day window). ~30% inference latency reduction via query optimisation and Redis caching. 45% MTTD improvement over reactive alerting baseline.',
     chosen: 'FastAPI + Redis Pub/Sub for inference serving',
@@ -83,32 +86,42 @@ export const PROJECTS: readonly Project[] = [
       'PostgreSQL',
     ],
     demoUrl: 'https://sabiscore.scardubu.dev',
-    githubUrl: 'https://github.com/Scardubu/sabiscore',
+    githubUrl: 'https://github.com/Scardubu/Sabiscore',
     caseStudy: '/work/sabiscore',
   },
   {
-    slug: 'hashablanca',
-    title: 'Hashablanca',
-    type: 'Privacy Infrastructure · Blockchain',
-    status: 'wip',
-    tagline: 'Multi-chain encrypted data transfer with ZK-proof regulatory compliance.',
+    slug: 'swarmxq',
+    title: 'SwarmXQ',
+    type: 'AI Agent Platform · Orchestration',
+    status: 'live',
+    featured: true,
+    tagline: 'Multi-agent operator platform that improves itself between runs — autonomous evolution, live fleet dashboard.',
     description:
-      'Backend for secure, verifiable transfer of sensitive data across Ethereum, Polygon, BSC, and StarkNet simultaneously. Multi-GB AES-256 payloads with automatic retry and full transaction audit records. ZK-SNARK proof pipelines for GDPR-compliant regulatory reporting. 90% integration test coverage. Zero data-loss record throughout.',
-    chosen: 'ZK-SNARKs for regulatory proof generation',
-    over: 'Centralised compliance oracle with full data exposure',
+      'Multi-agent orchestration platform where agents autonomously improve their own task strategies between runs. The evolution layer scores outcomes, replaces low-performing configurations, and produces measurable quality gains without manual tuning. Live dashboard surfaces real-time fleet visibility — task queue depth, agent health, completion rates. Built for reliability under resource constraints; checkpoint-based replay means failed sub-tasks restart from the last consistent state, not from scratch.',
+    chosen: 'Autonomous evolution layer with LLM-guided strategy mutation',
+    over: 'Static agent configurations with manual tuning cycles',
     because:
-      'GDPR mandates minimum data disclosure — ZK proofs validate compliance without revealing payload contents to the verifier',
+      'Manual tuning cannot adapt to novel inputs at scale — autonomous evolution scores strategies against real outcomes and rewrites low performers between runs',
     constraint:
-      'Proof generation must complete before blockchain settlement window closes (~12s on Ethereum mainnet).',
+      'Agents must hold correctness under Lagos network conditions — unreliable connectivity, variable latency, and intermittent API availability.',
     outcomes: [
-      'zero data-loss record',
-      '90% integration test coverage',
-      '4-chain simultaneous sync',
-      'GDPR-proof trails',
+      'self-improving agent fleet',
+      'live orchestration dashboard',
+      'checkpoint-based fault recovery',
+      'zero manual tuning cycles',
     ],
-    stack: ['Solidity', 'ZK-SNARKs', 'IPFS', 'Ethereum', 'Polygon', 'BSC', 'StarkNet', 'Node.js'],
-    githubUrl: 'https://github.com/Scardubu/hashablanca',
-    caseStudy: '/work/hashablanca',
+    stack: [
+      'FastAPI',
+      'Python',
+      'BullMQ',
+      'Redis',
+      'PostgreSQL',
+      'Next.js',
+      'WebSocket',
+      'Docker',
+    ],
+    githubUrl: 'https://github.com/Scardubu/SwarmXQ',
+    caseStudy: '/work/swarmxq',
   },
 ];
 
