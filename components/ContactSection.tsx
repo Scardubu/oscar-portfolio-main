@@ -479,7 +479,7 @@ export function ContactSection() {
           {/* Social links */}
           <m.div
             variants={child}
-            className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
+            className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-4">
               <a
