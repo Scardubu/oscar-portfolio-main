@@ -50,7 +50,7 @@ export function Footer() {
               Oscar Ndugbu
             </Link>
             <p className="mt-1 text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
-              Abuja-built. Globally deployed.{' '}
+              Lagos-built. Globally deployed.{' '}
               <span style={{ color: 'var(--color-text-muted)' }}>
                 Battle-tested in audit season.
               </span>
