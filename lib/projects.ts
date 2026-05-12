@@ -132,6 +132,40 @@ export const PROJECTS: readonly Project[] = [
     caseStudy: '/work/swarmxq',
   },
   {
+    slug: 'hashablanca',
+    title: 'Hashablanca',
+    type: 'Blockchain · ZK Privacy',
+    status: 'case-study',
+    featured: false,
+    tagline:
+      'ZK proofs for document integrity verification — confidentiality and verifiability as simultaneous properties, not a tradeoff.',
+    description:
+      'Privacy-preserving blockchain infrastructure using Circom 2 circuits and Groth16 proofs. Any verifier can confirm a document existed and was unmodified at a given timestamp without seeing the document. Multi-chain token distribution across Ethereum, Polygon, BSC, and StarkNet via per-chain adapters. CBOR streaming handles 4GB+ file archives. 90%+ test coverage. GDPR-compliant PII detection and anonymisation.',
+    chosen: 'Groth16 ZK proofs with off-chain proving',
+    over: 'Database timestamp signatures',
+    because:
+      'Database timestamps are mutable — ZK proofs provide cryptographic verifiability of document existence and integrity without exposing content',
+    constraint:
+      'Proof generation must complete off-chain and fit within on-chain verifier gas limits across four EVM-compatible networks.',
+    outcomes: [
+      'ZK proof integrity layer',
+      '4 chain networks',
+      '4GB+ file processing',
+      '90%+ test coverage',
+    ],
+    stack: [
+      'Circom 2',
+      'snarkjs (Groth16)',
+      'Solidity',
+      'FastAPI',
+      'Web3.py',
+      'PostgreSQL',
+      'Docker',
+    ],
+    githubUrl: 'https://github.com/Scardubu/hashablanca',
+    caseStudy: '/work/hashablanca',
+  },
+  {
     slug: 'ubec',
     title: 'UBEC Data Pipeline',
     type: 'Federal Infrastructure · Data Engineering',
