@@ -364,7 +364,7 @@ export function ContactSection() {
           animate={inView ? 'visible' : 'hidden'}
         >
           <m.div variants={child} className="section-kicker-row">
-            <span className="section-number" aria-hidden="true">05</span>
+            <span className="section-number" aria-hidden="true">06</span>
             <span className="section-label">Contact</span>
           </m.div>
 
