@@ -53,7 +53,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
           {/* ── Section header ────────────────────────────────────────────── */}
           <m.div variants={child} className="mb-8 sm:mb-12">
             <div className="section-kicker-row">
-              <span className="section-number" aria-hidden="true">04</span>
+              <span className="section-number" aria-hidden="true">05</span>
               <span className="section-label">Writing</span>
             </div>
 
