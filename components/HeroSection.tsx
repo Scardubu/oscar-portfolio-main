@@ -211,6 +211,7 @@ export function HeroSection() {
             variants={heroContainer}
             initial="hidden"
             animate="visible"
+            className="hero-grid-child"
           >
             {/* Availability pill */}
             <m.div variants={child}>
@@ -249,13 +250,14 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* v19: Kicker now explicitly names full-stack dimension */}
+            {/* v25: Kicker — full-stack signal, wrapped safely on mobile */}
             <m.p
               variants={child}
-              className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed"
-              style={{ color: 'var(--color-film-teal)', wordBreak: 'break-word', overflowWrap: 'break-word' }}
+              className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
+              style={{ color: 'var(--color-film-teal)' }}
             >
-              Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global
+              <span className="inline sm:hidden">Full-Stack · React Native · Next.js 15 · AI Systems</span>
+              <span className="hidden sm:inline">Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global</span>
             </m.p>
 
             {/* Hero headline: A24 Didone word-by-word reveal */}
@@ -305,8 +307,8 @@ export function HeroSection() {
             {/* Body copy — production systems + full-stack signal */}
             <m.p
               variants={child}
-              className="mt-6 w-full text-base leading-[1.8]"
-              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)', overflowWrap: 'break-word' }}
+              className="mt-6 w-full text-base leading-[1.8] hero-body-text"
+              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)' }}
             >
               Production systems that stay alive when it matters most —
               compliant, fast, and relentlessly reliable. Whether it&apos;s a
@@ -326,18 +328,15 @@ export function HeroSection() {
             </m.div>
 
             {/* Proof callout — updated with SwarmXQ dashboard mention */}
-            <m.div variants={child} className="hero-proof-callout">
+            <m.div variants={child} className="hero-proof-callout overflow-hidden">
               <p
-                className="text-sm leading-relaxed font-medium"
+                className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
               >
-                TaxBridge: filing 4h → 15min · React Native app · Fastify API.
-                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                SabiScore: 99.9%+ uptime · ensemble ML · Next.js dashboard.
-                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                SwarmXQ: self-improving agent fleet · Next.js 15 live ops dashboard.
-                <span style={{ color: 'var(--color-text-muted)' }}> · </span>
-                Shipped in Lagos. Running globally. Battle-tested in audit season.
+                TaxBridge: filing 4h → 15min · React Native app · Fastify API.{' '}
+                SabiScore: 99.9%+ uptime · ensemble ML · Next.js dashboard.{' '}
+                SwarmXQ: self-improving agent fleet · live ops dashboard.{' '}
+                <span style={{ color: 'var(--color-film-teal)' }}>Shipped in Lagos. Running globally.</span>
               </p>
             </m.div>
 
