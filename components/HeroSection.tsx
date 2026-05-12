@@ -1,26 +1,30 @@
-// CONVICTION ENGINE v19.0 — HeroSection
+// CONVICTION ENGINE v20.0 — HeroSection
 //
-// v19 CHANGES vs v18:
+// v20 CHANGES vs v19:
 //
-//   KICKER: "Full-Stack · Infrastructure · AI Systems · Lagos → Global"
-//     Previously underweighted the frontend dimension. Now explicit.
-//     React Native · Next.js 15 are named in proof column #4.
+//   MOBILE HEADSHOT (critical fix):
+//     mt-2 mb-7 → mt-8 mb-8   — deliberate breathing room between pill and face.
+//     h-20/h-24 → h-24/h-28   — commanding presence, not a thumbnail.
+//     Border upgraded: 3px stroke, tighter inner glow ring for "liquid glass" depth.
+//     The vertical rhythm now feels intentional: pill → space → face → kicker → headline.
 //
-//   PROOF COLUMN #4 — FULL STACK OWNERSHIP:
-//     Upgraded body copy to explicitly name React Native, Next.js 15,
-//     Tailwind v4, Framer Motion. Engineers scan this as a tech signal;
-//     founders and PMs read it as "one hire, complete product".
+//   CTA HIERARCHY (v20):
+//     Primary: "Start a conversation" with mailto + green dot (live signal).
+//     The primary CTA copy change from "Email Oscar" → "Start a conversation" converts
+//     better with founders/PMs who want to initiate but not cold-email. Identical mailto.
 //
-//   PROOF CALLOUT: Added "React Native · Next.js 15 dashboard" to SwarmXQ line.
+//   TRUST SIGNAL:
+//     Proof callout appended: "Shipped in Lagos · Running globally · Battle-tested in audit season."
 //
-//   HEADSHOT (desktop): Increased from h-20/xl:h-24 → h-28/xl:h-36 for
-//     stronger visual presence on desktop without hurting LCP (still priority).
+//   STAT STRIP DATA ATTRS:
+//     Each stat now carries data-stat for CSS color targeting via globals.css selectors.
 //
-//   MOBILE HEADSHOT: Added subtle teal glow ring animation (CSS keyframe)
-//     for attention without JS cost.
+//   DESKTOP HEADSHOT:
+//     h-32/xl:h-44 → h-36/xl:h-48 — larger commanding presence in the right column.
+//     border-width 2.5px for high-DPI screens.
 //
-//   KEEP: All v18 architecture — CTA-after-proof conversion law, A24 Didone
-//     word-by-word reveal, scroll-linked parallax, spring physics, ReducedMotion.
+//   KEEP: All v19 — word-by-word A24 Didone reveal, scroll-linked parallax,
+//     spring physics, ReducedMotion fallbacks, ProofCarousel, LiveActivityBar, HeroVisual.
 //
 'use client';
 
@@ -52,18 +56,15 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
   ),
 });
 
-/* ── Headline words ────────────────────────────────────────────────────────── */
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
-/* ── Conviction stats — irrefutable metrics pre-CTA ───────────────────────── */
 const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Filing time' },
-  { value: '99.9%+',     label: '90-day uptime' },
-  { value: 'sub-150ms',  label: 'API p99' },
-  { value: '45% MTTD',   label: 'Improvement' },
+  { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
+  { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
+  { value: 'sub-150ms',  label: 'API p99',        stat: 'latency' },
+  { value: '45% MTTD',   label: 'Improvement',   stat: 'mttd'    },
 ] as const;
 
-/* ── Proof pillars — swipeable on mobile ──────────────────────────────────── */
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
@@ -79,11 +80,10 @@ const PROOF_COLUMNS = [
   },
   {
     label: 'FULL STACK OWNERSHIP',
-    body: 'React Native mobile app through Next.js 15 dashboard to FastAPI inference to PostgreSQL. Tailwind v4, Framer Motion, Effect-TS. One engineer, zero handoff tax — product to infrastructure.',
+    body: 'React Native mobile app through Next.js 15 dashboard to FastAPI inference to PostgreSQL. Tailwind v4, Framer Motion, Effect-TS. One engineer, zero handoff tax.',
   },
 ] as const;
 
-/* ── Proof carousel — swipeable on mobile, grid on sm+ ───────────────────── */
 function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -106,7 +106,6 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <>
-      {/* Carousel — mobile scroll-snap, desktop grid */}
       <div
         ref={scrollRef}
         className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] mt-8"
@@ -139,7 +138,6 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         ))}
       </div>
 
-      {/* Scroll indicator dots — mobile only */}
       <div className="carousel-dots" aria-hidden="true">
         {PROOF_COLUMNS.map((_, i) => (
           <span
@@ -152,12 +150,10 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-/* ── Main HeroSection ──────────────────────────────────────────────────────── */
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
 
-  /* ── Scroll-linked parallax — desktop only ────────────────────────────── */
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: HERO_SCROLL_CONFIG.offset,
@@ -181,7 +177,6 @@ export function HeroSection() {
     reducedMotion ? [1, 1] : HERO_SCROLL_CONFIG.opacityOutput,
   );
 
-  /* ── Variant configuration ───────────────────────────────────────────── */
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
@@ -199,7 +194,6 @@ export function HeroSection() {
         paddingBottom: 'clamp(2rem, 4vw, 6rem)',
       }}
     >
-      {/* Ambient background glows — suppressed on mobile via CSS */}
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
@@ -216,7 +210,7 @@ export function HeroSection() {
             {/* Availability pill */}
             <m.div variants={child}>
               <div
-                className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
                 aria-label="Availability status: Available for Staff+ roles"
               >
                 <span className="dot-live" aria-hidden="true" />
@@ -226,31 +220,36 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Headshot — mobile only: below pill with deliberate breathing room */}
+            {/* v20: Mobile headshot — mt-8 mb-8 for deliberate breathing room */}
             <m.div
               variants={child}
-              className="mt-2 mb-7 flex lg:hidden justify-start"
+              className="mt-8 mb-8 flex lg:hidden justify-start"
               aria-hidden="true"
             >
               <div
-                className="relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
-                  boxShadow: '0 0 0 5px oklch(70% 0.21 188 / 0.10), 0 0 0 10px oklch(70% 0.21 188 / 0.05), 0 10px 36px oklch(0% 0 0 / 0.55)',
+                  border: '3px solid oklch(70% 0.21 188 / 0.60)',
+                  boxShadow: [
+                    '0 0 0 1px oklch(70% 0.21 188 / 0.18)',
+                    '0 0 0 6px oklch(70% 0.21 188 / 0.09)',
+                    '0 0 0 13px oklch(70% 0.21 188 / 0.04)',
+                    '0 14px 44px oklch(0% 0 0 / 0.62)',
+                  ].join(', '),
                 }}
               >
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 640px) 96px, 80px"
+                  sizes="(min-width: 640px) 112px, 96px"
                   className="object-cover object-top"
                   priority
                 />
               </div>
             </m.div>
 
-            {/* v27: Kicker — full-stack signal, nowrap chunks prevent mid-word breaks */}
+            {/* Kicker */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
@@ -314,7 +313,7 @@ export function HeroSection() {
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* Body copy — production systems + full-stack signal */}
+            {/* Body copy */}
             <m.p
               variants={child}
               className="mt-6 w-full text-base leading-[1.8] hero-body-text"
@@ -325,11 +324,11 @@ export function HeroSection() {
               quiet Tuesday or a FIRS filing deadline, the system ships.
             </m.p>
 
-            {/* Conviction stat strip */}
+            {/* Conviction stat strip — data-stat drives per-metric CSS color */}
             <m.div variants={child} aria-label="Performance metrics">
               <div className="conviction-stat-strip" role="list">
-                {CONVICTION_STATS.map(({ value, label }) => (
-                  <div key={label} className="conviction-stat" role="listitem">
+                {CONVICTION_STATS.map(({ value, label, stat }) => (
+                  <div key={label} className="conviction-stat" data-stat={stat} role="listitem">
                     <span className="conviction-stat-value">{value}</span>
                     <span className="conviction-stat-label">{label}</span>
                   </div>
@@ -337,8 +336,8 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Proof callout — updated with SwarmXQ dashboard mention */}
-            <m.div variants={child} className="hero-proof-callout overflow-hidden">
+            {/* Proof callout with Lagos trust signal */}
+            <m.div variants={child} className="hero-proof-callout overflow-hidden mt-6">
               <p
                 className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
@@ -346,7 +345,9 @@ export function HeroSection() {
                 TaxBridge: filing 4h → 15min · React Native app · Fastify API.{' '}
                 SabiScore: 99.9%+ uptime · ensemble ML · Next.js dashboard.{' '}
                 SwarmXQ: self-improving agent fleet · live ops dashboard.{' '}
-                <span style={{ color: 'var(--color-film-teal)' }}>Shipped in Lagos. Running globally.</span>
+                <span style={{ color: 'var(--color-film-teal)' }}>
+                  Shipped in Lagos · Running globally · Battle-tested in audit season.
+                </span>
               </p>
             </m.div>
 
@@ -367,7 +368,7 @@ export function HeroSection() {
                   style={{ background: 'var(--color-success)' }}
                   aria-hidden="true"
                 />
-                Email Oscar
+                Start a conversation
               </a>
               <Link
                 href="#section-projects"
@@ -401,15 +402,19 @@ export function HeroSection() {
           </m.div>
 
           {/* ── Right column: Headshot + HeroVisual — desktop only ──────── */}
-          {/* v20: Headshot enlarged h-32/xl:h-44, circular, cinematic glass ring */}
           <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
             <div className="flex justify-end">
               <m.div
-                className="relative h-32 w-32 xl:h-44 xl:w-44 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-36 w-36 xl:h-48 xl:w-48 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '2px solid oklch(70% 0.21 188 / 0.50)',
-                  boxShadow:
-                    '0 0 0 6px oklch(70% 0.21 188 / 0.08), 0 0 0 12px oklch(70% 0.21 188 / 0.04), 0 20px 60px oklch(0% 0 0 / 0.60), inset 0 1px 0 oklch(100% 0 0 / 0.14)',
+                  border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
+                  boxShadow: [
+                    '0 0 0 1px oklch(70% 0.21 188 / 0.12)',
+                    '0 0 0 7px oklch(70% 0.21 188 / 0.08)',
+                    '0 0 0 14px oklch(70% 0.21 188 / 0.04)',
+                    '0 24px 72px oklch(0% 0 0 / 0.65)',
+                    'inset 0 1px 0 oklch(100% 0 0 / 0.14)',
+                  ].join(', '),
                 }}
                 whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 240, damping: 22 } }}
               >
@@ -417,7 +422,7 @@ export function HeroSection() {
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 1280px) 176px, 128px"
+                  sizes="(min-width: 1280px) 192px, 144px"
                   className="object-cover object-top"
                   priority
                 />
