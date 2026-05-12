@@ -373,7 +373,7 @@ export function ContactSection() {
             id="contact-heading"
             className="mb-4 md:mb-5"
           >
-            Let&apos;s build systems that work at 2am.
+            The system is ready. Are you?
           </m.h2>
 
           <m.p
@@ -381,8 +381,8 @@ export function ContactSection() {
             className="mb-6 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Whether you&apos;re hiring for Staff+, co-founding, or fixing something
-            on fire — start here.
+            Hiring for Staff+, building something from scratch, or putting out a
+            fire — the conversation starts here. Response within 24 hours.
           </m.p>
 
           <m.div
@@ -415,11 +415,15 @@ export function ContactSection() {
             </m.div>
 
             <m.div variants={child} className="flex flex-col gap-4">
+              {/* v20: "Email Oscar directly" is secondary here — the form above is the primary
+                  action. Two full-width teal CTAs stacked on mobile creates visual noise and
+                  dilutes conversion intent. This becomes a clear secondary option. */}
               <div className="flex flex-col gap-3">
                 <a
                   href="mailto:scardubu@gmail.com"
-                  className="cta-primary cta-primary--lg tactile-press"
-                  aria-label="Email Oscar Ndugbu directly"
+                  className="cta-secondary cta-secondary--lg tactile-press"
+                  aria-label="Email Oscar Ndugbu directly at scardubu@gmail.com"
+                  style={{ justifyContent: 'center' }}
                 >
                   <span
                     className="inline-block h-2 w-2 rounded-full"
