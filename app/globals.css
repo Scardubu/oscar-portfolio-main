@@ -1497,3 +1497,159 @@ h3, .h3 {
   outline: 2px solid var(--color-film-teal);
   outline-offset: 2px;
 }
+/* ════════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v27.0 — GLOBALS.CSS PATCH
+   Mobile blank-space guard + typography micro-polish + section flow fixes.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Mobile blank-space guard ─────────────────────────────────────────────
+   The body padding-bottom reserves space for the fixed bottom nav (72px).
+   On mobile, if page content is shorter than the viewport, the background
+   is exposed below the last DOM element. Adding a min-height to the layout
+   isolate wrapper prevents the "all-black void" below the footer.
+   Only applied on mobile where the bottom nav exists.
+*/
+@media (max-width: 768px) {
+  body > div:first-of-type,
+  body .relative.isolate {
+    min-height: calc(100svh - var(--nav-height, 60px));
+  }
+
+  /* Footer should never have extra space below on mobile */
+  footer[role="contentinfo"] {
+    margin-bottom: 0;
+  }
+
+  /* Ensure the footer bottom strip sits flush against body padding */
+  footer[role="contentinfo"] .border-t:last-child {
+    padding-bottom: 1.25rem;
+  }
+}
+
+/* ── Section breathing — consistent rhythm on mobile ──────────────────────
+   --section-py clamp(2.5rem, 7vw, 8.5rem) is correct but all sections
+   share it. The hero already has its own padding via style prop.
+   This ensures no double-stacking when sections border each other.
+*/
+section.border-t + section.border-t {
+  /* border-top already provides visual separation; py is sufficient */
+}
+
+/* ── Hero body text — improved line-height on narrow viewports ────────────
+   At 320px, leading-[1.8] with text-base creates awkward line breaks.
+   Tighten slightly on very small screens.
+*/
+@media (max-width: 374px) {
+  .hero-body-text {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+}
+
+/* ── Hero kicker wrap fix ─────────────────────────────────────────────────
+   "AI SYS-TEMS" break observed in screenshot 1 at ~390px.
+   Force word-break: keep-all on the full-stack kicker spans.
+*/
+.hero-kicker {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+/* ── Conviction stat strip — per-metric color selectors ──────────────────
+   Ensure nth-child coloring works even when variants/data attributes aren't set.
+   v27 explicit fallback: first=teal(filing), second=green(uptime),
+   third=teal(latency), fourth=violet(mttd).
+*/
+.conviction-stat:nth-child(1) .conviction-stat-value { color: var(--color-stat-filing);  }
+.conviction-stat:nth-child(2) .conviction-stat-value { color: var(--color-stat-uptime);  }
+.conviction-stat:nth-child(3) .conviction-stat-value { color: var(--color-stat-latency); }
+.conviction-stat:nth-child(4) .conviction-stat-value { color: var(--color-stat-mttd);    }
+
+/* ── Bottom nav active line — brighter on high-brightness displays ────────
+   Lagos outdoor use: ensure the teal top-line indicator has enough contrast.
+*/
+@media (max-width: 768px) {
+  .bottom-nav-item.active::after {
+    background: var(--color-film-teal);
+    box-shadow: 0 0 14px oklch(70% 0.21 188 / 0.55), 0 0 4px oklch(70% 0.21 188 / 0.8);
+  }
+}
+
+/* ── Headshot ring — v27 refined pulse with double-ring depth ─────────────
+   The v24 ring-pulse used a single shadow. v27 adds a faint outer ring
+   for liquid-glass multi-layer depth. Mobile only (desktop = Framer Motion).
+*/
+@media (max-width: 1023px) {
+  @keyframes headshot-ring-pulse-v27 {
+    0%, 100% {
+      box-shadow:
+        0 0 0 3px oklch(70% 0.21 188 / 0.12),
+        0 0 0 6px oklch(70% 0.21 188 / 0.05),
+        0 10px 36px oklch(0% 0 0 / 0.55);
+    }
+    50% {
+      box-shadow:
+        0 0 0 4px oklch(70% 0.21 188 / 0.22),
+        0 0 0 9px oklch(70% 0.21 188 / 0.08),
+        0 12px 40px oklch(0% 0 0 / 0.62);
+    }
+  }
+  .hero-headshot-ring {
+    animation: headshot-ring-pulse-v27 4s ease-in-out infinite;
+  }
+}
+
+/* ── Proof carousel pill — gap below on very small screens ───────────────
+   Carousel dots get clipped on 320px when margin-top is too small.
+*/
+@media (max-width: 374px) {
+  .carousel-dots { margin-top: 0.625rem; }
+}
+
+/* ── OSS card install command — prevent overflow on narrow screens ─────── */
+@media (max-width: 430px) {
+  .oss-install-cmd {
+    font-size: 0.6875rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ── Featured skill card — explicit border-top accent transition ──────────
+   The skill cards in SkillsSection use border-top for the colored bar.
+   Transition so the bar animates in smoothly on inView.
+*/
+.featured-skill-card {
+  border-top-color: transparent;
+  transition:
+    border-top-color 0.4s var(--ease-out) 0.1s,
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-spring);
+}
+.featured-skill-card.in-view {
+  border-top-color: var(--skill-accent, var(--color-film-teal));
+}
+
+/* ── Writing filter chip scrollbar — hide on iOS ──────────────────────── */
+.filter-chip-row {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.filter-chip-row::-webkit-scrollbar { display: none; }
+
+/* ── Contact form select — dark option background cross-browser ───────────
+   Firefox respects background on <option> but Chrome/Safari do not on dark.
+   Fallback to appearance:none on all browsers for consistency.
+*/
+.contact-field-select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── Print: hide bottom nav correctly ─────────────────────────────────── */
+@media print {
+  .bottom-nav, .floating-hire-cta { display: none !important; }
+  body { padding-bottom: 0 !important; }
+}
