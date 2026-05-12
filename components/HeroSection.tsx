@@ -226,10 +226,10 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Headshot — mobile only: centered below pill, above kicker */}
+            {/* Headshot — mobile only: below pill with explicit gap */}
             <m.div
               variants={child}
-              className="mb-6 flex lg:hidden justify-start"
+              className="mt-4 mb-6 flex lg:hidden justify-start"
               aria-hidden="true"
             >
               <div
