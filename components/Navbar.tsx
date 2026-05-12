@@ -210,7 +210,7 @@ export function NavBar() {
               </span>
               {/* v18: Full-Stack replaces Backend — correct signal for a full-stack engineer */}
               <span
-                className="font-mono text-[9px] tracking-[0.12em] uppercase transition-colors duration-150 group-hover:text-white/60"
+                className="nav-tagline font-mono text-[9px] tracking-[0.12em] uppercase transition-colors duration-150 group-hover:text-white/60"
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 Full-Stack · Infra · ML
