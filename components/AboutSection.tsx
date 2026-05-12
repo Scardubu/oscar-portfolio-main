@@ -251,26 +251,34 @@ export function AboutSection() {
               variants={itemVariants}
               className="mb-6 hidden lg:flex flex-col items-center gap-3"
             >
-              <div className="relative" aria-hidden="true">
-                {/* Conic teal ring */}
+              <m.div
+                className="relative"
+                aria-hidden="true"
+                whileHover={{ scale: 1.04, transition: { type: 'spring', stiffness: 260, damping: 22 } }}
+              >
+                {/* Conic teal ring — larger radius to match 180px image */}
                 <div
-                  className="absolute -inset-[3px] rounded-[calc(var(--radius-xl)+4px)]"
+                  className="absolute -inset-[3px] rounded-full"
                   style={{
                     background:
-                      'conic-gradient(from 180deg, oklch(70% 0.21 188 / 0.6), transparent 55%, oklch(70% 0.21 188 / 0.25) 100%)',
+                      'conic-gradient(from 180deg, oklch(70% 0.21 188 / 0.65), transparent 55%, oklch(70% 0.21 188 / 0.28) 100%)',
                   }}
                   aria-hidden="true"
                 />
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu"
-                  width={144}
-                  height={144}
+                  width={180}
+                  height={180}
                   priority={false}
-                  className="relative rounded-[var(--radius-xl)] object-cover object-top"
-                  style={{ width: '144px', height: '144px' }}
+                  className="relative rounded-full object-cover object-top"
+                  style={{
+                    width: '180px',
+                    height: '180px',
+                    boxShadow: '0 16px 48px oklch(0% 0 0 / 0.55)',
+                  }}
                 />
-              </div>
+              </m.div>
               <div className="text-center">
                 <p
                   className="font-display text-sm font-bold"
@@ -282,7 +290,7 @@ export function AboutSection() {
                   className="font-mono text-[10px] tracking-widest uppercase mt-0.5"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
-                  Full-Stack · Infra · ML
+                  Full-Stack · Infra · ML · Lagos
                 </p>
               </div>
             </m.div>
