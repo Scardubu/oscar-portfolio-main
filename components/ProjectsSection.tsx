@@ -452,9 +452,9 @@ export function ProjectsSection() {
             </div>
           )}
 
-          {/* Non-featured grid */}
+          {/* Non-featured grid — single project: full-width; multiple: 2-col */}
           {gridProjects.length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className={gridProjects.length === 1 ? 'grid gap-4' : 'grid gap-4 sm:grid-cols-2'}>
               {gridProjects.map((project, i) => (
                 <ProjectCard
                   key={project.slug}
