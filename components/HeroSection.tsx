@@ -216,7 +216,7 @@ export function HeroSection() {
             {/* Availability pill */}
             <m.div variants={child}>
               <div
-                className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
                 aria-label="Availability status: Available for Staff+ roles"
               >
                 <span className="dot-live" aria-hidden="true" />
@@ -226,38 +226,48 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Headshot — mobile only: below pill with explicit gap */}
+            {/* Headshot — mobile only: below pill with deliberate breathing room */}
             <m.div
               variants={child}
-              className="mt-4 mb-6 flex lg:hidden justify-start"
+              className="mt-2 mb-7 flex lg:hidden justify-start"
               aria-hidden="true"
             >
               <div
-                className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '2px solid oklch(70% 0.21 188 / 0.50)',
-                  boxShadow: '0 0 0 4px oklch(70% 0.21 188 / 0.10), 0 8px 32px oklch(0% 0 0 / 0.55)',
+                  border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
+                  boxShadow: '0 0 0 5px oklch(70% 0.21 188 / 0.10), 0 0 0 10px oklch(70% 0.21 188 / 0.05), 0 10px 36px oklch(0% 0 0 / 0.55)',
                 }}
               >
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="80px"
+                  sizes="(min-width: 640px) 96px, 80px"
                   className="object-cover object-top"
                   priority
                 />
               </div>
             </m.div>
 
-            {/* v25: Kicker — full-stack signal, wrapped safely on mobile */}
+            {/* v27: Kicker — full-stack signal, nowrap chunks prevent mid-word breaks */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
               style={{ color: 'var(--color-film-teal)' }}
             >
-              <span className="inline sm:hidden">Full-Stack · React Native · Next.js 15 · AI Systems</span>
-              <span className="hidden sm:inline">Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global</span>
+              <span className="inline sm:hidden">
+                <span className="whitespace-nowrap">Full-Stack</span>
+                {' · '}
+                <span className="whitespace-nowrap">React Native</span>
+                {' · '}
+                <span className="whitespace-nowrap">Next.js 15</span>
+                {' · '}
+                <span className="whitespace-nowrap">AI Systems</span>
+              </span>
+              <span className="hidden sm:inline">
+                Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global
+              </span>
             </m.p>
 
             {/* Hero headline: A24 Didone word-by-word reveal */}
