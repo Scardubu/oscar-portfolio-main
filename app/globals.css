@@ -1729,3 +1729,106 @@ section.border-t + section.border-t {
     padding-bottom: max(env(safe-area-inset-bottom), 8px);
   }
 }
+
+/* ════ CONVICTION ENGINE v20.1 — CSS PATCH (ContactSection + misc) ════
+   Appended. ContactSection cta-secondary--lg, About narrative spacing,
+   and contact form field refinements.
+   ════════════════════════════════════════════ */
+
+/* ── v20.1: cta-secondary--lg — matches cta-primary--lg proportions ───────
+   Used in ContactSection right column — same height as primary, secondary style.
+   This eliminates the visual weight discrepancy between the two CTA sizes.
+*/
+.cta-secondary--lg {
+  min-height: 56px;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* ── v20.1: Section heading numbers — slightly larger on mobile ───────────
+   Currently 14px on small screens. Bump to 15px for better optical
+   weight matching the adjacent section label text.
+*/
+.section-number {
+  font-size: clamp(0.75rem, 1vw, 0.875rem) !important;
+}
+
+/* ── v20.1: Contact form — refined field focus ring ──────────────────────
+   The existing focus ring uses browser default. Upgrade to teal for
+   brand coherence and accessibility clarity.
+*/
+.contact-field-input:focus {
+  outline: none;
+  border-color: oklch(70% 0.21 188 / 0.60) !important;
+  box-shadow: 0 0 0 3px oklch(70% 0.21 188 / 0.12) !important;
+}
+
+/* ── v20.1: contact-field-select — remove browser-default arrow on WebKit */
+.contact-field-select::-webkit-inner-spin-button,
+.contact-field-select::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* ── v20.1: About narrative — improve paragraph leading on small screens ─ */
+@media (max-width: 640px) {
+  .about-narrative-p {
+    font-size: 0.9375rem;
+    line-height: 1.85;
+  }
+}
+
+/* ── v20.1: Projects section intro — tighter descender gap ───────────── */
+#section-projects h2 {
+  letter-spacing: -0.035em;
+}
+
+/* ── v20.1: Writing filter chips — active state ring ──────────────────── */
+.writing-filter-chip[data-active='true'] {
+  border-color: oklch(70% 0.21 188 / 0.5) !important;
+  color: oklch(70% 0.21 188) !important;
+  background: oklch(70% 0.21 188 / 0.07) !important;
+}
+
+/* ── v20.1: Glass nav border-bottom refinement ────────────────────────── */
+.glass-nav {
+  border-bottom: 0.5px solid oklch(100% 0 0 / 0.06);
+}
+.glass-nav[data-scrolled='true'] {
+  border-bottom-color: oklch(100% 0 0 / 0.10);
+}
+
+/* ── v20.1: Proof card left accent line — on hover reveal ─────────────── */
+.proof-card::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 2px;
+  background: var(--color-film-teal);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.proof-card:hover::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-card::after { transition: none; }
+}
+
+/* ── v20.1: Stat strip value — improve mobile mono readability ────────── */
+@media (max-width: 479px) {
+  .conviction-stat-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+  }
+  .conviction-stat-value {
+    font-size: 0.75rem;
+  }
+}
