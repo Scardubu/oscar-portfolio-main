@@ -84,7 +84,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             */}
             <m.div
               variants={child}
-              className="mt-5 -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
+              className="filter-chip-row mt-5 -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
               style={{ scrollbarWidth: 'none', scrollSnapType: 'x mandatory' }}
               role="group"
               aria-label="Filter articles by topic"
