@@ -419,14 +419,14 @@ export function ContactSection() {
                 <a
                   href="mailto:scardubu@gmail.com"
                   className="cta-primary cta-primary--lg tactile-press"
-                  aria-label="Email Oscar Ndugbu"
+                  aria-label="Email Oscar Ndugbu directly"
                 >
                   <span
                     className="inline-block h-2 w-2 rounded-full"
                     style={{ background: 'var(--color-success)' }}
                     aria-hidden="true"
                   />
-                  Start a conversation
+                  Email Oscar directly
                 </a>
                 <a
                   href="/cv/oscar-ndugbu-resume.pdf"
