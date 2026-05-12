@@ -8,7 +8,7 @@
 //
 //   DESKTOP CTA: "Book a Call" → "Hire Oscar" — more direct conversion language.
 //
-//   MOBILE CTA: "Hire me" → explicit "Hire Oscar" — personal, removes ambiguity.
+//   MOBILE CTA: "Hire Oscar" → explicit "Hire Oscar" — personal, removes ambiguity.
 //
 //   KEEP: All v17 architecture unchanged.
 //
@@ -272,17 +272,16 @@ export function NavBar() {
             {/* ── Mobile: emergency CTA — film teal for visibility ─────── */}
             <a
               href="mailto:scardubu@gmail.com"
-              className="flex md:hidden items-center justify-center rounded-md px-3 py-2 text-xs font-bold transition active:scale-95"
+              className="flex md:hidden items-center justify-center rounded-md border border-white/20 px-3 py-2 text-xs font-semibold transition active:scale-95 hover:border-white/35 hover:bg-white/6"
               style={{
                 minHeight: '36px',
                 minWidth: '44px',
-                color: 'oklch(8% 0.01 265)',
-                background: 'var(--color-film-teal)',
-                boxShadow: '0 2px 10px oklch(70% 0.21 188 / 0.25)',
+                color: 'var(--color-film-teal)',
+                background: 'oklch(70% 0.21 188 / 0.08)',
               }}
               aria-label="Email Oscar to discuss opportunities"
             >
-              Hire me
+              Hire Oscar
             </a>
           </div>
         </nav>
