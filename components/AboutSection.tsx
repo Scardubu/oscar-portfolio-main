@@ -152,23 +152,31 @@ export function AboutSection() {
               style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
             >
               Principal full-stack engineer and platform architect with four years of
-              independent product delivery. TaxBridge ships as a React Native / Expo 54
-              mobile app backed by a Fastify 5 API with PostgreSQL 15 RLS enforcing
-              tenant isolation at the database engine level. SabiScore serves ensemble
-              ML inference (XGBoost, LightGBM, CatBoost) behind a Next.js 15 dashboard
-              with 99.9%+ uptime on a 90-day Prometheus window. SwarmXQ orchestrates a
-              self-improving AI agent fleet with a live ops dashboard in Next.js 15.
+              independent product delivery. Three live production systems, zero acquired
+              technical debt by design.
             </m.p>
 
             <m.p
               variants={itemVariants}
               className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
-              style={{ color: 'var(--color-text-primary)', opacity: 0.70 }}
+              style={{ color: 'var(--color-text-primary)', opacity: 0.75 }}
             >
-              The non-CS background (B.Tech Environmental Technology, FUTO) is a feature,
-              not a gap — it means every system decision comes from first principles rather
-              than pattern-matching the textbook answer. Four cloud certifications and 15+
-              merged upstream contributions are the receipts.
+              TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS
+              enforcing tenant isolation at the database engine level.
+              SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost) behind a
+              Next.js 15 dashboard — 99.9%+ uptime, 90-day Prometheus window.
+              SwarmXQ: self-improving AI agent fleet with live ops visibility.
+            </m.p>
+
+            <m.p
+              variants={itemVariants}
+              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
+              style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
+            >
+              Non-CS background (B.Tech Environmental Technology, FUTO) is a
+              feature — every architecture decision comes from first principles, not
+              textbook pattern-matching. Four cloud certs and 15+ merged upstream
+              contributions are the receipts.
             </m.p>
 
             {/* Stack strip */}
