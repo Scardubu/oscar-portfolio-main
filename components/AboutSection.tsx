@@ -218,7 +218,7 @@ export function AboutSection() {
                 className="mb-2 font-mono text-[10px] tracking-widest uppercase font-semibold"
                 style={{ color: 'var(--color-film-teal)' }}
               >
-                Federal infrastructure · UBEC
+                Federal infrastructure · UBEC · Abuja HQ
               </p>
               <p className="text-sm leading-7" style={{ color: 'var(--color-text-secondary)' }}>
                 Over a decade building the data systems that tracked school funding
@@ -239,8 +239,8 @@ export function AboutSection() {
               className="mt-8 text-lg font-semibold"
               style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}
             >
-              Abuja precision.{' '}
-              <span style={{ color: 'var(--color-film-teal)' }}>Global scale.</span>
+              Lagos-built.{' '}
+              <span style={{ color: 'var(--color-film-teal)' }}>Running globally.</span>
             </m.p>
           </div>
 
