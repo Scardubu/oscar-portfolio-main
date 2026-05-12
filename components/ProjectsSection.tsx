@@ -435,9 +435,9 @@ export function ProjectsSection() {
             className="mb-10 sm:mb-14 max-w-[56ch] text-sm sm:text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            TaxBridge compressed 4-hour filings to 15 minutes. SabiScore holds 99.9%+ uptime on
-            ensemble ML inference. SwarmXQ orchestrates AI agents that improve themselves between
-            runs. Built in Lagos. Running globally.
+            4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under
+            ensemble ML inference. AI agents that improve themselves between runs.
+            All of it shipped from Lagos. All of it running in production.
           </m.p>
 
           {/* Primary featured */}
