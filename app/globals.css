@@ -1653,3 +1653,79 @@ section.border-t + section.border-t {
   .bottom-nav, .floating-hire-cta { display: none !important; }
   body { padding-bottom: 0 !important; }
 }
+/* ════ CONVICTION ENGINE v20.0 — CSS PATCH ════
+   Appended below existing v18 rules. These override or supplement specific
+   selectors. Order preserved: last rule wins on equal specificity.
+   ════════════════════════════════════════════ */
+
+/* ── v20: Mobile headshot — larger, more dramatic presence ────────────────
+   h-24/h-28 in JSX; CSS ring pulse updated for the new border radius.
+   The glow rings are additive with the JSX boxShadow.
+*/
+@media (max-width: 1023px) {
+  @keyframes headshot-ring-pulse-v20 {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px oklch(70% 0.21 188 / 0.18),
+        0 0 0 6px oklch(70% 0.21 188 / 0.09),
+        0 0 0 13px oklch(70% 0.21 188 / 0.04),
+        0 14px 44px oklch(0% 0 0 / 0.62);
+    }
+    50% {
+      box-shadow:
+        0 0 0 2px oklch(70% 0.21 188 / 0.28),
+        0 0 0 8px oklch(70% 0.21 188 / 0.14),
+        0 0 0 16px oklch(70% 0.21 188 / 0.06),
+        0 18px 52px oklch(0% 0 0 / 0.70);
+    }
+  }
+  .hero-headshot-ring {
+    animation: headshot-ring-pulse-v20 4s ease-in-out infinite;
+    border-width: 3px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-ring { animation: none !important; }
+}
+
+/* ── v20: conviction-stat data-stat color selectors ──────────────────────
+   Previously relied on nth-child which breaks if order changes.
+   data-stat attribute is stable and intent-declarative.
+*/
+.conviction-stat[data-stat='filing']  .conviction-stat-value { color: var(--color-stat-filing);  }
+.conviction-stat[data-stat='uptime']  .conviction-stat-value { color: var(--color-stat-uptime);  }
+.conviction-stat[data-stat='latency'] .conviction-stat-value { color: var(--color-stat-latency); }
+.conviction-stat[data-stat='mttd']    .conviction-stat-value { color: var(--color-stat-mttd);    }
+
+/* ── v20: Wider stat strip gap — more scannable at small widths ───────── */
+@media (min-width: 380px) {
+  .conviction-stat-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+  }
+}
+
+/* ── v20: Mobile hero availability pill — no bottom margin (moved to JSX) */
+/* The mb-0 on the pill div is intentional — spacing is in the headshot mt-8 */
+
+/* ── v20: CTA primary "Start a conversation" — no width changes needed,
+   just ensure the green dot aligns nicely at the new copy length.
+   tactile-press already handles active states. */
+.cta-primary--lg {
+  gap: 0.625rem;
+}
+
+/* ── v20: Proof callout — mt-6 already in JSX; add left-border accent ── */
+.hero-proof-callout {
+  border-left: 2px solid oklch(70% 0.21 188 / 0.25);
+  padding-left: 0.875rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ── v20: Mobile bottom nav — ensure safe area on newer iPhones ─────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 8px);
+  }
+}
