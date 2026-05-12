@@ -88,9 +88,10 @@ export function AboutSection() {
         >
           {/* ── LEFT COLUMN — narrative ─────────────────────────────────── */}
           <div>
-            <m.p variants={itemVariants} className="label-mono" style={{ color: 'var(--color-cyan)' }}>
-              BACKGROUND
-            </m.p>
+            <m.div variants={itemVariants} className="section-kicker-row mb-[var(--space-2)]">
+              <span className="section-number" aria-hidden="true">04</span>
+              <span className="section-label">About</span>
+            </m.div>
 
             <m.h2
               variants={itemVariants}
