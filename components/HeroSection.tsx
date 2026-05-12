@@ -235,8 +235,8 @@ export function HeroSection() {
               <div
                 className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '1.5px solid oklch(70% 0.21 188 / 0.45)',
-                  boxShadow: '0 0 0 4px oklch(70% 0.21 188 / 0.08), 0 8px 32px oklch(0% 0 0 / 0.50)',
+                  border: '2px solid oklch(70% 0.21 188 / 0.50)',
+                  boxShadow: '0 0 0 4px oklch(70% 0.21 188 / 0.10), 0 8px 32px oklch(0% 0 0 / 0.55)',
                 }}
               >
                 <Image
@@ -391,26 +391,27 @@ export function HeroSection() {
           </m.div>
 
           {/* ── Right column: Headshot + HeroVisual — desktop only ──────── */}
-          {/* v19: Desktop headshot enlarged to h-28/xl:h-36 for stronger presence */}
+          {/* v20: Headshot enlarged h-32/xl:h-44, circular, cinematic glass ring */}
           <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
             <div className="flex justify-end">
-              <div
-                className="relative h-28 w-28 xl:h-36 xl:w-36 overflow-hidden rounded-[var(--radius-xl)] hero-headshot-ring"
+              <m.div
+                className="relative h-32 w-32 xl:h-44 xl:w-44 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
-                  border: '1.5px solid oklch(70% 0.21 188 / 0.40)',
+                  border: '2px solid oklch(70% 0.21 188 / 0.50)',
                   boxShadow:
-                    '0 0 0 8px oklch(70% 0.21 188 / 0.06), 0 16px 48px oklch(0% 0 0 / 0.55), inset 0 1px 0 oklch(100% 0 0 / 0.12)',
+                    '0 0 0 6px oklch(70% 0.21 188 / 0.08), 0 0 0 12px oklch(70% 0.21 188 / 0.04), 0 20px 60px oklch(0% 0 0 / 0.60), inset 0 1px 0 oklch(100% 0 0 / 0.14)',
                 }}
+                whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 240, damping: 22 } }}
               >
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="144px"
+                  sizes="(min-width: 1280px) 176px, 128px"
                   className="object-cover object-top"
                   priority
                 />
-              </div>
+              </m.div>
             </div>
             <HeroVisual />
           </m.div>
