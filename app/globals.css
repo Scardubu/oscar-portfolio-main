@@ -944,14 +944,18 @@ h3, .h3 {
 @keyframes headshot-ring-pulse {
   0%, 100% {
     box-shadow:
-      0 0 0 4px oklch(70% 0.21 188 / 0.08),
-      0 8px 32px oklch(0% 0 0 / 0.50);
+      0 0 0 4px oklch(70% 0.21 188 / 0.10),
+      0 8px 32px oklch(0% 0 0 / 0.55);
   }
   50% {
     box-shadow:
-      0 0 0 6px oklch(70% 0.21 188 / 0.14),
-      0 8px 40px oklch(0% 0 0 / 0.55);
+      0 0 0 7px oklch(70% 0.21 188 / 0.16),
+      0 8px 40px oklch(0% 0 0 / 0.60);
   }
+}
+/* Desktop: pulse handled by Framer Motion whileHover — static ring */
+@media (min-width: 1024px) {
+  .hero-headshot-ring { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-headshot-ring { animation: none !important; }
