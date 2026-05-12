@@ -1,13 +1,12 @@
-// CONVICTION ENGINE v26.0 — Footer
+// CONVICTION ENGINE v27.0 — Footer
 //
-// v26 CHANGES vs v15.1:
-//   LOCATION: Lagos → Abuja (current base per profile).
-//   GRID LAYOUT: 3-col on lg+; brand | nav | connect.
-//   STATUS DOT: live build timestamp, green dot.
-//   BOTTOM STRIP: The 2am design constraint tagline as footer anchor.
-//   CTA: "Start a conversation" with success dot.
-//   MOBILE: Full-width CTA on mobile, auto on sm+.
-//   KEEP: All nav links, social links, resume download, scardubu.dev.
+// v27 vs v26:
+//   LOCATION FIX: "Shipped in Abuja" → "Shipped in Lagos". Oscar is Lagos-based.
+//     UBEC (Abuja) is a past employer. Footer trust strip reflects current location.
+//   MOBILE COMPACT: py-10 → py-8; gap-10 → gap-8.
+//     Reduces accumulated bottom whitespace on mobile before body padding-bottom.
+//   GRID: Mobile stacked → 2-col sm (Nav + Connect side-by-side) → 3-col lg.
+//   FOOTER GLOW: Subtle teal gradient behind the bottom strip for cinematic depth.
 'use client';
 
 import Link from 'next/link';
@@ -21,30 +20,40 @@ const NAV_LINKS = [
 ] as const;
 
 const SOCIAL_LINKS = [
-  { label: 'GitHub',      href: 'https://github.com/Scardubu',          external: true },
-  { label: 'LinkedIn',    href: 'https://linkedin.com/in/oscardubu',     external: true },
-  { label: 'scardubu.dev',href: 'https://scardubu.dev',                  external: true },
+  { label: 'GitHub',       href: 'https://github.com/Scardubu',       external: true },
+  { label: 'LinkedIn',     href: 'https://linkedin.com/in/oscardubu',  external: true },
+  { label: 'scardubu.dev', href: 'https://scardubu.dev',               external: true },
 ] as const;
 
 export function Footer() {
-  const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+  const year = new Date().getFullYear();
 
   return (
     <footer
       role="contentinfo"
       aria-label="Site footer"
-      className="border-t"
+      className="relative border-t overflow-hidden"
       style={{ borderColor: 'var(--color-border)' }}
     >
-      {/* ── Main grid ─────────────────────────────────────────────────────── */}
-      <div className="container py-10 grid gap-10 lg:grid-cols-[2fr_1fr_1fr] lg:gap-16">
+      {/* Subtle ambient glow — desktop only */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 hidden lg:block"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 40% at 20% 100%, oklch(70% 0.21 188 / 0.04) 0%, transparent 70%)',
+        }}
+      />
 
-        {/* Brand */}
-        <div className="flex flex-col gap-4">
+      {/* ── Main grid ─────────────────────────────────────────────────────── */}
+      <div className="container relative py-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] lg:gap-16 lg:py-10">
+
+        {/* Brand — full width on mobile/sm, 2fr on lg */}
+        <div className="sm:col-span-2 lg:col-span-1 flex flex-col gap-4">
           <div>
             <Link
               href="/"
-              className="inline-block font-display text-lg font-bold tracking-tight transition hover:opacity-80"
+              className="inline-block font-display text-base font-bold tracking-tight transition hover:opacity-80"
               style={{ color: 'var(--color-text-primary)' }}
             >
               Oscar Ndugbu
@@ -57,27 +66,33 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <p className="flex items-center gap-2 font-mono text-[10px]" style={{ color: 'oklch(93% 0.006 264 / 0.35)' }}>
-              <span className="inline-block h-1.5 w-1.5 rounded-full shrink-0" style={{ background: 'var(--color-success)' }} aria-hidden="true" />
-              All systems operational · {buildTime}
+          <div className="flex flex-col gap-1">
+            <p
+              className="flex items-center gap-2 font-mono text-[10px]"
+              style={{ color: 'oklch(93% 0.006 264 / 0.38)' }}
+            >
+              <span
+                className="inline-block h-1.5 w-1.5 rounded-full shrink-0"
+                style={{ background: 'var(--color-success)' }}
+                aria-hidden="true"
+              />
+              All systems operational
             </p>
             <p className="font-mono text-[10px]" style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}>
               TaxBridge · SabiScore · SwarmXQ · Hashablanca
             </p>
             <p className="font-mono text-[10px]" style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}>
-              © 2024–2026 Oscar Ndugbu · Built with Next.js 15
+              © 2024–{year} Oscar Ndugbu · Next.js 15
             </p>
           </div>
-
-          <p className="font-mono text-[9px] tracking-[0.1em] uppercase" style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}>
-            Shipped in Abuja · Running globally · Battle-tested in audit season
-          </p>
         </div>
 
         {/* Nav */}
         <nav aria-label="Footer navigation">
-          <p className="mb-3 font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--color-text-muted)' }}>
+          <p
+            className="mb-3 font-mono text-[10px] tracking-widest uppercase"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
             Navigation
           </p>
           <ul className="flex flex-col gap-0.5" role="list">
@@ -98,7 +113,10 @@ export function Footer() {
         {/* Connect */}
         <div className="flex flex-col gap-4">
           <div>
-            <p className="mb-3 font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--color-text-muted)' }}>
+            <p
+              className="mb-3 font-mono text-[10px] tracking-widest uppercase"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
               Connect
             </p>
             <ul className="flex flex-col gap-0.5" role="list">
@@ -122,29 +140,46 @@ export function Footer() {
                   className="inline-flex min-h-10 items-center gap-1.5 text-sm transition-colors hover:text-white"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
-                  Resume <span aria-hidden="true" style={{ color: 'var(--color-text-muted)' }}>↓</span>
+                  Resume{' '}
+                  <span aria-hidden="true" style={{ color: 'var(--color-text-muted)' }}>
+                    ↓
+                  </span>
                 </a>
               </li>
             </ul>
           </div>
+
           <a
             href="mailto:scardubu@gmail.com"
             className="cta-primary w-full sm:w-auto"
             aria-label="Email Oscar to start a conversation"
           >
-            <span className="inline-block h-2 w-2 rounded-full shrink-0" style={{ background: 'var(--color-success)' }} aria-hidden="true" />
+            <span
+              className="inline-block h-2 w-2 rounded-full shrink-0"
+              style={{ background: 'var(--color-success)' }}
+              aria-hidden="true"
+            />
             Start a conversation
           </a>
         </div>
       </div>
 
       {/* ── Bottom strip ──────────────────────────────────────────────────── */}
-      <div className="border-t py-4" style={{ borderColor: 'var(--color-border-subtle)' }}>
-        <div className="container flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}>
-            The system has to work at 2am. That&apos;s not a slogan. It&apos;s a design constraint.
+      <div
+        className="border-t py-4"
+        style={{ borderColor: 'var(--color-border-subtle)' }}
+      >
+        <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <p
+            className="font-mono text-[9px] tracking-widest uppercase"
+            style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}
+          >
+            Shipped in Lagos · Running globally · Battle-tested in audit season
           </p>
-          <p className="font-mono text-[9px]" style={{ color: 'oklch(93% 0.006 264 / 0.13)' }}>
+          <p
+            className="font-mono text-[9px]"
+            style={{ color: 'oklch(93% 0.006 264 / 0.14)' }}
+          >
             scardubu.dev
           </p>
         </div>
