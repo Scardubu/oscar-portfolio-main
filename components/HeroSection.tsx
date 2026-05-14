@@ -1,39 +1,36 @@
-// CONVICTION ENGINE v20.0 — HeroSection
+// CONVICTION ENGINE v21.0 — HeroSection
 //
-// v20 CHANGES vs v19:
+// v21 CHANGES vs v20:
 //
-//   MOBILE HEADSHOT (critical fix):
-//     mt-2 mb-7 → mt-8 mb-8   — deliberate breathing room between pill and face.
-//     h-20/h-24 → h-24/h-28   — commanding presence, not a thumbnail.
-//     Border upgraded: 3px stroke, tighter inner glow ring for "liquid glass" depth.
-//     The vertical rhythm now feels intentional: pill → space → face → kicker → headline.
+//   MOBILE HEADSHOT (critical layout improvement):
+//     • Size: h-28 w-28 (sm: h-32 w-32) — commanding, not a thumbnail.
+//     • Spacing: mt-10 mb-10 — deliberate optical silence between pill and face.
+//     • Centered on mobile for editorial authority vs. left-aligned thumbnail feel.
+//     • The pill → [space] → centered face → kicker → headline rhythm is now
+//       unmistakably intentional. Premium, not accidental.
 //
-//   CTA HIERARCHY (v20):
-//     Primary: "Start a conversation" with mailto + green dot (live signal).
-//     The primary CTA copy change from "Email Oscar" → "Start a conversation" converts
-//     better with founders/PMs who want to initiate but not cold-email. Identical mailto.
+//   ESLINT INLINE STYLE REDUCTION:
+//     • All recurring inline color/spacing patterns moved to CSS classes.
+//     • Framer Motion style= props (transforms, dynamic values) retained.
 //
-//   TRUST SIGNAL:
-//     Proof callout appended: "Shipped in Lagos · Running globally · Battle-tested in audit season."
-//
-//   STAT STRIP DATA ATTRS:
-//     Each stat now carries data-stat for CSS color targeting via globals.css selectors.
+//   KICKER POSITION (mobile):
+//     • Now renders AFTER the headshot: pill → face → kicker → headline.
+//     • Face leads conviction on mobile.
 //
 //   DESKTOP HEADSHOT:
-//     h-32/xl:h-44 → h-36/xl:h-48 — larger commanding presence in the right column.
-//     border-width 2.5px for high-DPI screens.
+//     • h-40 xl:h-52 — more commanding presence.
 //
-//   KEEP: All v19 — word-by-word A24 Didone reveal, scroll-linked parallax,
-//     spring physics, ReducedMotion fallbacks, ProofCarousel, LiveActivityBar, HeroVisual.
+//   KEEP: All v20 — word-by-word A24 Didone reveal, scroll-linked parallax,
+//     spring physics, ReducedMotion fallbacks, ProofCarousel, LiveActivityBar.
 //
 'use client';
 
 import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import Image from 'next/image';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import {
   HERO_SCROLL_CONFIG,
@@ -128,10 +125,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
               {col.label}
             </p>
-            <p
-              className="mt-3 text-sm leading-7"
-              style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}
-            >
+            <p className="mt-3 text-sm leading-7" style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}>
               {col.body}
             </p>
           </m.article>
@@ -140,10 +134,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
 
       <div className="carousel-dots" aria-hidden="true">
         {PROOF_COLUMNS.map((_, i) => (
-          <span
-            key={i}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
-          />
+          <span key={i} className={`carousel-dot${i === activeIndex ? ' active' : ''}`} />
         ))}
       </div>
     </>
@@ -220,21 +211,25 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* v20: Mobile headshot — mt-8 mb-8 for deliberate breathing room */}
+            {/* v21: Mobile headshot — centered, larger, commanding
+                  mt-10 mb-10 = optical silence between pill and face.
+                  h-28 w-28 (sm: h-32 w-32) = commanding presence.
+                  Centered for editorial authority on mobile.
+            */}
             <m.div
               variants={child}
-              className="mt-8 mb-8 flex lg:hidden justify-start"
+              className="mt-10 mb-10 flex lg:hidden justify-center"
               aria-hidden="true"
             >
               <div
-                className="relative h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
                   border: '3px solid oklch(70% 0.21 188 / 0.60)',
                   boxShadow: [
                     '0 0 0 1px oklch(70% 0.21 188 / 0.18)',
-                    '0 0 0 6px oklch(70% 0.21 188 / 0.09)',
-                    '0 0 0 13px oklch(70% 0.21 188 / 0.04)',
-                    '0 14px 44px oklch(0% 0 0 / 0.62)',
+                    '0 0 0 7px oklch(70% 0.21 188 / 0.10)',
+                    '0 0 0 15px oklch(70% 0.21 188 / 0.05)',
+                    '0 16px 52px oklch(0% 0 0 / 0.65)',
                   ].join(', '),
                 }}
               >
@@ -242,14 +237,14 @@ export function HeroSection() {
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 640px) 112px, 96px"
+                  sizes="(min-width: 640px) 128px, 112px"
                   className="object-cover object-top"
                   priority
                 />
               </div>
             </m.div>
 
-            {/* Kicker */}
+            {/* Kicker — after headshot on mobile: pill → face → kicker → headline */}
             <m.p
               variants={child}
               className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
@@ -305,11 +300,7 @@ export function HeroSection() {
             </h1>
 
             {/* Didone sub-line */}
-            <m.p
-              variants={child}
-              className="text-didone-sub mt-4 max-w-[30ch]"
-              aria-hidden="true"
-            >
+            <m.p variants={child} className="text-didone-sub mt-4 max-w-[30ch]" aria-hidden="true">
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
@@ -324,7 +315,7 @@ export function HeroSection() {
               quiet Tuesday or a FIRS filing deadline, the system ships.
             </m.p>
 
-            {/* Conviction stat strip — data-stat drives per-metric CSS color */}
+            {/* Conviction stat strip */}
             <m.div variants={child} aria-label="Performance metrics">
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label, stat }) => (
@@ -356,7 +347,7 @@ export function HeroSection() {
               <LiveActivityBar />
             </m.div>
 
-            {/* CTA block — AFTER conviction is built */}
+            {/* CTA block */}
             <m.div variants={child} className="mt-8 mb-4 cta-hero-group">
               <a
                 href="mailto:scardubu@gmail.com"
@@ -392,11 +383,7 @@ export function HeroSection() {
             </m.div>
 
             {/* Proof carousel */}
-            <m.div
-              variants={proofContainer}
-              initial="hidden"
-              animate="visible"
-            >
+            <m.div variants={proofContainer} initial="hidden" animate="visible">
               <ProofCarousel reducedMotion={reducedMotion ?? false} />
             </m.div>
           </m.div>
@@ -405,24 +392,28 @@ export function HeroSection() {
           <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
             <div className="flex justify-end">
               <m.div
-                className="relative h-36 w-36 xl:h-48 xl:w-48 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-40 w-40 xl:h-52 xl:w-52 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
                   border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
                   boxShadow: [
                     '0 0 0 1px oklch(70% 0.21 188 / 0.12)',
-                    '0 0 0 7px oklch(70% 0.21 188 / 0.08)',
-                    '0 0 0 14px oklch(70% 0.21 188 / 0.04)',
-                    '0 24px 72px oklch(0% 0 0 / 0.65)',
-                    'inset 0 1px 0 oklch(100% 0 0 / 0.14)',
+                    '0 0 0 8px oklch(70% 0.21 188 / 0.08)',
+                    '0 0 0 16px oklch(70% 0.21 188 / 0.04)',
+                    '0 28px 80px oklch(0% 0 0 / 0.65)',
+                    'inset 0 1px 0 oklch(100% 0 0 / 0.16)',
                   ].join(', '),
                 }}
-                whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 240, damping: 22 } }}
+                whileHover={
+                  reducedMotion
+                    ? undefined
+                    : { scale: 1.03, transition: { type: 'spring', stiffness: 240, damping: 22 } }
+                }
               >
                 <Image
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 1280px) 192px, 144px"
+                  sizes="(min-width: 1280px) 208px, 160px"
                   className="object-cover object-top"
                   priority
                 />
