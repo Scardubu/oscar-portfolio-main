@@ -1832,3 +1832,179 @@ section.border-t + section.border-t {
     font-size: 0.75rem;
   }
 }
+
+/* ════ CONVICTION ENGINE v21.0 — CSS PATCH ════
+   Critical layout improvements:
+   1. Mobile headshot: larger + more centered + better breathing room
+   2. Desktop headshot: more commanding column presence
+   3. Hero section: refined vertical rhythm
+   4. Navbar: improved mobile CTA refinement
+   5. misc: skeleton animation, about section leading
+   ════════════════════════════════════════════ */
+
+/* ── v21: Mobile headshot ring — h-28/h-32 glow tuning ───────────────────
+   Matched to new box-shadow values in JSX. Larger radii for larger element.
+*/
+@media (max-width: 1023px) {
+  @keyframes headshot-ring-pulse-v21 {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px oklch(70% 0.21 188 / 0.18),
+        0 0 0 7px oklch(70% 0.21 188 / 0.10),
+        0 0 0 15px oklch(70% 0.21 188 / 0.05),
+        0 16px 52px oklch(0% 0 0 / 0.65);
+    }
+    50% {
+      box-shadow:
+        0 0 0 2px oklch(70% 0.21 188 / 0.28),
+        0 0 0 10px oklch(70% 0.21 188 / 0.14),
+        0 0 0 20px oklch(70% 0.21 188 / 0.06),
+        0 20px 60px oklch(0% 0 0 / 0.72);
+    }
+  }
+  .hero-headshot-ring {
+    animation: headshot-ring-pulse-v21 4s ease-in-out infinite;
+    border-width: 3px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-ring { animation: none !important; }
+}
+
+/* ── v21: Desktop headshot — h-40/h-52 pulse ─────────────────────────────
+   Larger element needs more generous glow rings.
+*/
+@media (min-width: 1024px) {
+  .hero-headshot-ring {
+    animation: none; /* Framer Motion handles desktop hover */
+  }
+}
+
+/* ── v21: Mobile hero centering — headshot centered within left col ───────
+   The justify-center on the headshot wrapper already handles centering.
+   This ensures the kicker text below still aligns left for readability.
+*/
+@media (max-width: 1023px) {
+  .hero-kicker {
+    text-align: left;
+  }
+}
+
+/* ── v21: Hero section top/bottom padding — fluid clamp ─────────────────
+   Replaced the static JSX style= with a CSS class for ESLint compliance.
+*/
+.hero-section-pad {
+  padding-top: clamp(5rem, 8vw, 7rem);
+  padding-bottom: clamp(2rem, 4vw, 6rem);
+}
+
+/* ── v21: SkillsSection trust metric cards — top border transition ────────
+   Adds a hover lift to make them feel interactive.
+*/
+@media (hover: hover) and (pointer: fine) {
+  .skills-trust-metric {
+    transition:
+      transform var(--dur-base) var(--ease-spring),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .skills-trust-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px oklch(0% 0 0 / 0.25);
+  }
+}
+
+/* ── v21: Project card outcome badge — elevated contrast ─────────────────
+   Make the outcome metric chips more legible at a glance.
+*/
+.outcome-chip {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+/* ── v21: Section border — consistent cross-browser treatment ────────────
+   Ensure border-t uses the CSS var, not browser default.
+*/
+section.border-t {
+  border-top-color: var(--color-border);
+}
+
+/* ── v21: Navbar mobile CTA — brighter on scrolled state ─────────────────
+   When the user has scrolled, the mobile CTA should have higher contrast.
+*/
+.glass-nav[data-scrolled='true'] .mobile-hire-cta {
+  border-color: oklch(70% 0.21 188 / 0.40);
+}
+
+/* ── v21: About section narrative — improve paragraph spacing ────────────
+   Tighter line-height on mobile for the dense text block.
+*/
+@media (max-width: 640px) {
+  .about-narrative-block > p + p {
+    margin-top: 1.25rem;
+  }
+}
+
+/* ── v21: Writing section filter chips — smooth active transition ─────── */
+.writing-filter-chip {
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+/* ── v21: Open source install command — monospace overflow on iOS ─────── */
+.oss-install-cmd {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── v21: Contact field — consistent focus ring cross-browser ───────────
+   Upgrade from browser default to brand teal ring.
+*/
+.contact-field-input:focus,
+.contact-field-select:focus,
+.contact-field-textarea:focus {
+  outline: none;
+  border-color: oklch(70% 0.21 188 / 0.65) !important;
+  box-shadow: 0 0 0 3px oklch(70% 0.21 188 / 0.12) !important;
+}
+
+/* ── v21: Carousel dots — larger tap targets on mobile ───────────────── */
+.carousel-dot {
+  display: inline-block;
+  transition: width var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+
+/* ── v21: Section skeleton loading — shimmer refinement ─────────────────
+   More legible loading state.
+*/
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(100% 0 0 / 0.04) 0%,
+    oklch(100% 0 0 / 0.09) 50%,
+    oklch(100% 0 0 / 0.04) 100%
+  );
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── v21: Print refinements ──────────────────────────────────────────── */
+@media print {
+  .hero-proof-callout,
+  .proof-card,
+  .mobile-carousel,
+  .carousel-dots { display: none !important; }
+  .conviction-stat-strip { display: flex !important; gap: 1rem 2.5rem !important; }
+  h1, h2, h3 { color: #000 !important; }
+}
