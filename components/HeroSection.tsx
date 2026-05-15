@@ -234,11 +234,11 @@ export function HeroSection() {
                 }}
               >
                 <Image
-                  src="/images/oscar-headshot.jpg"
+                  src="/headshot.webp"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="(min-width: 640px) 144px, 128px"
-                  className="object-cover" style={{ objectPosition: 'center 12%' }}
+                  className="object-cover"
                   priority
                 />
               </div>
@@ -410,11 +410,11 @@ export function HeroSection() {
                 }
               >
                 <Image
-                  src="/images/oscar-headshot.jpg"
+                  src="/headshot.webp"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="(min-width: 1280px) 208px, 160px"
-                  className="object-cover" style={{ objectPosition: 'center 12%' }}
+                  className="object-cover"
                   priority
                 />
               </m.div>
