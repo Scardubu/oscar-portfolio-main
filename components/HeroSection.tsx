@@ -218,11 +218,11 @@ export function HeroSection() {
             */}
             <m.div
               variants={child}
-              className="mt-10 mb-10 flex lg:hidden justify-center"
+              className="mt-12 mb-12 flex lg:hidden justify-center"
               aria-hidden="true"
             >
               <div
-                className="relative h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-full hero-headshot-ring"
+                className="relative h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-full hero-headshot-ring"
                 style={{
                   border: '3px solid oklch(70% 0.21 188 / 0.60)',
                   boxShadow: [
@@ -237,8 +237,8 @@ export function HeroSection() {
                   src="/images/oscar-headshot.jpg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 640px) 128px, 112px"
-                  className="object-cover object-top"
+                  sizes="(min-width: 640px) 144px, 128px"
+                  className="object-cover" style={{ objectPosition: 'center 12%' }}
                   priority
                 />
               </div>
@@ -414,7 +414,7 @@ export function HeroSection() {
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="(min-width: 1280px) 208px, 160px"
-                  className="object-cover object-top"
+                  className="object-cover" style={{ objectPosition: 'center 12%' }}
                   priority
                 />
               </m.div>
