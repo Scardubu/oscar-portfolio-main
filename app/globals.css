@@ -1850,8 +1850,8 @@ section.border-t + section.border-t {
     0%, 100% {
       box-shadow:
         0 0 0 1px oklch(70% 0.21 188 / 0.18),
-        0 0 0 7px oklch(70% 0.21 188 / 0.10),
-        0 0 0 15px oklch(70% 0.21 188 / 0.05),
+        0 0 0 9px oklch(70% 0.21 188 / 0.10),
+        0 0 0 18px oklch(70% 0.21 188 / 0.05),
         0 16px 52px oklch(0% 0 0 / 0.65);
     }
     50% {
