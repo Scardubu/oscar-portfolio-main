@@ -103,8 +103,15 @@ export function CommandPalette() {
         action: () => { window.open(CV_ASSET_PATH, '_blank', 'noopener,noreferrer'); close(); },
       },
       {
+        id: 'action-copy-email', group: 'Actions', label: 'Copy email', shortcut: 'C',
+        action: () => {
+          void navigator.clipboard.writeText(CONTACT_EMAIL);
+          close();
+        },
+      },
+      {
         id: 'action-email', group: 'Actions', label: 'Send email', shortcut: 'E',
-        action: () => { globalThis.location.href = 'mailto:oscar@scardubu.dev'; close(); },
+        action: () => { globalThis.location.href = `mailto:${CONTACT_EMAIL}`; close(); },
       },
       {
         id: 'action-github', group: 'Actions', label: 'Open GitHub',
