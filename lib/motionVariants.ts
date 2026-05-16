@@ -42,7 +42,7 @@
  *   decisive  → CTA hover, primary interactive     (stiffness 600 / damping 35)
  */
 
-import type { Transition, Variants } from 'framer-motion';
+import type { Transition, Variant, Variants } from 'framer-motion';
 
 /* ══════════════════════════════════════════════════════════════════════════
    SPRING PRESETS
@@ -107,9 +107,14 @@ export function mobileReducedVariant<T extends Variants>(
   const result: Variants = {};
   for (const [key, value] of Object.entries(variants)) {
     if (typeof value !== 'object' || value === null) {
-      result[key] = value;
+      result[key] = value as Variant;
       continue;
     }
+    // Downcast to Record for safe runtime property access.
+    // The `as unknown as Variant` bridge on assignment is intentional:
+    // framer-motion 11 tightened MakeKeyframes<TargetProperties> to use
+    // a --${string} index signature incompatible with Record<string,unknown>,
+    // so we must re-enter the Variant type after manipulation.
     const state = value as Record<string, unknown>;
     const transition = state.transition as Record<string, unknown> | undefined;
     if (transition && typeof transition.duration === 'number') {
@@ -122,9 +127,9 @@ export function mobileReducedVariant<T extends Variants>(
             ? { delay: transition.delay / 2 }
             : {}),
         },
-      };
+      } as unknown as Variant;
     } else {
-      result[key] = state;
+      result[key] = state as unknown as Variant;
     }
   }
   return result as T;
