@@ -1,7 +1,7 @@
 /**
  * lib/config.ts
  *
- * Single source of truth for environment-specific URL configuration.
+ * Single source of truth for environment-specific URL and contact configuration.
  *
  * CRITICAL DISTINCTION — two functions, two contexts:
  *
@@ -26,6 +26,32 @@ export const SITE_URL: string =
 
 export const BLOG_BASE: string = `${SITE_URL}/blog`
 export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf'
+
+// ─── Contact ──────────────────────────────────────────────────────────────────
+
+/**
+ * CONTACT_EMAIL — single source of truth for all contact surfaces.
+ *
+ * Used in:
+ *   - Footer
+ *   - HeroSection mailto CTA
+ *   - Navbar CTA
+ *   - ContactSection
+ *   - CommandPalette
+ *   - app/api/contact/route.ts (Resend "to" address)
+ *   - app/error.tsx fallback
+ *   - app/rss.xml/route.ts
+ *   - lib/portfolio-data.ts
+ *   - lib/data.ts
+ *   - app/lib/constants.ts
+ *
+ * Do NOT hardcode the email anywhere else. Import this constant instead.
+ * Verify the Resend configuration in app/api/contact/route.ts uses this value.
+ *
+ * ⚠️  VERIFY: Ensure oscar@scardubu.dev is configured in your Resend dashboard
+ *     and set as the RESEND_TO_EMAIL environment variable in Vercel.
+ */
+export const CONTACT_EMAIL = 'scardubu@gmail.com'
 
 // ─── Blog URLs ────────────────────────────────────────────────────────────────
 
