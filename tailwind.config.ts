@@ -1,12 +1,16 @@
 /**
- * tailwind.config.ts — CONVICTION ENGINE v19.0
+ * tailwind.config.ts — CONVICTION ENGINE v20.0
  * ─────────────────────────────────────────────────────────────────────────────
- * SINGLE SOURCE OF TRUTH. Delete tailwind.config.js — this file takes
- * Next.js resolution precedence and was previously missing the full config,
- * silently dropping all color / font / animation design tokens.
+ * PHASE 2 CLEANUP:
+ *   - Removed arbitrary spacing overrides (use CSS custom properties in
+ *     globals.css instead — they don't tree-shake well in Tailwind v4)
+ *   - Removed maxWidth overrides (moved to CSS --max-width-* custom properties)
+ *   - Removed zIndex overrides (defined in @theme block in globals.css)
+ *   - Color mappings updated to match canonical :root token names
+ *   - All color values reference var(--token) from globals.css :root
  *
- * Rule: All colour values reference var(--token-name) from globals.css.
- * Never hardcode hex values here or in component files.
+ * Rule: This file is for Tailwind utility generation only. Design token
+ * values live in globals.css :root. Never hardcode hex/oklch here.
  */
 
 import type { Config } from 'tailwindcss';
@@ -22,41 +26,51 @@ const config: Config = {
   theme: {
     extend: {
 
-      // ── Colours (all reference CSS custom properties) ─────────────────
+      // ── Colors (all reference CSS custom properties from :root) ───────────
+      // Token names match the canonical --color-* names in globals.css :root
       colors: {
-        bg: {
-          base:     'var(--bg-base)',
-          surface:  'var(--bg-surface)',
-          elevated: 'var(--bg-elevated)',
-        },
-        border: {
-          subtle:  'var(--border-subtle)',
-          default: 'var(--border-default)',
-          strong:  'var(--border-strong)',
-        },
-        accent: {
-          primary:   'var(--accent-primary)',
-          secondary: 'var(--accent-secondary)',
-          fintech:   'var(--accent-fintech)',
-          warn:      'var(--accent-warn)',
-          danger:    'var(--accent-danger)',
-        },
+        // Backgrounds
+        'color-bg':             'var(--color-bg)',
+        'color-surface':        'var(--color-surface)',
+        'color-surface-raised': 'var(--color-surface-raised)',
+
+        // Text
+        'color-text-primary':   'var(--color-text-primary)',
+        'color-text-secondary': 'var(--color-text-secondary)',
+        'color-text-muted':     'var(--color-text-muted)',
+
+        // Accents
+        'color-film-teal':   'var(--color-film-teal)',
+        'color-film-amber':  'var(--color-film-amber)',
+        'color-film-violet': 'var(--color-film-violet)',
+
+        // Semantic
+        'color-success': 'var(--color-success)',
+        'color-warning': 'var(--color-warning)',
+        'color-danger':  'var(--color-danger)',
+
+        // Borders
+        'color-border':        'var(--color-border)',
+        'color-border-subtle': 'var(--color-border-subtle)',
+        'color-border-hover':  'var(--color-border-hover)',
+
+        // Metric badges (used in MetricBadge component)
         metric: {
-          live:       'var(--metric-live)',
-          documented: 'var(--metric-documented)',
-          backtested: 'var(--metric-backtested)',
-          snapshot:   'var(--metric-snapshot)',
-        },
-        text: {
-          primary:   'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          muted:     'var(--text-muted)',
-          code:      'var(--text-code)',
+          live:       'var(--color-success)',
+          documented: 'var(--color-film-teal)',
+          backtested: 'var(--color-film-amber)',
+          snapshot:   'var(--color-text-muted)',
         },
       },
 
-      // ── Typography ────────────────────────────────────────────────────
+      // ── Typography ────────────────────────────────────────────────────────
       fontFamily: {
+        display: [
+          'var(--font-display)',
+          'Syne',
+          'Arial Black',
+          'sans-serif',
+        ],
         mono: [
           'JetBrains Mono',
           'Fira Code',
@@ -73,40 +87,38 @@ const config: Config = {
           'BlinkMacSystemFont',
           'sans-serif',
         ],
+        didone: [
+          'Playfair Display',
+          'Georgia',
+          'serif',
+        ],
       },
 
       fontSize: {
-        metric:  ['clamp(1.75rem,4vw,2.5rem)',  { lineHeight: '1',    letterSpacing: '-0.03em' }],
-        display: ['clamp(2.5rem,6vw,5rem)',      { lineHeight: '1.05', letterSpacing: '-0.03em' }],
+        metric:  ['clamp(1.75rem, 4vw, 2.5rem)', { lineHeight: '1',    letterSpacing: '-0.03em' }],
+        display: ['clamp(2.25rem, 6vw + 0.75rem, 6.25rem)', { lineHeight: '1.07', letterSpacing: '-0.04em' }],
       },
 
-      // ── Spacing ───────────────────────────────────────────────────────
+      // ── Spacing — only custom named values, not scale overrides ──────────
+      // Tailwind defaults (4px base) are kept. Only add named semantic values.
       spacing: {
-        '18':        '4.5rem',
-        '22':        '5.5rem',
-        '30':        '7.5rem',
-        section:     '6rem',
-        container:   '2rem',
+        'section': '6rem',   // var(--section-py) for section padding shortcuts
+        'nav':     '60px',   // var(--nav-height)
+        'bottom-nav': '68px', // var(--bottom-nav-height)
       },
 
-      // ── Max widths ────────────────────────────────────────────────────
-      maxWidth: {
-        'hero':         '20ch',
-        'heading':      '28ch',
-        'prose':        '72ch',
-        'prose-narrow': '60ch',
-        'prose-wide':   '80ch',
-        'layout':       '1200px',
-        'layout-wide':  '1400px',
-      },
-
-      // ── Border radius ─────────────────────────────────────────────────
+      // ── Border radius ─────────────────────────────────────────────────────
+      // Mirror the @theme radius tokens for Tailwind class generation
       borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
+        'sm':   '6px',
+        'md':   '10px',
+        'lg':   '14px',
+        'xl':   '18px',
+        '2xl':  '24px',
+        'full': '9999px',
       },
 
-      // ── Animation ─────────────────────────────────────────────────────
+      // ── Animation ─────────────────────────────────────────────────────────
       keyframes: {
         'fade-up': {
           '0%':   { opacity: '0', transform: 'translateY(16px)' },
@@ -132,28 +144,23 @@ const config: Config = {
         },
       },
       animation: {
-        'fade-up':       'fade-up 0.45s cubic-bezier(0.16,1,0.3,1) forwards',
-        'fade-in':       'fade-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards',
-        'pulse-dot':     'pulse-dot 2s ease-in-out infinite',
-        'kinetic-in':    'kinetic-in 0.55s cubic-bezier(0.16,1,0.3,1) both',
-        'liquid-float':  'liquid-float 4s ease-in-out infinite',
+        'fade-up':      'fade-up 0.45s cubic-bezier(0.16,1,0.3,1) forwards',
+        'fade-in':      'fade-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards',
+        'pulse-dot':    'pulse-dot 2s ease-in-out infinite',
+        'kinetic-in':   'kinetic-in 0.55s cubic-bezier(0.16,1,0.3,1) both',
+        'liquid-float': 'liquid-float 4s ease-in-out infinite',
       },
 
-      // ── Box shadow ────────────────────────────────────────────────────
+      // ── Box shadow ────────────────────────────────────────────────────────
       boxShadow: {
-        'glow-primary': '0 0 32px -8px var(--accent-primary)',
-        'glow-fintech':  '0 0 32px -8px var(--accent-fintech)',
-        'card':          '0 4px 24px rgba(0,0,0,0.4)',
-        'card-hover':    '0 8px 40px rgba(0,0,0,0.6)',
-      },
-
-      // ── Z-index ───────────────────────────────────────────────────────
-      zIndex: {
-        'navbar':  '200',
-        'overlay': '400',
-        'command': '500',
-        'modal':   '9000',
-        'toast':   '50',
+        'glow-teal':   '0 0 32px -8px var(--color-film-teal-glow)',
+        'glow-amber':  '0 0 32px -8px var(--color-film-amber-glow)',
+        'glow-violet': '0 0 32px -8px var(--color-film-violet-glow)',
+        'card':        '0 4px 24px rgba(0,0,0,0.4)',
+        'card-hover':  '0 8px 40px rgba(0,0,0,0.6)',
+        // Deprecated aliases — kept for backward compat
+        'glow-primary': 'var(--color-film-teal-glow)',
+        'glow-fintech':  'var(--color-film-amber-glow)',
       },
     },
   },
