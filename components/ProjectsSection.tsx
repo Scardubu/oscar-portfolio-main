@@ -1,5 +1,14 @@
-// CONVICTION ENGINE v23.0 — ProjectsSection
-// v23 upgrades vs v22:
+// CONVICTION ENGINE v24.0 — ProjectsSection
+// v24 vs v23:
+//   [CHANGE]: SecondaryFeaturedCard CTA — "Case study ↗" → "Read case study ↗"
+//     The verb was missing on secondary cards while TaxBridge (primary featured) used
+//     "Read case study". Dropping the verb implies these projects are lower-stakes.
+//     Consistent action language across all three featured cards removes the hierarchy
+//     implication and reduces friction (Fogg: Ability — visitor knows the next action).
+//     (Nielsen: Recognition over Recall — same action, same label)
+//   KEEP: All v23 card structure, motion, arch decision accordion, tech strips,
+//     section intro, grid layout, all other CTA text.
+//
 //   • ALL THREE core projects are now featured — TaxBridge as primary hero card,
 //     SabiScore + SwarmXQ as secondary featured cards (full arch decision, outcomes,
 //     BECAUSE block). Previously SwarmXQ was demoted to a grid stub.
@@ -315,7 +324,8 @@ function SecondaryFeaturedCard({
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2 mt-3">
           {project.caseStudy && (
             <Link href={project.caseStudy} className="cta-primary justify-center sm:justify-start text-xs">
-              Case study <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+              {/* v24 CHANGE: "Case study" → "Read case study" — verb restores consistent action language across all featured cards */}
+              Read case study <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           )}
           {project.demoUrl && (
@@ -383,7 +393,8 @@ function ProjectCard({
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {project.caseStudy && (
           <Link href={project.caseStudy} className="cta-ghost text-xs min-h-[48px] flex items-center justify-center sm:justify-start">
-            Case study →
+            {/* v24 CHANGE: "Case study →" → "Read case study →" — verb consistency */}
+            Read case study →
           </Link>
         )}
         {project.githubUrl && (
