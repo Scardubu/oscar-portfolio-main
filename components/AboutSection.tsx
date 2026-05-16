@@ -25,6 +25,7 @@ import { m, useInView, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
+import { anchorUrl } from '@/lib/config';
 import {
   cardReveal,
   clipReveal,
