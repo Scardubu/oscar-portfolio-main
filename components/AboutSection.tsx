@@ -344,7 +344,7 @@ export function AboutSection() {
             {/* Availability chip — links to contact */}
             <m.div variants={itemVariants} className="mb-6">
               <a
-                href="#section-contact"
+                href={anchorUrl('section-contact')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
                 aria-label="Available for Staff+ roles — contact Oscar"
               >
