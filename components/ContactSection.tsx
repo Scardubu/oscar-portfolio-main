@@ -163,8 +163,9 @@ function ContactForm() {
         <button
           type="button"
           onClick={() => setState('idle')}
-          className="mt-2 font-mono text-xs tracking-widest uppercase transition hover:opacity-70"
+          className="mt-2 min-h-[48px] px-4 font-mono text-xs tracking-widest uppercase transition hover:opacity-70"
           style={{ color: 'var(--color-text-muted)' }}
+          aria-label="Send another message"
         >
           Send another ↩
         </button>
