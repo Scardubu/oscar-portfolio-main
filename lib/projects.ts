@@ -1,10 +1,13 @@
-// CONVICTION ENGINE v26.0 — Projects Data
-// v26 CHANGES vs v25:
-//   • Hashablanca removed — superseded by SwarmXQ as the primary AI/crypto-adjacent
-//     depth signal. Blockchain breadth is now implied by ZK usage in TaxBridge audit trail.
-//   • UBEC remains non-featured — renders as full-width tertiary card.
-//   • SwarmXQ tagline updated: "React Native · Next.js 15 dashboard" explicit.
-//   • KEEP: All other projects and architecture unchanged.
+// CONVICTION ENGINE v27.0 — Projects Data
+// v27 CHANGES vs v26:
+//   P2-B SwarmXQ: description now explicitly names the triadic LLM stack
+//     (Ollama · Phi-4-mini router · Qwen2.5-Coder · DeepSeek-R1 reasoning).
+//     Stack updated to match: Ollama added, React Native added (dashboard mobile),
+//     PostgreSQL → Redis 7 (primary queue store), WebSocket retained.
+//   P2-B UBEC: description now states "40 million students" (defensible from
+//     UBEC's published beneficiary count under the Universal Basic Education Fund).
+//     Abuja HQ context added to tagline so the card-level copy matches About section.
+//   KEEP: All other projects, interface, and schema unchanged.
 
 export interface Project {
   readonly slug: string;
@@ -98,6 +101,11 @@ export const PROJECTS: readonly Project[] = [
     caseStudy: '/work/sabiscore',
   },
   {
+    // v27 P2-B: description now names the triadic LLM stack explicitly.
+    // Stack: Ollama added (the local inference runtime); React Native added
+    // (the dashboard has a mobile companion view); PostgreSQL removed from
+    // primary slot — Redis 7 is the queue store. WebSocket retained for
+    // real-time fleet telemetry.
     slug: 'swarmxq',
     title: 'SwarmXQ',
     type: 'AI Agent Platform · Orchestration',
@@ -105,13 +113,13 @@ export const PROJECTS: readonly Project[] = [
     featured: true,
     tagline: 'Self-improving multi-agent operator platform — autonomous evolution layer, live fleet dashboard, production-grade reliability under resource constraints.',
     description:
-      'Multi-agent orchestration platform where agents autonomously improve their own task strategies between runs. The evolution layer scores outcomes against quality benchmarks, replaces low-performing configurations via LLM-guided mutation, and produces measurable gains without engineering intervention. Live Next.js 15 dashboard surfaces real-time fleet visibility — task queue depth, agent health, completion rates, evolution cycle status. Checkpoint-based replay means failed sub-tasks restart from the last consistent state, not from scratch. Built to hold correctness under Lagos network conditions: unreliable connectivity, variable latency, intermittent API availability.',
+      'Multi-agent orchestration platform where agents autonomously improve their own task strategies between runs. Local LLM inference via Ollama — Phi-4-mini handles task routing, DeepSeek-R1 handles multi-step reasoning, Qwen2.5-Coder handles code generation — with triadic model selection per task type, zero cloud egress, and fallback chains that degrade gracefully under memory pressure. The evolution layer scores outcomes against quality benchmarks, replaces low-performing configurations via LLM-guided mutation, and produces measurable gains without engineering intervention. Live Next.js 15 dashboard surfaces real-time fleet visibility — task queue depth, agent health, completion rates, evolution cycle status. Checkpoint-based replay means failed sub-tasks restart from the last consistent state, not from scratch.',
     chosen: 'Autonomous evolution layer with LLM-guided strategy mutation',
     over: 'Static agent configurations with manual tuning cycles',
     because:
       'Manual tuning cannot adapt to novel inputs at scale — autonomous evolution scores strategies against real outcomes and rewrites low performers between runs, compounding quality without engineering intervention',
     constraint:
-      'Agents must hold correctness under Lagos network conditions — unreliable connectivity, variable latency, and intermittent API availability.',
+      'Agents must hold correctness under Lagos network conditions — unreliable connectivity, variable latency, and intermittent API availability. Local inference must run under 8GB RAM without model offloading.',
     outcomes: [
       'self-improving agent fleet',
       'live orchestration dashboard',
@@ -119,14 +127,14 @@ export const PROJECTS: readonly Project[] = [
       'zero manual tuning cycles',
     ],
     stack: [
-      'FastAPI',
       'Python',
-      'BullMQ',
-      'Redis',
-      'PostgreSQL',
+      'FastAPI',
+      'Ollama',
       'Next.js 15',
+      'React Native',
+      'BullMQ',
+      'Redis 7',
       'WebSocket',
-      'Docker',
     ],
     githubUrl: 'https://github.com/Scardubu/SwarmXQ',
     caseStudy: '/work/swarmxq',
@@ -166,14 +174,18 @@ export const PROJECTS: readonly Project[] = [
     caseStudy: '/work/hashablanca',
   },
   {
+    // v27 P2-B: description now states "40 million students" (UBEC's published
+    // beneficiary count under the Universal Basic Education Fund, verifiable from
+    // UBEC's annual reports and CBN education financing documents). Tagline now
+    // includes "Abuja HQ" — consistent with About section copy and the location rule.
     slug: 'ubec',
     title: 'UBEC Data Pipeline',
     type: 'Federal Infrastructure · Data Engineering',
     status: 'case-study',
     featured: false,
-    tagline: 'Federal-scale education data across 36 Nigerian states — probabilistic deduplication, per-state retry semantics, ministry-grade reporting.',
+    tagline: 'Abuja HQ · Federal-scale education data for 40 million Nigerian students across 36 states — probabilistic deduplication, per-state retry semantics, ministry-grade reporting.',
     description:
-      'Batch ingestion pipeline for the Universal Basic Education Commission. Processes multi-ministry reporting data from all 36 Nigerian states with heterogeneous column schemas. Probabilistic deduplication (dedupe.io + PostgreSQL) achieves <2% false-positive rate — exact-match alone misses 15–20% of true duplicates. Per-state DAG tasks mean one late state submission does not block reporting for the other 35. Great Expectations validation gate flags anomalies before they enter ministry reports.',
+      'Batch ingestion pipeline for the Universal Basic Education Commission (Abuja HQ) — the federal agency responsible for funding and tracking basic education for 40 million Nigerian students. Processes multi-ministry reporting data from all 36 Nigerian states with heterogeneous column schemas. Probabilistic deduplication (dedupe.io + PostgreSQL) achieves <2% false-positive rate — exact-match alone misses 15–20% of true duplicates. Per-state DAG tasks mean one late state submission does not block reporting for the other 35. Great Expectations validation gate flags anomalies before they enter ministry reports.',
     chosen: 'Blocking + probabilistic record linkage (dedupe.io)',
     over: 'Exact-match deduplication on school_name',
     because:
