@@ -1,9 +1,16 @@
 'use client';
 // CONVICTION ENGINE v1.0 — TestimonialsSection
+//
 // P2-D: TESTIMONIALS data existed in lib/portfolio-data.ts but was never rendered.
-// Placement: between ProjectsSection and OpenSourceSection (maximum authority placement).
-// Desktop: 2-column grid. Mobile: single-card scrollable strip.
-// Motion: cardReveal stagger, reducedMotion gate, viewportOnce.
+// This component closes that gap. Placement: between ProjectsSection and
+// OpenSourceSection (maximum authority placement — proof lands immediately
+// after the technical evidence, before OSS).
+//
+// Desktop: 2-column grid.
+// Mobile:  single-column stack — no horizontal scroll on narrow viewports.
+// Motion:  cardReveal stagger, reducedMotion gate, viewportOnce.
+// WCAG:    <blockquote> with cite attr, <footer> inside for attribution,
+//          StarRow uses role="img" + aria-label.
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
@@ -17,9 +24,15 @@ import {
 } from '@/lib/motionVariants';
 import { TESTIMONIALS } from '@/lib/portfolio-data';
 
+// ── Star rating row ───────────────────────────────────────────────────────────
+
 function StarRow() {
   return (
-    <div className="flex items-center gap-0.5" aria-label="5 out of 5 stars" role="img">
+    <div
+      className="flex items-center gap-0.5"
+      aria-label="5 out of 5 stars"
+      role="img"
+    >
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
@@ -37,14 +50,16 @@ function StarRow() {
   );
 }
 
+// ── Main section ──────────────────────────────────────────────────────────────
+
 export function TestimonialsSection() {
   const ref           = useRef<HTMLElement>(null);
   const inView        = useInView(ref, { once: true, margin: '-80px' });
   const reducedMotion = useReducedMotion();
 
-  const container    = staggerContainer(0.08, 0.05);
-  const itemVariant  = reducedMotion ? noMotion : fadeRise;
-  const headVariant  = reducedMotion ? noMotion : clipReveal;
+  const container   = staggerContainer(0.08, 0.05);
+  const itemVariant = reducedMotion ? noMotion : fadeRise;
+  const headVariant = reducedMotion ? noMotion : clipReveal;
 
   return (
     <section
@@ -60,7 +75,7 @@ export function TestimonialsSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          {/* Eyebrow */}
+          {/* ── Eyebrow ─────────────────────────────────────────────────── */}
           <m.div variants={itemVariant} className="section-kicker-row">
             <span className="section-number" aria-hidden="true">01.5</span>
             <span className="section-label">Client Signal</span>
@@ -79,11 +94,12 @@ export function TestimonialsSection() {
             className="mb-10 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            From BALL 247 to TradeBuza — real quotes from the engineers,
-            product leads, and CTOs who shipped with these systems in production.
+            From BALL 247 to TradeBuza — real quotes from the CTOs, engineering
+            leads, and product managers who shipped with these systems in
+            production.
           </m.p>
 
-          {/* Desktop 2-col grid / Mobile scroll strip */}
+          {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}
           <m.div
             variants={container}
             className="grid gap-4 sm:grid-cols-2"
@@ -105,23 +121,37 @@ export function TestimonialsSection() {
                   &ldquo;{t.quote}&rdquo;
                 </p>
 
-                <footer className="flex items-center gap-3 border-t pt-4" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <footer
+                  className="flex items-center gap-3 border-t pt-4"
+                  style={{ borderColor: 'var(--color-border-subtle)' }}
+                >
                   {/* Initials avatar */}
                   <div
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-semibold"
-                    style={{ background: `${t.accent}1A`, color: t.accent, border: `1px solid ${t.accent}33` }}
+                    style={{
+                      background: `${t.accent}1A`,
+                      color: t.accent,
+                      border: `1px solid ${t.accent}33`,
+                    }}
                     aria-hidden="true"
                   >
                     {t.initials}
                   </div>
+
                   <div>
                     <p
                       className="text-sm font-semibold leading-tight"
-                      style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}
+                      style={{
+                        color: 'var(--color-text-primary)',
+                        fontFamily: 'var(--font-display)',
+                      }}
                     >
                       {t.name}
                     </p>
-                    <p className="font-mono text-[10px] tracking-wide mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+                    <p
+                      className="font-mono text-[10px] tracking-wide mt-0.5"
+                      style={{ color: 'var(--color-text-muted)' }}
+                    >
                       {t.title} · {t.company}
                     </p>
                   </div>
