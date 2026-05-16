@@ -105,7 +105,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
     <>
       <div
         ref={scrollRef}
-        className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] mt-8"
+        className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)]"
         style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
         role="region"
         aria-label="Production proof pillars"
@@ -125,7 +125,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
               {col.label}
             </p>
-            <p className="mt-3 text-sm leading-7" style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}>
+            <p className="text-sm leading-7" style={{ marginTop: "0.75rem" }} style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}>
               {col.body}
             </p>
           </m.article>
@@ -218,7 +218,7 @@ export function HeroSection() {
             */}
             <m.div
               variants={child}
-              className="mt-12 mb-12 flex lg:hidden justify-center"
+              className="py-14 flex lg:hidden justify-center"
               aria-hidden="true"
             >
               <div
@@ -247,7 +247,7 @@ export function HeroSection() {
             {/* Kicker — after headshot on mobile: pill → face → kicker → headline */}
             <m.p
               variants={child}
-              className="mb-4 font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
+              className="font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
               style={{ color: 'var(--color-film-teal)' }}
             >
               <span className="inline sm:hidden">
@@ -300,14 +300,14 @@ export function HeroSection() {
             </h1>
 
             {/* Didone sub-line */}
-            <m.p variants={child} className="text-didone-sub mt-4 max-w-[30ch]" aria-hidden="true">
+            <m.p variants={child} className="text-didone-sub max-w-[30ch]" aria-hidden="true">
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
             {/* Body copy */}
             <m.p
               variants={child}
-              className="mt-6 w-full text-base leading-[1.8] hero-body-text"
+              className="w-full text-base leading-[1.8] hero-body-text"
               style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)' }}
             >
               Production systems that stay alive when it matters most —
@@ -328,7 +328,7 @@ export function HeroSection() {
             </m.div>
 
             {/* Proof callout with Lagos trust signal */}
-            <m.div variants={child} className="hero-proof-callout overflow-hidden mt-6">
+            <m.div variants={child} className="hero-proof-callout overflow-hidden">
               <p
                 className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
@@ -343,12 +343,12 @@ export function HeroSection() {
             </m.div>
 
             {/* Live activity bar */}
-            <m.div variants={child} className="mt-5">
+            <m.div variants={child} className="live-bar-wrapper-hero">
               <LiveActivityBar />
             </m.div>
 
             {/* CTA block */}
-            <m.div variants={child} className="mt-8 mb-4 cta-hero-group">
+            <m.div variants={child} className="cta-hero-group">
               <a
                 href="mailto:scardubu@gmail.com"
                 className="cta-primary cta-primary--lg tactile-press"
@@ -371,7 +371,7 @@ export function HeroSection() {
             </m.div>
 
             {/* Ghost CV link */}
-            <m.div variants={child} className="mb-2">
+            <m.div variants={child} className="cv-ghost-wrapper">
               <a
                 href="/cv/oscar-ndugbu-resume.pdf"
                 download
@@ -425,7 +425,7 @@ export function HeroSection() {
         </div>
 
         {/* Mobile HeroVisual — below fold */}
-        <div className="mt-10 lg:hidden">
+        <div className="lg:hidden" style={{ marginTop: "2.5rem" }}>
           <HeroVisual />
         </div>
       </div>
