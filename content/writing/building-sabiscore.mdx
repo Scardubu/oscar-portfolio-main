@@ -39,6 +39,24 @@ That design keeps the hot path readable, testable, and easy to reason about unde
 
 The major decision was not whether to add another model. It was whether the overall system could remain legible when production issues appear. A slightly more complex ensemble was acceptable because the operational surface around it stayed disciplined.
 
+The ensemble itself is XGBoost plus LightGBM with a weighted soft-voting layer. The two models have different strengths: XGBoost captures non-linear interactions across historical fixture data more reliably; LightGBM handles high-cardinality categorical features faster with lower memory footprint. Neither model alone is meaningfully better than the other. Together, with per-weight tuning against a held-out validation window, they outperform either individual model by a consistent 4–7% on the primary accuracy metric.
+
+That composes without much operational complexity because both models serve via the same feature schema and cache key. Adding a second model to the ensemble is not the same as doubling the maintenance surface — provided the serving layer is isolated from the training logic.
+
+## Model drift and the retraining boundary
+
+The retraining schedule is driven by two signals: elapsed time (weekly baseline) and PSI score on the incoming feature distribution. When feature drift crosses a threshold, the pipeline triggers an unscheduled retraining run rather than waiting for the weekly cycle.
+
+This matters because sports data is seasonally non-stationary. Feature distributions in tournament windows look nothing like regular-season distributions. A weekly-only retraining cadence would tolerate weeks of degraded predictions during exactly the periods when user demand is highest.
+
+The PSI threshold is set conservatively — a false positive (retraining when drift is acceptable) costs compute time. A false negative (missing real drift) costs prediction quality when it is most visible. The asymmetry favors the conservative threshold.
+
+## Monitoring is not optional
+
+Prometheus tracks prediction latency at p50, p95, and p99 percentiles, cache hit rate, and a rolling accuracy proxy derived from event outcomes available with a short lag. The accuracy proxy is imperfect — it cannot evaluate every prediction immediately — but it provides a signal that matters in production: is the model's directional confidence still calibrated?
+
+When the proxy drops below threshold, an alert fires before users experience a visible change in quality. That window is narrow but it exists, and it is worth having.
+
 ## Operational lesson
 
-The most valuable production pattern was graceful fallback. If a dependency slows down, the system must degrade deliberately instead of leaking uncertainty into the product experience. Reliability is usually decided there, not in the training notebook.
+The most valuable production pattern was graceful fallback. If a dependency slows down — Redis unavailable, feature store slow — the system must degrade deliberately instead of leaking uncertainty into the product experience. The fallback path serves a lightweight single-model prediction from a pre-computed baseline, with a visible confidence reduction in the response payload. Users see a lower-confidence score rather than an error. Reliability is usually decided in the fallback design, not in the training notebook.
