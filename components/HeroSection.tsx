@@ -329,7 +329,7 @@ export function HeroSection() {
             >
               Production systems that stay alive when it matters most —
               compliant, fast, and relentlessly reliable. Whether it&apos;s a
-              quiet Tuesday or a FIRS filing deadline, the system ships.
+              quiet Tuesday or an NRS compliance deadline, the system ships.
               Constraint-forged in Lagos. Trusted at global scale.
             </m.p>
 
