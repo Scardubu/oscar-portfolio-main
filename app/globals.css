@@ -11,69 +11,88 @@
 @property --glow-intensity { syntax: "<number>"; inherits: false; initial-value: 0.6; }
 
 @theme {
-  --color-space-black: #09090e;
-  --color-space-deep: #0c0c14;
-  --color-space-mid: #101018;
-  --color-space-surface: #15151e;
-  --color-space-elevated: #1b1b26;
-  --color-accent-primary: #00c8e8;
-  --color-accent-dim: #00c8e820;
-  --color-accent-glow: #00c8e840;
-  --color-accent-text: #4dd9f0;
-  --color-cyan: #00c8e8;
-  --color-accent: #7c8cf8;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-live: #22c55e;
-  --color-text-primary: #f0f0f8;
-  --color-text-secondary: #8888a8;
-  --color-text-tertiary: #55556a;
-  --color-text-muted: #55556a;
-  --color-text-accent: #00c8e8;
-  --color-text-hero: #ffffff;
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
-  --color-border-glass: rgba(255, 255, 255, 0.12);
-  --color-border: rgba(255, 255, 255, 0.08);
+  /* ── Font family ──────────────────────────────────────────────────────── */
   --font-display: var(--font-syne), "Syne", sans-serif;
   --font-body: var(--font-dm-sans), "DM Sans", sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
   --font-didone: var(--font-didone-var, "Playfair Display"), Georgia, serif;
-  --shadow-liquid-resting: 0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
-  --shadow-liquid-hover: 0 12px 48px rgba(0,200,232,0.15), 0 4px 16px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.14) inset, 0 -1px 0 rgba(0,0,0,0.4) inset;
-  --border-glass-top: rgba(255,255,255,0.35);
+
+  /* ── Shadow definitions ───────────────────────────────────────────────── */
+  --shadow-liquid-resting:
+    0 4px 24px rgba(0,0,0,0.4),
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 -1px 0 rgba(0,0,0,0.3) inset;
+  --shadow-liquid-hover:
+    0 12px 48px rgba(0,200,232,0.15),
+    0 4px 16px rgba(0,0,0,0.5),
+    0 1px 0 rgba(255,255,255,0.14) inset,
+    0 -1px 0 rgba(0,0,0,0.4) inset;
+
+  /* ── Fresnel borders ──────────────────────────────────────────────────── */
+  --border-glass-top:    rgba(255,255,255,0.35);
   --border-glass-bottom: rgba(255,255,255,0.05);
-  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
-  --radius-xl: 18px; --radius-2xl: 24px; --radius-full: 9999px;
-  --bento-gap: clamp(8px, 2vw, 20px);
+
+  /* ── Border radius ────────────────────────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   18px;
+  --radius-2xl:  24px;
+  --radius-full: 9999px;
+
+  /* ── Bento grid ───────────────────────────────────────────────────────── */
+  --bento-gap:    clamp(8px, 2vw, 20px);
   --bento-radius: 16px;
-  --bento-pad: clamp(16px, 3vw, 24px);
-  --hero-col-gap: clamp(2rem, 4vw, 4rem);
+  --bento-pad:    clamp(16px, 3vw, 24px);
+
+  /* ── Hero layout ──────────────────────────────────────────────────────── */
+  --hero-col-gap:    clamp(2rem, 4vw, 4rem);
   --hero-left-width: 54%;
   --hero-right-width: 46%;
-  --section-py: clamp(2.5rem, 7vw, 8.5rem);
-  --max-width-prose: 68ch;
+
+  /* ── Section spacing ──────────────────────────────────────────────────── */
+  --section-py:       clamp(2.5rem, 7vw, 8.5rem);
+  --max-width-prose:  68ch;
+
+  /* ── Clamp-based space scale ──────────────────────────────────────────── */
   --space-1: clamp(0.25rem, 0.5vw, 0.5rem);
   --space-2: clamp(0.75rem, 1.5vw, 1.25rem);
   --space-3: clamp(1rem, 2vw, 1.75rem);
   --space-4: clamp(1.5rem, 3vw, 2.5rem);
-  --text-xs: clamp(0.6875rem, 0.8vw, 0.75rem);
-  --text-sm: clamp(0.8125rem, 0.9vw, 0.875rem);
+
+  /* ── Clamp-based type scale ───────────────────────────────────────────── */
+  --text-xs:   clamp(0.6875rem, 0.8vw, 0.75rem);
+  --text-sm:   clamp(0.8125rem, 0.9vw, 0.875rem);
   --text-base: clamp(0.9375rem, 1vw, 1rem);
-  --text-lg: clamp(1rem, 1.2vw, 1.125rem);
-  --text-xl: clamp(1.125rem, 1.4vw, 1.25rem);
-  --text-2xl: clamp(1.25rem, 1.8vw, 1.5rem);
+  --text-lg:   clamp(1rem, 1.2vw, 1.125rem);
+  --text-xl:   clamp(1.125rem, 1.4vw, 1.25rem);
+  --text-2xl:  clamp(1.25rem, 1.8vw, 1.5rem);
   --text-hero: clamp(2.5rem, 7vw, 5rem);
+
+  /* ── Line height ──────────────────────────────────────────────────────── */
   --leading-tight: 1.07;
-  --leading-snug: 1.25;
-  --glow-spread: 600px;
-  --glow-blur: 120px;
-  --noise-opacity: 0.052;
+  --leading-snug:  1.25;
+
+  /* ── Ambient FX ───────────────────────────────────────────────────────── */
+  --glow-spread:      600px;
+  --glow-blur:        120px;
+  --noise-opacity:    0.052;
   --retro-grid-opacity: 0.06;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── CSS easing ───────────────────────────────────────────────────────── */
+  --ease-out-expo:     cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
-  --z-base: 1; --z-content: 2; --z-nav: 50;
-  --z-bottom-nav: 60; --z-overlay: 80; --z-modal: 100; --z-cursor: 9999;
+
+  /* ── Z-index ──────────────────────────────────────────────────────────── */
+  --z-base:       1;
+  --z-content:    2;
+  --z-nav:        50;
+  --z-bottom-nav: 60;
+  --z-overlay:    80;
+  --z-modal:      100;
+  --z-cursor:     9999;
+
+  /* ── Bottom nav ───────────────────────────────────────────────────────── */
   --bottom-nav-height: 68px;
 }
 
@@ -144,18 +163,39 @@ html { scrollbar-gutter: stable; }
   --color-live-glow: oklch(65% 0.18 155 / 0.18);
   --color-wip: var(--color-warning);
 
-  /* Semantic aliases */
-  --color-space-black: #09090e;
-  --color-space-deep: #0c0c14;
-  --color-space-mid: #101018;
-  --color-space-surface: #15151e;
-  --color-space-elevated: #1b1b26;
-  --color-accent-primary: oklch(74% 0.18 195);
-  --color-accent-dim: oklch(74% 0.18 195 / 0.14);
-  --color-accent-text: oklch(80% 0.16 195);
-  --color-error: #ef4444;
+  /* Deprecated: --color-space-* → --color-bg* */
+  --color-space-black:   var(--color-bg);
+  --color-space-deep:    var(--color-bg);
+  --color-space-mid:     var(--color-surface);
+  --color-space-surface: var(--color-surface);
+  --color-space-elevated: var(--color-surface-raised);
+
+  /* Deprecated: --color-accent-* → --color-film-teal* */
+  --color-accent-primary: var(--color-film-teal);
+  --color-accent-dim:     var(--color-film-teal-surface);
+  --color-accent-text:    var(--color-film-teal-hover);
+  --color-accent-glow:    var(--color-film-teal-glow);
+
+  /* Deprecated: --color-text-hero (now redundant with --color-text-primary) */
   --color-text-hero: oklch(97% 0.006 80);
-  --color-border-glass: rgba(255,255,255,0.12);
+
+  /* Deprecated: --color-error → --color-danger */
+  --color-error: var(--color-danger);
+
+  /* Deprecated: --color-border-glass */
+  --color-border-glass: oklch(100% 0 0 / 0.12);
+
+  /* Token mapping reference (for engineers reading the file):
+     NEW TOKEN                  ← OLD TOKEN
+     --color-bg                 ← --color-space-black
+     --color-surface            ← --color-space-surface / --color-space-mid
+     --color-surface-raised     ← --color-space-elevated
+     --color-film-teal          ← --color-accent-primary / --color-cyan
+     --color-film-teal-surface  ← --color-accent-dim
+     --color-film-amber         ← --color-amber / --color-warning (stat)
+     --color-film-violet        ← (new in v18)
+     --color-danger             ← --color-error
+  */
 
   /* v18: Per-metric accent colors */
   --color-stat-filing: oklch(73% 0.17 65);
