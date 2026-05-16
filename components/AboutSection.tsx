@@ -123,8 +123,9 @@ export function AboutSection() {
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Constraint makes the engineer. Lagos makes the constraint visible.
-              Federal scale. Production ML. Full-stack delivery.
+              Built the digital learning infrastructure for 40 million Nigerian
+              students at UBEC, Abuja HQ. Then shipped three production platforms
+              from Lagos that hold at 2am.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
