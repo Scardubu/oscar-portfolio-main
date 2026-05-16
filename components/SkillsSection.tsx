@@ -15,7 +15,7 @@
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 
-import { fadeRise, noMotion } from '@/lib/motionVariants';
+import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { SkillsMap } from '@/components/skills/SkillsMap';
 
 const TRUST_METRICS = [
@@ -103,6 +103,7 @@ export function SkillsSection() {
   const cardsInView = useInView(cardsRef, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
   const child = reducedMotion ? noMotion : fadeRise;
+  const container = staggerContainer(0.07, 0.05);
 
   return (
     <section
@@ -116,7 +117,7 @@ export function SkillsSection() {
         <m.div
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+          variants={container}
         >
           {/* ── Section header ─────────────────────────────────────────── */}
           <m.div variants={child} className="mb-10 sm:mb-14">
