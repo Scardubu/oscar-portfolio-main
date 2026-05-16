@@ -234,7 +234,7 @@ export function HeroSection() {
                 }}
               >
                 <Image
-                  src="/headshot.webp"
+                  src="/images/Oscar-headshot.jpeg"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="(min-width: 640px) 144px, 128px"
