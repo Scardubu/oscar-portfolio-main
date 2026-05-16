@@ -1,16 +1,20 @@
 'use client';
-// CONVICTION ENGINE v1.0 — TestimonialsSection
+// CONVICTION ENGINE v1.1 — TestimonialsSection
 //
-// P2-D: TESTIMONIALS data existed in lib/portfolio-data.ts but was never rendered.
-// This component closes that gap. Placement: between ProjectsSection and
-// OpenSourceSection (maximum authority placement — proof lands immediately
-// after the technical evidence, before OSS).
+// v1.1 vs v1.0:
+//   [CHANGE]: Section kicker — removed "01.5" section number.
+//     The numbered section sequence (01 Projects → 02 OSS → 03 Skills → 04 About →
+//     05 Writing → 06 Contact) is a deliberate hierarchy contract. "01.5" breaks
+//     the sequence, reads as an afterthought, and creates a visual inconsistency.
+//     Testimonials is an interstitial — it doesn't need a number.
+//     (Nielsen: Minimalist Design — every element earns its place)
+//   ⚠ VERIFICATION REQUIRED: All 4 named testimonials (BALL 247, Trovotech,
+//     Legum Solutions, TradeBuza) must be verified as real, consented clients
+//     before this section is deployed. The specific metrics (23% accuracy,
+//     8h → 45min) must be traceable to actual engagements. See CONVICTION ENGINE
+//     v3.0 audit report for options. This section MUST NOT go live unverified.
+//   KEEP: All v1.0 card layout, star ratings, motion, grid, body copy.
 //
-// Desktop: 2-column grid.
-// Mobile:  single-column stack — no horizontal scroll on narrow viewports.
-// Motion:  cardReveal stagger, reducedMotion gate, viewportOnce.
-// WCAG:    <blockquote> with cite attr, <footer> inside for attribution,
-//          StarRow uses role="img" + aria-label.
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
