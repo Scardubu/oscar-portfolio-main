@@ -106,6 +106,22 @@ export function CommandPalette() {
         id: 'action-email', group: 'Actions', label: 'Send email', shortcut: 'E',
         action: () => { globalThis.location.href = 'mailto:oscar@scardubu.dev'; close(); },
       },
+      {
+        id: 'action-github', group: 'Actions', label: 'Open GitHub',
+        action: () => { window.open('https://github.com/Scardubu', '_blank', 'noopener,noreferrer'); close(); },
+      },
+      {
+        id: 'action-linkedin', group: 'Actions', label: 'Open LinkedIn',
+        action: () => { window.open('https://linkedin.com/in/oscardubu', '_blank', 'noopener,noreferrer'); close(); },
+      },
+      {
+        id: 'action-theme', group: 'Actions', label: 'Toggle theme',
+        action: () => {
+          const root = document.documentElement;
+          root.classList.toggle('light');
+          close();
+        },
+      },
     ],
     [router, scrollTo, close]
   );
