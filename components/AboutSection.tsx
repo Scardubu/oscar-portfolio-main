@@ -1,6 +1,22 @@
-// CONVICTION ENGINE v19.0 — AboutSection
+// CONVICTION ENGINE v20.0 — AboutSection
 //
-// v19 CHANGES vs v18:
+// v20 vs v19:
+//   [CHANGE 1]: Opening subheadline paragraph restores live-site copy (which diverged from ZIP).
+//     Previous ZIP copy: "Built the digital learning infrastructure for 40 million Nigerian
+//     students at UBEC, Abuja HQ. Then shipped three production platforms from Lagos that hold at 2am."
+//     Restored: "Constraint makes the engineer. Lagos makes the constraint visible. Federal scale.
+//     Production ML. Full-stack delivery." — thesis-forward, tighter, Layer 1 optimised.
+//     UBEC proof point moved into first narrative paragraph where it belongs (Layer 2).
+//     (Hook Model: Trigger must open a loop, not deliver a résumé line)
+//   [CHANGE 2]: Closing narrative line — removed defensive framing.
+//     Previous: "The point is not where the journey started — it is the quality of
+//     reasoning now visible in the work." — defensive; implies awareness of bias against origin.
+//     Replaced: "Constraint is the credential. The work is the record." — closes with
+//     agency; deploys throughline thesis; no hedge; active voice.
+//     (Cialdini: Consistency — closing line resolves thesis, does not apologise for it)
+//   KEEP: All v19 impact stats, quick facts, stack strip, cert cards, grid layout,
+//     constraint code card, narrative paragraphs 1-2, motion choreography.
+//
 //   UBEC NARRATIVE — FULL REPLACEMENT:
 //     The UBEC callout card has been removed entirely.
 //     Replaced with a “Constraint Code” card — Oscar’s non-negotiable
@@ -118,14 +134,15 @@ export function AboutSection() {
               Wired to hold.
             </m.h2>
 
+            {/* v20 CHANGE: Subheadline restored to live-site copy — thesis-forward, Layer 1 optimised.
+                UBEC proof point belongs in narrative paragraph (Layer 2), not the 5-second subheadline. */}
             <m.p
               variants={itemVariants}
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Built the digital learning infrastructure for 40 million Nigerian
-              students at UBEC, Abuja HQ. Then shipped three production platforms
-              from Lagos that hold at 2am.
+              Constraint makes the engineer. Lagos makes the constraint visible.
+              Federal scale. Production ML. Full-stack delivery.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
@@ -160,7 +177,9 @@ export function AboutSection() {
               style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
             >
               Built systems where there is no luxury of guessing: no padded support
-              layer, no forgiving staging mirror, no room for vague ownership.
+              layer, no forgiving staging mirror, no room for vague ownership — from
+              federal-scale data infrastructure for 40 million Nigerian students at
+              UBEC to three production platforms shipping from Lagos.
               That pressure sharpened a habit of first-principles thinking, explicit
               failure modes, and engineering decisions that stay readable long after
               the deploy is done.
@@ -184,9 +203,10 @@ export function AboutSection() {
               style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
             >
               Fifteen-plus upstream contributions merged, four cloud certifications,
-              and public code that outlives any single job title. The point is not
-              where the journey started — it is the quality of reasoning now visible
-              in the work.
+              and public code that outlives any single job title.{' '}
+              {/* v20 CHANGE: replaced "The point is not where the journey started..."
+                  (defensive framing) with throughline thesis closure. */}
+              Constraint is the credential. The work is the record.
             </m.p>
 
             {/* Stack strip */}
