@@ -1,5 +1,6 @@
 // CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 import { expect, test } from '@playwright/test';
+import { CONTACT_EMAIL } from '../lib/config';
 
 test.describe('Portfolio smoke tests', () => {
   test.beforeEach(async ({ browserName }) => {
@@ -144,7 +145,7 @@ test.describe('Portfolio smoke tests', () => {
     await page.locator('#contact').scrollIntoViewIfNeeded();
 
     await expect(
-      page.locator('#contact a[href="mailto:scardubu@gmail.com"][data-cta="primary"]')
+      page.locator(`#contact a[href="mailto:${CONTACT_EMAIL}"][data-cta="primary"]`)
     ).toBeVisible();
   });
 

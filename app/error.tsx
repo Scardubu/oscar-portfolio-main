@@ -5,6 +5,7 @@
 //     v1 was a bare centered div — inconsistent with every other page.
 
 import { useEffect } from 'react';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 function isChunkLoadError(error: Error): boolean {
   return (
@@ -124,10 +125,10 @@ export default function ErrorPage({
           >
             Still stuck?{' '}
             <a
-              href="mailto:scardubu@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="underline underline-offset-2 transition-colors hover:text-white"
             >
-              scardubu@gmail.com
+              {CONTACT_EMAIL}
             </a>
           </p>
         )}

@@ -16,6 +16,7 @@
 
 import { SystemStatus } from '@/components/SystemStatus';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { CONTACT_EMAIL } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 import { cn } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
@@ -261,7 +262,7 @@ export function NavBar() {
                 ⌘K
               </button>
               <a
-                href="mailto:scardubu@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="cta-primary"
                 style={{ minHeight: '36px', padding: '0.375rem 1.125rem', fontSize: '0.8125rem', width: 'auto' }}
               >
@@ -271,7 +272,7 @@ export function NavBar() {
 
             {/* ── Mobile: emergency CTA — film teal for visibility ─────── */}
             <a
-              href="mailto:scardubu@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="flex md:hidden items-center justify-center rounded-md border border-white/20 px-3 py-2 text-xs font-semibold transition active:scale-95 hover:border-white/35 hover:bg-white/6"
               style={{
                 minHeight: '36px',

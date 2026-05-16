@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { contactSchema } from "@/app/lib/validations";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 // Lazy-initialize Resend client to avoid build-time errors when env var is missing
 let resend: Resend | null = null;
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
 
     await client.emails.send({
       from: "Oscar Portfolio <noreply@scardubu.dev>",
-      to: "scardubu@gmail.com",
+      to: CONTACT_EMAIL,
       subject,
       text: `Name: ${data.name}
 Email: ${data.email}

@@ -10,6 +10,7 @@
 'use client';
 
 import Link from 'next/link';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 const NAV_LINKS = [
   { label: 'Projects', href: '#section-projects' },
@@ -150,7 +151,7 @@ export function Footer() {
           </div>
 
           <a
-            href="mailto:scardubu@gmail.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="cta-primary w-full sm:w-auto"
             aria-label="Email Oscar to start a conversation"
           >

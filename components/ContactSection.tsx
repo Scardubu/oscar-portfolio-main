@@ -8,6 +8,7 @@ import { m, useInView, useReducedMotion } from 'framer-motion';
 import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'react';
 
 import { CopyEmail } from '@/components/CopyEmail';
+import { CONTACT_EMAIL } from '@/lib/config';
 import {
   cardReveal,
   clipReveal,
@@ -151,11 +152,11 @@ function ContactForm() {
         <p className="text-sm leading-7 max-w-[40ch]" style={{ color: 'var(--color-text-secondary)' }}>
           I&apos;ll respond within 24 hours. For urgent matters, email{' '}
           <a
-            href="mailto:scardubu@gmail.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="underline underline-offset-2"
             style={{ color: 'var(--color-film-teal)' }}
           >
-            scardubu@gmail.com
+            {CONTACT_EMAIL}
           </a>{' '}
           directly.
         </p>
@@ -323,11 +324,11 @@ function ContactForm() {
       <p className="mt-3 text-center font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
         Or email directly:{' '}
         <a
-          href="mailto:scardubu@gmail.com"
+          href={`mailto:${CONTACT_EMAIL}`}
           className="underline underline-offset-2 transition hover:opacity-70"
           style={{ color: 'var(--color-film-teal)' }}
         >
-          scardubu@gmail.com
+          {CONTACT_EMAIL}
         </a>
       </p>
     </form>
@@ -420,9 +421,9 @@ export function ContactSection() {
                   dilutes conversion intent. This becomes a clear secondary option. */}
               <div className="flex flex-col gap-3">
                 <a
-                  href="mailto:scardubu@gmail.com"
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="cta-secondary cta-secondary--lg tactile-press"
-                  aria-label="Email Oscar Ndugbu directly at scardubu@gmail.com"
+                  aria-label={`Email Oscar Ndugbu directly at ${CONTACT_EMAIL}`}
                   style={{ justifyContent: 'center' }}
                 >
                   <span
@@ -508,7 +509,7 @@ export function ContactSection() {
                 <LinkedInIcon />
                 <span className="hidden sm:inline">LinkedIn</span>
               </a>
-              <CopyEmail email="scardubu@gmail.com" />
+              <CopyEmail email={CONTACT_EMAIL} />
             </div>
 
             <p

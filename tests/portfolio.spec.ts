@@ -5,6 +5,7 @@
  * Run: pnpm test (all browsers) | pnpm test:e2e (Chromium only)
  */
 import { test, expect, type Page } from '@playwright/test';
+import { CONTACT_EMAIL } from '../lib/config';
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 
@@ -29,7 +30,7 @@ test.describe('Nav', () => {
 
   test('Hire me CTA links to email', async ({ page }) => {
     const hireLink = page.getByRole('link', { name: /hire me/i }).first();
-    await expect(hireLink).toHaveAttribute('href', 'mailto:scardubu@gmail.com');
+    await expect(hireLink).toHaveAttribute('href', `mailto:${CONTACT_EMAIL}`);
   });
 
   test('Work link scrolls to projects section', async ({ page }) => {
@@ -297,9 +298,9 @@ test.describe('Contact', () => {
 
   test('primary email CTA is correct', async ({ page }) => {
     const emailCTA = page.locator('#contact').getByRole('link', {
-      name: /scardubu@gmail\.com/i,
+      name: new RegExp(CONTACT_EMAIL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
     });
-    await expect(emailCTA).toHaveAttribute('href', 'mailto:scardubu@gmail.com');
+    await expect(emailCTA).toHaveAttribute('href', `mailto:${CONTACT_EMAIL}`);
   });
 
   test('GitHub link opens in new tab', async ({ page }) => {

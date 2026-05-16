@@ -1,4 +1,5 @@
 // CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+import { CONTACT_EMAIL } from '@/lib/config';
 
 export interface PaletteItem {
   id: string;
@@ -62,7 +63,7 @@ export const STATIC_PALETTE_ITEMS: PaletteItem[] = [
     id: 'contact-email',
     label: 'Email Oscar',
     category: 'CONTACT',
-    href: 'mailto:scardubu@gmail.com',
+    href: `mailto:${CONTACT_EMAIL}`,
     keywords: ['mail', 'message'],
   },
   {

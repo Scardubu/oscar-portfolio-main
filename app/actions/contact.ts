@@ -7,6 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { z } from "zod";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -99,7 +100,7 @@ export async function submitContactForm(
     // const resend = new Resend(process.env.RESEND_API_KEY);
     // await resend.emails.send({
     //   from:    "Portfolio Contact <noreply@scardubu.dev>",
-    //   to:      "scardubu@gmail.com",
+    //   to:      CONTACT_EMAIL,
     //   subject: `[Portfolio] ${type} — ${name}`,
     //   text:    `From: ${name} <${email}>\nCompany: ${company ?? "N/A"}\nType: ${type}\n\n${message}`,
     // });
@@ -113,7 +114,7 @@ export async function submitContactForm(
     return {
       status:  "error",
       message:
-        "Something went wrong. Please email directly at scardubu@gmail.com",
+        `Something went wrong. Please email directly at ${CONTACT_EMAIL}`,
     };
   }
 }

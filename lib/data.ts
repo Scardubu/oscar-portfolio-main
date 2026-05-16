@@ -5,6 +5,7 @@
  * Rule: All content lives here. Zero hardcoded strings in components.
  * Update once → propagates everywhere.
  */
+import { CONTACT_EMAIL } from '@/lib/config';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -784,7 +785,7 @@ export const PERSONAL = {
   tagline: "Fullstack Engineer",
   location: "Lagos, Nigeria 🇳🇬",
   locationShort: "Nigeria 🇳🇬 • Remote-First",
-  email: "scardubu@gmail.com",
+  email: CONTACT_EMAIL,
   github: "https://github.com/scardubu",
   linkedin: "https://linkedin.com/in/oscardubu",
   kaggle: "https://www.kaggle.com/scardubu",

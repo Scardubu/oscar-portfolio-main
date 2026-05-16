@@ -1,3 +1,5 @@
+import { CONTACT_EMAIL } from '@/lib/config';
+
 export interface NavItem {
   id: string;
   label: string;
@@ -57,7 +59,7 @@ export const heroCopy = {
     'The strongest signal here is not a claim. It is the combination of shipped work, explicit tradeoffs, and an interface disciplined enough to explain the work without asking for trust first.',
   ctaPrimary: 'See Work',
   ctaSecondary: 'Open to Staff+ · Fullstack · Co-founder · Consulting',
-  contactEmail: 'scardubu@gmail.com',
+  contactEmail: CONTACT_EMAIL,
 } as const;
 
 export const heroMetrics: HeroMetric[] = [
