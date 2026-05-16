@@ -170,44 +170,45 @@ export function AboutSection() {
               ))}
             </m.div>
 
-            {/* Narrative */}
-            <m.p
-              variants={itemVariants}
-              className="mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
-              style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
-            >
-              Built systems where there is no luxury of guessing: no padded support
-              layer, no forgiving staging mirror, no room for vague ownership — from
-              federal-scale data infrastructure for 40 million Nigerian students at
-              UBEC to three production platforms shipping from Lagos.
-              That pressure sharpened a habit of first-principles thinking, explicit
-              failure modes, and engineering decisions that stay readable long after
-              the deploy is done.
-            </m.p>
+            {/* Narrative — about-narrative-block activates mobile paragraph spacing (globals.css v21);
+                about-narrative-p activates tighter font-size/line-height on ≤640px (globals.css v20.1) */}
+            <div className="about-narrative-block">
+              <m.p
+                variants={itemVariants}
+                className="about-narrative-p mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
+                style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
+              >
+                Built systems where there is no luxury of guessing: no padded support
+                layer, no forgiving staging mirror, no room for vague ownership — from
+                federal-scale data infrastructure for 40 million Nigerian students at
+                UBEC to three production platforms shipping from Lagos.
+                That pressure sharpened a habit of first-principles thinking, explicit
+                failure modes, and engineering decisions that stay readable long after
+                the deploy is done.
+              </m.p>
 
-            <m.p
-              variants={itemVariants}
-              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
-              style={{ color: 'var(--color-text-primary)', opacity: 0.75 }}
-            >
-              TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS
-              enforcing tenant isolation at the database engine level.
-              SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost) behind a
-              Next.js 15 dashboard — 99.9%+ uptime, 90-day Prometheus window.
-              SwarmXQ: self-improving AI agent fleet with live ops visibility.
-            </m.p>
+              <m.p
+                variants={itemVariants}
+                className="about-narrative-p mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
+                style={{ color: 'var(--color-text-primary)', opacity: 0.75 }}
+              >
+                TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS
+                enforcing tenant isolation at the database engine level.
+                SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost) behind a
+                Next.js 15 dashboard — 99.9%+ uptime, 90-day Prometheus window.
+                SwarmXQ: self-improving AI agent fleet with live ops visibility.
+              </m.p>
 
-            <m.p
-              variants={itemVariants}
-              className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
-              style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
-            >
-              Fifteen-plus upstream contributions merged, four cloud certifications,
-              and public code that outlives any single job title.{' '}
-              {/* v20 CHANGE: replaced "The point is not where the journey started..."
-                  (defensive framing) with throughline thesis closure. */}
-              Constraint is the credential. The work is the record.
-            </m.p>
+              <m.p
+                variants={itemVariants}
+                className="about-narrative-p mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
+                style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
+              >
+                Fifteen-plus upstream contributions merged, four cloud certifications,
+                and public code that outlives any single job title.{' '}
+                Constraint is the credential. The work is the record.
+              </m.p>
+            </div>
 
             {/* Stack strip */}
             <m.div
