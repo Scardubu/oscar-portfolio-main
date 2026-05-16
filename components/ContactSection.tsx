@@ -51,10 +51,10 @@ const TRUST_BADGES = [
 ] as const;
 
 const INQUIRY_TYPES = [
-  { value: 'job',            label: 'Staff+ / Full-time role'       },
-  { value: 'consulting',    label: 'Infrastructure consulting'       },
-  { value: 'collaboration', label: 'Technical co-founder / equity'  },
-  { value: 'other',         label: 'Something else'                  },
+  { value: 'job',            label: 'Staff+ / Full-time role'  },
+  { value: 'consulting',    label: 'Consulting / Contract'      },
+  { value: 'collaboration', label: 'Co-founder'                 },
+  { value: 'other',         label: 'Advisory'                   },
 ] as const;
 
 function GitHubIcon() {
