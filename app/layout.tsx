@@ -188,6 +188,13 @@ const personJsonLd = {
     'SRE',
     'AI Infrastructure',
   ],
+  alumniOf: [
+    {
+      '@type': 'Organization',
+      name: 'Universal Basic Education Commission (UBEC)',
+      url: 'https://ubec.gov.ng',
+    },
+  ],
   sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 
