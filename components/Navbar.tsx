@@ -214,7 +214,7 @@ export function NavBar() {
                 className="nav-tagline font-mono text-[9px] tracking-[0.12em] uppercase transition-colors duration-150 group-hover:text-white/60"
                 style={{ color: 'var(--color-text-muted)' }}
               >
-                Full-Stack · Infra · ML
+                Full-Stack · AI · Fintech
               </span>
             </Link>
 
