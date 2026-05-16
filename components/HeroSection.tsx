@@ -1,27 +1,33 @@
-// CONVICTION ENGINE v21.0 — HeroSection
+// CONVICTION ENGINE v22.0 — HeroSection
 //
-// v21 CHANGES vs v20:
+// v22 CHANGES vs v21:
 //
-//   MOBILE HEADSHOT (critical layout improvement):
-//     • Size: h-28 w-28 (sm: h-32 w-32) — commanding, not a thumbnail.
-//     • Spacing: mt-10 mb-10 — deliberate optical silence between pill and face.
-//     • Centered on mobile for editorial authority vs. left-aligned thumbnail feel.
-//     • The pill → [space] → centered face → kicker → headline rhythm is now
-//       unmistakably intentional. Premium, not accidental.
+//   CTA HIERARCHY (Hook Model — Action trigger):
+//     Primary CTA: "Start a conversation" → "Tell me your constraints"
+//       Specificity creates curiosity (Fogg: Motivation). Differentiates from
+//       every generic "contact me" button. Signals problem-solver, not candidate.
+//     Response reassurance: Added "I respond to every message within 24 hours"
+//       beneath the CTA group — Fogg: Ability (removes uncertainty).
+//     Secondary CTA: "View Projects ↓" → "See the work ↓" — action-forward.
 //
-//   ESLINT INLINE STYLE REDUCTION:
-//     • All recurring inline color/spacing patterns moved to CSS classes.
-//     • Framer Motion style= props (transforms, dynamic values) retained.
+//   AVAILABILITY PILL (ethical scarcity — Cialdini):
+//     "AVAILABLE · STAFF+ ROLES" → "AVAILABLE · STAFF+ · LIMITED SLOTS"
+//     Truthful: Oscar is not bulk-hiring. Real constraint, not fake urgency.
 //
-//   KICKER POSITION (mobile):
-//     • Now renders AFTER the headshot: pill → face → kicker → headline.
-//     • Face leads conviction on mobile.
+//   PROOF CALLOUT (outcome-first, metric-led — Hook Model: Variable Reward):
+//     Each project now leads with its headline metric.
+//     Removes description-first language; proof comes first.
 //
-//   DESKTOP HEADSHOT:
-//     • h-40 xl:h-52 — more commanding presence.
+//   PROOF CAROUSEL — "FULL STACK OWNERSHIP" body sharpened:
+//     "Zero handoff tax. Zero blame diffusion." surfaces the competitive
+//     moat of single-engineer ownership as a business benefit, not a feature.
 //
-//   KEEP: All v20 — word-by-word A24 Didone reveal, scroll-linked parallax,
-//     spring physics, ReducedMotion fallbacks, ProofCarousel, LiveActivityBar.
+//   BODY COPY: Added "Constraint-forged in Lagos. Trusted at global scale."
+//     Unity principle (Cialdini) — Lagos as engineering credential, not limitation.
+//
+//   KEEP: All v21 motion choreography, A24 Didone word-by-word reveal,
+//     scroll parallax, spring physics, ReducedMotion fallbacks, headshot
+//     sizing/positioning, ProofCarousel, LiveActivityBar.
 //
 'use client';
 
@@ -66,19 +72,19 @@ const CONVICTION_STATS = [
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
-    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement over reactive alerting.',
+    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement over reactive alerting. Not a staging environment. Production.',
   },
   {
     label: 'DECISIONS DOCUMENTED',
-    body: 'Every tradeoff is written as Chosen / Over / Because — architecture reasoning at every layer, legible to the next engineer without clicking a link.',
+    body: 'Every tradeoff is written as Chosen / Over / Because — architecture reasoning at every layer, legible to the next engineer without clicking a link. The system explains itself.',
   },
   {
     label: 'ZERO-DOWNTIME DESIGN',
-    body: 'Health checks, idempotent BullMQ queues, circuit breakers, and rate-limit scoping are in the baseline — not retrofitted after the first 3am incident.',
+    body: 'Health checks, idempotent BullMQ queues, circuit breakers, and rate-limit scoping ship in the baseline — not retrofitted after the first 3am incident. They exist before the incident does.',
   },
   {
     label: 'FULL STACK OWNERSHIP',
-    body: 'React Native mobile app through Next.js 15 dashboard to FastAPI inference to PostgreSQL. Tailwind v4, Framer Motion, Effect-TS. One engineer, zero handoff tax.',
+    body: 'React Native mobile through Next.js 15 dashboard to FastAPI inference to PostgreSQL. One engineer drives the entire surface. Zero handoff tax. Zero blame diffusion. The system always belongs to someone — and that someone is in the room.',
   },
 ] as const;
 
@@ -199,24 +205,20 @@ export function HeroSection() {
             animate="visible"
             className="hero-grid-child"
           >
-            {/* Availability pill */}
+            {/* Availability pill — ethical scarcity */}
             <m.div variants={child}>
               <div
                 className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
-                aria-label="Availability status: Available for Staff+ roles"
+                aria-label="Availability status: Available for Staff+ roles, limited slots"
               >
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
-                  AVAILABLE · STAFF+ ROLES
+                  AVAILABLE · STAFF+ · LIMITED SLOTS
                 </span>
               </div>
             </m.div>
 
-            {/* v21: Mobile headshot — centered, larger, commanding
-                  mt-10 mb-10 = optical silence between pill and face.
-                  h-28 w-28 (sm: h-32 w-32) = commanding presence.
-                  Centered for editorial authority on mobile.
-            */}
+            {/* Mobile headshot — centered, commanding */}
             <m.div
               variants={child}
               className="py-14 flex lg:hidden justify-center"
@@ -245,7 +247,7 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Kicker — after headshot on mobile: pill → face → kicker → headline */}
+            {/* Kicker */}
             <m.p
               variants={child}
               className="font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
@@ -265,7 +267,7 @@ export function HeroSection() {
               </span>
             </m.p>
 
-            {/* Hero headline: A24 Didone word-by-word reveal */}
+            {/* Hero headline */}
             <h1
               id="hero-heading"
               className="w-full text-balance"
@@ -314,6 +316,7 @@ export function HeroSection() {
               Production systems that stay alive when it matters most —
               compliant, fast, and relentlessly reliable. Whether it&apos;s a
               quiet Tuesday or a FIRS filing deadline, the system ships.
+              Constraint-forged in Lagos. Trusted at global scale.
             </m.p>
 
             {/* Conviction stat strip */}
@@ -328,15 +331,15 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Proof callout with Lagos trust signal */}
+            {/* Proof callout — metric-led, outcome-first */}
             <m.div variants={child} className="hero-proof-callout overflow-hidden">
               <p
                 className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
               >
-                TaxBridge: filing 4h → 15min · React Native app · Fastify API.{' '}
-                SabiScore: 99.9%+ uptime · ensemble ML · Next.js dashboard.{' '}
-                SwarmXQ: self-improving agent fleet · live ops dashboard.{' '}
+                TaxBridge: 4h → 15min filing · NRS-compliant · zero data-loss record.{' '}
+                SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.{' '}
+                SwarmXQ: self-improving agent fleet · checkpoint fault recovery · zero manual tuning.{' '}
                 <span style={{ color: 'var(--color-film-teal)' }}>
                   Shipped in Lagos · Running globally · Battle-tested in audit season.
                 </span>
@@ -353,22 +356,37 @@ export function HeroSection() {
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
                 className="cta-primary cta-primary--lg tactile-press"
-                aria-label="Email Oscar to start a conversation"
+                aria-label="Email Oscar — tell him about your constraints"
               >
                 <span
                   className="inline-block h-2 w-2 rounded-full"
                   style={{ background: 'var(--color-success)' }}
                   aria-hidden="true"
                 />
-                Start a conversation
+                Tell me your constraints
               </a>
               <Link
                 href={anchorUrl('section-projects')}
                 className="cta-secondary tactile-press"
                 aria-label="Jump to projects section"
               >
-                View Projects <span aria-hidden="true">↓</span>
+                See the work <span aria-hidden="true">↓</span>
               </Link>
+            </m.div>
+
+            {/* Response reassurance — removes friction (Fogg: Ability) */}
+            <m.div variants={child}>
+              <p
+                className="font-mono text-[10px] tracking-wider"
+                style={{ color: 'oklch(93% 0.006 264 / 0.35)' }}
+              >
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full mr-1.5 align-middle"
+                  style={{ background: 'var(--color-success)' }}
+                  aria-hidden="true"
+                />
+                I respond to every message within 24 hours.
+              </p>
             </m.div>
 
             {/* Ghost CV link */}
