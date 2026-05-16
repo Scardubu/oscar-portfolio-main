@@ -16,6 +16,10 @@ const ProjectsSection = dynamic(
   () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
   { ssr: true }
 );
+const TestimonialsSection = dynamic(
+  () => import('@/components/TestimonialsSection').then((m) => ({ default: m.TestimonialsSection })),
+  { ssr: true }
+);
 const OpenSourceSection = dynamic(
   () => import('@/components/OpenSourceSection').then((m) => ({ default: m.OpenSourceSection })),
   { ssr: true }
@@ -51,6 +55,13 @@ export default async function Home() {
           fallback={<SectionSkeleton id="section-projects" label="Projects" height={560} />}
         >
           <ProjectsSection />
+        </Suspense>
+
+        {/* 01.5 — Testimonials: client authority between depth proof and OSS */}
+        <Suspense 
+          fallback={<SectionSkeleton id="section-testimonials" label="Testimonials" height={360} />}
+        >
+          <TestimonialsSection />
         </Suspense>
 
         {/* 02 — Open Source: secondary trust signal, installable artifacts */}
