@@ -1,17 +1,23 @@
-// CONVICTION ENGINE v17.0 — AboutSection
+// CONVICTION ENGINE v19.0 — AboutSection
 //
-// v17 CHANGES vs v16:
-//   HEADSHOT: Added to right sidebar (lg+) with conic teal ring — human warmth
-//     without hurting mobile LCP.  SSR-safe via next/image.
-//   NARRATIVE: Reframes non-CS background as a feature, not a gap.
-//     Every platform named with its frontend layer explicitly.
-//   UBEC BLOCK: Visual upgrade — standalone callout card with stack strip.
-//   STACK DOTS: Color-coded category dots for 2-second full-stack signal.
-//   AVAILABILITY CHIP: Now an anchor link to #section-contact.
-//   CERT BADGES: Provider-specific color (AWS amber, GCP blue, JS yellow, PG blue).
-//   MOTION: staggerChildren applied independently per column; right-column
-//     cards cascade on their own inView trigger.
-//   KEEP: All v16 impact stats, quick facts, stack strip, cert cards, grid layout.
+// v19 CHANGES vs v18:
+//   UBEC NARRATIVE — FULL REPLACEMENT:
+//     The UBEC callout card has been removed entirely.
+//     Replaced with a “Constraint Code” card — Oscar’s non-negotiable
+//     engineering standards expressed as active declarations, not resume lines.
+//
+//   WHY IT WORKS:
+//     Institutional memory is passive. Staff+ hiring is about judgment under
+//     pressure. The new card shows how Oscar reasons when the systems are messy,
+//     the data is incomplete, and the cost of getting it wrong is real.
+//
+//   NARRATIVE PARAGRAPHS — REFRAMED:
+//     The opening copy now leads with the engineering environment and the
+//     habits it creates: first-principles thinking, explicit failure modes,
+//     and writing decisions down so the next engineer can move faster.
+//
+//   KEEP: Impact stats, quick facts, stack strip, cert cards, grid layout,
+//     motion choreography, availability chip, and right column structure.
 //
 'use client';
 
@@ -106,9 +112,9 @@ export function AboutSection() {
               className="mt-4"
               style={{ color: 'var(--color-text-primary)' }}
             >
-              A decade of infrastructure.{' '}
+              Built to ship.{' '}
               <br className="hidden sm:block" />
-              Four years of product.
+              Wired to hold.
             </m.h2>
 
             <m.p
@@ -116,8 +122,8 @@ export function AboutSection() {
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Non-CS background. Federal-scale engineering. Production ML.
-              Full-stack delivery.
+              Constraint makes the engineer. Lagos makes the constraint visible.
+              Federal scale. Production ML. Full-stack delivery.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
@@ -151,9 +157,11 @@ export function AboutSection() {
               className="mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
               style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
             >
-              Principal full-stack engineer and platform architect with four years of
-              independent product delivery. Three live production systems, zero acquired
-              technical debt by design.
+              Built systems where there is no luxury of guessing: no padded support
+              layer, no forgiving staging mirror, no room for vague ownership.
+              That pressure sharpened a habit of first-principles thinking, explicit
+              failure modes, and engineering decisions that stay readable long after
+              the deploy is done.
             </m.p>
 
             <m.p
@@ -173,10 +181,10 @@ export function AboutSection() {
               className="mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
               style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
             >
-              Non-CS background (B.Tech Environmental Technology, FUTO) is a
-              feature — every architecture decision comes from first principles, not
-              textbook pattern-matching. Four cloud certs and 15+ merged upstream
-              contributions are the receipts.
+              Fifteen-plus upstream contributions merged, four cloud certifications,
+              and public code that outlives any single job title. The point is not
+              where the journey started — it is the quality of reasoning now visible
+              in the work.
             </m.p>
 
             {/* Stack strip */}
@@ -216,29 +224,58 @@ export function AboutSection() {
               ))}
             </m.div>
 
-            {/* UBEC callout — proof of federal-scale engineering */}
+            {/* Constraint Code — replaces UBEC callout */}
             <m.div
               variants={cardVariant}
               className="glass-surface mt-8 rounded-[var(--radius-lg)] p-5 sm:p-6"
-              style={{ borderLeft: '2px solid var(--color-cyan)' }}
+              style={{ borderLeft: '2px solid var(--color-film-teal)' }}
             >
               <p
                 className="mb-2 font-mono text-[10px] tracking-widest uppercase font-semibold"
                 style={{ color: 'var(--color-film-teal)' }}
               >
-                Federal infrastructure · UBEC · Abuja HQ
+                Constraint Code · Non-Negotiable Standards
               </p>
-              <p className="text-sm leading-7" style={{ color: 'var(--color-text-secondary)' }}>
-                Over a decade building the data systems that tracked school funding
-                across all 36 Nigerian states — ETL pipelines, dashboards, and
-                budget allocation infrastructure processing real federal allocations.
-                Federal scale. Real money. Not an academic exercise.
-              </p>
+              <div className="flex flex-col gap-4" role="list">
+                {[
+                  {
+                    declaration: 'Correctness is a product feature, not a backend preference.',
+                    proof: 'The database schema, API contracts, and UI flows all carry the burden of truth — not just the last layer to touch the request.',
+                  },
+                  {
+                    declaration: 'Silent failures are design failures.',
+                    proof: 'Retries, dead-letter handling, structured logs, and metrics exist before the first incident, not after the apology.',
+                  },
+                  {
+                    declaration: 'Every critical decision deserves a written rationale.',
+                    proof: 'The next engineer should be able to understand the choice, the tradeoff, and what was consciously rejected.',
+                  },
+                  {
+                    declaration: 'If a system cannot be observed, it cannot be trusted.',
+                    proof: 'Health checks, traces, and dashboards are treated as part of the product surface — not optional operations decoration.',
+                  },
+                ].map(({ declaration, proof }) => (
+                  <div key={declaration} className="flex flex-col gap-1" role="listitem">
+                    <p
+                      className="text-sm font-semibold leading-snug"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      {declaration}
+                    </p>
+                    <p
+                      className="text-xs leading-6"
+                      style={{ color: 'var(--color-text-muted)' }}
+                    >
+                      {proof}
+                    </p>
+                  </div>
+                ))}
+              </div>
               <p
-                className="mt-3 font-mono text-[10px] tracking-wider"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="font-mono text-[10px] tracking-wider"
+                style={{ marginTop: '1.25rem', color: 'var(--color-text-muted)', opacity: 0.6 }}
               >
-                Python 3.11 · Apache Airflow · PostgreSQL · Power BI
+                Traced to live production decisions across TaxBridge · SabiScore · SwarmXQ
               </p>
             </m.div>
 
