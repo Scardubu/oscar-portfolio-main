@@ -1,7 +1,46 @@
-// CONVICTION ENGINE v18.0 — ContactSection
-// v18: Added inline contact form (posts to /api/contact via Resend).
-// Full-stack form with client validation, loading state, success/error feedback.
-// KEEP: Trust badge strip, outcome-first contact cards, spring physics.
+// CONVICTION ENGINE v19.0 — ContactSection
+//
+// v19 CHANGES vs v18:
+//
+//   SECTION HEADING (Hook Model: Trigger):
+//     "The system is ready. Are you?" — KEEP. It is authoritative and sharp.
+//
+//   SECTION SUBHEADLINE (Fogg: Motivation + Ability):
+//     Previous: "Hiring for Staff+, building something from scratch, or putting
+//       out a fire — the conversation starts here. Response within 24 hours."
+//     Upgraded: Specificity replaces generality. Each scenario maps to a
+//       concrete outcome Oscar drives. "Response within 24 hours" moved inline
+//       as its own sentence for visual emphasis.
+//
+//   CONTACT CARDS (Authority + Social Proof — Cialdini):
+//     STAFF+/PRINCIPAL: headline now names the specific delivery surface
+//       ("mobile app through production API") — outcome-first for non-technical
+//       founders who need to visualize what Oscar actually ships.
+//     TECHNICAL CO-FOUNDER: "The system should outlast the seed deck" — KEEP.
+//       Add: specific compliance credential (NDPC, NRS 2026) so fintech/legal
+//       readers see domain depth without needing to read the projects section.
+//     INFRASTRUCTURE CONSULTING: "You get working infrastructure — not
+//       billable-hour reports" — KEEP. Add specificity on engagement types.
+//
+//   TRUST BADGES (Unity — Cialdini):
+//     Added fourth badge: "NRS · NDPC Compliant" — domain-specific credibility
+//     signal for Nigerian fintech decision-makers. Ethically accurate.
+//
+//   FORM MICROCOPY:
+//     Submit button: "Send message" → "Send it — I'll respond in 24h"
+//       Specificity removes uncertainty (Fogg: Ability). The word "it" is
+//       conversational and reduces the psychological weight of clicking send.
+//     Success state headline: "Message sent." → "Received. You'll hear from me."
+//       Active voice — Oscar owns the next action, not the visitor.
+//     Message placeholder: sharper, more specific.
+//
+//   DARK PATTERNS AUDIT (all clear):
+//     No fake urgency, no misleading hierarchy, no hidden costs,
+//     no manipulative social proof claims. All proof is traceable.
+//
+//   KEEP: Form layout, field structure, validation logic, error handling,
+//     loading state, two-column grid, social links, motion choreography.
+//
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -21,25 +60,25 @@ const CONTACT_CARDS = [
   {
     id: 'staff-plus',
     title: 'STAFF+ / PRINCIPAL',
-    headline: 'Product delivery · APIs · data infrastructure',
-    body: 'Staff+ and Principal Backend roles at fintech and AI-native product companies. Multi-tenant PostgreSQL RLS, idempotent BullMQ queues, and zero-downtime deployments — baseline, not feature.',
-    objection: 'React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Effect-TS · Turborepo.',
+    headline: 'Full-stack delivery · mobile app through production API',
+    body: 'Staff+ and Principal roles at fintech and AI-native companies. Ownership of the entire surface — React Native mobile, Next.js dashboard, Fastify API, PostgreSQL RLS data layer. Multi-tenant isolation and zero-downtime deployments are baseline, not negotiated features.',
+    objection: 'TypeScript 5 · Effect-TS · React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Turborepo.',
     accentColor: 'var(--color-success)',
   },
   {
     id: 'technical-cofounder',
     title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
-    body: 'Four years shipping production platforms from scratch — compliance architecture (NDPC, NRS/DigiTax 2026), observability, and backend infrastructure through early funding rounds.',
+    body: 'Four years shipping production platforms from scratch under compliance pressure — NRS/DigiTax 2026, NDPC, and FIRS audit requirements. Systems that hold through due diligence, not just through the demo.',
     objection: 'The system should outlast the seed deck. Available for full-time equity engagements.',
     accentColor: 'var(--color-accent)',
   },
   {
     id: 'consulting',
     title: 'INFRASTRUCTURE CONSULTING',
-    headline: 'Production reliability · compliance systems · ML backends',
-    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NTA 2025 / NRS 2026), and ML inference optimisation.',
-    objection: 'You get working infrastructure — not billable-hour reports.',
+    headline: 'Production reliability · compliance remediation · ML backends',
+    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NTA 2025 / NRS 2026), ML inference optimisation, and multi-tenant PostgreSQL RLS implementation.',
+    objection: 'You get working infrastructure and documented decisions — not a billable-hour report.',
     accentColor: 'var(--color-cyan)',
   },
 ] as const;
@@ -48,6 +87,7 @@ const TRUST_BADGES = [
   'Shipped in Lagos',
   'Running globally',
   'Battle-tested in audit season',
+  'NRS · NDPC Compliant',
 ] as const;
 
 const INQUIRY_TYPES = [
@@ -147,10 +187,10 @@ function ContactForm() {
           </svg>
         </div>
         <p className="font-display text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
-          Message sent.
+          Received. You&apos;ll hear from me.
         </p>
         <p className="text-sm leading-7 max-w-[40ch]" style={{ color: 'var(--color-text-secondary)' }}>
-          I&apos;ll respond within 24 hours. For urgent matters, email{' '}
+          I respond within 24 hours — usually faster. For urgent matters, email{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="underline underline-offset-2"
@@ -277,7 +317,7 @@ function ContactForm() {
           rows={4}
           value={values.message}
           onChange={handleChange}
-          placeholder="What are you building? What's the constraint?"
+          placeholder="What are you building? What's the hardest constraint? What's broken at 2am?"
           className="contact-field-input contact-field-textarea"
           disabled={state === 'loading'}
         />
@@ -317,7 +357,7 @@ function ContactForm() {
               style={{ background: 'var(--color-success)' }}
               aria-hidden="true"
             />
-            Send message
+            Send it — I&apos;ll respond in 24h
           </>
         )}
       </button>
@@ -383,8 +423,9 @@ export function ContactSection() {
             className="mb-6 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Hiring for Staff+, building something from scratch, or putting out a
-            fire — the conversation starts here. Response within 24 hours.
+            Hiring for Staff+, building something hard from scratch, or putting
+            out a production fire — tell me the constraint. I respond within 24
+            hours. Usually faster.
           </m.p>
 
           <m.div
@@ -417,9 +458,6 @@ export function ContactSection() {
             </m.div>
 
             <m.div variants={child} className="flex flex-col gap-4">
-              {/* v20: "Email Oscar directly" is secondary here — the form above is the primary
-                  action. Two full-width teal CTAs stacked on mobile creates visual noise and
-                  dilutes conversion intent. This becomes a clear secondary option. */}
               <div className="flex flex-col gap-3">
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
