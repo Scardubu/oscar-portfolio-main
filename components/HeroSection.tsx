@@ -363,7 +363,7 @@ export function HeroSection() {
                 Start a conversation
               </a>
               <Link
-                href="#section-projects"
+                href={anchorUrl('section-projects')}
                 className="cta-secondary tactile-press"
                 aria-label="Jump to projects section"
               >
