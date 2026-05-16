@@ -183,7 +183,7 @@ export function SkillsSection() {
           <m.div
             ref={cardsRef}
             variants={child}
-            className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6"
+            className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
             aria-label="Top skills — production-traced"
             role="list"
           >
