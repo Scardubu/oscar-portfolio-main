@@ -53,8 +53,9 @@ export class ErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={this.handleReset}
-            className="inline-flex min-h-[44px] items-center rounded-full border px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition"
+            className="inline-flex min-h-[48px] items-center rounded-full border px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition"
             style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+            aria-label="Try again — reload this section"
           >
             Try again
           </button>
