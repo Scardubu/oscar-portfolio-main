@@ -1,14 +1,14 @@
-// CONVICTION ENGINE v22.0 — OpenSourceSection
-// v22 vs v21.1:
-//   COPY: "Three" → "Four" packages (llm-dispatch is the 4th, was in data but not copy).
-//   GRID: 2-col on sm, 4-col on xl — all 4 packages show without horizontal scroll.
-//   PROOF STRIP: Updated to reflect 4 packages accurately.
-//   HOVER ANIMATION: whileHover spring tightened for snappier feel on desktop.
-//   KEEP: CopyInstall widget, GitHub CTA, all package data, motion config.
 'use client';
 
-import { m, useInView, useReducedMotion } from 'framer-motion';
-import { useMemo, useRef, useState } from 'react';
+// CONVICTION ENGINE v23.0 — OpenSourceSection
+// v23 vs v22:
+//   P3-B: CopyInstall migrated from useState text swap to useAnimate() imperative
+//     sequence — COPY → scale(0.96) → COPIED ✓ → reset at 1.8s. This is the
+//     spec-required Tier 3 motion: physical, satisfying, like a mechanical key click.
+//   KEEP: All v22 changes — four packages, 2/4-col grid, proof strip, motion config.
+
+import { m, useAnimate, useInView, useReducedMotion } from 'framer-motion';
+import { useMemo, useRef } from 'react';
 
 import {
   cardReveal,
@@ -62,22 +62,52 @@ const OSS_PROJECTS = [
 ] as const;
 
 function CopyInstall({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
+  const reducedMotion           = useReducedMotion();
+  const [scope, animate]        = useAnimate();
+  const labelRef                = useRef<HTMLSpanElement>(null);
 
-  function handleCopy() {
-    void navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    });
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      return; // clipboard blocked — fail silently, no state to clean up
+    }
+
+    if (labelRef.current) {
+      labelRef.current.textContent = 'COPIED ✓';
+      labelRef.current.style.color = 'var(--color-success)';
+    }
+
+    if (!reducedMotion) {
+      // Tier 3 imperative sequence — physical press feel
+      await animate(scope.current, { scale: 0.96 }, { duration: 0.08, ease: 'easeIn' });
+      await animate(scope.current, { scale: 1    }, { type: 'spring', stiffness: 420, damping: 26 });
+      await animate(
+        scope.current,
+        { borderColor: 'oklch(73% 0.18 196 / 0.5)' },
+        { duration: 0.12 }
+      );
+    }
+
+    await new Promise<void>((res) => setTimeout(res, 1800));
+
+    if (labelRef.current) {
+      labelRef.current.textContent = 'COPY';
+      labelRef.current.style.color = 'var(--color-text-muted)';
+    }
+    if (!reducedMotion) {
+      void animate(scope.current, { borderColor: 'oklch(100% 0 0 / 0.08)' }, { duration: 0.2 });
+    }
   }
 
   return (
     <button
+      ref={scope}
       type="button"
-      onClick={handleCopy}
+      onClick={() => { void handleCopy(); }}
       aria-label={`Copy install command: ${text}`}
-      className="w-full flex items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3 py-3 text-left transition hover:border-white/16 active:scale-[0.98] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
-      style={{ borderColor: copied ? 'oklch(73% 0.18 196 / 0.5)' : 'oklch(100% 0 0 / 0.08)' }}
+      className="w-full flex items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3 py-3 text-left hover:border-white/16 active:scale-[0.98] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+      style={{ borderColor: 'oklch(100% 0 0 / 0.08)' }}
     >
       <code
         className="font-mono text-[11px] tracking-wide truncate"
@@ -86,11 +116,12 @@ function CopyInstall({ text }: { text: string }) {
         {text}
       </code>
       <span
-        className="shrink-0 font-mono text-[10px] tracking-widest uppercase transition min-w-[40px] text-right"
-        style={{ color: copied ? 'var(--color-success)' : 'var(--color-text-muted)' }}
+        ref={labelRef}
+        className="shrink-0 font-mono text-[10px] tracking-widest uppercase min-w-[40px] text-right"
+        style={{ color: 'var(--color-text-muted)' }}
         aria-live="polite"
       >
-        {copied ? '✓ Done' : 'Copy'}
+        COPY
       </span>
     </button>
   );
