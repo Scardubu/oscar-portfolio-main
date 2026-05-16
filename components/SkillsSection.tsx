@@ -86,6 +86,14 @@ const FEATURED_SKILLS = [
     color: 'var(--color-film-teal)',
     barWidth: '95%',
   },
+  {
+    // Java 17 · Spring Boot 3: NRS integration layer in production TaxBridge
+    name: 'Java 17',
+    level: 'Expert',
+    project: 'TaxBridge · Spring Boot 3',
+    color: 'var(--color-film-amber)',
+    barWidth: '88%',
+  },
 ] as const;
 
 export function SkillsSection() {
