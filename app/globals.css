@@ -854,7 +854,7 @@ h3, .h3 {
 }
 @media (min-width: 480px) { .conviction-stat-strip { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; } }
 .conviction-stat { display: flex; flex-direction: column; gap: 0.2rem; }
-.conviction-stat-value { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: var(--weight-semibold); letter-spacing: 0.04em; white-space: nowrap; color: var(--color-stat-uptime); }
+.conviction-stat-value { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: var(--weight-semibold); letter-spacing: 0.04em; white-space: nowrap; color: var(--color-stat-uptime); font-variant-numeric: tabular-nums; }
 .conviction-stat[data-stat='filing'] .conviction-stat-value { color: var(--color-stat-filing); }
 .conviction-stat[data-stat='uptime'] .conviction-stat-value { color: var(--color-stat-uptime); }
 .conviction-stat[data-stat='latency'] .conviction-stat-value { color: var(--color-stat-latency); }
@@ -1870,6 +1870,7 @@ section.border-t + section.border-t {
   }
   .conviction-stat-value {
     font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
   }
 }
 
