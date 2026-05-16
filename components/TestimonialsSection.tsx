@@ -1,20 +1,22 @@
 'use client';
-// CONVICTION ENGINE v1.1 — TestimonialsSection
+// CONVICTION ENGINE v2.0 — TestimonialsSection
 //
-// v1.1 vs v1.0:
-//   [CHANGE]: Section kicker — removed "01.5" section number.
-//     The numbered section sequence (01 Projects → 02 OSS → 03 Skills → 04 About →
-//     05 Writing → 06 Contact) is a deliberate hierarchy contract. "01.5" breaks
-//     the sequence, reads as an afterthought, and creates a visual inconsistency.
-//     Testimonials is an interstitial — it doesn't need a number.
-//     (Nielsen: Minimalist Design — every element earns its place)
-//   ⚠ VERIFICATION REQUIRED: All 4 named testimonials (BALL 247, Trovotech,
-//     Legum Solutions, TradeBuza) must be verified as real, consented clients
-//     before this section is deployed. The specific metrics (23% accuracy,
-//     8h → 45min) must be traceable to actual engagements. See CONVICTION ENGINE
-//     v3.0 audit report for options. This section MUST NOT go live unverified.
-//   KEEP: All v1.0 card layout, star ratings, motion, grid, body copy.
-//
+// v2.0 vs v1.1:
+//   [CHANGE 1]: Section content — replaced 4 unverified named testimonials with 4
+//     verifiable system proof cards sourced directly from lib/projects.ts.
+//     The component header in v1.1 contained an explicit warning: "⚠ VERIFICATION
+//     REQUIRED — MUST NOT go live unverified." They were live. This closes that risk.
+//     Framework: Cialdini Authority — specificity and traceability outperform
+//     unverifiable social proof for technical evaluators and for basic honesty.
+//   [CHANGE 2]: Section number "01.5" removed from rendered output.
+//     v1.1 comment stated this was the intent; the code never executed it.
+//     Interstitial sections do not carry a number — consistent with the sequence
+//     contract (01 Projects → 02 OSS → 03 Skills → 04 About → 05 Writing → 06 Contact).
+//     (Nielsen: Minimalist Design)
+//   [CHANGE 3]: Heading — "What the teams say." → "Shipped systems. Verified outcomes."
+//     Traceable claim replaces unverifiable framing.
+//   KEEP: Grid layout, motion choreography, card border-left accent pattern,
+//     all CSS variables and design tokens, section ID for nav anchor compatibility.
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
@@ -26,33 +28,56 @@ import {
   noMotion,
   staggerContainer,
 } from '@/lib/motionVariants';
-import { TESTIMONIALS } from '@/lib/portfolio-data';
 
-// ── Star rating row ───────────────────────────────────────────────────────────
+// ── Proof card data — sourced from lib/projects.ts verified outcomes ──────────
+// Every metric here is traceable to a project slug and its outcomes[] or description.
+// TaxBridge: 4h→15min (tagline), NRS rate limits (constraint), 95% coverage (outcomes)
+// SabiScore: 99.9%+ uptime (outcomes), 45% MTTD (outcomes), 30% latency (description)
+// SwarmXQ:   self-improving fleet (outcomes), checkpoint recovery (outcomes), 8GB RAM (constraint)
+// UBEC:      36 states (outcomes), <2% dedup (description), 40M students (tagline)
 
-function StarRow() {
-  return (
-    <div
-      className="flex items-center gap-0.5"
-      aria-label="5 out of 5 stars"
-      role="img"
-    >
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg
-          key={i}
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="currentColor"
-          aria-hidden="true"
-          style={{ color: 'oklch(73% 0.17 65)' }}
-        >
-          <path d="M6 1l1.39 2.82L10.5 4.24l-2.25 2.19.53 3.09L6 7.77 3.22 9.52l.53-3.09L1.5 4.24l3.11-.42L6 1z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
+const PROOF_CARDS = [
+  {
+    id:        'taxbridge',
+    type:      'COMPLIANCE PLATFORM · FINTECH',
+    metric:    '4h \u2192 15min',
+    metricSub: 'Filing time',
+    headline:  'Tax filing compressed. Zero data-loss record.',
+    body:      'BullMQ absorbs NRS API rate limits (30 req/min per TIN) without client-visible failure. PostgreSQL RLS isolates each tenant at the database engine level — not the application layer. Immutable hash-chained audit trail. 95% test coverage.',
+    decision:  'Chosen: RLS at engine level, not application-layer filtering — NRS audit scrutiny demands proof that tenant data cannot cross-contaminate.',
+    accent:    'var(--color-film-teal)',
+  },
+  {
+    id:        'sabiscore',
+    type:      'ML PLATFORM · OBSERVABILITY',
+    metric:    '99.9%+',
+    metricSub: '90-day uptime',
+    headline:  'Ensemble ML. Engineers alerted before users notice.',
+    body:      'XGBoost, LightGBM, and CatBoost inference with real-time model quality monitoring. ~30% inference latency reduction via Redis caching. 45% MTTD improvement over reactive alerting baseline. Prometheus 90-day proof window.',
+    decision:  'Chosen: FastAPI + Redis Pub/Sub — sub-50ms event fan-out at sustained load, impossible with synchronous polling under concurrent sessions.',
+    accent:    'oklch(72% 0.17 160)',
+  },
+  {
+    id:        'swarmxq',
+    type:      'AI AGENT PLATFORM · ORCHESTRATION',
+    metric:    'Zero',
+    metricSub: 'Manual tuning cycles',
+    headline:  'Self-improving fleet. Checkpoint recovery.',
+    body:      'Triadic LLM routing under 8GB RAM — Phi-4-mini for task routing, DeepSeek-R1 for multi-step reasoning, Qwen2.5-Coder for generation. Agents evolve their own task strategies between runs. Failed sub-tasks restart from last consistent checkpoint, not from scratch.',
+    decision:  'Chosen: Autonomous evolution layer over static agent configs — manual tuning cannot adapt to novel inputs at scale.',
+    accent:    'oklch(75% 0.16 300)',
+  },
+  {
+    id:        'ubec',
+    type:      'FEDERAL INFRASTRUCTURE · DATA',
+    metric:    '36',
+    metricSub: 'State sources',
+    headline:  '40M Nigerian students. <2% deduplication error.',
+    body:      'Batch ingestion for the Universal Basic Education Commission across all 36 Nigerian states. Probabilistic record linkage (dedupe.io + PostgreSQL) where exact-match alone misses 15\u201320% of true duplicates. Per-state DAG tasks — one late submission does not block reporting for the other 35.',
+    decision:  'Chosen: Probabilistic deduplication over exact-match — state submissions use inconsistent school name spellings across ministries.',
+    accent:    'oklch(78% 0.17 65)',
+  },
+] as const;
 
 // ── Main section ──────────────────────────────────────────────────────────────
 
@@ -69,7 +94,7 @@ export function TestimonialsSection() {
     <section
       id="section-testimonials"
       ref={ref}
-      aria-labelledby="testimonials-heading"
+      aria-labelledby="proof-record-heading"
       className="border-t py-[var(--section-py)]"
       style={{ borderColor: 'var(--color-border)' }}
     >
@@ -79,18 +104,17 @@ export function TestimonialsSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          {/* ── Eyebrow ─────────────────────────────────────────────────── */}
+          {/* ── Eyebrow — no section number; interstitial between 01 and 02 ── */}
           <m.div variants={itemVariant} className="section-kicker-row">
-            <span className="section-number" aria-hidden="true">01.5</span>
-            <span className="section-label">Client Signal</span>
+            <span className="section-label">Production record</span>
           </m.div>
 
           <m.h2
             variants={headVariant}
-            id="testimonials-heading"
+            id="proof-record-heading"
             className="mt-4 mb-3"
           >
-            What the teams say.
+            Shipped systems. Verified outcomes.
           </m.h2>
 
           <m.p
@@ -98,9 +122,8 @@ export function TestimonialsSection() {
             className="mb-10 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            From BALL 247 to TradeBuza — real quotes from the CTOs, engineering
-            leads, and product managers who shipped with these systems in
-            production.
+            Four production systems. Every metric traceable to a deployed
+            codebase. All of it running.
           </m.p>
 
           {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}
@@ -108,59 +131,73 @@ export function TestimonialsSection() {
             variants={container}
             className="grid gap-4 sm:grid-cols-2"
           >
-            {TESTIMONIALS.map((t, i) => (
-              <m.blockquote
-                key={t.id}
+            {PROOF_CARDS.map((card, i) => (
+              <m.article
+                key={card.id}
                 variants={reducedMotion ? noMotion : cardReveal(i % 2 === 0 ? 20 : 28)}
-                className="glass-medium rounded-[var(--radius-xl)] p-6 flex flex-col gap-4"
-                style={{ borderLeft: `3px solid ${t.accent}` }}
-                cite={t.company}
+                className="glass-medium rounded-[var(--radius-xl)] p-6 flex flex-col gap-3"
+                style={{ borderLeft: `3px solid ${card.accent}` }}
+                aria-label={`${card.type}: ${card.headline}`}
+                whileHover={
+                  reducedMotion
+                    ? undefined
+                    : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+                }
               >
-                <StarRow />
-
+                {/* Type label */}
                 <p
-                  className="text-sm leading-7 flex-1"
-                  style={{ color: 'var(--color-text-primary)', opacity: 0.85 }}
+                  className="font-mono text-[10px] tracking-widest uppercase"
+                  style={{ color: card.accent, opacity: 0.8 }}
                 >
-                  &ldquo;{t.quote}&rdquo;
+                  {card.type}
                 </p>
 
-                <footer
-                  className="flex items-center gap-3 border-t pt-4"
-                  style={{ borderColor: 'var(--color-border-subtle)' }}
-                >
-                  {/* Initials avatar */}
-                  <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-semibold"
-                    style={{
-                      background: `${t.accent}1A`,
-                      color: t.accent,
-                      border: `1px solid ${t.accent}33`,
-                    }}
-                    aria-hidden="true"
+                {/* Metric row */}
+                <div className="flex items-baseline gap-2">
+                  <span
+                    className="font-mono text-2xl font-bold leading-none"
+                    style={{ color: card.accent }}
                   >
-                    {t.initials}
-                  </div>
+                    {card.metric}
+                  </span>
+                  <span
+                    className="font-mono text-[10px] tracking-widest uppercase"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {card.metricSub}
+                  </span>
+                </div>
 
-                  <div>
-                    <p
-                      className="text-sm font-semibold leading-tight"
-                      style={{
-                        color: 'var(--color-text-primary)',
-                        fontFamily: 'var(--font-display)',
-                      }}
-                    >
-                      {t.name}
-                    </p>
-                    <p
-                      className="font-mono text-[10px] tracking-wide mt-0.5"
-                      style={{ color: 'var(--color-text-muted)' }}
-                    >
-                      {t.title} · {t.company}
-                    </p>
-                  </div>
-                </footer>
-              </m.blockquote>
+                {/* Headline */}
+                <p
+                  className="text-sm font-semibold leading-snug"
+                  style={{
+                    color: 'var(--color-text-primary)',
+                    fontFamily: 'var(--font-display)',
+                  }}
+                >
+                  {card.headline}
+                </p>
+
+                {/* System detail */}
+                <p
+                  className="text-xs leading-6 flex-1"
+                  style={{ color: 'var(--color-text-secondary)', opacity: 0.85 }}
+                >
+                  {card.body}
+                </p>
+
+                {/* Architecture decision — Layer 2 for technical evaluators */}
+                <p
+                  className="font-mono text-[10px] leading-5 border-t pt-3 italic"
+                  style={{
+                    borderColor: 'var(--color-border-subtle)',
+                    color: 'var(--color-text-muted)',
+                  }}
+                >
+                  {card.decision}
+                </p>
+              </m.article>
             ))}
           </m.div>
         </m.div>
