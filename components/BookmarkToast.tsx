@@ -1,11 +1,11 @@
-﻿// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
 'use client';
 
 import { AnimatePresence, m } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { springConfig } from '@/lib/motion';
+import { springConfig } from '@/lib/motionVariants';
 
 const SESSION_KEY = 'portfolio_bookmark_shown';
 const AUTO_DISMISS_MS = 6_000;
