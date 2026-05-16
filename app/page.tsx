@@ -1,8 +1,12 @@
-// CONVICTION ENGINE v22.0 — Home Page
-// Mobile-native: Hero → Projects → OSS → Skills → About → Writing → Contact.
+// CONVICTION ENGINE v23.0 — Home Page
+// v23 CHANGE: TestimonialsSection added between Projects and OSS (P2-D).
+//   TESTIMONIALS data existed in lib/portfolio-data.ts since v27 but was never
+//   rendered. This closes the gap — authority signal lands immediately after
+//   the technical depth proof and before OSS artifacts.
+//
+// Render order: Hero → Projects → Testimonials → OSS → Skills → About → Writing → Contact
 // Render priority: HeroSection is above-the-fold, zero lazy-loading.
 // Heavy sections: dynamic import (ssr: true) to reduce initial JS bundle.
-// Location: Lagos, Nigeria → Global.
 
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
@@ -57,8 +61,8 @@ export default async function Home() {
           <ProjectsSection />
         </Suspense>
 
-        {/* 01.5 — Testimonials: client authority between depth proof and OSS */}
-        <Suspense 
+        {/* 01.5 — Testimonials: client authority immediately after depth proof */}
+        <Suspense
           fallback={<SectionSkeleton id="section-testimonials" label="Testimonials" height={360} />}
         >
           <TestimonialsSection />
