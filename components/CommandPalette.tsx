@@ -11,7 +11,7 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CV_ASSET_PATH } from '@/lib/config';
+import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 
 interface CommandItem {
