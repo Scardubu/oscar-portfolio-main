@@ -1,4 +1,17 @@
-// CONVICTION ENGINE v22.0 — HeroSection
+// CONVICTION ENGINE v23.0 — HeroSection
+//
+// v23 vs v22:
+//   [CHANGE 1]: CONVICTION_STATS[3] — value '45% MTTD' → '45% faster'; label 'Improvement' → 'Alert detection'.
+//     '45% MTTD · Improvement' required knowing the acronym and left the label unanchored.
+//     '45% faster · Alert detection' is self-contained for non-technical decision-makers
+//     while preserving the monitoring credential for technical readers.
+//     (Behavioral Economics: Specificity signals quality over opaque acronyms)
+//   [CHANGE 2]: Mobile kicker — replaced 'React Native' with 'Lagos → Global'.
+//     The Lagos throughline is the most differentiated signal in the strip and must
+//     appear on every viewport. Mobile is the highest-traffic surface.
+//     (Cialdini: Unity — shared identity signal must survive format constraints)
+//   KEEP: All v22 headline, body, proof callout, CTAs, stat strip structure,
+//     motion choreography, ProofCarousel, LiveActivityBar, HeroVisual.
 //
 // v22 CHANGES vs v21:
 //
@@ -66,7 +79,7 @@ const CONVICTION_STATS = [
   { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
   { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
   { value: 'sub-150ms',  label: 'API p99',        stat: 'latency' },
-  { value: '45% MTTD',   label: 'Improvement',   stat: 'mttd'    },
+  { value: '45% faster', label: 'Alert detection', stat: 'mttd'    }, // v23 CHANGE: self-contained for non-technical readers; MTTD signal preserved in project WHY blocks
 ] as const;
 
 const PROOF_COLUMNS = [
@@ -254,13 +267,14 @@ export function HeroSection() {
               style={{ color: 'var(--color-film-teal)' }}
             >
               <span className="inline sm:hidden">
+                {/* v23 CHANGE: 'React Native' → 'Lagos → Global' on mobile. Lagos signal must appear on every viewport. */}
                 <span className="whitespace-nowrap">Full-Stack</span>
-                {' · '}
-                <span className="whitespace-nowrap">React Native</span>
                 {' · '}
                 <span className="whitespace-nowrap">Next.js 15</span>
                 {' · '}
                 <span className="whitespace-nowrap">AI Systems</span>
+                {' · '}
+                <span className="whitespace-nowrap">Lagos → Global</span>
               </span>
               <span className="hidden sm:inline">
                 Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global
