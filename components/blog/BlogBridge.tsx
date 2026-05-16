@@ -16,7 +16,7 @@
  */
 
 import { blogUrl } from '@/lib/config';
-import { fadeUp, viewportOnce } from '@/lib/motion';
+import { fadeUp, viewportOnce } from '@/lib/motionVariants';
 import type { BadgeType, BlogArticleRef } from '@/lib/types';
 import { m, useReducedMotion } from 'framer-motion'
 import * as React from 'react';
