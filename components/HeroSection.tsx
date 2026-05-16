@@ -32,7 +32,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
-import { CONTACT_EMAIL } from '@/lib/config';
+import { CONTACT_EMAIL, anchorUrl } from '@/lib/config';
 import {
   HERO_SCROLL_CONFIG,
   cardReveal,
