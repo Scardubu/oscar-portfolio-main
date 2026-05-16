@@ -52,7 +52,6 @@
     "lib/**/*.tsx",
     "hooks/**/*.ts",
     "hooks/**/*.tsx",
-    "data/projects.ts",
 
     "components/**/*.tsx",
     "components/**/*.ts",
