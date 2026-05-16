@@ -1,6 +1,6 @@
 'use client'
 
-import { fadeIn, viewportOnce } from '@/lib/motion';
+import { fadeIn, viewportOnce } from '@/lib/motionVariants';
 import { cn } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
