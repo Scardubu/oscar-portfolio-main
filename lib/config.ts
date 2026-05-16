@@ -51,7 +51,7 @@ export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf'
  * ⚠️  VERIFY: Ensure oscar@scardubu.dev is configured in your Resend dashboard
  *     and set as the RESEND_TO_EMAIL environment variable in Vercel.
  */
-export const CONTACT_EMAIL = 'scardubu@gmail.com'
+export const CONTACT_EMAIL = 'oscar@scardubu.dev'
 
 // ─── Blog URLs ────────────────────────────────────────────────────────────────
 
