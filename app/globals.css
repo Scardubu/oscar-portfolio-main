@@ -2008,3 +2008,57 @@ section.border-t {
   .conviction-stat-strip { display: flex !important; gap: 1rem 2.5rem !important; }
   h1, h2, h3 { color: #000 !important; }
 }
+
+/* ════ MARGIN RESET COMPENSATION — v21.1 ════════════════════════════════
+   Root issue: `*, *::before, *::after { margin: 0 }` (line ~268) is an
+   unlayered rule. Tailwind v4 @layer utilities has LOWER cascade priority
+   than unlayered rules, so ALL mt-* mb-* my-* Tailwind utilities in JSX
+   are silently zeroed at runtime.
+
+   Fix: Move all margin declarations into these CSS class rules, which are
+   also unlayered and appear AFTER the reset — so they win the cascade.
+
+   This is the only correct approach. Do NOT remove the global reset
+   (it prevents browser default margins from bleeding in elsewhere).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Hero kicker: gap between headshot and kicker, and between kicker and h1 */
+.hero-kicker {
+  margin-bottom: 1rem;        /* was mb-4 utility — zeroed by reset */
+}
+
+/* Hero body copy: breathing room above paragraph */
+.hero-body-text {
+  margin-top: 1.5rem;         /* was mt-6 utility — zeroed by reset */
+}
+
+/* Hero proof callout: breathing room above the Lagos trust signal block */
+.hero-proof-callout {
+  margin-top: 1.5rem;         /* was mt-6 utility — zeroed by reset */
+}
+
+/* CTA button group: space above and below the primary action cluster */
+.cta-hero-group {
+  margin-top: 2rem;           /* was mt-8 utility — zeroed by reset */
+  margin-bottom: 1rem;        /* was mb-4 utility — zeroed by reset */
+}
+
+/* Live activity bar wrapper: gap above it */
+.live-bar-wrapper-hero {
+  margin-top: 1.25rem;        /* was mt-5 utility — zeroed by reset */
+}
+
+/* Proof carousel: gap above cards */
+.mobile-carousel {
+  margin-top: 2rem;           /* was mt-8 utility — zeroed by reset */
+}
+
+/* CV ghost link wrapper */
+.cv-ghost-wrapper {
+  margin-bottom: 0.5rem;      /* was mb-2 utility — zeroed by reset */
+}
+
+/* text-didone-sub: top gap below headline (was mt-4 utility — zeroed) */
+.text-didone-sub {
+  margin-top: 1rem;
+}
