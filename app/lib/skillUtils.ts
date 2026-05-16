@@ -1,5 +1,15 @@
 // PRD Feature 3: Skill-002 - Utility functions for D3.js force graph
-import type { Skill } from "./constants";
+// Skill interface — self-contained; app/lib/constants.ts was removed (stale layer).
+// This module is standalone: no component currently imports it.
+export interface Skill {
+  id: string;
+  name: string;
+  category: "ml" | "backend" | "frontend" | "devops" | "blockchain";
+  proficiency: "expert" | "advanced" | "proficient";
+  yearsOfExperience: number;
+  projects: string[];
+  relatedSkills?: string[];
+}
 
 // PRD: Category color mapping (5 categories)
 export const CATEGORY_COLORS = {
