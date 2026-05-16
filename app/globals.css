@@ -2143,3 +2143,78 @@ section.border-t {
 .text-didone-sub {
   margin-top: 1rem;
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v29.1 — DESKTOP EDITORIAL IMPROVEMENTS
+   Surgical additions. Every rule is additive at a breakpoint where smaller
+   viewports are unaffected. Source: audit pass on v29 screenshots.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── P3-A: Writing filter chip row — clean desktop alignment ──────────────
+   On mobile the chip row uses -mx-[clamp(1rem,5vw,3rem)] bleed + matching
+   padding-inline to create an edge-to-edge scrollable strip. On lg+ (1024px)
+   the chips fit in a single line within the container, so the bleed is
+   unnecessary and the overflow-x: auto is dead weight. Reset to clean layout.
+   Nielsen: Minimalist hierarchy — no scroll affordance where no scroll is needed.
+*/
+@media (min-width: 1024px) {
+  .filter-chip-row {
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+}
+
+/* ── P3-B: Desktop section prose — richer leading at xl ──────────────────
+   At xl+ (1280px) section descriptors read at clamp's max value (~18px).
+   Slightly tighten leading for crisp editorial rhythm at large size.
+   Mobile leading-[1.8] is preserved (max-width breakpoint not affected).
+*/
+@media (min-width: 1280px) {
+  .section-deferred p,
+  #section-projects > .container > div > p,
+  #open-source    > .container > div > p,
+  #skills         > .container > div > p,
+  #section-about  > .container > div > p,
+  #section-writing > .container > div > p {
+    line-height: 1.75;
+  }
+}
+
+/* ── P3-C: Desktop hero — proof carousel 2-col → horizontal strip at xl ──
+   The proof cards sit in the left hero column (54% width).
+   At xl (1280px): 54% × (1280 - 96px padding) = ~628px.
+   Two cards with gap: 628px is correct and spacious for 2-col.
+   No 4-col override — card labels like "LIVE IN PRODUCTION" need ≥150px
+   to avoid truncation and 2-col already fills the column elegantly.
+   No change needed here; documented for future reference.
+*/
+
+/* ── P3-D: Desktop project section heading — tighter optical tracking ─────
+   At --text-section max (~3.25rem), -0.035em tracking from v20.1 can
+   loosen slightly on very wide viewports. Fine-tune at xl.
+   Only affects the projects section h2 per scoped selector already in v20.1.
+*/
+@media (min-width: 1280px) {
+  #section-projects h2 {
+    letter-spacing: -0.04em;
+  }
+}
+
+/* ── P3-E: Desktop nav — tagline max-width fully unconstrained ────────────
+   At lg+ the nav has ample width for the full tagline.
+   Lift the 220px max-width cap so "Full-Stack · AI · Fintech" always renders
+   in full regardless of font rendering variance across platforms.
+*/
+@media (min-width: 1024px) {
+  .nav-tagline {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+/* ── Reduced-motion guard — all P3 additions ──────────────────────────────
+   No animation added above; this guard is a safety declaration only.
+   The v29.1 block adds no keyframes or transitions.
+*/
