@@ -1043,7 +1043,13 @@ h3, .h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 160px;
+  /* v29 FIX: Increased from 160px → 220px.
+     "Full-Stack · AI · Fintech" at 9px font-mono with 0.12em tracking
+     renders to ≈162px. At 160px, it clipped to "FINTE…" on every mobile viewport.
+     220px gives full display at 320px+ without displacing the Hire Oscar CTA.
+     (flex justify-between reserves right-side space regardless of tagline width)
+     Nielsen: visible system status — tagline is a first-5s trust signal. */
+  max-width: 220px;
 }
 
 /* ════ MOBILE HIGH-CONTRAST BOOST — v24 Lagos outdoor use ════
@@ -1841,6 +1847,40 @@ section.border-t + section.border-t {
 }
 .glass-nav[data-scrolled='true'] {
   border-bottom-color: oklch(100% 0 0 / 0.10);
+}
+
+/* ── v29: SkillsMap tab — teal active state ───────────────────────────────
+   SkillsMap tabs use aria-pressed + className="skills-map-tab".
+   Active state mirrors writing-filter-chip[data-active='true'] for
+   brand-consistent teal accent across all interactive filter controls.
+   Nielsen: Consistency — all filter/tab active states use the same signal.
+*/
+.skills-map-tab[data-active='true'] {
+  border-color: oklch(70% 0.21 188 / 0.45) !important;
+  color: var(--color-film-teal) !important;
+  background: oklch(70% 0.21 188 / 0.08) !important;
+}
+
+/* ── v29: Writing filter chip — teal active state via data attribute ──────
+   The .writing-filter-chip[data-active='true'] rule was defined in v20.1
+   but never triggered because WritingSection buttons lacked the class and
+   attribute. v29 WritingSection.tsx adds both — this rule now fires.
+   Nielsen: Consistency — filter active state is brand-teal site-wide.
+*/
+
+/* ── v29: Desktop hero carousel — containment at lg breakpoint ────────────
+   The ProofCarousel uses -mx-[clamp(1rem,5vw,3rem)] + paddingInline for
+   a full-bleed-to-edge effect on mobile. At 1024px the hero enters a
+   two-column grid. Reset the negative margins so the carousel container
+   stays within the left column at the 1024px min-desktop threshold where
+   right bleed (48px) approaches the column gap (41px at clamp minimum).
+   Content width is unaffected: paddingInline cancels the margin pull.
+*/
+@media (min-width: 1024px) {
+  .hero-grid-child .mobile-carousel {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 }
 
 /* ── v20.1: Proof card left accent line — on hover reveal ─────────────── */
