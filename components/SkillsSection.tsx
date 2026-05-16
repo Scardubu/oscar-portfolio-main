@@ -139,8 +139,9 @@ export function SkillsSection() {
               style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word' }}
             >
               62 battle-tested skills across ML, AI agent orchestration, fintech
-              compliance, backend infrastructure, DevOps, and blockchain/ZK —
-              every one traceable to a live production system.
+              compliance, backend infrastructure, DevOps, and blockchain/ZK.
+              Every one traceable to a live system running in production — not a
+              side project, not a tutorial, not a certificate exercise.
             </p>
 
             {/* Outcome-first trust strip — serves both engineers and founders */}
