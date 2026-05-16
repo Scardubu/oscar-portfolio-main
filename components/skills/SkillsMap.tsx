@@ -11,7 +11,7 @@
 //   • Keyboard: all tab buttons have proper type="button" + focus ring.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
-import { filterTransition } from '@/lib/motion';
+import { filterTransition } from '@/lib/motionVariants';
 import type { SkillNode, SkillPillar } from '@/lib/types';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
