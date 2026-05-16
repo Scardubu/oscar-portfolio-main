@@ -147,15 +147,17 @@ export const SKILLS: SkillNode[] = [
     id: 'java17',
     name: 'Java 17+',
     pillar: 'Backend & APIs',
-    level: 'proficient',
-    tags: ['used-in:taxbridge', 'used-in:ubec'],
+    // Expert: NRS integration, Spring Boot 3 services, production TaxBridge API layer
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'used-in:ubec', 'documented'],
   },
   {
     id: 'springboot',
     name: 'Spring Boot 3',
     pillar: 'Backend & APIs',
-    level: 'proficient',
-    tags: ['used-in:taxbridge'],
+    // Expert: TaxBridge compliance services shipped and running in production
+    level: 'expert',
+    tags: ['used-in:taxbridge', 'documented'],
   },
   {
     id: 'pydantic',
