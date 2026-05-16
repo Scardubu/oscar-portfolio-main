@@ -1,2 +1,17 @@
+# Normalize all text files to LF on checkout (P1-M fix)
 * text=auto eol=lf
+
+# Shell scripts must always be LF
 *.sh text eol=lf
+
+# Binary — no normalization
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.docx binary
