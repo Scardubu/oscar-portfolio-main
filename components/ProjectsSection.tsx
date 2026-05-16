@@ -168,6 +168,7 @@ function FeaturedProjectCard({
           style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
           aria-expanded={archOpen}
           aria-controls={`arch-mobile-${featured.slug}`}
+          aria-label={`Toggle architecture decision for ${featured.title}`}
         >
           <span>Architecture Decision</span>
           <m.span animate={{ rotate: archOpen ? 180 : 0 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
@@ -278,10 +279,11 @@ function SecondaryFeaturedCard({
           <button
             type="button"
             onClick={() => setArchOpen((v) => !v)}
-            className="w-full flex items-center justify-between min-h-[44px] py-2.5 border-t font-mono text-[10px] tracking-widest uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+            className="w-full flex items-center justify-between min-h-[48px] py-2.5 border-t font-mono text-[10px] tracking-widest uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
             style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
             aria-expanded={archOpen}
             aria-controls={`arch-secondary-${project.slug}`}
+            aria-label={`Toggle architecture decision for ${project.title}`}
           >
             <span>Architecture Decision</span>
             <m.span animate={{ rotate: archOpen ? 180 : 0 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
