@@ -1,12 +1,19 @@
-// CONVICTION ENGINE v27.0 — Footer
+// CONVICTION ENGINE v28.0 — Footer
 //
-// v27 vs v26:
-//   LOCATION FIX: "Shipped in Abuja" → "Shipped in Lagos". Oscar is Lagos-based.
-//     UBEC (Abuja) is a past employer. Footer trust strip reflects current location.
-//   MOBILE COMPACT: py-10 → py-8; gap-10 → gap-8.
-//     Reduces accumulated bottom whitespace on mobile before body padding-bottom.
-//   GRID: Mobile stacked → 2-col sm (Nav + Connect side-by-side) → 3-col lg.
-//   FOOTER GLOW: Subtle teal gradient behind the bottom strip for cinematic depth.
+// v28 vs v27:
+//   CTA COPY (Hook Model: Prompt — timely, relevant, not pushy):
+//     "Start a conversation" → "Start the conversation"
+//     The definite article ("the") implies inevitability — as if the conversation
+//     has already been earned by the portfolio above it. Subtle commitment/
+//     consistency nudge (Cialdini) without fake urgency.
+//   CTA SUBLABEL: Added "· Response within 24 hours" inline with the dot.
+//     Fogg: Ability — removes the friction of not knowing what happens after clicking.
+//   BRAND TAGLINE: Added "Constraint is the credential." as a third line below
+//     the Lagos/audit season trust signals. Reinforces the core thesis for anyone
+//     landing on the footer after scrolling the whole page.
+//   KEEP: All v27 layout, grid, ambient glow, system status, nav links, social links.
+//   KEEP: "Shipped in Lagos" in trust strip — correct location.
+//
 'use client';
 
 import Link from 'next/link';
@@ -64,6 +71,12 @@ export function Footer() {
               <span style={{ color: 'var(--color-text-muted)' }}>
                 Battle-tested in audit season.
               </span>
+            </p>
+            <p
+              className="mt-1 font-mono text-[10px] tracking-wider"
+              style={{ color: 'oklch(70% 0.21 188 / 0.55)' }}
+            >
+              Constraint is the credential.
             </p>
           </div>
 
@@ -150,17 +163,18 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Footer CTA — Hook Model: final Prompt before the visitor leaves */}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="cta-primary w-full sm:w-auto"
-            aria-label="Email Oscar to start a conversation"
+            aria-label="Email Oscar to start a conversation — response within 24 hours"
           >
             <span
               className="inline-block h-2 w-2 rounded-full shrink-0"
               style={{ background: 'var(--color-success)' }}
               aria-hidden="true"
             />
-            Start a conversation
+            Start the conversation · 24h response
           </a>
         </div>
       </div>
