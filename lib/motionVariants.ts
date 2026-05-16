@@ -1,36 +1,32 @@
 /**
- * CONVICTION ENGINE v14.0 — MOTION VOCABULARY
+ * CONVICTION ENGINE v15.0 — MOTION VOCABULARY
  * ─────────────────────────────────────────────────────────────────────────
- * Changelog from v12.0:
+ * THE SINGLE SOURCE OF MOTION TRUTH.
  *
- *   NEW: dramaticReveal — for full-width section heading reveals where the
- *     scale of the motion should feel physically weighty. Combines a larger
- *     Y travel (36px) with a slight scale-down start (0.96). Lower spring
- *     stiffness (160) makes it feel like a large object settling.
- *     Use for ContactSection and AboutSection h2 elements.
+ * lib/motion.ts has been deleted. All exports that lived there now live here.
+ * Every component should import from '@/lib/motionVariants' — never from
+ * '@/lib/motion' (which no longer exists).
  *
- *   NEW: letterReveal — per-character reveal for short, high-conviction
- *     words (e.g. acronyms, KPI labels). Faster spring than wordReveal
- *     because characters are smaller and need a snappier feel.
- *     Use sparingly — word-level reveal is the primary pattern.
+ * Changelog from v14.0:
+ *   v15.0 MERGE: Absorbed all exports from lib/motion.ts:
+ *     fadeIn, fadeUp, reveal, revealLeft, revealRight, scaleIn,
+ *     stagger, staggerSlow, heroContainer, heroItem, listItem,
+ *     interactive, liquidCard, mobileMenu (name-collision resolved — see below),
+ *     mobileMenuItem, mobileMenuItems, filterTransition, springConfig,
+ *     viewportOnceDefault, pageTransition (merged with existing)
  *
- *   NEW: glassCardReveal — identical physics to cardReveal but with an
- *     additional backdrop-filter reveal trick: starts at blur(8px) and
- *     settles to blur(0). Only for glass-elevated tier cards where the
- *     blur-on-enter signals the glass "condensing" into focus.
- *     NOTE: Use sparingly — promotes to compositor layer. Not for lists.
+ *   NAME COLLISION RESOLUTION:
+ *     Both files exported mobileMenu, mobileMenuItem, mobileMenuItems,
+ *     filterTransition, and pageTransition. The motionVariants.ts versions
+ *     are canonical (more complete spring vocabulary). lib/motion.ts versions
+ *     are discarded. If any component produced subtly different animation,
+ *     the canonical version is the correct reference.
  *
- *   NEW: springs.decisive — for CTA buttons and primary interactive
- *     elements that need to feel instant but still physical.
- *     stiffness 600, damping 35 — ultra-snappy with zero bounce.
+ *   v15.0 NEW: mobileReducedVariant() helper — halves durations on mobile.
+ *     Called at component level: `mobileReducedVariant(variants, isMobile)`.
+ *     Does NOT remove transforms — only duration halving is safe cross-device.
  *
- *   REF: wordReveal spring: stiffness 200 → 190, mass 1.0 → 1.05.
- *     Adds a fractionally heavier feel to large headline letterforms.
- *     The difference is subtle but compounds across 7 words.
- *
- *   REF: fadeRise: y: 16 → 14. Shorter travel = more confident reveal.
- *     16px was appropriate at v11; with the tightened grid in v14 the
- *     extra travel is visible as a layout shift on slow connections.
+ *   v15.0 NEW: viewportOnceDefault export (alias for viewportOnce, backward compat).
  *
  *   KEEP all spring vocabulary names — external components reference by name.
  *   KEEP HERO_SCROLL_CONFIG — parallax values unchanged.
@@ -65,9 +61,16 @@ export const springs = {
   layout: { type: 'spring', stiffness: 300, damping: 28, mass: 0.8 } as Transition,
   /** Hover lift — instant physical settle */
   hoverRise: { type: 'spring', stiffness: 500, damping: 32, mass: 0.6 } as Transition,
-  /** v14.0 NEW: CTA hover, primary interactive — ultra-snappy zero-bounce */
+  /** CTA hover, primary interactive — ultra-snappy zero-bounce */
   decisive: { type: 'spring', stiffness: 600, damping: 35, mass: 0.5 } as Transition,
 } as const;
+
+/**
+ * springConfig — canonical alias for springs.smooth.
+ * Used by legacy components (ThemeToggle, CommandPalette, GlassCard).
+ * New code: use springs.smooth directly.
+ */
+export const springConfig: Transition = springs.smooth;
 
 /* ══════════════════════════════════════════════════════════════════════════
    VIEWPORT CONFIG
@@ -75,6 +78,57 @@ export const springs = {
 
 export const viewportOnce = { once: true, margin: '-72px' } as const;
 export const viewportRelaxed = { once: true, margin: '-40px' } as const;
+/** Backward-compat alias — prefer viewportOnce in new code */
+export const viewportOnceDefault = { once: true, margin: '-80px' } as const;
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE MOTION HELPER
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * mobileReducedVariant — halves all transition durations on mobile.
+ *
+ * Call at component top-level:
+ *   const isMobile = useMediaQuery('(max-width: 767px)');
+ *   const variants = mobileReducedVariant(cardReveal(), isMobile);
+ *
+ * Does NOT remove scale or translate transforms — only duration reduction.
+ * Removing transforms can cause layout jumps on constrained viewports.
+ *
+ * Spring transitions don't have a `duration` property, so spring-based
+ * variants are returned unmodified — springs self-regulate via stiffness/damping.
+ */
+export function mobileReducedVariant<T extends Variants>(
+  variants: T,
+  isMobile: boolean
+): T {
+  if (!isMobile) return variants;
+
+  const result: Variants = {};
+  for (const [key, value] of Object.entries(variants)) {
+    if (typeof value !== 'object' || value === null) {
+      result[key] = value;
+      continue;
+    }
+    const state = value as Record<string, unknown>;
+    const transition = state.transition as Record<string, unknown> | undefined;
+    if (transition && typeof transition.duration === 'number') {
+      result[key] = {
+        ...state,
+        transition: {
+          ...transition,
+          duration: transition.duration / 2,
+          ...(typeof transition.delay === 'number'
+            ? { delay: transition.delay / 2 }
+            : {}),
+        },
+      };
+    } else {
+      result[key] = state;
+    }
+  }
+  return result as T;
+}
 
 /* ══════════════════════════════════════════════════════════════════════════
    CONTAINERS — stagger orchestration
@@ -95,14 +149,26 @@ export const staggerContainer = (stagger = 0.08, delay = 0.05): Variants => ({
   },
 });
 
+/** Slower stagger for editorial content (articles, timelines) */
+export const staggerSlow: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
+  exit: { transition: { staggerChildren: 0.06, staggerDirection: -1 } },
+};
+
+/** Generic stagger (backward-compat alias) */
+export const stagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.045, delayChildren: 0.08 } },
+  exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+};
+
 /* ══════════════════════════════════════════════════════════════════════════
    PRIMITIVE REVEALS
    ══════════════════════════════════════════════════════════════════════════ */
 
 /**
  * fadeRise — body text, secondary elements, proof cards.
- *
- * v12 CHANGE: Removed `filter: blur(4px)` from hidden state.
  * v14 CHANGE: y: 16 → 14. Shorter travel = more confident reveal.
  */
 export const fadeRise: Variants = {
@@ -132,11 +198,28 @@ export const fadeRiseGentle: Variants = {
   },
 };
 
+/** fadeIn — opacity-only, no position transform */
+export const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: springs.smooth },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
+};
+
+/** fadeUp — body text with subtle upward travel and blur settle */
+export const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 14, filter: 'blur(3px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: springs.smooth,
+  },
+  exit: { opacity: 0, y: -8, filter: 'blur(2px)', transition: { duration: 0.15 } },
+};
+
 /**
- * v14.0 NEW — dramaticReveal
- * For full-width section headings where the motion should feel physically
- * weighty. Lower stiffness (160) = heavier object settling.
- * Use for ContactSection h2, AboutSection h2.
+ * dramaticReveal — for full-width section headings (ContactSection, AboutSection h2).
+ * Lower stiffness (160) makes it feel like a large object settling.
  * NO scale — prevents layout reflow on wide headings.
  */
 export const dramaticReveal = (yOffset = 36): Variants => ({
@@ -153,6 +236,68 @@ export const dramaticReveal = (yOffset = 36): Variants => ({
   },
 });
 
+/** sectionEntrance — full-section reveals without scale (prevents layout thrashing) */
+export const sectionEntrance = (yOffset = 20): Variants => ({
+  hidden: { opacity: 0, y: yOffset },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: springs.gentle,
+  },
+});
+
+/** scaleIn — opacity + subtle scale for dialogs and popovers */
+export const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: { opacity: 1, scale: 1, transition: springs.smooth },
+  exit: { opacity: 0, scale: 0.98, transition: { duration: 0.12 } },
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DIRECTIONAL REVEALS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/** reveal — generic vertical fade-rise (backward-compat alias for fadeRise) */
+export const reveal: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 300, damping: 25 },
+  },
+  exit: {
+    opacity: 0,
+    y: 8,
+    transition: { type: 'spring', stiffness: 180, damping: 20 },
+  },
+};
+
+export const revealLeft: Variants = {
+  hidden: { opacity: 0, x: -16 },
+  visible: { opacity: 1, x: 0, transition: springs.snappy },
+  exit: { opacity: 0, x: -8, transition: { duration: 0.12 } },
+};
+
+export const revealRight: Variants = {
+  hidden: { opacity: 0, x: 16 },
+  visible: { opacity: 1, x: 0, transition: springs.snappy },
+  exit: { opacity: 0, x: 8, transition: { duration: 0.12 } },
+};
+
+/** listItem — for rendered lists and filter results */
+export const listItem: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: springs.smooth },
+  exit: { opacity: 0, y: 6, transition: { duration: 0.1 } },
+};
+
+/** liquidCard — glass card entrance (same physics as cardReveal + scale) */
+export const liquidCard: Variants = {
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
+  exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.14 } },
+};
+
 /* ══════════════════════════════════════════════════════════════════════════
    A24 DIDONE WORD REVEAL
    ══════════════════════════════════════════════════════════════════════════ */
@@ -163,9 +308,6 @@ export const dramaticReveal = (yOffset = 36): Variants => ({
  * Wrap each word in an `overflow:hidden` clipping container.
  * Apply this variant to the INNER span (the one that translates).
  * Creates the "rising from below the frame" letterform unfurl.
- *
- * v14.0: stiffness 200 → 190, mass 1.0 → 1.05.
- * Adds a fractionally heavier feel at large headline sizes.
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
@@ -192,10 +334,9 @@ export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => (
 });
 
 /**
- * v14.0 NEW — letterReveal
- * Per-character reveal for short, high-conviction words (KPI labels, acronyms).
+ * letterReveal — per-character reveal for short, high-conviction words.
  * Faster spring than wordReveal — characters are smaller, need snappier feel.
- * Use sparingly — word-level reveal is the primary pattern.
+ * Use sparingly.
  */
 export const letterReveal: Variants = {
   hidden: { y: '100%', opacity: 0 },
@@ -211,7 +352,6 @@ export const letterReveal: Variants = {
   },
 };
 
-/** Container: stagger each letter's reveal (faster than word stagger) */
 export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants => ({
   hidden: {},
   visible: {
@@ -230,9 +370,6 @@ export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants =>
  * clipReveal — left-to-right clip wipe.
  * Use for section headings and proof callout borders.
  * Creates the A24 "unknown → revealed" geometric intersection.
- *
- * Spring tuned cinematic: low stiffness creates the sense of a physical
- * curtain being drawn rather than a digital fade.
  */
 export const clipReveal: Variants = {
   hidden: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
@@ -254,9 +391,7 @@ export const clipReveal: Variants = {
 
 /**
  * cardReveal
- * @param yOffset vertical travel (px). Positive = rises up, negative = drops down.
- *
- * Scale starts at 0.972 — just enough to feel physical without being obvious.
+ * @param yOffset vertical travel (px). Positive = rises up.
  */
 export const cardReveal = (yOffset = 28): Variants => ({
   hidden: { opacity: 0, y: yOffset, scale: 0.972 },
@@ -275,16 +410,22 @@ export const cardReveal = (yOffset = 28): Variants => ({
 });
 
 /**
- * sectionEntrance — for full-section reveals where scale would cause
- * layout thrashing. Use for AboutSection, WritingSection, ContactSection.
- * No scale — only opacity + Y translate.
+ * glassCardReveal — like cardReveal with a backdrop-filter blur settle.
+ * Use sparingly — promotes to compositor layer. Not for lists.
  */
-export const sectionEntrance = (yOffset = 20): Variants => ({
-  hidden: { opacity: 0, y: yOffset },
+export const glassCardReveal = (yOffset = 28): Variants => ({
+  hidden: { opacity: 0, y: yOffset, scale: 0.972 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: springs.gentle,
+    scale: 1,
+    transition: springs.smooth,
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    scale: 0.97,
+    transition: { duration: 0.14 },
   },
 });
 
@@ -328,19 +469,32 @@ export const cardHoverReset = {
   transition: springs.hoverRise,
 } as const;
 
+/** interactive — whileHover/whileTap shorthand for card components */
+export const interactive = {
+  hover: { y: -3, transition: springs.snappy },
+  tap: { scale: 0.97, transition: springs.snappy },
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HERO SEQUENCE
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/** heroContainer — stagger orchestrator for HeroSection children */
+export const heroContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
+};
+
+/** heroItem — child variant for hero sequence items */
+export const heroItem: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: springs.snappy },
+};
+
 /* ══════════════════════════════════════════════════════════════════════════
    ACCORDION REVEAL — AnimatePresence height collapse
    ══════════════════════════════════════════════════════════════════════════ */
 
-/**
- * accordionReveal — used for "Read full brief" expandable sections.
- *
- * Framer Motion handles height: 0 → 'auto' via JS-measured FLIP internally.
- * Acceptable for content that expands once per session (not on scroll).
- * Opacity fade runs concurrently to soften the layout shift visually.
- *
- * For scroll-critical sections, use clipReveal instead.
- */
 export const accordionReveal: Variants = {
   hidden: { opacity: 0, height: 0 },
   visible: {
@@ -419,30 +573,6 @@ export const filterTransition: Variants = {
    SCROLL-LINKED HERO PARALLAX
    ══════════════════════════════════════════════════════════════════════════ */
 
-/**
- * HERO SCROLL PARALLAX CONFIGURATION
- *
- * Usage in HeroSection.tsx:
- *
- *   const heroRef = useRef<HTMLElement>(null);
- *   const { scrollYProgress } = useScroll({
- *     target: heroRef,
- *     offset: ['start start', 'end start'],
- *   });
- *   const textY   = useTransform(scrollYProgress, [0, 1], ['0%', '10%']);
- *   const visualY = useTransform(scrollYProgress, [0, 1], ['0%', '6%']);
- *   const heroOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
- *
- * Apply textY to the left text column, visualY to the HeroVisual wrapper.
- * Apply heroOpacity to the outer container for a cinematic exit.
- *
- * Why different rates:
- *   Text (10%) exits faster — DMs see the headline fade as they commit.
- *   Visual (6%) lingers — system status stays readable a beat longer.
- *   This "depth difference" is the key cinematic effect.
- *
- * Hardware safety: translateY via MotionValue is always on the compositor.
- */
 export const HERO_SCROLL_CONFIG = {
   offset: ['start start', 'end start'] as ['start start', 'end start'],
   textRange: [0, 1] as [number, number],
@@ -457,16 +587,6 @@ export const HERO_SCROLL_CONFIG = {
    NO-MOTION ACCESSIBILITY FALLBACK
    ══════════════════════════════════════════════════════════════════════════ */
 
-/**
- * noMotion — used when:
- *   1. useReducedMotion() returns true (word-split layouts need this because
- *      the DOM structure changes, not just the animation)
- *   2. Any explicit "no animation" override
- *
- * Note: MotionConfig(reducedMotion="user") handles animation suppression
- * automatically across all `m.*` components. noMotion is only needed when
- * the COMPONENT STRUCTURE changes based on motion preference.
- */
 export const noMotion: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0 } },
