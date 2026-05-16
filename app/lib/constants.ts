@@ -112,6 +112,7 @@ export const PROFILE = {
   availableFor: "Remote & On-site (Nigeria)",
   email: CONTACT_EMAIL,
   phone: "+234-803-388-5065",
+  social: {
     github: "https://github.com/scardubu",
     linkedin: "https://linkedin.com/in/oscardubu",
     twitter: "https://twitter.com/oscardubu",
