@@ -169,9 +169,9 @@ export function OpenSourceSection() {
             className="mb-10 sm:mb-12 max-w-[56ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Four production-hardened packages from the fintech trenches —
-            each solving a gap that general-purpose libraries don&apos;t address.
-            Install in minutes.
+            Four production-hardened packages extracted from real fintech systems —
+            each solving a gap that general-purpose libraries don&apos;t address
+            and that one data-leak event makes permanently expensive. Install in minutes.
           </m.p>
 
           {/* Card grid: 1-col mobile → 2-col sm → 4-col xl */}
