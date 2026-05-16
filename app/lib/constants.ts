@@ -1,4 +1,5 @@
 // Constants for portfolio data (PRD Feature 2: Projects-001 to Projects-009)
+import { CONTACT_EMAIL } from '@/lib/config';
 
 // Testimonials for social proof
 export interface Testimonial {
@@ -109,9 +110,8 @@ export const PROFILE = {
   locationDisplay: "Lagos, Nigeria 🇳🇬",
   timezone: "WAT (UTC+1)",
   availableFor: "Remote & On-site (Nigeria)",
-  email: "scardubu@gmail.com",
+  email: CONTACT_EMAIL,
   phone: "+234-803-388-5065",
-  social: {
     github: "https://github.com/scardubu",
     linkedin: "https://linkedin.com/in/oscardubu",
     twitter: "https://twitter.com/oscardubu",
@@ -728,7 +728,7 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     title: "Consulting & Projects",
     description: "Custom ML solutions, model deployment, and MLOps implementation",
     cta: "Discuss Your Project",
-    href: "mailto:scardubu@gmail.com?subject=Consulting%20Inquiry",
+    href: `mailto:${CONTACT_EMAIL}?subject=Consulting%20Inquiry`,
   },
   {
     id: "partnership",
@@ -736,7 +736,7 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     title: "Technical Partnerships",
     description: "Co-founder opportunities, technical advisorship, and strategic collaboration",
     cta: "Explore Partnership",
-    href: "mailto:scardubu@gmail.com?subject=Partnership%20Opportunity",
+    href: `mailto:${CONTACT_EMAIL}?subject=Partnership%20Opportunity`,
   },
   {
     id: "speaking",
@@ -744,6 +744,6 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     title: "Speaking & Mentorship",
     description: "Tech talks, workshops, and mentoring for ML engineers",
     cta: "Send Invitation",
-    href: "mailto:scardubu@gmail.com?subject=Speaking%20Inquiry",
+    href: `mailto:${CONTACT_EMAIL}?subject=Speaking%20Inquiry`,
   },
 ];

@@ -1,4 +1,5 @@
 import { getAllPosts } from "@/app/lib/blog";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 export async function GET() {
   const posts = getAllPosts();
@@ -13,7 +14,7 @@ export async function GET() {
       <guid isPermaLink="true">${siteUrl}/blog/${post.slug}</guid>
       <description><![CDATA[${post.description}]]></description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
-      <author>scardubu@gmail.com (Oscar Ndugbu)</author>
+      <author>${CONTACT_EMAIL} (Oscar Ndugbu)</author>
       <category>${post.category}</category>
       ${post.tags.map((tag) => `<category>${tag}</category>`).join("\n      ")}
     </item>`
@@ -29,8 +30,8 @@ export async function GET() {
     <language>en-US</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
-    <managingEditor>scardubu@gmail.com (Oscar Ndugbu)</managingEditor>
-    <webMaster>scardubu@gmail.com (Oscar Ndugbu)</webMaster>
+    <managingEditor>${CONTACT_EMAIL} (Oscar Ndugbu)</managingEditor>
+    <webMaster>${CONTACT_EMAIL} (Oscar Ndugbu)</webMaster>
     <copyright>Copyright ${new Date().getFullYear()} Oscar Ndugbu</copyright>
     <ttl>60</ttl>
     ${rssItems}

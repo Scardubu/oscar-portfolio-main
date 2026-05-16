@@ -5,6 +5,7 @@
  * Components import from here — never hardcode content in JSX.
  * ─────────────────────────────────────────────────────────────────────────────
  */
+import { CONTACT_EMAIL } from '@/lib/config';
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 
@@ -259,6 +260,6 @@ export const PRODUCTION_PATTERNS = [
 export const SOCIAL = {
   github:   "https://github.com/scardubu",
   linkedin: "https://linkedin.com/in/oscardubu",
-  email:    "mailto:scardubu@gmail.com",
+  email:    `mailto:${CONTACT_EMAIL}`,
   twitter:  "https://twitter.com/scardubu",
 } as const;

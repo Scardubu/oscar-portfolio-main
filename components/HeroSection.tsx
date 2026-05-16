@@ -32,6 +32,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
+import { CONTACT_EMAIL } from '@/lib/config';
 import {
   HERO_SCROLL_CONFIG,
   cardReveal,
@@ -350,7 +351,7 @@ export function HeroSection() {
             {/* CTA block */}
             <m.div variants={child} className="cta-hero-group">
               <a
-                href="mailto:scardubu@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="cta-primary cta-primary--lg tactile-press"
                 aria-label="Email Oscar to start a conversation"
               >
