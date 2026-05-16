@@ -131,7 +131,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               >
                 <div className="flex flex-wrap items-center gap-2.5">
                   <span className="pill pill-cyan">Featured</span>
-                  <span className="badge-muted">{posts.length} published</span>
+                  <span className="badge-muted">{posts.length} articles</span>
                   <span
                     className="font-mono text-xs"
                     style={{ color: 'var(--color-text-muted)' }}
