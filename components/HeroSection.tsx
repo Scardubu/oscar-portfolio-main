@@ -125,7 +125,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
               {col.label}
             </p>
-            <p className="text-sm leading-7" style={{ marginTop: "0.75rem" }} style={{ color: 'oklch(94% 0.007 80 / 0.62)' }}>
+            <p className="text-sm leading-7" style={{ marginTop: "0.75rem", color: "oklch(94% 0.007 80 / 0.62)" }}>
               {col.body}
             </p>
           </m.article>
