@@ -99,7 +99,7 @@ export function AboutSection() {
   const containerVariants = staggerContainer(0.09, 0.05);
   const itemVariants = reducedMotion ? noMotion : fadeRise;
   const headingVariant = reducedMotion ? noMotion : clipReveal;
-  const cardVariant    = reducedMotion ? noMotion : cardReveal(16);
+  const cardVariant = reducedMotion ? noMotion : cardReveal(16);
 
   return (
     <section
@@ -119,7 +119,9 @@ export function AboutSection() {
           {/* ── LEFT COLUMN — narrative ─────────────────────────────────── */}
           <div>
             <m.div variants={itemVariants} className="section-kicker-row mb-[var(--space-2)]">
-              <span className="section-number" aria-hidden="true">04</span>
+              <span className="section-number" aria-hidden="true">
+                04
+              </span>
               <span className="section-label">ABOUT</span>
             </m.div>
 
@@ -141,8 +143,7 @@ export function AboutSection() {
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Constraint makes the engineer. Lagos makes the constraint visible.
-              Federal scale. Production ML. Full-stack delivery.
+              I build systems where constraint stays visible. Lagos, federal scale, production ML, and full-stack delivery are part of the same operating model.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
@@ -178,7 +179,7 @@ export function AboutSection() {
                 className="about-narrative-p mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
                 style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
               >
-                Built systems where there is no luxury of guessing: no padded support
+                I build systems where there is no luxury of guessing: no padded support
                 layer, no forgiving staging mirror, no room for vague ownership. From
                 federal-scale data infrastructure for 40 million Nigerian students at
                 UBEC to three production platforms shipping from Lagos, the habit stayed
