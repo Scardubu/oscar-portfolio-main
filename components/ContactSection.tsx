@@ -415,7 +415,7 @@ export function ContactSection() {
             id="contact-heading"
             className="mb-4 md:mb-5"
           >
-            Tell me the constraint.
+            The system is ready. Are you?
           </m.h2>
 
           <m.p
