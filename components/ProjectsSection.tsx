@@ -410,7 +410,7 @@ function ProjectCard({
 /* ── Section export ───────────────────────────────────────────────────────── */
 export function ProjectsSection() {
   const ref           = useRef<HTMLElement>(null);
-  const inView        = useInView(ref, { once: true, margin: '-80px' });
+  const inView        = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
 
   const container = useMemo(() => staggerContainer(0.09, 0.05), []);
