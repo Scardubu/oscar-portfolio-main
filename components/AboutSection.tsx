@@ -93,7 +93,7 @@ const PROVIDER_STYLES: Record<string, { bg: string; color: string; border: strin
 
 export function AboutSection() {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
 
   const containerVariants = staggerContainer(0.09, 0.05);
