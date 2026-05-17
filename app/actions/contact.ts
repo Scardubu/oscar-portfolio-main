@@ -1,9 +1,17 @@
 "use server";
+// ⚠️  DEPRECATED — NOT IN USE
 // app/actions/contact.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// Next.js 15 Server Action for contact form submission.
-// Zod validation server-side — never trust client data.
-// Returns structured state compatible with useActionState.
+// This file is vestigial. The live contact form path is:
+//   ContactSection.tsx → fetch('/api/contact') → app/api/contact/route.ts
+//                        → app/lib/validations.ts (contactSchema)
+//
+// This server action uses a different field name ('type' vs 'inquiryType'),
+// different enum values ("Job opportunity" vs 'job'), and different message
+// length limits (max 2000 vs max 500). It is not imported by any component.
+//
+// DO NOT import this file. If a server-action path is needed in future,
+// align the schema with app/lib/validations.ts and ContactSection.tsx first.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { z } from "zod";
