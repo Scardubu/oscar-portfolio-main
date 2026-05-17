@@ -1,23 +1,27 @@
 /**
- * portfolio-data.ts — CONVICTION ENGINE v28.0
+ * portfolio-data.ts — CONVICTION ENGINE v28.1
  * ─────────────────────────────────────────────────────────────────────────────
  * Single source of truth for profile-level portfolio content.
  *
  * SCOPE: This file owns PROFILE, HERO copy, CONVICTION_STATS, LIVE_METRICS,
- * ACTIVITY_FEED, and SOCIAL. It does NOT own:
+ * and SOCIAL. It does NOT own:
  *   - Project data           → lib/projects.ts
  *   - Skill matrix data      → lib/data/skills.ts
  *   - Production proof cards → components/TestimonialsSection.tsx (PROOF_CARDS)
  *   - Blog article metadata  → lib/data/blog-articles.ts
  *   - Config / URLs          → lib/config.ts
+ *   - Live activity feed     → app/api/activity/route.ts (GitHub proxy)
+ *                              Consumed by: components/Liveactivitybar.tsx
  *
- * v28 CHANGES vs v27:
- *   • TESTIMONIALS export removed — unverifiable named quotes replaced by
- *     PROOF_CARDS in TestimonialsSection.tsx (verified system outcomes only).
- *   • ACTIVITY_FEED a7 updated: "Portfolio v28 deployed — data layer cleanup"
- *   • SCOPE comment corrected: removed stale reference to app/lib/constants.ts
- *     (that file does not exist in the current codebase).
- *   • Version bumped to v28.0.
+ * v28.1 CHANGES vs v28.0:
+ *   • ACTIVITY_FEED export removed — it was a dead export.
+ *     LiveActivityBar fetches from /api/activity (GitHub proxy, real commit
+ *     data) and never imported from this file. The hardcoded relative-time
+ *     strings ("2h ago", "6h ago") were stale on every deploy.
+ *     Canonical live activity source: app/api/activity/route.ts
+ *   • SCOPE comment updated to reflect ACTIVITY_FEED removal.
+ *   • HERO mirror reference updated from v26 to v28.
+ *   • Version bumped to v28.1.
  *   • KEEP: PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS, SOCIAL — unchanged.
  * ─────────────────────────────────────────────────────────────────────────────
  */
@@ -40,7 +44,7 @@ export const PROFILE = {
 } as const;
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
-// Reference mirror of HeroSection.tsx v26 live copy.
+// Reference mirror of HeroSection.tsx v28 live copy.
 // Components consume HeroSection.tsx directly — this is a canonical reference
 // so the hero copy is traceable to a single written record outside the component.
 //
@@ -67,7 +71,7 @@ export const HERO = {
 } as const;
 
 // ── Conviction Metrics ────────────────────────────────────────────────────────
-// Synced to CONVICTION_STATS in HeroSection.tsx v26.
+// Synced to CONVICTION_STATS in HeroSection.tsx v28.
 // Every value is traceable to a named production system:
 //   4h → 15min  : TaxBridge (filing time, accountant-reported)
 //   99.9%+      : SabiScore (Prometheus 90-day uptime window)
@@ -110,18 +114,16 @@ export const LIVE_METRICS = {
 } as const;
 
 // ── Activity Feed ─────────────────────────────────────────────────────────────
-// Recent engineering activity across live systems.
-// Update timestamps and events after each significant deploy or model cycle.
-
-export const ACTIVITY_FEED = [
-  { id: 'a1', event: 'SabiScore prediction model retrained',            time: '2h ago',  type: 'ml'      as const },
-  { id: 'a2', event: 'TaxBridge: zero data-loss audit cycle passed',    time: '6h ago',  type: 'infra'   as const },
-  { id: 'a3', event: 'Portfolio Lighthouse score: 99/100',              time: '1d ago',  type: 'perf'    as const },
-  { id: 'a4', event: 'SwarmXQ evolution cycle — 3 agents upgraded',     time: '2d ago',  type: 'ml'      as const },
-  { id: 'a5', event: 'NRS compliance validation: TaxBridge passing',    time: '3d ago',  type: 'shipped' as const },
-  { id: 'a6', event: 'XGBoost + LightGBM ensemble v3.2 deployed',      time: '5d ago',  type: 'ml'      as const },
-  { id: 'a7', event: 'Portfolio v28 deployed — data layer cleanup',     time: '1w ago',  type: 'shipped' as const },
-] as const;
+// ⚠️  ACTIVITY_FEED removed in v28.1.
+//
+// The previous ACTIVITY_FEED array with hardcoded relative-time strings
+// ("2h ago", "6h ago", etc.) was a dead export — nothing in the active
+// codebase imported it. LiveActivityBar (components/Liveactivitybar.tsx)
+// fetches real commit data directly from /api/activity (GitHub proxy),
+// not from this file.
+//
+// Canonical live activity source: app/api/activity/route.ts
+// Fallback (when GitHub API is unavailable): handled inside route.ts
 
 // ── Social Links ──────────────────────────────────────────────────────────────
 
