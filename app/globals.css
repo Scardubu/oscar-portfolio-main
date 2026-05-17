@@ -1093,6 +1093,82 @@ h3, .h3 {
   }
 }
 
+/* ════ LUMINARY WORDMARK — v33 ════
+   The OSCAR brand mark. OLED-native 5-layer glass shadow architecture.
+   All color values trace to --color-film-teal-* tokens defined in @theme.
+   Border: 0.5px — precision mark, not widget chrome.
+   Radius: 11px — not pill-soft, not square-hard; half the project card radius.
+   Shadow layers:
+     1. outer definition ring  → --color-film-teal-surface (teal /0.07)
+     2. ground shadow          → deep black, stops the mark floating
+     3. top inner Fresnel      → white /0.09, simulates overhead light
+     4. bottom inner shadow    → black /0.25, completes the glass illusion
+     5. ambient teal glow      → --color-film-teal-glow (teal /0.14)
+*/
+.nav-wordmark-luminary {
+  /* Typography — Syne 800 from --font-display; never swap weight */
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.11em;
+  color: #ffffff;
+  text-transform: uppercase;
+  /* Teal luminance bleed — OLED signature */
+  text-shadow: 0 0 16px oklch(70% 0.21 188 / 0.35);
+
+  /* Capsule geometry */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* WCAG 2.2 AA touch target */
+  padding: 0 18px;
+  border-radius: 11px;
+  border: 0.5px solid oklch(70% 0.21 188 / 0.45);
+
+  /* Surface: teal-tinted glass fading into deep near-black */
+  background: linear-gradient(
+    148deg,
+    oklch(70% 0.21 188 / 0.14) 0%,
+    oklch(7% 0.012 265 / 0.65) 100%
+  );
+
+  /* 5-layer shadow system */
+  box-shadow:
+    0 0 0 1px var(--color-film-teal-surface),
+    0 1px 3px oklch(0% 0 0 / 0.75),
+    inset 0 1px 0 oklch(100% 0 0 / 0.09),
+    inset 0 -1px 0 oklch(0% 0 0 / 0.25),
+    0 0 22px var(--color-film-teal-glow);
+
+  /* CSS owns shadow + border transitions; Framer owns transform */
+  transition:
+    box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.25s ease;
+
+  user-select: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Hover — border intensifies to /0.68, glow expands to /0.22 */
+.nav-wordmark-luminary:hover {
+  border-color: oklch(70% 0.21 188 / 0.68);
+  box-shadow:
+    0 0 0 1px oklch(70% 0.21 188 / 0.18),
+    0 2px 8px oklch(0% 0 0 / 0.65),
+    inset 0 1px 0 oklch(100% 0 0 / 0.12),
+    inset 0 -1px 0 oklch(0% 0 0 / 0.20),
+    0 0 34px oklch(70% 0.21 188 / 0.22);
+}
+
+/* Respect system preference — disable CSS transitions when reduced */
+@media (prefers-reduced-motion: reduce) {
+  .nav-wordmark-luminary {
+    transition: none;
+    text-shadow: none;
+  }
+}
+
 /* ════ MOBILE HIGH-CONTRAST BOOST — v24 Lagos outdoor use ════
    Under direct sunlight at 390px, text-secondary at oklch(57%) reads poorly.
    Lift secondary text to 65% luminance on mobile for outdoor legibility.
