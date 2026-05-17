@@ -92,22 +92,20 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   className="mt-4 lg:mt-0 max-w-[52ch] text-sm sm:text-base leading-[1.8]"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
-                  Architecture calls, ML trade-offs, and what actually held in
-                  production — from Lagos to the world.
+                  Architecture calls, ML trade-offs, and the production decisions
+                  behind them — from Lagos to the world.
                 </m.p>
               </div>
             </div>
 
             {/*
-              Filter chips: flex-wrap on mobile so all labels are fully visible.
-              v22.1 FIX: Replaced overflow-x:auto (which hid RELIABILITY/FINTECH)
-              with flex-wrap:wrap at <640px. At sm+ single-row with overflow-x:auto.
-              fade-right overlay hidden below sm — wrap removes scroll affordance need.
+              Filter chips: flex-wrap at every width so labels stay visible.
+              v22.1 FIX: Replaced the horizontal strip that hid RELIABILITY/FINTECH
+              on narrow viewports with a wrapping layout that keeps every topic readable.
             */}
             <m.div
               variants={child}
-              className="filter-chip-row flex flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto sm:-mx-[clamp(1rem,5vw,3rem)] sm:px-[clamp(1rem,5vw,3rem)] pb-1"
-              style={{ scrollbarWidth: 'none' }}
+              className="filter-chip-row flex flex-wrap gap-2 pb-1"
               role="group"
               aria-label="Filter articles by topic"
             >
