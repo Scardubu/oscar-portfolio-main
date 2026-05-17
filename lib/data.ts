@@ -5,7 +5,7 @@
  * Rule: All content lives here. Zero hardcoded strings in components.
  * Update once → propagates everywhere.
  */
-import { CONTACT_EMAIL } from '@/lib/config';
+import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -118,7 +118,7 @@ export const HERO_ROLE_TAGS = [
 export const HERO_CTA_PRIMARY = { label: "Let's Talk", href: "#contact" };
 export const HERO_CTA_SECONDARY = {
   label: "Download CV",
-  href: "/cv/oscar-ndugbu-resume.pdf",
+  href: CV_ASSET_PATH,
 };
 export const HERO_CTA_TERTIARY = { label: "View Work", href: "#projects" };
 
@@ -793,5 +793,5 @@ export const PERSONAL = {
   availabilityLabel: "Open to Senior Fullstack Roles & Consulting",
   responseTime: "Typically responds within 24 hours",
   quote: "Ship it, then iterate.",
-  cvUrl: "/cv/oscar-ndugbu-resume.pdf",
+  cvUrl: CV_ASSET_PATH,
 };
