@@ -2687,3 +2687,68 @@ main, section, .container {
   }
 }
 
+   CONVICTION ENGINE v33.0 — Layout System Extension
+   Extends the existing design token layer without replacing any tokens.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Section shell ──────────────────────────────────────────────────────── */
+.section-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 2vw, 2rem);
+  border: 1px solid var(--color-border);
+  background: linear-gradient(180deg, oklch(100% 0 0 / 0.03), oklch(100% 0 0 / 0.015));
+}
+
+/* ── Surface card — composable with glass-* classes ─────────────────────── */
+.surface-card {
+  border: 1px solid var(--color-border);
+  background: linear-gradient(180deg, oklch(100% 0 0 / 0.045), oklch(100% 0 0 / 0.025));
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 0 1px oklch(70% 0.21 188 / 0.08), 0 12px 48px oklch(0% 0 0 / 0.25);
+}
+
+/* ── Focus ring utility ──────────────────────────────────────────────────── */
+.focus-ring { outline: none; transition: box-shadow 180ms ease, border-color 180ms ease; }
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 1px oklch(70% 0.21 188 / 0.45), 0 0 0 6px oklch(70% 0.21 188 / 0.12);
+}
+
+/* ── Metric display — consistent number + label rhythm ──────────────────── */
+.metric-number {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.9; letter-spacing: -0.08em; font-weight: 700;
+  font-family: var(--font-display);
+}
+.metric-label {
+  margin-top: 0.625rem; font-size: 0.7rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--color-text-muted); font-family: var(--font-mono);
+}
+
+/* ── Editorial grid — asymmetric 2-col on lg+ ───────────────────────────── */
+.editorial-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+@media (min-width: 1024px) {
+  .editorial-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    gap: clamp(2rem, 4vw, 4rem); align-items: start;
+  }
+}
+
+/* ── Section intro editorial — heading + aside on lg+ ───────────────────── */
+@media (min-width: 1024px) {
+  .section-intro-editorial {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(3rem, 5vw, 6rem); align-items: end;
+    margin-bottom: clamp(3rem, 5vw, 5rem);
+  }
+}
+
+/* ── Footer mobile: prevent grid cells from stretching ──────────────────── */
+@media (max-width: 639px) {
+  footer[role="contentinfo"] > div:first-of-type {
+    grid-auto-rows: auto;
+  }
+}
+
+/* ── Overflow guard ──────────────────────────────────────────────────────── */
+html, body { max-width: 100vw; overflow-x: hidden; }
