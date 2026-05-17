@@ -1,13 +1,16 @@
-// CONVICTION ENGINE v25.2 — HeroSection
+// CONVICTION ENGINE v26.0 — HeroSection
 //
-// v25.2 Synthesis (Best of v25.0 + v25.1):
-//   • Keyboard navigation (Arrows + Home + End) with smooth scrollIntoView
-//   • Native scroll-snap + optimized IntersectionObserver (rooted + balanced thresholds)
-//   • Live region for screen readers + improved ARIA
-//   • Strong Cialdini scarcity ("3 SLOTS • Q3 2026") — truthful and high-signal
-//   • Refined copy across proof cards and body
-//   • Defensive code: proper cleanup, desktop detection, reducedMotion safety
-//   • Preserved premium motion language, Lagos→Global signal, and conviction thesis
+// v26.0 vs v25.2:
+//   [FIX P3-A CONVICTION_STATS]: Fourth entry corrected from '45% faster' / 'Alert detection'
+//     to '45% MTTD' / 'Improvement'. MTTD is the precise engineering term used in
+//     SabiScore's Prometheus data; the vaguer "faster alerts" framing diverged from
+//     lib/portfolio-data.ts (canonical source) and the PROOF_COLUMNS body copy in this
+//     same file. All three references now use identical language.
+//   [FIX P3-A PROOF_COLUMNS]: LIVE IN PRODUCTION body copy updated to match — "45% MTTD
+//     improvement over reactive alerting baseline" replaces "45% faster alert detection".
+//   [FIX P3-A PROOF_CALLOUT]: Inline proof callout updated to "45% MTTD" for consistency.
+//   KEEP: All v25.2 behaviour — keyboard nav, scroll-snap, IntersectionObserver, live region,
+//     scroll-parallax, motion choreography, headshot, CTAs, availability pill, full layout.
 
 'use client';
 
@@ -42,7 +45,9 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
 
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
-// HeroSection.tsx line 46–50 — SURGICAL EDIT
+// v26 FIX: Synced to lib/portfolio-data.ts CONVICTION_STATS (canonical source).
+// '45% MTTD' / 'Improvement' replaces '45% faster' / 'Alert detection' —
+// MTTD is the precise Prometheus-traceable metric; "faster" was imprecise.
 const CONVICTION_STATS = [
   { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
   { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
@@ -50,10 +55,13 @@ const CONVICTION_STATS = [
   { value: '45% MTTD',   label: 'Improvement',   stat: 'mttd'    },
 ] as const;
 
+// v26 FIX: PROOF_COLUMNS body copy updated to match corrected stat.
+// "45% MTTD improvement over reactive alerting baseline" replaces
+// "45% faster alert detection" — consistent with SabiScore outcomes[].
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
-    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window. Ensemble XGBoost, LightGBM, and CatBoost inference delivered 45% faster alert detection. Production reality, not staging theater.',
+    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window. Ensemble XGBoost, LightGBM, and CatBoost inference delivered 45% MTTD improvement over reactive alerting baseline. Production reality, not staging theater.',
   },
   {
     label: 'DECISIONS DOCUMENTED',
@@ -402,7 +410,7 @@ export function HeroSection() {
               className="w-full text-base leading-[1.8] hero-body-text"
               style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 56ch)' }}
             >
-              Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. 
+              Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable.{' '}
               Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
@@ -418,14 +426,14 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Proof Callout */}
+            {/* Proof Callout — v26 FIX: '45% MTTD' replaces '45% faster alerts' */}
             <m.div variants={child} className="hero-proof-callout hidden overflow-hidden sm:block">
               <p
                 className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
               >
                 TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.{' '}
-                SabiScore: 99.9%+ uptime · 45% faster alerts · ensemble ML inference.{' '}
+                SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.{' '}
                 SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.{' '}
                 <span style={{ color: 'var(--color-film-teal)' }}>
                   Shipped in Lagos · Running globally · Battle-tested.
