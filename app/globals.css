@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ════════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v18.0 — OSCAR NDUGBU DESIGN SYSTEM
+   CONVICTION ENGINE v32.0 — OSCAR NDUGBU DESIGN SYSTEM
    MOBILE-NATIVE — Source of truth: 320-430px
    A24 Cinematic Authority · Liquid Glass · Stripe Conversion Architecture
    Location: Lagos, Nigeria → Global
@@ -1055,21 +1055,41 @@ h3, .h3 {
 }
 .stack-chip:hover { border-color: var(--glass-border-hover); }
 
-/* ════ NAV TAGLINE UPDATE — v24 ════
+/* ════ NAV TAGLINE UPDATE — v32 ════
    ".nav-tagline" used in Navbar wordmark subtitle.
-   Ensures the "Full-Stack · Infra · ML" line doesn't overflow on very small screens.
+   Desktop and tablet should show the full role line; mobile keeps a tight
+   ellipsis fallback only when width is genuinely constrained.
 */
 .nav-tagline {
-  white-space: nowrap;
+  display: inline-block;
+  min-width: 0;
+  max-width: min(58vw, 360px);
   overflow: hidden;
   text-overflow: ellipsis;
-  /* v29 FIX: Increased from 160px → 220px.
-     "Full-Stack · AI · Fintech" at 9px font-mono with 0.12em tracking
-     renders to ≈162px. At 160px, it clipped to "FINTE…" on every mobile viewport.
-     220px gives full display at 320px+ without displacing the Hire Oscar CTA.
-     (flex justify-between reserves right-side space regardless of tagline width)
-     Nielsen: visible system status — tagline is a first-5s trust signal. */
-  max-width: 220px;
+  white-space: nowrap;
+  line-height: 1.1;
+  letter-spacing: clamp(0.07em, 0.14vw, 0.12em);
+  font-size: clamp(0.55rem, 0.65vw, 0.75rem);
+}
+
+@media (max-width: 480px) {
+  .nav-tagline {
+    max-width: min(64vw, 250px);
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-tagline {
+    max-width: min(38vw, 420px);
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+@media (min-width: 1280px) {
+  .nav-tagline {
+    max-width: 460px;
+  }
 }
 
 /* ════ MOBILE HIGH-CONTRAST BOOST — v24 Lagos outdoor use ════
@@ -2491,3 +2511,179 @@ main, section, .container {
     max-width: 100%;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v32.0 — RESPONSIVE EDITORIAL & PREMIUM POLISH
+   CSS-only refinement for tablet/desktop scale, overflow safety, and cleaner
+   micro-interactions. No markup or JS changes required.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Global safety rails ─────────────────────────────────────────────────── */
+:where(img, picture, video, canvas, svg) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+:where(header, nav, main, section, article, aside, div, p, a, button, span, li, h1, h2, h3, h4, h5, h6) {
+  min-width: 0;
+}
+
+:where(h1, h2, h3, .h1, .h2, .h3) {
+  text-wrap: balance;
+}
+
+:where(p, .text-didone-sub, .hero-proof-callout, .live-bar-text) {
+  text-wrap: pretty;
+}
+
+:where(.nav-tagline, .section-label, .label-mono, .pill-cyan, .live-bar-text, .badge-live, .badge-wip, .badge-muted, .project-metric-label, .conviction-stat-label, .writing-filter-chip, .stack-chip) {
+  overflow-wrap: anywhere;
+}
+
+/* ── Desktop canvas expansion ────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  :root {
+    --max-width: 1360px;
+    --section-py: clamp(3.75rem, 6vw, 9rem);
+    --section-py-mid: clamp(2rem, 4vw, 7rem);
+  }
+
+  .container {
+    padding-inline: clamp(1.5rem, 2.8vw, 3.5rem);
+  }
+
+  section[id] {
+    scroll-margin-top: calc(var(--nav-height-scrolled) + 1.25rem);
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --max-width: 1440px;
+  }
+}
+
+/* ── Mobile carousel becomes editorial grid on larger screens ───────────── */
+@media (min-width: 768px) {
+  .mobile-carousel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.875rem, 1.5vw, 1.25rem);
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-bottom: 0;
+    touch-action: pan-y;
+  }
+
+  .mobile-carousel-item {
+    flex: initial;
+    width: auto;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mobile-carousel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── Typography and spacing polish for wide viewports ───────────────────── */
+@media (min-width: 1024px) {
+  .text-didone-sub {
+    letter-spacing: -0.012em;
+    line-height: 1.38;
+  }
+
+  .hero-proof-callout {
+    max-width: min(100%, 46rem);
+  }
+
+  .proof-card,
+  .oss-card,
+  .hire-card,
+  .article-card,
+  .cert-card {
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+  }
+
+  .live-bar-text {
+    max-width: 340px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .proof-card,
+  .oss-card,
+  .hire-card,
+  .article-card {
+    box-shadow: 0 1px 0 0 oklch(100% 0 0 / 0.34) inset, 0 -1px 0 0 oklch(100% 0 0 / 0.03) inset, 1px 0 0 0 oklch(100% 0 0 / 0.19) inset, 0 18px 60px -12px oklch(0% 0 0 / 0.58), 0 4px 18px -2px oklch(0% 0 0 / 0.34);
+  }
+
+  .hero-proof-callout {
+    max-width: min(100%, 52rem);
+  }
+}
+
+/* ── Wider editorial grids on desktop without changing markup ───────────── */
+@media (min-width: 1024px) {
+  #section-writing .writing-articles-list {
+    align-items: stretch;
+  }
+
+  #section-projects .secondary-featured-grid {
+    grid-auto-rows: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  #section-writing .writing-articles-list article {
+    min-height: 72px;
+  }
+}
+
+/* ── Premium interaction polish: clearer hover states on fine pointers ─── */
+@media (hover: hover) and (pointer: fine) {
+  .glass-surface:hover,
+  .glass-light:hover,
+  .glass-medium:hover,
+  .glass-full:hover,
+  .glass-chromatic:hover,
+  .proof-card:hover,
+  .oss-card:hover,
+  .hire-card:hover,
+  .article-card:hover,
+  .cert-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .cta-primary:hover,
+  .cta-secondary:hover,
+  .cta-ghost:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* ── Accessibility / reduced-motion fallback continuation ───────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-carousel {
+    scroll-behavior: auto;
+  }
+
+  .glass-surface:hover,
+  .glass-light:hover,
+  .glass-medium:hover,
+  .glass-full:hover,
+  .proof-card:hover,
+  .oss-card:hover,
+  .hire-card:hover,
+  .article-card:hover,
+  .cert-card:hover,
+  .cta-primary:hover,
+  .cta-secondary:hover,
+  .cta-ghost:hover {
+    transform: none !important;
+  }
+}
+
