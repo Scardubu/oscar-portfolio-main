@@ -187,7 +187,7 @@ export function Footer() {
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
           <p
             className="font-mono text-[9px] tracking-widest uppercase"
-            style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}
+            style={{ color: 'oklch(93% 0.006 264 / 0.20)', overflowWrap: 'break-word', wordBreak: 'break-word' }}
           >
             Shipped in Lagos · Running globally · Battle-tested in audit season
           </p>
