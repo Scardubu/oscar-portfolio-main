@@ -2698,19 +2698,12 @@ main, section, .container {
    element cannot shrink below its content width on sub-360px viewports,
    causing overflow that bypasses overflow-wrap. Adding min-width: 0 lets
    the flex algorithm apply the overflow-wrap: anywhere rule from v32 correctly.
-   The max-width cap prevents the label from crowding the status badge sibling.
+   No max-width cap — contact cards, hire cards, and kicker rows all use
+   label-mono without a badge sibling, so a blanket cap would clip their text.
+   The flex-wrap on the parent container handles badge overflow instead.
 */
 .label-mono {
   min-width: 0;
-  max-width: calc(100% - 5rem); /* always leaves room for the status badge */
-}
-
-/* Restore unrestricted width inside non-constrained contexts (stack strips, kicker rows) */
-.section-kicker-row .label-mono,
-.section-kicker-row .section-label,
-.stack-chip .label-mono,
-.live-bar-wrapper-hero .label-mono {
-  max-width: none;
 }
 
 /* ── v34: response reassurance — increase presence without losing restraint ──
