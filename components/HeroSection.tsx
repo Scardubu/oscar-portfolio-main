@@ -212,7 +212,7 @@ export function HeroSection() {
       style={{
         opacity: heroOpacity,
         paddingTop: 'clamp(4rem, 6vw, 6.5rem)',
-        paddingBottom: 'clamp(4.5rem, 10vw, 7rem)',
+        paddingBottom: 'clamp(2rem, 5vw, 7rem)',
       }}
     >
       <div className="work-surface-glow" aria-hidden="true" />
@@ -424,8 +424,10 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* Proof carousel */}
-            <m.div variants={proofContainer} initial="hidden" animate="visible" className="hidden sm:block">
+            {/* Proof carousel — visible on all viewports.
+                Mobile: horizontal scroll with snap. sm+: 2-col grid (via .mobile-carousel CSS).
+                Hook Model: variable reward — proof before visitor scrolls away. */}
+            <m.div variants={proofContainer} initial="hidden" animate="visible">
               <ProofCarousel reducedMotion={reducedMotion ?? false} />
             </m.div>
           </m.div>
@@ -466,10 +468,8 @@ export function HeroSection() {
 
         </div>
 
-        {/* Mobile HeroVisual — below fold */}
-        <div className="lg:hidden" style={{ marginTop: "2.5rem" }}>
-          <HeroVisual />
-        </div>
+        {/* v24: Mobile HeroVisual removed. ProofCarousel provides equivalent
+            mobile depth without the ~320px lazy-loading dead zone. */}
       </div>
     </m.section>
   );
