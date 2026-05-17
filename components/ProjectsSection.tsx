@@ -1,25 +1,19 @@
-// CONVICTION ENGINE v24.0 — ProjectsSection
-// v24 vs v23:
-//   [CHANGE]: SecondaryFeaturedCard CTA — "Case study ↗" → "Read case study ↗"
-//     The verb was missing on secondary cards while TaxBridge (primary featured) used
-//     "Read case study". Dropping the verb implies these projects are lower-stakes.
-//     Consistent action language across all three featured cards removes the hierarchy
-//     implication and reduces friction (Fogg: Ability — visitor knows the next action).
-//     (Nielsen: Recognition over Recall — same action, same label)
-//   KEEP: All v23 card structure, motion, arch decision accordion, tech strips,
-//     section intro, grid layout, all other CTA text.
+// CONVICTION ENGINE v25.0 — ProjectsSection
 //
-//   • ALL THREE core projects are now featured — TaxBridge as primary hero card,
-//     SabiScore + SwarmXQ as secondary featured cards (full arch decision, outcomes,
-//     BECAUSE block). Previously SwarmXQ was demoted to a grid stub.
-//   • featured flag drives rendering: featured:true → FeaturedProjectCard or
-//     SecondaryFeaturedCard. Non-featured → ProjectCard grid.
-//   • SecondaryFeaturedCard: same signal density as FeaturedProjectCard but
-//     side-by-side on lg+ (2-col grid). Full BECAUSE, outcomes, arch decision,
-//     CTA strip — not a summary card.
-//   • Section intro updated: outcome-first, all three projects named.
-//   • KEEP: all v22 mobile ergonomics (48px targets, glass-full, spring physics).
-//   • KEEP: prefers-reduced-motion: noMotion fallback.
+// v25 vs v24:
+//   [CHANGE]: Section intro — editorial 2-col at lg+.
+//     Previous: kicker + h2 + description stacked single-column on all viewports.
+//     Problem: At desktop, a full-width heading over a full-width paragraph
+//       wastes the wider canvas and creates a "blown-up phone screen" reading
+//       pattern — excessively short line measure on the heading, unnecessarily
+//       wide measure on the paragraph.
+//     Fix: Wrap kicker+heading and description paragraph in `section-intro-editorial`
+//       div (layout.css). At lg+ this becomes a 2-col grid (heading left,
+//       description right) with editorial alignment. Mobile unchanged.
+//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
+//   KEEP: All v24 card structure, motion, arch decision accordion, tech strips,
+//     grid layout, all CTA text, StatusBadge, TechStrip, FeaturedProjectCard,
+//     SecondaryFeaturedCard, ProjectCard, spring physics, reduced-motion fallbacks.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -324,7 +318,6 @@ function SecondaryFeaturedCard({
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2 mt-3">
           {project.caseStudy && (
             <Link href={project.caseStudy} className="cta-primary justify-center sm:justify-start text-xs">
-              {/* v24 CHANGE: "Case study" → "Read case study" — verb restores consistent action language across all featured cards */}
               Read the case study <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           )}
@@ -393,7 +386,6 @@ function ProjectCard({
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {project.caseStudy && (
           <Link href={project.caseStudy} className="cta-ghost text-xs min-h-[48px] flex items-center justify-center sm:justify-start">
-            {/* v24 CHANGE: "Case study →" → "Read case study →" — verb consistency */}
             Read case study →
           </Link>
         )}
@@ -434,24 +426,41 @@ export function ProjectsSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          <m.div variants={child} className="section-kicker-row mb-8 sm:mb-12">
-            <span className="section-number" aria-hidden="true">01</span>
-            <span className="section-label">Projects</span>
+          {/*
+            v25 CHANGE: Editorial intro — section-intro-editorial (layout.css).
+            Mobile: kicker, h2, and description stack vertically (unchanged).
+            lg+: kicker+h2 anchor the left column; description sits right with
+              editorial alignment — richer desktop composition, not blown-up mobile.
+          */}
+          <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-14">
+            {/* Left: kicker + heading */}
+            <div>
+              <div className="section-kicker-row mb-4">
+                <span className="section-number" aria-hidden="true">01</span>
+                <span className="section-label">Projects</span>
+              </div>
+              <m.h2
+                variants={reducedMotion ? child : clipReveal}
+                id="projects-heading"
+              >
+                Built to survive{' '}
+                <br className="hidden lg:block" />
+                real constraints.
+              </m.h2>
+            </div>
+
+            {/* Right: description — editorial counterweight at lg+ */}
+            <div className="lg:flex lg:flex-col lg:justify-end">
+              <p
+                className="max-w-[52ch] text-sm sm:text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under
+                ensemble ML inference. AI agents that improve themselves between
+                runs. All of it shipped from Lagos. All of it running in production.
+              </p>
+            </div>
           </m.div>
-
-          <m.h2 variants={reducedMotion ? child : clipReveal} id="projects-heading" className="mb-4">
-            Built to survive real constraints.
-          </m.h2>
-
-          <m.p
-            variants={child}
-            className="mb-10 sm:mb-14 max-w-[56ch] text-sm sm:text-base leading-8"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under
-            ensemble ML inference. AI agents that improve themselves between runs.
-            All of it shipped from Lagos. All of it running in production.
-          </m.p>
 
           {/* Primary featured */}
           <FeaturedProjectCard featured={primaryFeatured} reducedMotion={reducedMotion ?? false} />
@@ -465,7 +474,7 @@ export function ProjectsSection() {
             </div>
           )}
 
-          {/* Non-featured grid — single project: full-width; multiple: 2-col */}
+          {/* Non-featured grid */}
           {gridProjects.length > 0 && (
             <div className={gridProjects.length === 1 ? 'grid gap-4' : 'grid gap-4 sm:grid-cols-2'}>
               {gridProjects.map((project, i) => (
