@@ -22,7 +22,7 @@ type FilterLabel = (typeof FILTER_LABELS)[number];
 
 export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
   const [activeFilter, setActiveFilter] = useState<FilterLabel | 'ALL'>('ALL');
 
@@ -81,45 +81,57 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               (restored by px-[clamp(...)]) actually appears after scrolling.
               Without it, overflow-x:auto clips the padding-right of the flex
               container, visually cutting off the last chip ("FINTECH").
+              v30 FIX: Added relative wrapper + right-edge fade gradient to
+              signal scrollability — Nielsen: visibility of system status.
             */}
-            <m.div
-              variants={child}
-              className="filter-chip-row mt-5 -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
-              style={{ scrollbarWidth: 'none', scrollSnapType: 'x mandatory' }}
-              role="group"
-              aria-label="Filter articles by topic"
-            >
-              {(['ALL', ...FILTER_LABELS] as const).map((label) => {
-                const isActive = activeFilter === label;
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
-                    aria-pressed={isActive}
-                    style={{ scrollSnapAlign: 'start' }}
-                    className={[
-                      'shrink-0 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase',
-                      'transition-all duration-200 min-h-[48px] border',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
-                      'active:scale-[0.97]',
-                      isActive
-                        ? 'bg-white/10 border-white/28 text-white'
-                        : 'border-white/10 text-white/45 hover:text-white/70 hover:border-white/20',
-                    ].join(' ')}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+            <div className="relative mt-5">
+              <m.div
+                variants={child}
+                className="filter-chip-row -mx-[clamp(1rem,5vw,3rem)] flex gap-2 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-1"
+                style={{ scrollbarWidth: 'none', scrollSnapType: 'x mandatory' }}
+                role="group"
+                aria-label="Filter articles by topic"
+              >
+                {(['ALL', ...FILTER_LABELS] as const).map((label) => {
+                  const isActive = activeFilter === label;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
+                      aria-pressed={isActive}
+                      style={{ scrollSnapAlign: 'start' }}
+                      className={[
+                        'shrink-0 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase',
+                        'transition-all duration-200 min-h-[48px] border',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                        'active:scale-[0.97]',
+                        isActive
+                          ? 'bg-white/10 border-white/28 text-white'
+                          : 'border-white/10 text-white/45 hover:text-white/70 hover:border-white/20',
+                      ].join(' ')}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
 
-              {/* v22.1: Trailing spacer — gives scroll room for right-side chip padding */}
-              <span
+                {/* v22.1: Trailing spacer — gives scroll room for right-side chip padding */}
+                <span
+                  aria-hidden="true"
+                  className="shrink-0 pointer-events-none"
+                  style={{ width: 'clamp(1rem, 5vw, 3rem)' }}
+                />
+              </m.div>
+              {/* Scroll affordance: fade-right overlay, hidden when chips fit (lg+) */}
+              <div
                 aria-hidden="true"
-                className="shrink-0 pointer-events-none"
-                style={{ width: 'clamp(1rem, 5vw, 3rem)' }}
+                className="filter-chip-fade-right pointer-events-none absolute right-0 top-0 bottom-1 w-16"
+                style={{
+                  background: 'linear-gradient(to right, transparent, var(--color-bg) 85%)',
+                }}
               />
-            </m.div>
+            </div>
           </m.div>
 
           {featuredPost ? (
