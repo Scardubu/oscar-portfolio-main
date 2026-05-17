@@ -275,11 +275,11 @@ export default function Navbar() {
             className="group relative flex items-center gap-3"
             aria-label="Homepage"
           >
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+            <div className="relative flex h-10 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-3 backdrop-blur-xl sm:hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 via-blue-500/20 to-purple-500/20 opacity-80" />
 
-              <span className="relative text-sm font-semibold tracking-wide text-white">
-                OS
+              <span className="relative text-xs font-semibold tracking-widest text-white uppercase">
+                Oscar
               </span>
             </div>
 
