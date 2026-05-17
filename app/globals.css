@@ -317,6 +317,24 @@ html {
   font-size: 16px;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
+  /* Smooth scrolling for all anchor navigation — applies to nav clicks, CTA jumps, footer links */
+  scroll-behavior: smooth;
+  /* Offset anchors by nav height so section headings don't hide under the fixed bar */
+  scroll-padding-top: calc(var(--nav-height) + 1.5rem);
+}
+@media (max-width: 768px) {
+  /* Mobile has bottom nav, not top. Minimal top offset for the fixed header only. */
+  html {
+    scroll-padding-top: calc(var(--nav-height) + 0.5rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Section scroll-margin: ensures #hash anchor lands with breathing room above the heading */
+section[id] {
+  scroll-margin-top: calc(var(--nav-height) + 1rem);
 }
 
 body {
@@ -326,6 +344,8 @@ body {
   background: var(--color-bg);
   min-height: 100vh;
   overflow-x: hidden;
+  /* Contain scroll momentum within the page — prevents browser overscroll effects from bleeding */
+  overscroll-behavior-y: none;
   padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
   position: relative;
 }
@@ -1222,6 +1242,41 @@ h3, .h3 {
 /* Disable all mesh orb transforms under reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .gradient-mesh-orb { will-change: auto; filter: blur(80px) !important; }
+}
+
+/* ════ FILTER CHIP SCROLL FADE — v30 ════
+   Right-edge fade gradient signals horizontal scrollability on mobile.
+   Hidden on lg+ where all chips fit inline with no overflow.
+   Pointer-events: none — transparent to interaction.
+*/
+.filter-chip-fade-right {
+  display: block;
+}
+@media (min-width: 1024px) {
+  .filter-chip-fade-right {
+    display: none;
+  }
+}
+
+/* ════ PROOF CAROUSEL DESKTOP EXPANSION — v30 ════
+   Mobile: horizontal scroll, 1 card visible.
+   sm (640px): 2-col grid.
+   lg (1024px): inside 54% hero column = ~628px — 2-col is correct.
+   xl (1280px): inside 54% col = ~680px, still 2-col, but increase gap.
+*/
+@media (min-width: 640px) {
+  .mobile-carousel {
+    gap: 1rem;
+  }
+}
+@media (min-width: 1024px) {
+  .mobile-carousel {
+    gap: 1.25rem;
+  }
+  /* Proof carousel: subtle fade-right to indicate row overflow on smaller lg */
+  .proof-card {
+    height: 100%;
+  }
 }
 
 /* ════ PILL BASE CLASS ════
@@ -2218,3 +2273,141 @@ section.border-t {
    No animation added above; this guard is a safety declaration only.
    The v29.1 block adds no keyframes or transitions.
 */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v30.0 — SCROLL SMOOTHNESS + SECTION TRANSITIONS
+   Surgical additions for seamless page scroll experience.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Section border transitions — soften the hard divider between sections ──
+   Each section has a border-top. On fast scroll the borders can feel abrupt.
+   A subtle gradient-fade on the section top-border prevents visual stacking.
+   Only affects the decorative border — the section padding creates real space.
+*/
+section.border-t {
+  border-top: 1px solid var(--color-border);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+/* ── Optimize will-change for scroll-driven animations ──────────────────────
+   Limit will-change to elements that actually animate during scroll.
+   Over-applying will-change creates unnecessary compositor layers and causes
+   scroll jank. Scope it precisely to the hero parallax targets only.
+*/
+.hero-grid-child,
+.hero-headshot-ring {
+  will-change: auto; /* framer-motion injects will-change:transform directly */
+}
+
+/* ── Reduce content-visibility jank on section reveal ───────────────────────
+   content-visibility:auto skips paint for off-screen sections, which is good
+   for initial paint but creates a small layout recalc burst on first scroll-into-view.
+   Setting a realistic contain-intrinsic-size prevents the height-estimation jump.
+   Values are generous estimates — actual heights vary by content.
+*/
+.section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 720px; /* increased from 640px — more accurate for dense sections */
+}
+
+/* ── Smooth mobile carousel momentum ────────────────────────────────────────
+   iOS Safari's momentum scrolling can feel jerky without this.
+   Combined with scroll-snap, produces the iPhone-native swipe feel.
+*/
+.mobile-carousel {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+/* ── Pill cyan — ensure it wraps cleanly on all viewports ──────────────────
+   Long pill text (e.g. "4HRS → 15MIN FILING") must never overflow its card.
+*/
+.pill-cyan {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── Desktop: section entry timing — stagger section reveals for clarity ───
+   When scrolling fast through many sections, staggered inView thresholds
+   (set in component useInView calls) need CSS support to not batch-fire.
+   This ensures each section's first paint is clean.
+*/
+@media (min-width: 1024px) {
+  section[id] > .container {
+    /* Isolate section paint — prevents compositor layer promotion cascade */
+    isolation: isolate;
+  }
+}
+
+/* ── Smooth scroll progress bar rendering ───────────────────────────────────
+   The scroll progress bar uses framer-motion scaleX transform.
+   Force GPU compositing to keep it off the main thread.
+*/
+.scroll-progress-fill {
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ── Anchor link breathing room — prevent content hiding under sticky nav ───
+   In addition to scroll-padding-top on html, this provides a fallback
+   for browsers that don't support scroll-padding-top on html.
+*/
+[id]:is(section, div[role='region']) {
+  scroll-margin-top: calc(var(--nav-height) + 0.5rem);
+}
+
+/* ── Touch action: pan-y on scroll containers ───────────────────────────────
+   Prevents 300ms delay on iOS for vertical scroll while preserving
+   horizontal swipe gestures in the carousel.
+*/
+.mobile-carousel {
+  touch-action: pan-x;
+}
+main, section, .container {
+  touch-action: pan-y;
+}
+
+/* ── Writing section: filter chip row wrapper ───────────────────────────────
+   The relative wrapper div that contains the chip row and fade overlay.
+   Ensures the fade overlays clip correctly within the section container.
+*/
+.filter-chip-row-wrap {
+  position: relative;
+  overflow: hidden; /* clip the fade overlay within bounds */
+}
+
+/* ── Smooth glass-nav scroll transition ─────────────────────────────────────
+   The nav switches appearance when scrolled. Ensure the transition uses
+   GPU-friendly properties only (opacity, backdrop-filter, background).
+*/
+.glass-nav {
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    backdrop-filter var(--dur-slow) var(--ease-out),
+    box-shadow var(--dur-slow) var(--ease-out);
+}
+
+/* ── Desktop: about section layout — wider reading column at xl ─────────────
+   At xl+ the 3fr/2fr grid gives the narrative more horizontal space,
+   improving the reading rhythm for the dense constraint code block.
+*/
+@media (min-width: 1280px) {
+  #section-about .container > div {
+    grid-template-columns: 4fr 2fr;
+  }
+}
+
+/* ── Reduced motion: disable all scroll-triggered reveal delays ─────────────
+   When the user prefers reduced motion, section reveals should be instant.
+   framer-motion's noMotion variant handles this in JS, but CSS fallback
+   ensures no partial animation state on very fast scroll.
+*/
+@media (prefers-reduced-motion: reduce) {
+  section[id] { scroll-margin-top: var(--nav-height); }
+  .mobile-carousel { scroll-behavior: auto; }
+  .section-deferred { content-visibility: visible; contain-intrinsic-size: unset; }
+}
