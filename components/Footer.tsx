@@ -96,7 +96,7 @@ export function Footer() {
               All systems operational
             </p>
             <p style={{ color: 'oklch(93% 0.006 264 / 0.24)' }}>
-              TaxBridge · SabiScore · SwarmXQ · Hashablanca
+              TaxBridge · SabiScore · SwarmXQ
             </p>
             <p style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}>
               © 2024–{year} Oscar Ndugbu · Next.js 15
