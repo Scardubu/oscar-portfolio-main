@@ -1,11 +1,16 @@
 'use client';
 
-// CONVICTION ENGINE v23.0 — OpenSourceSection
-// v23 vs v22:
-//   P3-B: CopyInstall migrated from useState text swap to useAnimate() imperative
-//     sequence — COPY → scale(0.96) → COPIED ✓ → reset at 1.8s. This is the
-//     spec-required Tier 3 motion: physical, satisfying, like a mechanical key click.
-//   KEEP: All v22 changes — four packages, 2/4-col grid, proof strip, motion config.
+// CONVICTION ENGINE v24.0 — OpenSourceSection
+//
+// v24 vs v23:
+//   [CHANGE]: Section intro — editorial 2-col at lg+.
+//     Previous: kicker + h2 + description stacked single-column on all viewports.
+//     Fix: Wrap kicker+heading and description in `section-intro-editorial` div
+//       (layout.css). At lg+ the section intro becomes heading-left / description-right.
+//       Mobile layout unchanged.
+//     (layout.css `.section-intro-editorial` — desktop expansion)
+//   KEEP: All v23 card structure, CopyInstall animation, 4-package grid,
+//     proof strip, motion choreography, reduced-motion fallbacks.
 
 import { m, useAnimate, useInView, useReducedMotion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
@@ -22,7 +27,7 @@ const OSS_PROJECTS = [
   {
     name: 'pg-tenant',
     stack: 'Node.js · PostgreSQL',
-    desc: 'Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant\'s records are mathematically invisible to another. Used in production by fintech teams where a single data-leak event means regulatory audit.',
+    desc: "Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant's records are mathematically invisible to another. Used in production by fintech teams where a single data-leak event means regulatory audit.",
     href: 'https://github.com/Scardubu/pg-tenant',
     install: 'npm i pg-tenant',
     badge: 'Production-grade',
@@ -70,7 +75,7 @@ function CopyInstall({ text }: { text: string }) {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      return; // clipboard blocked — fail silently, no state to clean up
+      return;
     }
 
     if (labelRef.current) {
@@ -79,7 +84,6 @@ function CopyInstall({ text }: { text: string }) {
     }
 
     if (!reducedMotion) {
-      // Tier 3 imperative sequence — physical press feel
       await animate(scope.current, { scale: 0.96 }, { duration: 0.08, ease: 'easeIn' });
       await animate(scope.current, { scale: 1    }, { type: 'spring', stiffness: 420, damping: 26 });
       await animate(
@@ -149,28 +153,39 @@ export function OpenSourceSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          {/* Section kicker */}
-          <m.div variants={child} className="section-kicker-row mb-8 sm:mb-12">
-            <span className="section-number" aria-hidden="true">02</span>
-            <span className="section-label">Open Source</span>
+          {/*
+            v24 CHANGE: Editorial intro — section-intro-editorial (layout.css).
+            Mobile: kicker, h2, description stack vertically (unchanged).
+            lg+: kicker+h2 left column; description right column with editorial weight.
+          */}
+          <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-12">
+            {/* Left: kicker + heading */}
+            <div>
+              <div className="section-kicker-row mb-4">
+                <span className="section-number" aria-hidden="true">02</span>
+                <span className="section-label">Open Source</span>
+              </div>
+              <m.h2
+                variants={reducedMotion ? child : clipReveal}
+                id="oss-heading"
+                className="max-w-[26ch]"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Infrastructure for problems nobody packaged yet.
+              </m.h2>
+            </div>
+
+            {/* Right: description */}
+            <div className="lg:flex lg:flex-col lg:justify-end">
+              <p
+                className="max-w-[52ch] text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Four production-hardened packages extracted from real systems — each
+                fills a gap general-purpose libraries leave open. Install in minutes.
+              </p>
+            </div>
           </m.div>
-
-          <m.h2
-            variants={reducedMotion ? child : clipReveal}
-            id="oss-heading"
-            className="mb-4 max-w-[26ch]"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            Infrastructure for problems nobody packaged yet.
-          </m.h2>
-
-          <m.p
-            variants={child}
-            className="mb-10 sm:mb-12 max-w-[56ch] text-base leading-8"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            Four production-hardened packages extracted from real systems — each fills a gap general-purpose libraries leave open. Install in minutes.
-          </m.p>
 
           {/* Card grid: 1-col mobile → 2-col sm → 4-col xl */}
           <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -220,7 +235,6 @@ export function OpenSourceSection() {
                   <CopyInstall text={item.install} />
                 </div>
 
-                {/* FIX v21.1: restored missing <a opening tag on GitHub CTA */}
                 <a
                   href={item.href}
                   target="_blank"
@@ -253,7 +267,7 @@ export function OpenSourceSection() {
             className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
           >
             {[
-              { value: '4',   label: 'production packages', detail: 'npm + pip'             },
+              { value: '4',   label: 'production packages', detail: 'npm + pip'              },
               { value: '15+', label: 'merged contributions', detail: 'XGBoost · scikit-learn' },
               { value: 'MIT', label: 'open license',         detail: 'all packages'           },
             ].map(({ value, label, detail }) => (
