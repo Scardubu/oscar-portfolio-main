@@ -385,8 +385,16 @@ function ProjectCard({
       </div>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {project.caseStudy && (
-          <Link href={project.caseStudy} className="cta-ghost text-xs min-h-[48px] flex items-center justify-center sm:justify-start">
-            Read case study →
+          <Link href={project.caseStudy} className="cta-ghost text-xs min-h-[48px] flex items-center justify-center gap-1 sm:justify-start group">
+            Read case study
+            <m.span
+              aria-hidden="true"
+              whileHover={reducedMotion ? undefined : { x: 2 }}
+              transition={{ type: 'spring', stiffness: 440, damping: 28 }}
+              className="inline-block"
+            >
+              →
+            </m.span>
           </Link>
         )}
         {project.githubUrl && (
