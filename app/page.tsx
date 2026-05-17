@@ -1,15 +1,15 @@
-// CONVICTION ENGINE v26.1 — Home Page
+// CONVICTION ENGINE v28.1 — Home Page
 //
-// Refined orchestration for production readiness:
+// Section render order and orchestration rationale:
 //
-// 00. Hero          → Above-the-fold LCP target (synchronous)
-// 01. Projects      → Primary proof of depth and execution capability
-// 01.5 Testimonials → Immediate authority and social proof
-// 02. Open Source   → Trust through public artifacts and contributions
-// 03. Skills        → Breadth after depth is established
-// 04. About         → Human connection and operating context
-// 05. Writing       → Thought leadership and decision-making clarity
-// 06. Contact       → Final conversion endpoint
+// 00. Hero             → Above-the-fold LCP target (synchronous)
+// 01. Projects         → Primary proof of depth and execution capability
+// 01.5 Production Record → Authority immediately after depth proof
+// 02. Open Source      → Trust through public artifacts and contributions
+// 03. Skills           → Breadth only after depth is established
+// 04. About            → Human connection and operating context
+// 05. Writing          → Thought leadership and decision-making clarity
+// 06. Contact          → Final conversion endpoint
 //
 // Technical strategy:
 // - Hero stays synchronous for first paint quality.
@@ -92,7 +92,7 @@ export default async function Home() {
           <ProjectsSection />
         </SectionBlock>
 
-        {/* 01.5 — Testimonials: authority immediately after proof */}
+        {/* 01.5 — Production Record: proof of outcomes after depth */}
         <SectionBlock id="section-testimonials" label="Testimonials" height={360}>
           <TestimonialsSection />
         </SectionBlock>
