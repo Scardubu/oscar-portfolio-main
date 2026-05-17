@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SECTION_IDS = [
   'section-projects',
@@ -162,6 +162,9 @@ export function NavBar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
+  // P1: Ref-based set so each callback sees the full current intersection state,
+  // not just the delta. Fixes "WRITING" staying active when Contact is in view.
+  const visibleSectionsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 8);
@@ -174,18 +177,39 @@ export function NavBar() {
     const els = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     if (!els.length) return;
 
+    visibleSectionsRef.current.clear();
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting);
-        if (visible.length) {
-          setActiveSection(visible[0].target.id);
-        }
+        // Update persistent set from the delta entries
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleSectionsRef.current.add(entry.target.id);
+          } else {
+            visibleSectionsRef.current.delete(entry.target.id);
+          }
+        });
+
+        // Among all currently visible sections, pick the LAST one in page order.
+        // SECTION_IDS is top→bottom — the last match is the section the user has
+        // most recently scrolled into, which is always the correct active state.
+        const active = ([...SECTION_IDS] as string[])
+          .filter((id) => visibleSectionsRef.current.has(id))
+          .at(-1);
+
+        if (active) setActiveSection(active);
       },
-      { rootMargin: '-20% 0px -70% 0px' }
+      // Widen the detection window: top 15%–70% of viewport.
+      // The extra headroom (was -70%, now -60%) catches tall sections like
+      // Contact that enter from the bottom before the previous section exits.
+      { rootMargin: '-15% 0px -60% 0px' }
     );
 
     els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      visibleSectionsRef.current.clear();
+    };
   }, []);
 
   return (
