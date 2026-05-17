@@ -1250,7 +1250,12 @@ h3, .h3 {
    Pointer-events: none — transparent to interaction.
 */
 .filter-chip-fade-right {
-  display: block;
+  display: none; /* hidden at mobile: flex-wrap means no overflow scroll, no fade needed */
+}
+@media (min-width: 640px) {
+  .filter-chip-fade-right {
+    display: block; /* visible at sm+ where chips can overflow-scroll on narrow sm */
+  }
 }
 @media (min-width: 1024px) {
   .filter-chip-fade-right {
@@ -2410,4 +2415,79 @@ main, section, .container {
   section[id] { scroll-margin-top: var(--nav-height); }
   .mobile-carousel { scroll-behavior: auto; }
   .section-deferred { content-visibility: visible; contain-intrinsic-size: unset; }
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE v31.0 — DESKTOP EDITORIAL IMPROVEMENTS
+   Surgical additions for richer tablet/desktop layouts.
+   Source: v31 audit against live screenshots + system prompt responsive rules.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── v31: Writing filter chips — flex-wrap on mobile ───────────────────────
+   At <640px the chip row wraps to multiple lines so all labels are readable
+   without requiring horizontal scroll. RELIABILITY and FINTECH no longer clip.
+   At sm+ the row stays single-line; the sm:-mx/px negative-margin bleed restores.
+*/
+@media (max-width: 639px) {
+  .filter-chip-row {
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* ── v31: Writing secondary articles — 2-col editorial grid at lg+ ──────────
+   At 1024px+ the secondary article list expands from a single column to
+   a 2-col grid, creating a richer editorial layout appropriate to the wider
+   viewport. The glass-border separator (gap-px + background: border-color)
+   pattern is preserved — the gap renders as a 1px border between items.
+   This is the minimum change that turns a blown-up mobile list into a
+   deliberate desktop composition.
+*/
+@media (min-width: 1024px) {
+  #section-writing .writing-articles-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 1px; /* preserves the glass-border grid-line pattern */
+  }
+
+  /* At 2-col, the date column shifts inline to save vertical space */
+  #section-writing .writing-articles-list article {
+    padding: 0.875rem 1.25rem;
+    align-items: flex-start;
+    min-height: 64px;
+  }
+}
+
+/* ── v31: Projects section — secondary card grid min-height at xl ───────────
+   At xl+ (1280px), secondary featured cards have more vertical space.
+   Enforce a min-height so the 2-col grid cards align at the top without
+   awkward height gaps between the two cards.
+*/
+@media (min-width: 1280px) {
+  #section-projects .secondary-featured-grid {
+    align-items: stretch;
+  }
+}
+
+/* ── v31: Writing filter chip touch target — 44px minimum on mobile ─────────
+   With flex-wrap, chips stack vertically. Maintain min-height for thumb comfort.
+*/
+@media (max-width: 639px) {
+  .writing-filter-chip {
+    min-height: 44px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+}
+
+/* ── v31: Desktop hero — proof callout wider at xl ──────────────────────────
+   The hero-proof-callout text is constrained to keep line length readable.
+   At xl+ expand max-width slightly to use the available column width.
+*/
+@media (min-width: 1280px) {
+  .hero-proof-callout {
+    max-width: 100%;
+  }
 }
