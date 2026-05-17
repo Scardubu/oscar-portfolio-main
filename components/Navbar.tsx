@@ -86,7 +86,7 @@ const SECTION_IDS = [
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Projects',    href: '#section-projects',    id: 'section-projects'    },
-  { label: 'Testimonials',href: '#section-testimonials',id: 'section-testimonials'},
+  { label: 'Record',      href: '#section-testimonials',id: 'section-testimonials'},
   { label: 'Open Source', href: '#open-source',          id: 'open-source'         },
   { label: 'Skills',      href: '#skills',               id: 'skills'              },
   { label: 'About',       href: '#section-about',        id: 'section-about'       },
