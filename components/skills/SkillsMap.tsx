@@ -1,14 +1,18 @@
 'use client';
-// CONVICTION ENGINE v21.0 — SkillsMap
-// Mobile-native:
-//   • Tab row: overflow-x-auto, shrink-0, min-h-[44px] touch targets.
-//   • Grid: 2-col mobile, 3 md, 4 lg, 5 xl.
-//   • SkillCard: level label + production tags visible on expert/proficient
-//     even on mobile (expert = must show; foundational = sm+ only).
-//   • Bar fill: spring-eased on capable devices, instant on reduced-motion.
-//   • Active tab: pill highlight with accent color.
-//   • Live count: aria-live region.
-//   • Keyboard: all tab buttons have proper type="button" + focus ring.
+// CONVICTION ENGINE v22.0 — SkillsMap
+//
+// v22 vs v21:
+//   [FIX]: Filter tab row — Responsive Failure resolved.
+//     Previous: overflow-x-auto + no-scrollbar on all viewports.
+//     Problem: "Backend & APIs", "Data & Storage", "DevOps & SRE" scroll
+//       off the right edge with no visible affordance. Users on mobile
+//       never discover the additional filter categories.
+//       (Nielsen: zero hidden content — if the user can't see it, it doesn't exist)
+//     Fix: flex-wrap at mobile so all 6 tabs are visible without any scroll.
+//       At sm+ (640px), single-row with overflow-x-auto activates only if
+//       the combined tab widths exceed viewport — consistent with WritingSection v22.1.
+//     KEEP: All v21 shrink-0, min-h-[44px] touch targets, aria-pressed,
+//       focus rings, spring bar animations, SkillCard layout.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import { filterTransition } from '@/lib/motionVariants';
@@ -165,9 +169,17 @@ export function SkillsMap(): React.ReactElement {
 
   return (
     <div className="space-y-5">
-      {/* Tab row: horizontal scroll on mobile */}
+      {/*
+        Filter tab row.
+        v22 FIX (Responsive Failure — Nielsen: Zero Hidden Content):
+          Mobile (<640px): flex-wrap so all 6 category tabs are visible without
+          horizontal scroll. "Data & Storage" and "DevOps & SRE" were invisible
+          to mobile users under the previous overflow-x-auto + no-scrollbar pattern.
+          sm+ (≥640px): flex-nowrap + overflow-x-auto activates only if tab widths
+          exceed viewport. Matches the WritingSection v22.1 pattern.
+      */}
       <div
-        className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
+        className="flex flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto sm:pb-1"
         style={{ scrollbarWidth: 'none' }}
         role="group"
         aria-label="Filter skills by category"
@@ -181,12 +193,12 @@ export function SkillsMap(): React.ReactElement {
               type="button"
               aria-pressed={isActive}
               className={[
-                'shrink-0 rounded-full px-3.5 py-2 text-xs font-medium',
+                'shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium',
                 'transition-all duration-200 min-h-[44px]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
                 isActive
                   ? 'bg-white/10 text-white border border-white/25 shadow-sm'
-                  : 'border border-transparent text-text-secondary hover:text-white bg-transparent',
+                  : 'border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 bg-transparent',
               ].join(' ')}
             >
               {tab}
