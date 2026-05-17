@@ -1,0 +1,148 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE — layout.css
+   Fluid layout and typography tokens.
+   Appended to globals.css via @import at build time.
+   These extend (do not override) the existing design-token layer.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fluid editorial spacing tokens ────────────────────────────────────────
+   Complement the existing --section-py. Use for section-level structural
+   spacing that needs to feel more intentional on wider viewports.
+*/
+:root {
+  --section-space-y:      clamp(5rem, 10vw, 10rem);
+  --container-padding-x:  clamp(1rem, 2vw, 2rem);
+  --headline-xl:          clamp(3.5rem, 10vw, 8rem);
+  --headline-lg:          clamp(2.5rem, 6vw, 5rem);
+  --body-lg:              clamp(1.05rem, 1.4vw, 1.2rem);
+}
+
+html {
+  /* Ensure anchor scroll doesn't disappear behind fixed nav */
+  scroll-padding-top: clamp(4.5rem, 8vw, 6rem);
+}
+
+/* ── Editorial grid — wider two-column layout on lg+ ─────────────────────
+   Used by SectionHeading + adjacent panel patterns.
+   One narrow content column (prose) + one wider proof column.
+*/
+.editorial-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .editorial-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+}
+
+/* ── Section shell — for sections that use a contained card aesthetic ──── */
+.section-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 2vw, 2rem);
+  border: 1px solid var(--color-border);
+  background: linear-gradient(
+    180deg,
+    oklch(100% 0 0 / 0.03),
+    oklch(100% 0 0 / 0.015)
+  );
+}
+
+/* ── Premium glass surface — composable with existing glass-* classes ───── */
+.surface-card {
+  border: 1px solid var(--color-border);
+  background: linear-gradient(
+    180deg,
+    oklch(100% 0 0 / 0.045),
+    oklch(100% 0 0 / 0.025)
+  );
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 0 1px oklch(70% 0.21 188 / 0.08),
+    0 12px 48px oklch(0% 0 0 / 0.25);
+}
+
+/* ── Focus ring — consistent, accessible, premium ─────────────────────── */
+.focus-ring {
+  outline: none;
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.focus-ring:focus-visible {
+  box-shadow:
+    0 0 0 1px oklch(70% 0.21 188 / 0.45),
+    0 0 0 6px oklch(70% 0.21 188 / 0.12);
+}
+
+/* ── Metric display tokens — consistent number+label rhythm ───────────── */
+.metric-number {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.metric-label {
+  margin-top: 0.625rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Desktop expansion: sections get richer layout, not just bigger ─────
+   This replaces the "blown-up phone screen" pattern on lg+.
+   Sections with enough content get asymmetric columns.
+*/
+@media (min-width: 1024px) {
+  /* Wider reading measure on desktop — prevents over-wide lines */
+  .prose-section p {
+    max-width: 68ch;
+  }
+
+  /* Section intros expand into editorial heading + aside pattern */
+  .section-intro-editorial {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(3rem, 5vw, 6rem);
+    align-items: end;
+    margin-bottom: clamp(3rem, 5vw, 5rem);
+  }
+}
+
+/* ── Tablet refinements (768px–1023px) ────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet: proof carousel becomes 2-col instead of scrolling mobile strip */
+  .proof-carousel-tablet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Tablet: conviction stat strip spreads out */
+  .conviction-stat-strip {
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+}
+
+/* ── Overflow safety ──────────────────────────────────────────────────── */
+body {
+  overflow-x: hidden;
+}
+
+/* Prevent any child from breaking horizontal layout */
+*,
+*::before,
+*::after {
+  min-width: 0;
+}
