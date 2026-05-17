@@ -156,7 +156,7 @@ export function AboutSection() {
               {IMPACT_STATS.map(({ value, label, color }) => (
                 <div key={label} className="flex flex-col gap-0.5">
                   <span
-                    className="font-mono text-base font-semibold tracking-tight"
+                    className="font-mono text-base font-semibold tracking-tight tabular-nums"
                     style={{ color }}
                   >
                     {value}
