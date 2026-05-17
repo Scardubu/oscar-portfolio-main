@@ -15,6 +15,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { anchorUrl } from '@/lib/config';
+
 export const metadata: Metadata = {
   title: '404 — Page Not Found · Oscar Ndugbu',
   robots: { index: false, follow: false },
@@ -103,9 +105,9 @@ export default function NotFound() {
           aria-label="Quick navigation"
         >
           {[
-            { label: 'Projects', href: '/#section-projects' },
-            { label: 'About',    href: '/#section-about'    },
-            { label: 'Contact',  href: '/#section-contact'  },
+            { label: 'Projects', href: anchorUrl('section-projects') },
+            { label: 'About',    href: anchorUrl('section-about')    },
+            { label: 'Contact',  href: anchorUrl('section-contact')  },
           ].map(({ label, href }) => (
             <Link
               key={href}
