@@ -1,9 +1,23 @@
 /**
- * lib/data.ts — Portfolio Single Source of Truth
+ * lib/data.ts — DEPRECATED · DO NOT IMPORT
  * Oscar Ndugbu | scardubu.dev
  *
- * Rule: All content lives here. Zero hardcoded strings in components.
- * Update once → propagates everywhere.
+ * ⚠️  This file is an orphan. Nothing in the active codebase imports from it.
+ *     It predates the v24–v28 data layer refactor and its content is stale.
+ *
+ * CANONICAL SOURCES — import from these instead:
+ *   Projects      → lib/projects.ts
+ *   Skills        → lib/data/skills.ts
+ *   Hero / Profile → lib/portfolio-data.ts (PROFILE, HERO, CONVICTION_STATS)
+ *   Testimonials  → components/TestimonialsSection.tsx (PROOF_CARDS — verified)
+ *   Blog articles → lib/data/blog-articles.ts
+ *   Config        → lib/config.ts (CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl)
+ *
+ * WHY NOT DELETED: Kept as a historical reference for the v10–v23 data shape.
+ * Do not restore imports. If you need data from here, migrate it to the
+ * canonical source for that domain above.
+ *
+ * Last active: pre-v24. Superseded by the CONVICTION ENGINE v24 data layer split.
  */
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 
