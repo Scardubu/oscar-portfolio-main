@@ -179,12 +179,12 @@ export function AboutSection() {
                 className="about-narrative-p mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
                 style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
               >
-                I build systems where there is no luxury of guessing: no padded support
-                layer, no forgiving staging mirror, no room for vague ownership. From
-                federal-scale data infrastructure for 40 million Nigerian students at
-                UBEC to three production platforms shipping from Lagos, the habit stayed
-                the same: first-principles thinking, explicit failure modes, and
-                engineering decisions that stay readable long after deploy.
+                Built the digital learning infrastructure for 40 million Nigerian
+                students at UBEC (Abuja HQ). Then shipped three production platforms
+                from Lagos — systems with no padded support layer, no forgiving staging
+                mirror, no room for vague ownership. First-principles thinking, explicit
+                failure modes, and engineering decisions that stay readable long after
+                deploy.
               </m.p>
 
               <m.p
