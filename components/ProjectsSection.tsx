@@ -67,7 +67,7 @@ function TechStrip({
       {visible.map((tech) => (
         <span
           key={tech}
-          className="glass-light rounded-md px-2 py-1 font-mono text-[10px] tracking-wide"
+          className="glass-light min-w-0 rounded-md px-2 py-1 font-mono text-[10px] tracking-wide break-words"
           style={{ color: 'var(--color-text-muted)' }}
         >
           {tech}
@@ -133,13 +133,13 @@ function FeaturedProjectCard({
           <span className="label-mono text-[10px] shrink-0 pt-0.5 w-12" style={{ color: 'var(--color-film-teal)' }}>
             WHY
           </span>
-          <span className="text-[13px] sm:text-sm leading-[1.7] font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          <span className="text-[13px] sm:text-sm leading-[1.7] font-medium min-w-0 break-words" style={{ color: 'var(--color-text-primary)' }}>
             {featured.because}
           </span>
         </div>
 
         <p
-          className="mt-3 border-l-2 pl-3 text-xs leading-[1.7] italic"
+          className="mt-3 border-l-2 pl-3 text-xs leading-[1.7] italic break-words"
           style={{ borderLeftColor: 'oklch(73% 0.18 75 / 0.3)', color: 'var(--color-text-muted)' }}
         >
           Constraint: {featured.constraint}
@@ -417,7 +417,7 @@ export function ProjectsSection() {
       id="section-projects"
       ref={ref}
       aria-labelledby="projects-heading"
-      className="border-t py-[var(--section-py)]"
+      className="border-t py-[var(--section-py)] section-deferred overflow-x-clip"
       style={{ borderColor: 'var(--color-border)' }}
     >
       <div className="container">
@@ -452,7 +452,7 @@ export function ProjectsSection() {
             {/* Right: description — editorial counterweight at lg+ */}
             <div className="lg:flex lg:flex-col lg:justify-end">
               <p
-                className="max-w-[52ch] text-sm sm:text-base leading-8"
+                className="max-w-[56ch] text-sm sm:text-base leading-8"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
                 4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under
