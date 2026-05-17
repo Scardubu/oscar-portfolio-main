@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { anchorUrl } from '@/lib/config';
 
 type SectionId =
   | 'section-projects'
@@ -255,7 +256,7 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.header
+      <m.header
         initial="hidden"
         animate="visible"
         variants={navbarVariants}
@@ -310,7 +311,7 @@ export default function Navbar() {
                     ].join(' ')}
                   >
                     {active && (
-                      <motion.div
+                      <m.div
                         layoutId="navbar-active-pill"
                         className="absolute inset-0 rounded-xl border border-cyan-400/20 bg-white/10 backdrop-blur-xl"
                         transition={{
@@ -330,6 +331,18 @@ export default function Navbar() {
             })}
           </nav>
 
+          {/* Desktop CTA — P3-C: "Hire Oscar" always visible at ≥1024px */}
+          <Link
+            href={anchorUrl('section-contact')}
+            className="hidden lg:inline-flex min-h-[44px] items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black hover:bg-[oklch(73%_0.18_196_/_0.08)]"
+            style={{
+              borderColor: 'oklch(73% 0.18 196 / 0.55)',
+              color: 'oklch(73% 0.18 196)',
+            }}
+          >
+            Hire Oscar
+          </Link>
+
           <button
             type="button"
             aria-label="Toggle navigation menu"
@@ -344,12 +357,12 @@ export default function Navbar() {
             )}
           </button>
         </div>
-      </motion.header>
+      </m.header>
 
       <AnimatePresence>
         {mobileOpen && (
           <>
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -358,7 +371,7 @@ export default function Navbar() {
               onClick={closeMenu}
             />
 
-            <motion.div
+            <m.div
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -370,9 +383,10 @@ export default function Navbar() {
                   const active = activeSection === item.id;
 
                   return (
-                    <motion.div
+                    <m.div
                       key={item.id}
                       variants={mobileItemVariants}
+                      whileTap={reducedMotion ? undefined : { scale: 0.92 }}
                     >
                       <Link
                         href={item.href}
@@ -390,11 +404,11 @@ export default function Navbar() {
                           <div className="h-2 w-2 rounded-full bg-cyan-400" />
                         )}
                       </Link>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
