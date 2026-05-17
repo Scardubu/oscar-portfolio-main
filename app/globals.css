@@ -343,11 +343,11 @@ body {
   font-size: var(--text-base);
   color: var(--color-text-primary);
   background: var(--color-bg);
-  min-height: 100vh;
+  min-height: 100svh; /* svh = small viewport height — matches iOS Safari visible area, prevents 100vh blank-space bleed */
   overflow-x: hidden;
   /* Contain scroll momentum within the page — prevents browser overscroll effects from bleeding */
   overscroll-behavior-y: none;
-  /* padding-bottom: removed — no BottomNav component rendered; phantom 72px gap eliminated */
+  /* padding-bottom: removed — no BottomNav component rendered; phantom gap eliminated */
   position: relative;
 }
 @media (min-width: 769px) { body { padding-bottom: 0; } }
@@ -1630,24 +1630,18 @@ h3, .h3 {
    ════════════════════════════════════════════════════════════════════════════ */
 
 /* ── Mobile blank-space guard ─────────────────────────────────────────────
-   The body padding-bottom reserves space for the fixed bottom nav (72px).
-   On mobile, if page content is shorter than the viewport, the background
-   is exposed below the last DOM element. Adding a min-height to the layout
-   isolate wrapper prevents the "all-black void" below the footer.
-   Only applied on mobile where the bottom nav exists.
+   Previously guarded against an "all-black void" when a BottomNav existed.
+   BottomNav is no longer rendered. The FIX 9 safe-area rule (below) and
+   body { min-height: 100svh } handle viewport coverage. Removed to prevent
+   unexpected min-height on nested elements.
 */
 @media (max-width: 768px) {
-  body > div:first-of-type,
-  body .relative.isolate {
-    min-height: calc(100svh - var(--nav-height, 60px));
-  }
-
   /* Footer should never have extra space below on mobile */
   footer[role="contentinfo"] {
     margin-bottom: 0;
   }
 
-  /* Ensure the footer bottom strip sits flush against body padding */
+  /* Ensure the footer bottom strip sits flush */
   footer[role="contentinfo"] .border-t:last-child {
     padding-bottom: 1.25rem;
   }
@@ -2938,15 +2932,15 @@ section {
 
 /* ==========================================================================
    FIX 9: Mobile safe-area protection
+   — Only pad by the device home-indicator safe area. No BottomNav renders,
+     so the previous max(--bottom-nav-height, safe-area) added a phantom 72px
+     gap below the footer on every modern iPhone. Removed.
    ========================================================================== */
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   body {
-    padding-bottom:
-      max(
-        var(--bottom-nav-height, 72px),
-        env(safe-area-inset-bottom)
-      );
+    /* Home-indicator clearance only — no fixed bottom nav to reserve space for */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 
