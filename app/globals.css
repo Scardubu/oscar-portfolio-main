@@ -1956,11 +1956,20 @@ section.border-t + section.border-t {
   font-size: clamp(0.75rem, 1vw, 0.875rem) !important;
 }
 
-/* ── v20.1: Contact form — refined field focus ring ──────────────────────
-   The existing focus ring uses browser default. Upgrade to teal for
-   brand coherence and accessibility clarity.
+/* ── v26 FIX: Contact form — focus ring corrected to :focus-visible ────────
+   :focus fires on mouse click too — not the intended behaviour.
+   :focus-visible fires only on keyboard navigation, matching WCAG 2.2 §2.4.11
+   and aligning with the global :focus-visible rule at line 1525.
+   Mouse users still see the border-color shift from .contact-field-input:focus
+   handled by the browser's native :focus state on the border property alone —
+   the glow ring is reserved for keyboard navigators who need it most.
 */
 .contact-field-input:focus {
+  outline: none;
+  border-color: oklch(70% 0.21 188 / 0.40) !important;
+}
+
+.contact-field-input:focus-visible {
   outline: none;
   border-color: oklch(70% 0.21 188 / 0.60) !important;
   box-shadow: 0 0 0 3px oklch(70% 0.21 188 / 0.12) !important;
