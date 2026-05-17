@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, m } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { anchorUrl } from '@/lib/config';
 
@@ -119,6 +119,8 @@ export default function Navbar() {
     useState<SectionId>('section-projects');
 
   const [scrolled, setScrolled] = useState(false);
+
+  const reducedMotion = useReducedMotion();
 
   const tickingRef = useRef(false);
   const visibilityRef = useRef<Map<SectionId, number>>(new Map());
