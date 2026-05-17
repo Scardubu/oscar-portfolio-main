@@ -1,21 +1,51 @@
 ---
 title: 'ML Systems Consulting'
-summary: 'Production ML architecture and delivery support for fintech teams that need reliable systems, clearer debugging, and faster technical decision-making.'
+summary: 'Deliverable-led ML infrastructure engagements — incident remediation, inference optimisation, audit-ready documentation, and production ML pipeline reviews for fintech teams.'
 tags:
   - 'MLOps'
-  - 'MLflow'
-  - 'Terraform'
   - 'FastAPI'
+  - 'MLflow'
+  - 'Prometheus'
+  - 'PostgreSQL'
+  - 'Python'
 ---
 
-## Focus
+## What this is
 
-Consulting work centers on the gap between model capability and production clarity. Teams often have an acceptable prototype and an unacceptable operating surface.
+Fractional ML engineering for fintech and data teams that have working models but unreliable production surfaces. The gap is not usually the model code. It is the surrounding infrastructure: unclear ownership, fragile inference boundaries, observability gaps, and technical decisions that cannot be defended under audit scrutiny.
 
-## What changes
+This is scoped consulting — deliverable-led, not hourly. Each engagement ends with working infrastructure and documented decisions, not a report of recommendations.
 
-The work typically improves inference boundaries, observability, deployment confidence, and the translation layer between technical model behavior and business-readable outputs.
+## Engagement types
 
-## Why it matters
+**Production ML pipeline review**  
+End-to-end audit of inference serving, retraining cadence, feature store design, and monitoring coverage. Output: a ranked list of correctness risks, an architecture decision record for each significant choice, and an implemented fix for the highest-severity items.
 
-Strong ML delivery is rarely blocked by model code alone. It is blocked by unclear ownership boundaries, fragile operations, and decisions that cannot be defended under scrutiny. The consulting offer targets exactly that layer.
+**Incident remediation**  
+Post-incident root cause work for ML systems — silent accuracy degradation, cache invalidation failures, feature distribution drift, OOM crashes under load. The deliverable is a working system, not a write-up of what happened.
+
+**Inference optimisation**  
+Latency reduction for prediction serving under concurrent load. Common sources: missing cache layer, synchronous feature fetches on the hot path, non-batched model calls, cold-start latency on model load. Typical outcome: 30–60% latency reduction without model changes.
+
+**Compliance-ready ML documentation**  
+For teams facing NRS, NDPC, or FIRS audit requirements where model behaviour must be explainable and traceable. Covers model cards, decision rationale documents, and audit trail implementation. Built from the actual system — not template documents.
+
+## What changes in practice
+
+The first session maps the actual system against what the team believes the system to be. These are almost always different. The gap — between the mental model and the production behaviour — is where most production issues live.
+
+Once the gap is mapped, the work is triage: which correctness risks are live now, which are latent, and which are acceptable given the operating constraints. From there, the engagements are sequential — highest severity first, documented decisions throughout.
+
+## Operating principles
+
+Every deliverable is traceable to a production system. No invented benchmarks, no template documents presented as bespoke analysis. If a recommendation cannot be justified against the specific system and its specific constraints, it does not go in the deliverable.
+
+The engagement ends when the infrastructure holds, not when the hours are used.
+
+## Relevant experience
+
+The inference optimisation and observability work in SabiScore (30% latency reduction, 45% MTTD improvement, 99.9%+ uptime) and the compliance audit trail in TaxBridge (hash-chained immutable records, 95% test coverage as a compliance artifact) represent the same work applied to owned systems. Consulting engagements apply the same approach to client systems under NDA.
+
+## To start a conversation
+
+Use the contact form below. Describe the constraint, the deadline, and the risk. That framing tells me whether this is the right fit for a scoped engagement.
