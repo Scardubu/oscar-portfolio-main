@@ -272,24 +272,32 @@ export default function Navbar() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="group relative flex items-center gap-3"
-            aria-label="Homepage"
+            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label="Oscar Ndugbu — Homepage"
           >
-            <div className="relative flex h-10 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-3 backdrop-blur-xl sm:hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 via-blue-500/20 to-purple-500/20 opacity-80" />
+            {/* Mobile wordmark — LUMINARY capsule */}
+            <m.span
+              className="nav-wordmark-luminary sm:hidden"
+              whileHover={reducedMotion ? undefined : { y: -1 }}
+              whileTap={reducedMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            >
+              Oscar
+            </m.span>
 
-              <span className="relative text-xs font-semibold tracking-widest text-white uppercase">
+            {/* Desktop wordmark — LUMINARY capsule + tagline */}
+            <div className="hidden sm:flex sm:flex-col sm:gap-0.5">
+              <m.span
+                className="nav-wordmark-luminary"
+                whileHover={reducedMotion ? undefined : { y: -1 }}
+                whileTap={reducedMotion ? undefined : { scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+              >
                 Oscar
-              </span>
-            </div>
+              </m.span>
 
-            <div className="hidden sm:flex sm:flex-col">
-              <span className="text-sm font-semibold tracking-wide text-white">
-                Oscar
-              </span>
-
-              <span className="text-xs text-white/50">
-                Systems Engineer
+              <span className="nav-tagline text-white/50">
+                Staff+ Engineer · Lagos → Global
               </span>
             </div>
           </Link>
