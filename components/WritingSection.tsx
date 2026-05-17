@@ -119,6 +119,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                     type="button"
                     onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
                     aria-pressed={isActive}
+                    data-active={isActive ? 'true' : 'false'}
                     className={[
                       'writing-filter-chip shrink-0 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase whitespace-nowrap',
                       'transition-all duration-200 min-h-[44px] border',
