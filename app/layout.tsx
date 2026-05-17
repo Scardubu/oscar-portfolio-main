@@ -29,6 +29,7 @@ import { DM_Sans, JetBrains_Mono, Playfair_Display, Syne } from 'next/font/googl
 
 import { Providers } from '@/app/providers';
 import CursorGlow from '@/components/CursorGlow';
+import { CommandPalette } from '@/components/CommandPalette';
 import { Footer } from '@/components/Footer';
 import { GradientMesh } from '@/components/GradientMesh';
 import { GrainOverlay } from '@/components/GrainOverlay';
@@ -271,6 +272,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <GradientMesh />
           <ScrollProgress />
           <Navbar />
+          <CommandPalette />
           {/*
             ── Stacking context ────────────────────────────────────────
             `isolate` creates a new stacking context for z-index.
