@@ -95,7 +95,7 @@ export function TestimonialsSection() {
       id="section-testimonials"
       ref={ref}
       aria-labelledby="proof-record-heading"
-      className="border-t py-[var(--section-py)]"
+      className="border-t py-[var(--section-py)] section-deferred overflow-x-clip"
       style={{ borderColor: 'var(--color-border)' }}
     >
       <div className="container">
@@ -137,13 +137,13 @@ export function TestimonialsSection() {
           {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}
           <m.div
             variants={container}
-            className="grid gap-4 sm:grid-cols-2"
+            className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
           >
             {PROOF_CARDS.map((card, i) => (
               <m.article
                 key={card.id}
                 variants={reducedMotion ? noMotion : cardReveal(i % 2 === 0 ? 20 : 28)}
-                className="glass-medium rounded-[var(--radius-xl)] p-6 flex flex-col gap-3"
+                className="glass-medium min-w-0 rounded-[var(--radius-xl)] p-6 flex flex-col gap-3"
                 style={{ borderLeft: `3px solid ${card.accent}` }}
                 aria-label={`${card.type}: ${card.headline}`}
                 whileHover={
@@ -154,7 +154,7 @@ export function TestimonialsSection() {
               >
                 {/* Type label */}
                 <p
-                  className="font-mono text-[10px] tracking-widest uppercase"
+                  className="font-mono text-[10px] tracking-widest uppercase break-words"
                   style={{ color: card.accent, opacity: 0.8, overflowWrap: 'break-word', wordBreak: 'break-word' }}
                 >
                   {card.type}
@@ -163,7 +163,7 @@ export function TestimonialsSection() {
                 {/* Metric row — larger display for scannable proof */}
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span
-                    className="font-mono text-[clamp(1.5rem,3vw,2rem)] font-bold leading-none"
+                    className="font-mono text-[clamp(1.35rem,2.8vw,2rem)] font-bold leading-none"
                     style={{ color: card.accent }}
                   >
                     {card.metric}
@@ -178,7 +178,7 @@ export function TestimonialsSection() {
 
                 {/* Headline */}
                 <p
-                  className="text-sm font-semibold leading-snug"
+                  className="text-sm font-semibold leading-snug break-words"
                   style={{
                     color: 'var(--color-text-primary)',
                     fontFamily: 'var(--font-display)',
@@ -197,7 +197,7 @@ export function TestimonialsSection() {
 
                 {/* Architecture decision — Layer 2 for technical evaluators */}
                 <p
-                  className="font-mono text-[10px] leading-5 border-t pt-3 italic"
+                  className="font-mono text-[10px] leading-5 border-t pt-3 italic break-words"
                   style={{
                     borderColor: 'var(--color-border-subtle)',
                     color: 'var(--color-text-muted)',
