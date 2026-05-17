@@ -104,27 +104,35 @@ export function TestimonialsSection() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          {/* ── Eyebrow — no section number; interstitial between 01 and 02 ── */}
-          <m.div variants={itemVariant} className="section-kicker-row">
-            <span className="section-label">Production record</span>
+          {/* ── Section header — editorial 2-col at lg+ (matches Projects v25, Writing v23, OSS v24) ── */}
+          <m.div variants={itemVariant} className="section-intro-editorial mb-10 sm:mb-14">
+            {/* Left: kicker + heading */}
+            <div>
+              <div className="section-kicker-row">
+                <span className="section-label">Production record</span>
+              </div>
+              <m.h2
+                variants={headVariant}
+                id="proof-record-heading"
+                className="mt-4"
+              >
+                Shipped systems.{' '}
+                <br className="hidden lg:block" />
+                Verified outcomes.
+              </m.h2>
+            </div>
+            {/* Right: description — editorial counterweight at lg+ */}
+            <div className="lg:flex lg:flex-col lg:justify-end">
+              <m.p
+                variants={itemVariant}
+                className="mt-4 lg:mt-0 max-w-[52ch] text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Four production systems. Every metric traceable to a deployed
+                codebase. All of it running.
+              </m.p>
+            </div>
           </m.div>
-
-          <m.h2
-            variants={headVariant}
-            id="proof-record-heading"
-            className="mt-4 mb-3"
-          >
-            Shipped systems. Verified outcomes.
-          </m.h2>
-
-          <m.p
-            variants={itemVariant}
-            className="mb-10 max-w-[52ch] text-base leading-8"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            Four production systems. Every metric traceable to a deployed
-            codebase. All of it running.
-          </m.p>
 
           {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}
           <m.div
@@ -152,10 +160,10 @@ export function TestimonialsSection() {
                   {card.type}
                 </p>
 
-                {/* Metric row */}
-                <div className="flex items-baseline gap-2">
+                {/* Metric row — larger display for scannable proof */}
+                <div className="flex items-baseline gap-2 flex-wrap">
                   <span
-                    className="font-mono text-2xl font-bold leading-none"
+                    className="font-mono text-[clamp(1.5rem,3vw,2rem)] font-bold leading-none"
                     style={{ color: card.accent }}
                   >
                     {card.metric}
