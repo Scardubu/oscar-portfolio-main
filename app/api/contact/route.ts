@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { contactSchema } from "@/app/lib/validations";
-import { CONTACT_EMAIL } from "@/lib/config";
+import { CONTACT_EMAIL, SENDER_EMAIL } from "@/lib/config";
 
 // Lazy-initialize Resend client to avoid build-time errors when env var is missing
 let resend: Resend | null = null;
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const subject = `[Portfolio] ${data.inquiryType.toUpperCase()} inquiry from ${data.name}`;
 
     await client.emails.send({
-      from: "Oscar Portfolio <noreply@scardubu.dev>",
+      from: `Oscar Portfolio <${SENDER_EMAIL}>`,
       to: CONTACT_EMAIL,
       subject,
       text: `Name: ${data.name}
