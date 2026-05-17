@@ -391,5 +391,18 @@ export function CommandPalette() {
         </m.div>
       )}
     </AnimatePresence>
+
+    {/* Mobile FAB — P3-F: floating ⌘ trigger, bottom-right, lg:hidden */}
+    {!open && (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label="Open command palette"
+        className="fixed bottom-6 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-black/80 text-white/70 backdrop-blur-xl transition-all duration-200 hover:border-white/20 hover:text-white lg:hidden"
+        style={{ boxShadow: '0 4px 24px oklch(0% 0 0 / 0.4)' }}
+      >
+        <span className="font-mono text-sm font-semibold tracking-tight">⌘</span>
+      </button>
+    )}
   );
 }
