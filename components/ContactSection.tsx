@@ -77,7 +77,7 @@ const CONTACT_CARDS = [
     id: 'consulting',
     title: 'INFRASTRUCTURE CONSULTING',
     headline: 'Production reliability · compliance remediation · ML backends',
-    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NTA 2025 / NRS 2026), ML inference optimisation, and multi-tenant PostgreSQL RLS implementation.',
+    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NRS 2026 / FIRS DigiTax), ML inference optimisation, and multi-tenant PostgreSQL RLS implementation.',
     objection: 'You get working infrastructure and documented decisions — not a billable-hour report.',
     accentColor: 'var(--color-cyan)',
   },
