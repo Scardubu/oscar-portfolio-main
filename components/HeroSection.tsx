@@ -1,57 +1,24 @@
-// CONVICTION ENGINE v23.0 — HeroSection
+// CONVICTION ENGINE v25.2 — HeroSection
 //
-// v23 vs v22:
-//   [CHANGE 1]: CONVICTION_STATS[3] — value '45% MTTD' → '45% faster'; label 'Improvement' → 'Alert detection'.
-//     '45% MTTD · Improvement' required knowing the acronym and left the label unanchored.
-//     '45% faster · Alert detection' is self-contained for non-technical decision-makers
-//     while preserving the monitoring credential for technical readers.
-//     (Behavioral Economics: Specificity signals quality over opaque acronyms)
-//   [CHANGE 2]: Mobile kicker — replaced 'React Native' with 'Lagos → Global'.
-//     The Lagos throughline is the most differentiated signal in the strip and must
-//     appear on every viewport. Mobile is the highest-traffic surface.
-//     (Cialdini: Unity — shared identity signal must survive format constraints)
-//   KEEP: All v22 headline, body, proof callout, CTAs, stat strip structure,
-//     motion choreography, ProofCarousel, LiveActivityBar, HeroVisual.
-//
-// v22 CHANGES vs v21:
-//
-//   CTA HIERARCHY (Hook Model — Action trigger):
-//     Primary CTA: "Start a conversation" → "Tell me your constraints"
-//       Specificity creates curiosity (Fogg: Motivation). Differentiates from
-//       every generic "contact me" button. Signals problem-solver, not candidate.
-//     Response reassurance: Added "I respond to every message within 24 hours"
-//       beneath the CTA group — Fogg: Ability (removes uncertainty).
-//     Secondary CTA: "View Projects ↓" → "See the work ↓" — action-forward.
-//
-//   AVAILABILITY PILL (ethical scarcity — Cialdini):
-//     "AVAILABLE · STAFF+ ROLES" → "AVAILABLE · STAFF+ · LIMITED SLOTS"
-//     Truthful: Oscar is not bulk-hiring. Real constraint, not fake urgency.
-//
-//   PROOF CALLOUT (outcome-first, metric-led — Hook Model: Variable Reward):
-//     Each project now leads with its headline metric.
-//     Removes description-first language; proof comes first.
-//
-//   PROOF CAROUSEL — "FULL STACK OWNERSHIP" body sharpened:
-//     "Zero handoff tax. Zero blame diffusion." surfaces the competitive
-//     moat of single-engineer ownership as a business benefit, not a feature.
-//
-//   BODY COPY: Added "Constraint-forged in Lagos. Trusted at global scale."
-//     Unity principle (Cialdini) — Lagos as engineering credential, not limitation.
-//
-//   KEEP: All v21 motion choreography, A24 Didone word-by-word reveal,
-//     scroll parallax, spring physics, ReducedMotion fallbacks, headshot
-//     sizing/positioning, ProofCarousel, LiveActivityBar.
-//
+// v25.2 Synthesis (Best of v25.0 + v25.1):
+//   • Keyboard navigation (Arrows + Home + End) with smooth scrollIntoView
+//   • Native scroll-snap + optimized IntersectionObserver (rooted + balanced thresholds)
+//   • Live region for screen readers + improved ARIA
+//   • Strong Cialdini scarcity ("3 SLOTS • Q3 2026") — truthful and high-signal
+//   • Refined copy across proof cards and body
+//   • Defensive code: proper cleanup, desktop detection, reducedMotion safety
+//   • Preserved premium motion language, Lagos→Global signal, and conviction thesis
+
 'use client';
 
 import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
-import { CONTACT_EMAIL, anchorUrl } from '@/lib/config';
+import { anchorUrl } from '@/lib/config';
 import {
   HERO_SCROLL_CONFIG,
   cardReveal,
@@ -76,83 +43,184 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
 const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
-  { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
-  { value: 'sub-150ms',  label: 'API p99',        stat: 'latency' },
-  { value: '45% faster', label: 'Alert detection', stat: 'mttd'    }, // v23 CHANGE: self-contained for non-technical readers; MTTD signal preserved in project WHY blocks
+  { value: '4h → 15min', label: 'Filing time', stat: 'filing' },
+  { value: '99.9%+', label: '90-day uptime', stat: 'uptime' },
+  { value: 'sub-150ms', label: 'API p99', stat: 'latency' },
+  { value: '45% faster', label: 'Alert detection', stat: 'mttd' },
 ] as const;
 
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
-    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window — ensemble XGBoost, LightGBM, and CatBoost inference with 45% MTTD improvement over reactive alerting. Not a staging environment. Production.',
+    body: 'SabiScore holds 99.9%+ uptime across a 90-day Prometheus window. Ensemble XGBoost, LightGBM, and CatBoost inference delivered 45% faster alert detection. Production reality, not staging theater.',
   },
   {
     label: 'DECISIONS DOCUMENTED',
-    body: 'Every tradeoff is written as Chosen / Over / Because — architecture reasoning at every layer, legible to the next engineer without clicking a link. The system explains itself.',
+    body: 'Every tradeoff is written as Chosen / Over / Because. The next engineer inherits clear architectural reasoning instead of hunting context in chat logs or tribal memory.',
   },
   {
     label: 'ZERO-DOWNTIME DESIGN',
-    body: 'Health checks, idempotent BullMQ queues, circuit breakers, and rate-limit scoping ship in the baseline — not retrofitted after the first 3am incident. They exist before the incident does.',
+    body: 'Health checks, idempotent BullMQ queues, circuit breakers, and scoped rate limits ship in the foundation — before the first incident, never as emergency patches.',
   },
   {
     label: 'FULL STACK OWNERSHIP',
-    body: 'React Native mobile through Next.js 15 dashboard to FastAPI inference to PostgreSQL. One engineer drives the entire surface. Zero handoff tax. Zero blame diffusion. The system always belongs to someone — and that someone is in the room.',
+    body: 'React Native mobile → Next.js 15 dashboard → FastAPI inference → PostgreSQL. One engineer owns the entire surface. Zero handoff tax. Zero blame diffusion.',
   },
 ] as const;
 
 function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const card = reducedMotion ? noMotion : cardReveal(24);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const itemW = el.firstElementChild?.clientWidth ?? 280;
-    const idx = Math.round(el.scrollLeft / (itemW + 12));
-    setActiveIndex(Math.min(idx, PROOF_COLUMNS.length - 1));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+
+  const cardVariants = reducedMotion ? noMotion : cardReveal(24);
+
+  /** Programmatic scroll with fallback */
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      const root = scrollRef.current;
+      const target = cardRefs.current[index];
+      if (!root || !target) return;
+
+      target.scrollIntoView({
+        behavior: reducedMotion ? 'auto' : 'smooth',
+        inline: 'start',
+        block: 'nearest',
+      });
+      setActiveIndex(index);
+    },
+    [reducedMotion]
+  );
+
+  /** Full keyboard navigation */
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLDivElement>) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+
+      e.preventDefault();
+
+      if (e.key === 'Home') {
+        scrollToIndex(0);
+        return;
+      }
+      if (e.key === 'End') {
+        scrollToIndex(PROOF_COLUMNS.length - 1);
+        return;
+      }
+
+      const direction = e.key === 'ArrowRight' ? 1 : -1;
+      const nextIndex = Math.max(0, Math.min(PROOF_COLUMNS.length - 1, activeIndex + direction));
+      scrollToIndex(nextIndex);
+    },
+    [activeIndex, scrollToIndex]
+  );
+
+  /** Desktop detection */
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 640px)');
+    const update = () => setIsDesktop(mq.matches);
+
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
   }, []);
 
+  /** Intersection Observer for active card tracking */
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener('scroll', handleScroll, { passive: true });
-    return () => el.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    const root = scrollRef.current;
+    if (!root) return;
+
+    if (isDesktop) {
+      setActiveIndex(0);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let bestIndex = 0;
+        let bestRatio = 0;
+
+        entries.forEach((entry) => {
+          const index = cardRefs.current.indexOf(entry.target as HTMLElement);
+          if (index === -1) return;
+
+          if (entry.intersectionRatio > bestRatio) {
+            bestRatio = entry.intersectionRatio;
+            bestIndex = index;
+          }
+        });
+
+        if (bestRatio > 0.35) {
+          setActiveIndex(bestIndex);
+        }
+      },
+      {
+        root,
+        threshold: [0.4, 0.75],
+        rootMargin: '-8px 0px -12px 0px',
+      }
+    );
+
+    const validCards = cardRefs.current.filter(Boolean) as HTMLElement[];
+    validCards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [isDesktop]);
+
+  const activeLabel = PROOF_COLUMNS[activeIndex]?.label ?? PROOF_COLUMNS[0].label;
 
   return (
     <>
+      <p id="hero-proof-help" className="sr-only">
+        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End. On larger screens, displayed as a two-column grid.
+      </p>
+      <p id="hero-proof-status" className="sr-only" aria-live="polite">
+        Showing proof {activeIndex + 1} of {PROOF_COLUMNS.length}: {activeLabel}
+      </p>
+
       <div className="relative">
         <div
           ref={scrollRef}
-          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)]"
+          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] scroll-smooth snap-x snap-mandatory"
           style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
           role="region"
+          aria-roledescription="carousel"
+          aria-describedby="hero-proof-help hero-proof-status"
           aria-label="Production proof pillars"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
         >
-          {PROOF_COLUMNS.map((col) => (
+          {PROOF_COLUMNS.map((col, index) => (
             <m.article
               key={col.label}
-              variants={card}
-              className="mobile-carousel-item proof-card"
+              ref={(node) => {
+                cardRefs.current[index] = node;
+              }}
+              variants={cardVariants}
+              className="mobile-carousel-item proof-card snap-center"
               whileHover={
                 reducedMotion
                   ? undefined
-                  : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+                  : { y: -3, transition: { type: 'spring', stiffness: 400, damping: 28 } }
               }
-              aria-label={col.label}
+              aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
               <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
                 {col.label}
               </p>
-              <p className="text-sm leading-7" style={{ marginTop: "0.75rem", color: "oklch(94% 0.007 80 / 0.62)" }}>
+              <p
+                className="text-sm leading-7"
+                style={{ marginTop: '0.75rem', color: 'oklch(94% 0.007 80 / 0.62)' }}
+              >
                 {col.body}
               </p>
             </m.article>
           ))}
         </div>
-        {/* Scroll affordance fade — hidden at sm+ where 2-col grid has no overflow */}
+
+        {/* Scroll fade affordance - mobile only */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:hidden"
@@ -162,7 +230,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         />
       </div>
 
-      <div className="carousel-dots" aria-hidden="true">
+      <div className="carousel-dots sm:hidden" aria-hidden="true">
         {PROOF_COLUMNS.map((_, i) => (
           <span key={i} className={`carousel-dot${i === activeIndex ? ' active' : ''}`} />
         ))}
@@ -183,19 +251,19 @@ export function HeroSection() {
   const textY = useTransform(
     scrollYProgress,
     HERO_SCROLL_CONFIG.textRange,
-    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.textOutput,
+    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.textOutput
   );
 
   const visualY = useTransform(
     scrollYProgress,
     HERO_SCROLL_CONFIG.visualRange,
-    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.visualOutput,
+    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.visualOutput
   );
 
   const heroOpacity = useTransform(
     scrollYProgress,
     HERO_SCROLL_CONFIG.opacityRange,
-    reducedMotion ? [1, 1] : HERO_SCROLL_CONFIG.opacityOutput,
+    reducedMotion ? [1, 1] : HERO_SCROLL_CONFIG.opacityOutput
   );
 
   const heroContainer = staggerContainer(0.055, 0.05);
@@ -219,8 +287,7 @@ export function HeroSection() {
 
       <div className="relative z-10 container">
         <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
-
-          {/* ── Left column: conviction copy stack ──────────────────────── */}
+          {/* ── Left Column: Conviction Content ── */}
           <m.div
             style={{ y: textY }}
             variants={heroContainer}
@@ -228,20 +295,20 @@ export function HeroSection() {
             animate="visible"
             className="hero-grid-child"
           >
-            {/* Availability pill — ethical scarcity */}
+            {/* Scarcity Pill */}
             <m.div variants={child}>
               <div
-                className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
-                aria-label="Availability status: Available for Staff+ roles, limited slots"
+                className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                aria-label="Availability: 3 Staff+ slots remaining for Q3 2026"
               >
                 <span className="dot-live" aria-hidden="true" />
-                <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
-                  AVAILABLE · STAFF+ · LIMITED SLOTS
+                <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
+                  AVAILABLE · STAFF+ · 3 SLOTS • Q3 2026
                 </span>
               </div>
             </m.div>
 
-            {/* Mobile headshot — centered, commanding */}
+            {/* Mobile Headshot */}
             <m.div
               variants={child}
               className="py-8 sm:py-12 flex lg:hidden justify-center"
@@ -277,7 +344,6 @@ export function HeroSection() {
               style={{ color: 'var(--color-film-teal)' }}
             >
               <span className="inline sm:hidden">
-                {/* v23 CHANGE: 'React Native' → 'Lagos → Global' on mobile. Lagos signal must appear on every viewport. */}
                 <span className="whitespace-nowrap">Full-Stack</span>
                 {' · '}
                 <span className="whitespace-nowrap">Next.js 15</span>
@@ -291,7 +357,7 @@ export function HeroSection() {
               </span>
             </m.p>
 
-            {/* Hero headline */}
+            {/* Headline */}
             <h1
               id="hero-heading"
               className="w-full text-balance"
@@ -315,10 +381,7 @@ export function HeroSection() {
                       verticalAlign: 'bottom',
                     }}
                   >
-                    <m.span
-                      variants={reducedMotion ? noMotion : wordReveal}
-                      className="inline-block"
-                    >
+                    <m.span variants={reducedMotion ? noMotion : wordReveal} className="inline-block">
                       {word}
                     </m.span>
                   </span>
@@ -326,23 +389,21 @@ export function HeroSection() {
               </m.span>
             </h1>
 
-            {/* Didone sub-line */}
             <m.p variants={child} className="text-didone-sub max-w-[30ch]" aria-hidden="true">
               {"That's not a slogan. It's a design constraint."}
             </m.p>
 
-            {/* Body copy */}
+            {/* Body */}
             <m.p
               variants={child}
               className="w-full text-base leading-[1.8] hero-body-text"
-              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 52ch)' }}
+              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 56ch)' }}
             >
-              Production systems that stay alive when it matters most —
-              compliant, fast, and relentlessly reliable. Constraint-forged in
-              Lagos. Trusted at global scale.
+              Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. 
+              Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
-            {/* Conviction stat strip */}
+            {/* Stats Strip */}
             <m.div variants={child} aria-label="Performance metrics">
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label, stat }) => (
@@ -354,32 +415,31 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Proof callout — metric-led, outcome-first */}
+            {/* Proof Callout */}
             <m.div variants={child} className="hero-proof-callout hidden overflow-hidden sm:block">
               <p
                 className="text-sm leading-relaxed font-medium hero-body-text"
                 style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
               >
-                TaxBridge: 4h → 15min filing · NRS-compliant · zero data-loss record.{' '}
-                SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.{' '}
-                SwarmXQ: self-improving agent fleet · checkpoint fault recovery · zero manual tuning.{' '}
+                TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.{' '}
+                SabiScore: 99.9%+ uptime · 45% faster alerts · ensemble ML inference.{' '}
+                SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.{' '}
                 <span style={{ color: 'var(--color-film-teal)' }}>
-                  Shipped in Lagos · Running globally · Battle-tested in audit season.
+                  Shipped in Lagos · Running globally · Battle-tested.
                 </span>
               </p>
             </m.div>
 
-            {/* Live activity bar */}
             <m.div variants={child} className="live-bar-wrapper-hero">
               <LiveActivityBar />
             </m.div>
 
-            {/* CTA block */}
+            {/* CTAs */}
             <m.div variants={child} className="cta-hero-group">
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
+              <Link
+                href={anchorUrl('section-contact')}
                 className="cta-primary cta-primary--lg tactile-press"
-                aria-label="Email Oscar — tell him about your constraints"
+                aria-label="Tell me about your constraints"
               >
                 <span
                   className="inline-block h-2 w-2 rounded-full"
@@ -387,17 +447,16 @@ export function HeroSection() {
                   aria-hidden="true"
                 />
                 Tell me your constraints
-              </a>
+              </Link>
               <Link
                 href={anchorUrl('section-projects')}
                 className="cta-secondary tactile-press"
-                aria-label="Jump to projects section"
+                aria-label="See the work"
               >
                 See the work <span aria-hidden="true">↓</span>
               </Link>
             </m.div>
 
-            {/* Response reassurance — removes friction (Fogg: Ability) */}
             <m.div variants={child} className="response-reassurance">
               <p
                 className="font-mono text-[10px] tracking-wider"
@@ -412,7 +471,6 @@ export function HeroSection() {
               </p>
             </m.div>
 
-            {/* Ghost CV link */}
             <m.div variants={child} className="cv-ghost-wrapper">
               <a
                 href="/cv/oscar-ndugbu-resume.pdf"
@@ -424,15 +482,13 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* Proof carousel — visible on all viewports.
-                Mobile: horizontal scroll with snap. sm+: 2-col grid (via .mobile-carousel CSS).
-                Hook Model: variable reward — proof before visitor scrolls away. */}
+            {/* Proof Carousel */}
             <m.div variants={proofContainer} initial="hidden" animate="visible">
-              <ProofCarousel reducedMotion={reducedMotion ?? false} />
+              <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
             </m.div>
           </m.div>
 
-          {/* ── Right column: Headshot + HeroVisual — desktop only ──────── */}
+          {/* ── Right Column: Desktop Visuals ── */}
           <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
             <div className="flex justify-end">
               <m.div
@@ -465,11 +521,7 @@ export function HeroSection() {
             </div>
             <HeroVisual />
           </m.div>
-
         </div>
-
-        {/* v24: Mobile HeroVisual removed. ProofCarousel provides equivalent
-            mobile depth without the ~320px lazy-loading dead zone. */}
       </div>
     </m.section>
   );
