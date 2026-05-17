@@ -1,8 +1,17 @@
-// CONVICTION ENGINE v2.0 — 404 Not Found
-// v2: Full design system integration — glass card, film-teal CTA,
-//     mono kicker, Didone sub-line, on-brand micro-copy.
-//     v1 used var(--color-accent) purple + plain layout — inconsistent with
-//     every other page on the site.
+// CONVICTION ENGINE v3.0 — 404 Not Found
+//
+// v3.0 vs v2.0:
+//   [FIX P3-C]: Headline now matches CE spec exactly.
+//     Previous: "This page doesn't exist." (CE spec requires "The system does." appended)
+//     Updated:  "This page doesn't exist. The system does."
+//     Principle: CE microcopy spec — the 404 is the one place the portfolio's
+//     reliability thesis should show up even in its absence state.
+//   [FIX P3-C]: Sub-line tightened to remove the uptime self-reference ("99.9%+ promise").
+//     Replacing it with the CE spec assurance line to close the loop without
+//     the site appearing to be boasting about its own uptime on its own error page.
+//   KEEP: glass card, film-teal CTA, mono kicker, ambient glow, nav strip,
+//     Lagos footer tag, all design tokens, all motion classes, focus states.
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -39,13 +48,16 @@ export default function NotFound() {
           404 · Not Found
         </p>
 
-        {/* Headline */}
+        {/* Headline — CE spec: "This page doesn't exist. The system does." */}
         <h1
           id="not-found-heading"
           className="mb-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl"
           style={{ color: 'var(--color-text-primary)' }}
         >
-          This page doesn&apos;t exist.
+          This page doesn&apos;t exist.{' '}
+          <span style={{ color: 'var(--color-film-teal)' }}>
+            The system does.
+          </span>
         </h1>
 
         {/* Didone sub-line */}
@@ -53,7 +65,7 @@ export default function NotFound() {
           className="mb-2 font-didone text-base italic sm:text-lg"
           style={{ color: 'var(--color-text-secondary)' }}
         >
-          Unlike the systems I build, this URL has no uptime guarantee.
+          Unlike the systems behind this site, this URL has no uptime record.
         </p>
 
         {/* Trust signal */}
@@ -61,7 +73,7 @@ export default function NotFound() {
           className="mb-8 font-mono text-[10px] tracking-widest uppercase"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          The rest of the site is 99.9%+ — promise.
+          Response within 24h · Zero data-loss record · Shipped from Lagos.
         </p>
 
         {/* Divider */}
@@ -71,7 +83,7 @@ export default function NotFound() {
           aria-hidden="true"
         />
 
-        {/* CTA */}
+        {/* Primary CTA */}
         <Link
           href="/"
           className="cta-primary cta-primary--lg tactile-press w-full justify-center"
@@ -99,7 +111,12 @@ export default function NotFound() {
               key={href}
               href={href}
               className="font-mono text-[11px] tracking-wider uppercase transition-colors hover:text-white"
-              style={{ color: 'var(--color-text-muted)', minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}
+              style={{
+                color: 'var(--color-text-muted)',
+                minHeight: '44px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
             >
               {label}
             </Link>
