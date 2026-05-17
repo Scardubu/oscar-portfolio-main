@@ -398,10 +398,10 @@ export function HeroSection() {
             </m.div>
 
             {/* Response reassurance — removes friction (Fogg: Ability) */}
-            <m.div variants={child}>
+            <m.div variants={child} className="response-reassurance">
               <p
                 className="font-mono text-[10px] tracking-wider"
-                style={{ color: 'oklch(93% 0.006 264 / 0.35)' }}
+                style={{ color: 'oklch(93% 0.006 264 / 0.50)' }}
               >
                 <span
                   className="inline-block h-1.5 w-1.5 rounded-full mr-1.5 align-middle"
