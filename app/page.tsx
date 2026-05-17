@@ -1,49 +1,82 @@
-// CONVICTION ENGINE v23.0 — Home Page
-// v23 CHANGE: TestimonialsSection added between Projects and OSS (P2-D).
-//   TESTIMONIALS data existed in lib/portfolio-data.ts since v27 but was never
-//   rendered. This closes the gap — authority signal lands immediately after
-//   the technical depth proof and before OSS artifacts.
+// CONVICTION ENGINE v26.1 — Home Page
 //
-// Render order: Hero → Projects → Testimonials → OSS → Skills → About → Writing → Contact
-// Render priority: HeroSection is above-the-fold, zero lazy-loading.
-// Heavy sections: dynamic import (ssr: true) to reduce initial JS bundle.
+// Refined orchestration for production readiness:
+//
+// 00. Hero          → Above-the-fold LCP target (synchronous)
+// 01. Projects      → Primary proof of depth and execution capability
+// 01.5 Testimonials → Immediate authority and social proof
+// 02. Open Source   → Trust through public artifacts and contributions
+// 03. Skills        → Breadth after depth is established
+// 04. About         → Human connection and operating context
+// 05. Writing       → Thought leadership and decision-making clarity
+// 06. Contact       → Final conversion endpoint
+//
+// Technical strategy:
+// - Hero stays synchronous for first paint quality.
+// - Every other section streams through Suspense.
+// - Dynamic imports keep the initial bundle lean while preserving SSR.
+// - BookmarkToastLoader stays outside <main> so it does not pollute the main landmark.
 
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
-import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { getWritingPosts } from '@/lib/content';
 
 const ProjectsSection = dynamic(
   () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
   { ssr: true }
 );
+
 const TestimonialsSection = dynamic(
   () => import('@/components/TestimonialsSection').then((m) => ({ default: m.TestimonialsSection })),
   { ssr: true }
 );
+
 const OpenSourceSection = dynamic(
   () => import('@/components/OpenSourceSection').then((m) => ({ default: m.OpenSourceSection })),
   { ssr: true }
 );
+
 const SkillsSection = dynamic(
   () => import('@/components/SkillsSection').then((m) => ({ default: m.SkillsSection })),
   { ssr: true }
 );
+
 const AboutSection = dynamic(
   () => import('@/components/AboutSection').then((m) => ({ default: m.AboutSection })),
   { ssr: true }
 );
+
 const WritingSection = dynamic(
   () => import('@/components/WritingSection').then((m) => ({ default: m.WritingSection })),
   { ssr: true }
 );
+
 const ContactSection = dynamic(
   () => import('@/components/ContactSection').then((m) => ({ default: m.ContactSection })),
   { ssr: true }
 );
+
+function SectionBlock({
+  id,
+  label,
+  height,
+  children,
+}: {
+  id: string;
+  label: string;
+  height: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <Suspense fallback={<SectionSkeleton id={id} label={label} height={height} />}>
+      {children}
+    </Suspense>
+  );
+}
 
 export default async function Home() {
   const posts = (await getWritingPosts()).slice(0, 6);
@@ -51,63 +84,48 @@ export default async function Home() {
   return (
     <>
       <main id="main-content" tabIndex={-1}>
-        {/* 00 — Hero: LCP target; zero deferred loading */}
+        {/* 00 — Hero: first paint, zero deferred loading */}
         <HeroSection />
 
-        {/* 01 — Projects: primary depth proof, highest conviction value */}
-        <Suspense
-          fallback={<SectionSkeleton id="section-projects" label="Projects" height={560} />}
-        >
+        {/* 01 — Projects: deepest execution proof */}
+        <SectionBlock id="section-projects" label="Projects" height={560}>
           <ProjectsSection />
-        </Suspense>
+        </SectionBlock>
 
-        {/* 01.5 — Testimonials: client authority immediately after depth proof */}
-        <Suspense
-          fallback={<SectionSkeleton id="section-testimonials" label="Testimonials" height={360} />}
-        >
+        {/* 01.5 — Testimonials: authority immediately after proof */}
+        <SectionBlock id="section-testimonials" label="Testimonials" height={360}>
           <TestimonialsSection />
-        </Suspense>
+        </SectionBlock>
 
-        {/* 02 — Open Source: secondary trust signal, installable artifacts */}
-        <Suspense
-          fallback={<SectionSkeleton id="open-source" label="Open Source" height={340} />}
-        >
+        {/* 02 — Open Source: public artifacts and contribution signal */}
+        <SectionBlock id="open-source" label="Open Source" height={340}>
           <OpenSourceSection />
-        </Suspense>
+        </SectionBlock>
 
-        {/* 03 — Skills: breadth established after depth is proven */}
-        <Suspense fallback={<SectionSkeleton id="skills" label="Skills" height={480} />}>
+        {/* 03 — Skills: breadth only after depth is established */}
+        <SectionBlock id="skills" label="Skills" height={480}>
           <SkillsSection />
-        </Suspense>
+        </SectionBlock>
 
-        {/* 04 — About: human story anchors the technical record */}
-        <Suspense
-          fallback={<SectionSkeleton id="section-about" label="About" height={320} />}
-        >
+        {/* 04 — About: operating context and human grounding */}
+        <SectionBlock id="section-about" label="About" height={320}>
           <AboutSection />
-        </Suspense>
+        </SectionBlock>
 
-        {/* 05 — Writing: deep expertise and decision-making signal */}
+        {/* 05 — Writing: decision-making depth and technical judgment */}
         {posts.length > 0 && (
-          <Suspense
-            fallback={<SectionSkeleton id="section-writing" label="Writing" height={420} />}
-          >
+          <SectionBlock id="section-writing" label="Writing" height={420}>
             <WritingSection posts={posts} />
-          </Suspense>
+          </SectionBlock>
         )}
 
-        {/* 06 — Contact: conversion endpoint, always last */}
-        <Suspense
-          fallback={<SectionSkeleton id="section-contact" label="Contact" height={280} />}
-        >
+        {/* 06 — Contact: final conversion endpoint */}
+        <SectionBlock id="section-contact" label="Contact" height={280}>
           <ContactSection />
-        </Suspense>
+        </SectionBlock>
       </main>
 
-      {/*
-        BookmarkToast: client-only, outside <main> to avoid polluting
-        the main landmark with a transient notification region.
-      */}
+      {/* Transient UI lives outside main to keep the landmark clean */}
       <BookmarkToastLoader />
     </>
   );
