@@ -128,8 +128,8 @@ export function TestimonialsSection() {
                 className="mt-4 lg:mt-0 max-w-[52ch] text-base leading-8"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                Four production systems. Every metric traceable to a deployed
-                codebase. All of it running.
+                Three live platforms. One federal engagement.
+                Every metric traceable to a deployed codebase.
               </m.p>
             </div>
           </m.div>
