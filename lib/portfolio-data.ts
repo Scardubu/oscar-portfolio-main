@@ -20,7 +20,7 @@
  *   • SOCIAL: urls verified against live accounts.
  * ─────────────────────────────────────────────────────────────────────────────
  */
-import { CONTACT_EMAIL } from '@/lib/config';
+import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 // G.7 Location rule: PROFILE.locationDisplay must be "Lagos, Nigeria 🇳🇬"
@@ -53,9 +53,12 @@ export const HERO = {
   location:     'Lagos, Nigeria 🇳🇬',
   trustStrip:   'Shipped in Lagos · Running globally · Battle-tested in audit season',
   cta: {
-    primary:   { label: 'Start a conversation', href: `mailto:${CONTACT_EMAIL}` },
-    secondary: { label: 'View Projects',        href: '#section-projects' },
-    cv:        { label: 'Download CV',          href: '/cv/oscar-ndugbu-resume.pdf' },
+    // anchorUrl() returns root-relative '/#section-contact' — correct for Next.js
+    // <Link> same-page navigation. mailto: was removed: the contact form is the
+    // designed conversion endpoint; a mailto cold-open bypasses it entirely.
+    primary:   { label: 'Start a conversation', href: anchorUrl('section-contact') },
+    secondary: { label: 'View Projects',        href: anchorUrl('section-projects') },
+    cv:        { label: 'Download CV',          href: CV_ASSET_PATH },
   },
 } as const;
 
