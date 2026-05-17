@@ -147,7 +147,7 @@ export function TestimonialsSection() {
                 {/* Type label */}
                 <p
                   className="font-mono text-[10px] tracking-widest uppercase"
-                  style={{ color: card.accent, opacity: 0.8 }}
+                  style={{ color: card.accent, opacity: 0.8, overflowWrap: 'break-word', wordBreak: 'break-word' }}
                 >
                   {card.type}
                 </p>
