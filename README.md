@@ -2,7 +2,7 @@
 
 Staff+ Full-Stack / Infra / AI portfolio. Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
 
-**Live site:** [https://scardubu.dev](https://scardubu.dev) · **CONVICTION ENGINE v28.0**
+**Live site:** [https://scardubu.dev](https://scardubu.dev)
 
 ---
 
