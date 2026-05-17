@@ -1,30 +1,27 @@
-# Oscar Ndugbu Portfolio
+# Oscar Ndugbu — scardubu.dev
 
-Production portfolio for Oscar Ndugbu — Principal Full-Stack Engineer focused on AI infrastructure, fintech systems, backend reliability, and cross-platform mobile.
+Staff+ Full-Stack / Infra / AI portfolio. Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
 
-Live site: [https://scardubu.dev](https://scardubu.dev)
+**Live site:** [https://scardubu.dev](https://scardubu.dev) · **CONVICTION ENGINE v28.0**
 
-**Conviction Engine v10.0** — Full-stack identity, SkillsMap, multi-platform positioning, SEO hardening.
+---
 
-## Tech Stack
+## What it is
 
-- Next.js 15 (App Router, Partial Prerendering)
-- React 19 (Server Components, use(), Compiler)
-- TypeScript (strict)
-- Tailwind CSS v4
-- Framer Motion 11 (LazyMotion + domAnimations)
-- MDX content system
-- Playwright E2E tests
-- Vercel deployment
+A proof system, not a brag sheet. Four production case studies, four open-source packages, 62 verified skills, and writing that explains the decisions behind the work.
 
-## Local Setup
+## Tech stack
 
-### Requirements
+- **Framework:** Next.js 15 (App Router, Partial Prerendering, Streaming)
+- **UI:** React 19, Tailwind CSS v4, Framer Motion 11 (LazyMotion + domAnimations)
+- **Language:** TypeScript strict across all layers
+- **Content:** MDX — case studies and writing posts
+- **Testing:** Playwright E2E (Chromium smoke suite)
+- **Deployment:** Vercel (main branch auto-deploys)
 
-- Node.js >= 20
-- pnpm >= 9
+## Local setup
 
-### Install and Run
+**Requirements:** Node.js ≥ 20, pnpm ≥ 9
 
 ```bash
 pnpm install
@@ -36,71 +33,85 @@ App starts at `http://localhost:3000`.
 ## Scripts
 
 ```bash
-pnpm dev          # start local dev server
+pnpm dev          # local dev server
 pnpm build        # production build
 pnpm start        # run built app
 pnpm lint         # ESLint checks
 pnpm lint:fix     # auto-fix lint issues
 pnpm type-check   # strict TypeScript checks
-pnpm test:e2e     # Chromium Playwright smoke suite
+pnpm test:e2e     # Playwright smoke suite (Chromium)
 pnpm test:all     # full Playwright matrix
 pnpm audit:copy   # content compliance checks
 pnpm lhci         # Lighthouse CI
 ```
 
-## Project Structure
+## Project structure
 
-- `app/`: routes, metadata, API endpoints
-- `components/`: all reusable UI sections and primitives
-- `content/`: writing and case-study source content
-- `lib/`: typed data and helpers
-- `e2e/`: Playwright smoke tests
-- `public/`: static assets including resume at `public/cv/oscar-ndugbu-resume.pdf`
+```
+app/           → routes, metadata, API endpoints, Suspense orchestration
+components/    → section components and shared UI primitives
+content/
+  writing/     → MDX technical posts (6 articles)
+  work/        → MDX case studies (TaxBridge, SabiScore, SwarmXQ, UBEC, Hashablanca)
+lib/
+  config.ts    → CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl(), canonicalSectionUrl()
+  portfolio-data.ts → PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS, ACTIVITY_FEED
+  projects.ts  → PROJECTS — canonical source for all project data
+  data/
+    skills.ts  → SKILLS (62 skills, 8 pillars)
+    blog-articles.ts → article metadata
+e2e/           → Playwright smoke tests
+public/
+  cv/oscar-ndugbu-resume.pdf  → resume download
+```
 
-## Core Sections
+## Site sections
 
-- Hero: clear full-stack positioning, proof metrics, CTAs
-- Skills: interactive SkillsMap filtered by pillar (AI/ML, Backend, Frontend, Mobile, Infrastructure, Data)
-- Projects: case studies with architecture decisions and measurable outcomes
-- Open Source: selected production-focused packages
-- About: background, experience, certifications
-- Writing: technical essays and implementation breakdowns
-- Contact: hiring and consulting conversion surface
+| # | Section | ID | What it proves |
+|---|---|---|---|
+| 00 | Hero | — | Positioning, conviction stats, proof carousel |
+| 01 | Projects | `section-projects` | 4 case studies with arch decisions |
+| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes) |
+| 02 | Open Source | `open-source` | 4 production packages |
+| 03 | Skills | `skills` | 62 skills across 8 pillars, each traced to a live system |
+| 04 | About | `section-about` | Operating context and credibility |
+| 05 | Writing | `section-writing` | 6 technical posts |
+| 06 | Contact | `section-contact` | 3 engagement types + contact form |
+
+## Data layer
+
+Each domain has one canonical source. Do not duplicate across files.
+
+| Domain | Canonical source |
+|---|---|
+| Projects | `lib/projects.ts` |
+| Skills | `lib/data/skills.ts` |
+| Hero / Profile | `lib/portfolio-data.ts` |
+| Production proof cards | `components/TestimonialsSection.tsx` → `PROOF_CARDS` |
+| Writing posts | `content/writing/*.mdx` via `lib/content.ts` |
+| Config / URLs | `lib/config.ts` |
+
+`lib/data.ts` is a deprecated orphan from pre-v24. It is not imported by anything. Do not import from it. See the deprecation header in that file for canonical alternatives.
 
 ## Deployment (Vercel)
 
-1. Push to `main`
-2. Vercel auto-builds with `pnpm build`
-3. Verify production routes:
+1. Push to `main` → Vercel auto-builds with `pnpm build`
+2. Verify production routes: `/`, `/work/[slug]`, `/writing`, `/api/og`
+3. Confirm resume download: `/cv/oscar-ndugbu-resume.pdf`
+4. Confirm Skills section at `/#skills` renders all 8 pillars
 
-- `/`
-- `/work/[slug]`
-- `/writing`
-- `/api/og`
-
-4. Confirm resume download path:
-
-- `/cv/oscar-ndugbu-resume.pdf`
-
-5. Verify Skills section at `/#skills` renders all pillars (AI/ML, Backend, Frontend, Mobile, Infrastructure, Data)
-
-## v10.0 Changelog
-
-- **Full-stack identity**: Hero, layout metadata, OG, and SEO keywords updated to Principal Full-Stack Engineer positioning
-- **SkillsMap**: Interactive filterable skills grid at `/#skills` — 6 pillars, proficiency bars, system context tags
-- **New skills**: React Native / Expo SDK 54, Turborepo 2, Effect-TS (all tagged `used-in:taxbridge`)
-- **SEO hardening**: 24-keyword array, `knowsAbout` JSON-LD, updated `jobTitle`
-- **ARIA fixes**: `role="list"` added to SkillsMap grid, `<output>` replaces `role="status"` span in Hero
-- **Navbar**: Skills link added to section navigation
-
-## Quality Gates
+## Quality gates
 
 - Build passes: `pnpm build`
 - Type checks pass: `pnpm type-check`
 - Lint passes: `pnpm lint`
-- Responsive behavior validated in E2E smoke tests
+- Smoke tests pass: `pnpm test:e2e`
 - Metadata and OG routes resolve correctly
 
-## License
+## Contact
 
-Personal portfolio. All content copyright Oscar Ndugbu.
+**oscar@scardubu.dev** — response within 24 hours.
+
+---
+
+*Personal portfolio. All content copyright Oscar Ndugbu.*
