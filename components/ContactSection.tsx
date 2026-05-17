@@ -379,7 +379,7 @@ function ContactForm() {
 /* ── Main ContactSection ─────────────────────────────────────────────────── */
 export function ContactSection() {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
 
   const container = useMemo(() => staggerContainer(0.07, 0.05), []);
@@ -458,27 +458,37 @@ export function ContactSection() {
             </m.div>
 
             <m.div variants={child} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-3">
+              {/* Social + CV row — compact, non-competing with form submit */}
+              <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="cta-secondary cta-secondary--lg tactile-press"
-                  aria-label={`Email Oscar Ndugbu directly at ${CONTACT_EMAIL}`}
-                  style={{ justifyContent: 'center' }}
+                  href="https://github.com/Scardubu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] tracking-wider uppercase transition min-h-[44px] hover:border-white/24 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+                  aria-label="GitHub profile"
                 >
-                  <span
-                    className="inline-block h-2 w-2 rounded-full"
-                    style={{ background: 'var(--color-success)' }}
-                    aria-hidden="true"
-                  />
-                  Email Oscar directly
+                  <GitHubIcon />
+                  GitHub
+                </a>
+                <a
+                  href="https://linkedin.com/in/oscardubu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] tracking-wider uppercase transition min-h-[44px] hover:border-white/24 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+                  aria-label="LinkedIn profile"
+                >
+                  <LinkedInIcon />
+                  LinkedIn
                 </a>
                 <a
                   href="/cv/oscar-ndugbu-resume.pdf"
                   download
-                  className="cta-secondary tactile-press"
+                  className="cta-ghost tactile-press text-[11px] font-mono tracking-wider uppercase"
                   aria-label="Download Oscar's resume PDF"
                 >
-                  Download CV ↓
+                  Resume ↓
                 </a>
               </div>
 
