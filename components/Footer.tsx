@@ -205,7 +205,7 @@ export function Footer() {
       >
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
           <p
-            className="tracking-[0.5px] uppercase"
+            className="tracking-[0.5px] uppercase text-balance"
             style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}
           >
             Shipped in Lagos · Running globally · Battle-tested in audit season
