@@ -47,7 +47,7 @@ import { m, useInView, useReducedMotion } from 'framer-motion';
 import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'react';
 
 import { CopyEmail } from '@/components/CopyEmail';
-import { CONTACT_EMAIL } from '@/lib/config';
+import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import {
   cardReveal,
   clipReveal,
@@ -525,7 +525,7 @@ export function ContactSection() {
               </a>
               <CopyEmail email={CONTACT_EMAIL} />
               <a
-                href="/cv/oscar-ndugbu-resume.pdf"
+                href={CV_ASSET_PATH}
                 download
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm transition-colors min-h-11 hover:text-white"
                 style={{ color: 'var(--color-text-muted)' }}
