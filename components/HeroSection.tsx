@@ -244,7 +244,7 @@ export function HeroSection() {
             {/* Mobile headshot — centered, commanding */}
             <m.div
               variants={child}
-              className="py-14 flex lg:hidden justify-center"
+              className="py-8 sm:py-12 flex lg:hidden justify-center"
               aria-hidden="true"
             >
               <div
