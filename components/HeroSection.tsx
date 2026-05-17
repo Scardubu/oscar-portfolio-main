@@ -1,4 +1,4 @@
-// CONVICTION ENGINE v26.0 — HeroSection
+// CONVICTION ENGINE v26.1 — HeroSection
 //
 // v26.0 vs v25.2:
 //   [FIX P3-A CONVICTION_STATS]: Fourth entry corrected from '45% faster' / 'Alert detection'
@@ -21,7 +21,7 @@ import Link from 'next/link';
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
-import { anchorUrl } from '@/lib/config';
+import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
   HERO_SCROLL_CONFIG,
   cardReveal,
@@ -484,7 +484,7 @@ export function HeroSection() {
 
             <m.div variants={child} className="cv-ghost-wrapper">
               <a
-                href="/cv/oscar-ndugbu-resume.pdf"
+                href={CV_ASSET_PATH}
                 download
                 className="cta-ghost tactile-press"
                 aria-label="Download Oscar's resume as PDF"
