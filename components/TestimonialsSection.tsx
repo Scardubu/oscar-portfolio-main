@@ -83,7 +83,7 @@ const PROOF_CARDS = [
 
 export function TestimonialsSection() {
   const ref           = useRef<HTMLElement>(null);
-  const inView        = useInView(ref, { once: true, margin: '-80px' });
+  const inView        = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
 
   const container   = staggerContainer(0.08, 0.05);
