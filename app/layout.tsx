@@ -82,8 +82,9 @@ export const metadata: Metadata = {
     default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     template: '%s · Oscar Ndugbu',
   },
+  // CE spec §P3-G: ≤160 chars, outcome-focused (this is 155 chars)
   description:
-    'Staff+ Full-Stack · Infra · ML Engineer based in Lagos, Nigeria. TaxBridge cut Nigerian SME tax filing from 4h to 15min. SabiScore holds 99.9%+ uptime across a 90-day Prometheus window. SwarmXQ orchestrates self-improving AI agents with zero cloud dependency. Production systems that stay alive when it matters most.',
+    'Staff+ Full-Stack Engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: 99.9%+ uptime. SwarmXQ: self-improving agents. Systems that hold at 2am.',
   metadataBase: new URL('https://www.scardubu.dev'),
   keywords: [
     'Full-Stack Engineer',
@@ -126,8 +127,9 @@ export const metadata: Metadata = {
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Ndugbu',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
+    // CE spec §P3-G og:description exact wording
     description:
-      'Principal full-stack engineer, Lagos. TaxBridge · SabiScore · SwarmXQ. React Native, Java, Next.js 15, Effect-TS. sub-150ms · 99.9%+ uptime.',
+      'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (99.9%+ uptime) from Lagos.',
     images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
   },
   twitter: {
