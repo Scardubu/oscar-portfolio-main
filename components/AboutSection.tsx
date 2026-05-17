@@ -82,7 +82,7 @@ const IMPACT_STATS = [
 // Quick facts for the sidebar — scannable proof at a glance
 const QUICK_FACTS = [
   { value: '4',   label: 'Cloud certs'  },
-  { value: '15+', label: 'OSS merged'   },
+  { value: '15+', label: 'Upstream PRs' },
   { value: '4+',  label: 'Yrs in prod.' },
 ] as const;
 
