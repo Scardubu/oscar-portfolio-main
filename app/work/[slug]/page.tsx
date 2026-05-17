@@ -11,6 +11,7 @@ import Navbar from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { getWorkCase, getWorkCases } from '@/lib/content';
 import { getProject, PROJECTS, type Project } from '@/lib/projects';
+import { anchorUrl } from '@/lib/config';
 
 type WorkPageProps = Readonly<{
   params: Promise<{ slug: string }>;
@@ -224,7 +225,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
 
             {/* Back link — top thumb zone */}
             <Link
-              href="/#section-projects"
+              href={anchorUrl('section-projects')}
               className="pill pill-cyan inline-flex min-h-[44px] items-center"
             >
               ← Projects
@@ -287,7 +288,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
 
                 {/* Back CTA: always visible on mobile, at natural thumb zone */}
                 <Link
-                  href="/#section-projects"
+                  href={anchorUrl('section-projects')}
                   className="pill pill-cyan inline-flex w-full justify-center min-h-[48px] items-center"
                 >
                   ← Back to projects
