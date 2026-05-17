@@ -211,6 +211,7 @@ export function CommandPalette() {
   const panelTransition = reducedMotion ? { duration: 0 } : springs.smooth;
 
   return (
+    <>
     <AnimatePresence>
       {open && (
         <m.div
@@ -404,5 +405,6 @@ export function CommandPalette() {
         <span className="font-mono text-sm font-semibold tracking-tight">⌘</span>
       </button>
     )}
+    </>
   );
 }
