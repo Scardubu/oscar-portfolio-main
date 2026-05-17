@@ -1,22 +1,19 @@
 'use client';
-// CONVICTION ENGINE v27.0 — SkillsSection
+// CONVICTION ENGINE v28.0 — SkillsSection
 //
-// v27 vs v25:
-//   SKILL BAR ANIMATION: Featured skill cards now animate bar width on inView,
-//     not just on mount. Previously reducedMotion gate was correct but the bars
-//     had no inView trigger — they animated off-screen and arrived fully filled.
-//     v27 uses a CSS class toggle (.visible) driven by useInView to correctly
-//     animate bars when the section scrolls into view.
-//   TRUST STRIP: border-top color now uses oklch alpha syntax for precision.
-//   GRID: xl:grid-cols-6 capped — avoids single orphaned card on ≥1400px.
-//   SECTION NUMBER: 03 (unchanged — projects is 01, OSS is 02).
-//   KEEP: All v25 data (TRUST_METRICS, FEATURED_SKILLS), SkillsMap.
+// v28 vs v27:
+//   EDITORIAL INTRO: Skills now uses the same desktop expansion pattern as the
+//     rest of the homepage — heading left, proof right at lg+ — so the section
+//     feels intentional on tablet and desktop instead of simply stretched.
+//   COPY TIGHTENING: Section thesis now foregrounds reliability and production
+//     traceability without adding new claims.
+//   KEEP: TRUST_METRICS, FEATURED_SKILLS, in-view bar animation, and SkillsMap.
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 
-import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { SkillsMap } from '@/components/skills/SkillsMap';
+import { fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 const TRUST_METRICS = [
   {
@@ -97,9 +94,9 @@ const FEATURED_SKILLS = [
 ] as const;
 
 export function SkillsSection() {
-  const ref        = useRef<HTMLElement>(null);
-  const cardsRef   = useRef<HTMLDivElement>(null);
-  const inView     = useInView(ref,      { once: true, margin: '-40px' });
+  const ref = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const cardsInView = useInView(cardsRef, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
   const child = reducedMotion ? noMotion : fadeRise;
@@ -114,41 +111,42 @@ export function SkillsSection() {
       style={{ borderColor: 'var(--color-border)' }}
     >
       <div className="container">
-        <m.div
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={container}
-        >
+        <m.div initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={container}>
           {/* ── Section header ─────────────────────────────────────────── */}
           <m.div variants={child} className="mb-10 sm:mb-14">
-            <div className="section-kicker-row mb-[var(--space-2)]">
-              <span className="section-number" aria-hidden="true">03</span>
-              <span className="section-label">SKILLS</span>
+            <div className="section-intro-editorial mb-6 sm:mb-8">
+              <div>
+                <div className="section-kicker-row mb-[var(--space-2)]">
+                  <span className="section-number" aria-hidden="true">
+                    03
+                  </span>
+                  <span className="section-label">SKILLS</span>
+                </div>
+
+                <h2
+                  id="skills-heading"
+                  className="mt-3 max-w-[22ch]"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  The stack behind systems that hold.
+                </h2>
+              </div>
+
+              <div className="lg:flex lg:flex-col lg:justify-end">
+                <p
+                  className="mt-4 lg:mt-0 max-w-[52ch] text-sm sm:text-base leading-8"
+                  style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word' }}
+                >
+                  62 battle-tested skills across ML, AI agent orchestration, fintech
+                  compliance, backend infrastructure, DevOps, and blockchain/ZK.
+                  Every one maps to a live system running in production — not a side
+                  project, not a tutorial, not a certificate exercise.
+                </p>
+              </div>
             </div>
 
-            <h2
-              id="skills-heading"
-              className="mt-3 max-w-[22ch]"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              The stack behind the systems.
-            </h2>
-
-            <p
-              className="mt-4 w-full max-w-[52ch] text-sm sm:text-base leading-8"
-              style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word' }}
-            >
-              62 battle-tested skills across ML, AI agent orchestration, fintech
-              compliance, backend infrastructure, DevOps, and blockchain/ZK.
-              Every one traceable to a live system running in production — not a
-              side project, not a tutorial, not a certificate exercise.
-            </p>
-
             {/* Outcome-first trust strip — serves both engineers and founders */}
-            <div
-              className="mt-6 grid gap-3 sm:grid-cols-3"
-              aria-label="System outcomes linked to skills"
-            >
+            <div className="mt-6 grid gap-3 sm:grid-cols-3" aria-label="System outcomes linked to skills">
               {TRUST_METRICS.map(({ value, label, sub, color, borderColor }) => (
                 <div
                   key={label}
@@ -162,16 +160,10 @@ export function SkillsSection() {
                   <p className="font-mono text-sm font-semibold" style={{ color }}>
                     {value}
                   </p>
-                  <p
-                    className="mt-0.5 text-xs font-medium"
-                    style={{ color: 'var(--color-text-primary)' }}
-                  >
+                  <p className="mt-0.5 text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>
                     {label}
                   </p>
-                  <p
-                    className="mt-1 font-mono text-[9px] tracking-wide"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <p className="mt-1 font-mono text-[9px] tracking-wide" style={{ color: 'var(--color-text-muted)' }}>
                     {sub}
                   </p>
                 </div>
@@ -195,27 +187,15 @@ export function SkillsSection() {
                 style={{ borderTop: `2px solid ${color}30` }}
                 aria-label={`${name} — ${level}`}
               >
-                {/* Level label */}
-                <span
-                  className="font-mono text-[9px] tracking-widest uppercase font-semibold"
-                  style={{ color }}
-                >
+                <span className="font-mono text-[9px] tracking-widest uppercase font-semibold" style={{ color }}>
                   {level}
                 </span>
 
-                {/* Skill name */}
-                <span
-                  className="text-xs font-medium leading-tight break-words"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <span className="text-xs font-medium leading-tight break-words" style={{ color: 'var(--color-text-primary)' }}>
                   {name}
                 </span>
 
-                {/* Project trace */}
-                <span
-                  className="font-mono text-[8px] leading-tight break-words"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <span className="font-mono text-[8px] leading-tight break-words" style={{ color: 'var(--color-text-muted)' }}>
                   {project}
                 </span>
 
@@ -233,7 +213,7 @@ export function SkillsSection() {
                     className="h-full rounded-full"
                     style={{ background: color }}
                     initial={{ width: '0%' }}
-                    animate={{ width: (reducedMotion || cardsInView) ? barWidth : '0%' }}
+                    animate={{ width: reducedMotion || cardsInView ? barWidth : '0%' }}
                     transition={
                       reducedMotion
                         ? { duration: 0 }
