@@ -1,4 +1,24 @@
-import { CONTACT_EMAIL } from '@/lib/config';
+// ⚠️  DEPRECATED — app/lib/homepage.ts
+//
+// This file predates the CONVICTION ENGINE v24 data layer split and contains
+// an earlier iteration of hero copy ("Hey, I'm Oscar 👋") that was superseded
+// by HeroSection.tsx and lib/portfolio-data.ts.
+//
+// Nothing in the active codebase imports from this file.
+//
+// CANONICAL SOURCES:
+//   Hero copy     → lib/portfolio-data.ts (HERO, CONVICTION_STATS)
+//   Navigation    → components/Navbar.tsx
+//   Hero metrics  → components/HeroSection.tsx (CONVICTION_STATS)
+//   Contact email → lib/config.ts (CONTACT_EMAIL)
+//
+// Do not import from here. If you are adding a new hero variant or homepage
+// experiment, create a new file and document the intent clearly.
+//
+// Last active: pre-v24. Safe to delete after confirming no test fixtures
+// import from this path.
+
+
 
 export interface NavItem {
   id: string;
