@@ -29,7 +29,7 @@ const OSS_PROJECTS = [
   {
     name: 'pg-tenant',
     stack: 'Node.js · PostgreSQL',
-    desc: "Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant's records are mathematically invisible to another. Used in production by fintech teams where a single data-leak event means regulatory audit.",
+    desc: "Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant's records are mathematically invisible to another. Production-deployed in TaxBridge, where a single data-leak event means regulatory audit.",
     href: 'https://github.com/Scardubu/pg-tenant',
     install: 'npm i pg-tenant',
     badge: 'Production-grade',
