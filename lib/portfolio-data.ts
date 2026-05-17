@@ -35,7 +35,7 @@ export const PROFILE = {
   github:          'https://github.com/Scardubu',
   linkedin:        'https://linkedin.com/in/oscardubu',
   site:            'https://scardubu.dev',
-  cvPath:          '/cv/oscar-ndugbu-resume.pdf',
+  cvPath:          CV_ASSET_PATH,
 } as const;
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
