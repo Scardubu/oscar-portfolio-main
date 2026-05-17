@@ -114,7 +114,7 @@ function CopyInstall({ text }: { text: string }) {
       style={{ borderColor: 'oklch(100% 0 0 / 0.08)' }}
     >
       <code
-        className="font-mono text-[11px] tracking-wide break-all sm:truncate"
+        className="min-w-0 flex-1 font-mono text-[11px] tracking-wide break-words sm:break-normal"
         style={{ color: 'var(--color-film-teal)' }}
       >
         {text}
@@ -144,7 +144,7 @@ export function OpenSourceSection() {
       id="open-source"
       ref={ref}
       aria-labelledby="oss-heading"
-      className="border-t py-[var(--section-py)]"
+      className="border-t py-[var(--section-py)] section-deferred overflow-x-clip"
       style={{ borderColor: 'var(--color-border)' }}
     >
       <div className="container">
@@ -198,15 +198,15 @@ export function OpenSourceSection() {
                     ? undefined
                     : { y: -3, transition: { type: 'spring', stiffness: 400, damping: 30 } }
                 }
-                className="glass-medium flex flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
+                className="glass-medium flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
               >
                 {/* Stack + badge row */}
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
-                  <p className="label-mono min-w-0 flex-1 pr-2 leading-snug" style={{ color: 'var(--color-text-muted)' }}>
+                  <p className="label-mono min-w-0 flex-1 pr-2 leading-snug break-words" style={{ color: 'var(--color-text-muted)' }}>
                     {item.stack}
                   </p>
                   <span
-                    className="font-mono text-[9px] tracking-widest uppercase px-2 py-0.5 rounded border shrink-0 max-w-[52%] text-right leading-tight"
+                    className="font-mono text-[9px] tracking-widest uppercase px-2 py-0.5 rounded border shrink-0 max-w-full whitespace-normal text-right leading-tight break-words"
                     style={{
                       color: item.badgeColor,
                       borderColor: item.badgeBorder,
@@ -224,7 +224,7 @@ export function OpenSourceSection() {
                 </h3>
 
                 <p
-                  className="mt-3 flex-1 text-sm leading-[1.8]"
+                  className="mt-3 flex-1 text-sm leading-[1.8] break-words"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
                   {item.desc}
