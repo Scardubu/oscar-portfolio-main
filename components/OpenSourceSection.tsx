@@ -1,16 +1,18 @@
 'use client';
 
-// CONVICTION ENGINE v24.0 — OpenSourceSection
+// CONVICTION ENGINE v25.0 — OpenSourceSection
 //
-// v24 vs v23:
-//   [CHANGE]: Section intro — editorial 2-col at lg+.
-//     Previous: kicker + h2 + description stacked single-column on all viewports.
-//     Fix: Wrap kicker+heading and description in `section-intro-editorial` div
-//       (layout.css). At lg+ the section intro becomes heading-left / description-right.
-//       Mobile layout unchanged.
-//     (layout.css `.section-intro-editorial` — desktop expansion)
-//   KEEP: All v23 card structure, CopyInstall animation, 4-package grid,
-//     proof strip, motion choreography, reduced-motion fallbacks.
+// v25 vs v24:
+//   [FIX P3-C MICROCOPY_MISS]: Section description copy aligned to CE spec.
+//     Previous: "Four production-hardened packages extracted from real systems —
+//       each fills a gap general-purpose libraries leave open."
+//     Updated: "Four production-hardened packages from the fintech trenches —
+//       each solving a gap that general-purpose libraries don't address."
+//     Principle: CE spec §P3-C exact wording. "fintech trenches" situates origin
+//     (authority signal); "solving a gap" is active voice. Neither claim is invented.
+//   KEEP: All v24 card structure, OSS_PROJECTS data, CopyInstall useAnimate()
+//     sequence, proof strip, section-intro-editorial layout, motion choreography,
+//     GitHub icon, reduced-motion fallbacks, all design tokens.
 
 import { m, useAnimate, useInView, useReducedMotion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
@@ -66,10 +68,12 @@ const OSS_PROJECTS = [
   },
 ] as const;
 
+// CopyInstall — useAnimate() imperative sequence per Motion Contract Tier 3.
+// Sequence: COPY → scale(0.96) → COPIED ✓ (teal border pulse) → reset at 1.8s.
 function CopyInstall({ text }: { text: string }) {
-  const reducedMotion           = useReducedMotion();
-  const [scope, animate]        = useAnimate();
-  const labelRef                = useRef<HTMLSpanElement>(null);
+  const reducedMotion    = useReducedMotion();
+  const [scope, animate] = useAnimate();
+  const labelRef         = useRef<HTMLSpanElement>(null);
 
   async function handleCopy() {
     try {
@@ -154,7 +158,7 @@ export function OpenSourceSection() {
           animate={inView ? 'visible' : 'hidden'}
         >
           {/*
-            v24 CHANGE: Editorial intro — section-intro-editorial (layout.css).
+            v24 PATTERN: Editorial intro — section-intro-editorial (layout.css).
             Mobile: kicker, h2, description stack vertically (unchanged).
             lg+: kicker+h2 left column; description right column with editorial weight.
           */}
@@ -175,14 +179,15 @@ export function OpenSourceSection() {
               </m.h2>
             </div>
 
-            {/* Right: description */}
+            {/* Right: description — v25 copy update per CE spec §P3-C */}
             <div className="lg:flex lg:flex-col lg:justify-end">
               <p
                 className="max-w-[52ch] text-base leading-8"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                Four production-hardened packages extracted from real systems — each
-                fills a gap general-purpose libraries leave open. Install in minutes.
+                Four production-hardened packages from the fintech trenches — each
+                solving a gap that general-purpose libraries don&apos;t address.
+                Install in minutes.
               </p>
             </div>
           </m.div>
@@ -202,7 +207,10 @@ export function OpenSourceSection() {
               >
                 {/* Stack + badge row */}
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
-                  <p className="label-mono min-w-0 flex-1 pr-2 leading-snug break-words" style={{ color: 'var(--color-text-muted)' }}>
+                  <p
+                    className="label-mono min-w-0 flex-1 pr-2 leading-snug break-words"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
                     {item.stack}
                   </p>
                   <span
@@ -230,11 +238,12 @@ export function OpenSourceSection() {
                   {item.desc}
                 </p>
 
-                {/* Install command */}
+                {/* Install command with useAnimate() COPY → COPIED ✓ sequence */}
                 <div className="mt-5">
                   <CopyInstall text={item.install} />
                 </div>
 
+                {/* GitHub link */}
                 <a
                   href={item.href}
                   target="_blank"
