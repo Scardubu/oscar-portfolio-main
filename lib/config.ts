@@ -53,6 +53,13 @@ export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf'
  */
 export const CONTACT_EMAIL = 'oscar@scardubu.dev'
 
+/**
+ * SENDER_EMAIL — the "from" address used by Resend when sending contact
+ * form submissions. Must be a verified domain sender in the Resend dashboard.
+ * Do NOT hardcode this string anywhere else — import this constant.
+ */
+export const SENDER_EMAIL = 'noreply@scardubu.dev'
+
 // ─── Blog URLs ────────────────────────────────────────────────────────────────
 
 /**
