@@ -141,10 +141,10 @@ export function mobileReducedVariant<T extends Variants>(
 
 /**
  * staggerContainer
- * @param stagger  delay between children (default 0.08s)
- * @param delay    initial delay before first child (default 0.05s)
+ * @param stagger  delay between children (default 0.07s — tightened from 0.08 for snappier reveals)
+ * @param delay    initial delay before first child (default 0.04s — tightened from 0.05)
  */
-export const staggerContainer = (stagger = 0.08, delay = 0.05): Variants => ({
+export const staggerContainer = (stagger = 0.07, delay = 0.04): Variants => ({
   hidden: {},
   visible: {
     transition: {
@@ -581,10 +581,10 @@ export const filterTransition: Variants = {
 export const HERO_SCROLL_CONFIG = {
   offset: ['start start', 'end start'] as ['start start', 'end start'],
   textRange: [0, 1] as [number, number],
-  textOutput: ['0%', '10%'] as [string, string],
+  textOutput: ['0%', '7%'] as [string, string],   // was 10% — reduced for smoother feel
   visualRange: [0, 1] as [number, number],
-  visualOutput: ['0%', '6%'] as [string, string],
-  opacityRange: [0, 0.65] as [number, number],
+  visualOutput: ['0%', '4%'] as [string, string],  // was 6% — subtler parallax on visual panel
+  opacityRange: [0, 0.8] as [number, number],       // was 0.65 — fade starts at 80% scroll, not 65%
   opacityOutput: [1, 0] as [number, number],
 } as const;
 
