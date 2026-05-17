@@ -1,150 +1,122 @@
 /**
- * CONVICTION ENGINE v15.0 — MOTION VOCABULARY
- * ─────────────────────────────────────────────────────────────────────────
+ * CONVICTION ENGINE v32.1 — MOTION VOCABULARY
  * THE SINGLE SOURCE OF MOTION TRUTH.
  *
- * lib/motion.ts has been deleted. All exports that lived there now live here.
- * Every component should import from '@/lib/motionVariants' — never from
- * '@/lib/motion' (which no longer exists).
+ * MERGE NOTES:
+ *   - Absorbed the v15.0 lib/motion.ts exports into this canonical module.
+ *   - Preserved the v32 scroll-smoothness pass and retained the newer, calmer timings.
+ *   - mobileReducedVariant only reduces timing values on mobile; it never mutates transforms.
+ *   - viewportOnceDefault remains a backward-compat alias for viewportOnce.
  *
- * Changelog from v14.0:
- *   v15.0 MERGE: Absorbed all exports from lib/motion.ts:
- *     fadeIn, fadeUp, reveal, revealLeft, revealRight, scaleIn,
- *     stagger, staggerSlow, heroContainer, heroItem, listItem,
- *     interactive, liquidCard, mobileMenu (name-collision resolved — see below),
- *     mobileMenuItem, mobileMenuItems, filterTransition, springConfig,
- *     viewportOnceDefault, pageTransition (merged with existing)
- *
- *   NAME COLLISION RESOLUTION:
- *     Both files exported mobileMenu, mobileMenuItem, mobileMenuItems,
- *     filterTransition, and pageTransition. The motionVariants.ts versions
- *     are canonical (more complete spring vocabulary). lib/motion.ts versions
- *     are discarded. If any component produced subtly different animation,
- *     the canonical version is the correct reference.
- *
- *   v15.0 NEW: mobileReducedVariant() helper — halves durations on mobile.
- *     Called at component level: `mobileReducedVariant(variants, isMobile)`.
- *     Does NOT remove transforms — only duration halving is safe cross-device.
- *
- *   v15.0 NEW: viewportOnceDefault export (alias for viewportOnce, backward compat).
- *
- *   KEEP all spring vocabulary names — external components reference by name.
- *   KEEP HERO_SCROLL_CONFIG — parallax values unchanged.
- *   KEEP noMotion, viewportOnce, viewportRelaxed — stable API surface.
- *
- * Spring vocabulary:
- *   snappy    → micro-interactions, hover states   (stiffness 420 / damping 30)
- *   smooth    → card reveals, section entrances    (stiffness 260 / damping 24)
- *   gentle    → hero headline, large Didone type   (stiffness 180 / damping 20)
- *   cinematic → dramatic section wipes             (stiffness 80  / damping 18)
- *   layout    → spatial continuity preserving      (stiffness 300 / damping 28)
- *   hoverRise → hover lift, instant settle         (stiffness 500 / damping 32)
- *   decisive  → CTA hover, primary interactive     (stiffness 600 / damping 35)
+ * KEEP: all spring vocabulary names, HERO_SCROLL_CONFIG, noMotion,
+ * viewportOnce, viewportRelaxed, and every exported variant name.
  */
 
 import type { Transition, Variant, Variants } from 'framer-motion';
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SPRING PRESETS
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ SPRING PRESETS ══════════════════════════════════════════════ */
 
 export const springs = {
-  /** Micro-interactions: hover states, tab switches, pill toggles */
   snappy: { type: 'spring', stiffness: 420, damping: 30, mass: 0.8 } as Transition,
-  /** Card reveals, section entrances, dialog appearance */
   smooth: { type: 'spring', stiffness: 260, damping: 24, mass: 0.9 } as Transition,
-  /** Hero headline, large Didone display type */
-  gentle: { type: 'spring', stiffness: 180, damping: 20, mass: 1.0 } as Transition,
-  /** Feature card, dramatic section reveal */
+  gentle: { type: 'spring', stiffness: 180, damping: 20, mass: 1 } as Transition,
   cinematic: { type: 'spring', stiffness: 80, damping: 18, mass: 1.4 } as Transition,
-  /** Layout transitions — preserves spatial continuity */
   layout: { type: 'spring', stiffness: 300, damping: 28, mass: 0.8 } as Transition,
-  /** Hover lift — instant physical settle */
   hoverRise: { type: 'spring', stiffness: 500, damping: 32, mass: 0.6 } as Transition,
-  /** CTA hover, primary interactive — ultra-snappy zero-bounce */
   decisive: { type: 'spring', stiffness: 600, damping: 35, mass: 0.5 } as Transition,
 } as const;
 
 /**
  * springConfig — canonical alias for springs.smooth.
- * Used by legacy components (ThemeToggle, CommandPalette, GlassCard).
- * New code: use springs.smooth directly.
+ * Used by legacy components. New code should use springs.smooth directly.
  */
 export const springConfig: Transition = springs.smooth;
 
-/* ══════════════════════════════════════════════════════════════════════════
-   VIEWPORT CONFIG
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ VIEWPORT CONFIG ════════════════════════════════════════════ */
 
-export const viewportOnce = { once: true, margin: '-72px' } as const;
+// v32: -80px — reveals start when 80px of section is visible.
+// Gives spring animations more runway before the element reaches center.
+export const viewportOnce = { once: true, margin: '-80px' } as const;
 export const viewportRelaxed = { once: true, margin: '-40px' } as const;
 /** Backward-compat alias — prefer viewportOnce in new code */
-export const viewportOnceDefault = { once: true, margin: '-80px' } as const;
+export const viewportOnceDefault = viewportOnce;
 
-/* ══════════════════════════════════════════════════════════════════════════
-   MOBILE MOTION HELPER
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ MOBILE MOTION HELPER ═══════════════════════════════════════ */
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function reduceTransitionObject(transition: Record<string, unknown>): Record<string, unknown> {
+  const next: Record<string, unknown> = { ...transition };
+
+  for (const [key, value] of Object.entries(next)) {
+    if (
+      typeof value === 'number' &&
+      (key === 'duration' ||
+        key === 'delay' ||
+        key === 'repeatDelay' ||
+        key === 'delayChildren' ||
+        key === 'staggerChildren')
+    ) {
+      next[key] = Math.max(0, value / 2);
+      continue;
+    }
+
+    if (isPlainObject(value)) {
+      next[key] = reduceTransitionObject(value);
+    }
+  }
+
+  return next;
+}
 
 /**
- * mobileReducedVariant — halves all transition durations on mobile.
+ * mobileReducedVariant — halves timing values on mobile.
  *
  * Call at component top-level:
  *   const isMobile = useMediaQuery('(max-width: 767px)');
  *   const variants = mobileReducedVariant(cardReveal(), isMobile);
  *
- * Does NOT remove scale or translate transforms — only duration reduction.
- * Removing transforms can cause layout jumps on constrained viewports.
- *
- * Spring transitions don't have a `duration` property, so spring-based
- * variants are returned unmodified — springs self-regulate via stiffness/damping.
+ * Does NOT remove scale or translate transforms — only timing reduction.
+ * Spring transitions remain effectively spring-driven; timing-based values
+ * inside transition objects are reduced when present.
  */
-export function mobileReducedVariant<T extends Variants>(
-  variants: T,
-  isMobile: boolean
-): T {
+export function mobileReducedVariant<T extends Variants>(variants: T, isMobile: boolean): T {
   if (!isMobile) return variants;
 
   const result: Variants = {};
+
   for (const [key, value] of Object.entries(variants)) {
     if (typeof value !== 'object' || value === null) {
       result[key] = value as Variant;
       continue;
     }
-    // Downcast to Record for safe runtime property access.
-    // The `as unknown as Variant` bridge on assignment is intentional:
-    // framer-motion 11 tightened MakeKeyframes<TargetProperties> to use
-    // a --${string} index signature incompatible with Record<string,unknown>,
-    // so we must re-enter the Variant type after manipulation.
+
     const state = value as Record<string, unknown>;
-    const transition = state.transition as Record<string, unknown> | undefined;
-    if (transition && typeof transition.duration === 'number') {
+    const transition = state.transition;
+
+    if (isPlainObject(transition)) {
       result[key] = {
         ...state,
-        transition: {
-          ...transition,
-          duration: transition.duration / 2,
-          ...(typeof transition.delay === 'number'
-            ? { delay: transition.delay / 2 }
-            : {}),
-        },
+        transition: reduceTransitionObject(transition),
       } as unknown as Variant;
     } else {
       result[key] = state as unknown as Variant;
     }
   }
+
   return result as T;
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   CONTAINERS — stagger orchestration
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ CONTAINERS ════════════════════════════════════════════════ */
 
 /**
  * staggerContainer
- * @param stagger  delay between children (default 0.07s — tightened from 0.08 for snappier reveals)
- * @param delay    initial delay before first child (default 0.04s — tightened from 0.05)
+ * @param stagger  delay between children (default 0.065s — tightened for snappier reveals)
+ * @param delay    initial delay before first child (default 0.04s)
  */
-export const staggerContainer = (stagger = 0.07, delay = 0.04): Variants => ({
+export const staggerContainer = (stagger = 0.065, delay = 0.04): Variants => ({
   hidden: {},
   visible: {
     transition: {
@@ -168,16 +140,14 @@ export const stagger: Variants = {
   exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   PRIMITIVE REVEALS
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ PRIMITIVE REVEALS ══════════════════════════════════════════ */
 
 /**
  * fadeRise — body text, secondary elements, proof cards.
- * v14 CHANGE: y: 16 → 14. Shorter travel = more confident reveal.
+ * v32: y 14 → 12. Shorter travel = less perceived jank.
  */
 export const fadeRise: Variants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
@@ -188,6 +158,20 @@ export const fadeRise: Variants = {
     y: -8,
     transition: { duration: 0.15 },
   },
+};
+
+/**
+ * fadeRiseSmooth — gentle spring for narrative body text / paragraph copy.
+ * Calmer and more editorial than fadeRise.
+ */
+export const fadeRiseSmooth: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: springs.gentle,
+  },
+  exit: { opacity: 0, y: -6, transition: { duration: 0.15 } },
 };
 
 /**
@@ -223,8 +207,8 @@ export const fadeUp: Variants = {
 };
 
 /**
- * dramaticReveal — for full-width section headings (ContactSection, AboutSection h2).
- * Lower stiffness (160) makes it feel like a large object settling.
+ * dramaticReveal — for full-width section headings.
+ * Lower stiffness makes it feel like a large object settling.
  * NO scale — prevents layout reflow on wide headings.
  */
 export const dramaticReveal = (yOffset = 36): Variants => ({
@@ -258,11 +242,9 @@ export const scaleIn: Variants = {
   exit: { opacity: 0, scale: 0.98, transition: { duration: 0.12 } },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   DIRECTIONAL REVEALS
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ DIRECTIONAL REVEALS ════════════════════════════════════════ */
 
-/** reveal — generic vertical fade-rise (backward-compat alias for fadeRise) */
+/** reveal — generic vertical fade-rise */
 export const reveal: Variants = {
   hidden: { opacity: 0, y: 12 },
   visible: {
@@ -303,16 +285,13 @@ export const liquidCard: Variants = {
   exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.14 } },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   A24 DIDONE WORD REVEAL
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ A24 DIDONE WORD REVEAL ════════════════════════════════════ */
 
 /**
  * wordReveal — for headline word-by-word cinematic reveals.
  *
- * Wrap each word in an `overflow:hidden` clipping container.
- * Apply this variant to the INNER span (the one that translates).
- * Creates the "rising from below the frame" letterform unfurl.
+ * Wrap each word in an overflow-hidden clipping container.
+ * Apply this variant to the inner span (the one that translates).
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
@@ -341,7 +320,6 @@ export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => (
 /**
  * letterReveal — per-character reveal for short, high-conviction words.
  * Faster spring than wordReveal — characters are smaller, need snappier feel.
- * Use sparingly.
  */
 export const letterReveal: Variants = {
   hidden: { y: '100%', opacity: 0 },
@@ -367,14 +345,12 @@ export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants =>
   },
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   CLIP REVEAL — geometric wipe
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ CLIP REVEAL ════════════════════════════════════════════════ */
 
 /**
- * clipReveal — left-to-right clip wipe.
- * Use for section headings and proof callout borders.
- * Creates the A24 "unknown → revealed" geometric intersection.
+ * clipReveal — left-to-right clip wipe for section headings.
+ * v32: stiffness 55 → 90, damping 18 → 22.
+ * Completes in ~0.5s vs ~1.4s — reliable at any scroll speed.
  */
 export const clipReveal: Variants = {
   hidden: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
@@ -383,122 +359,80 @@ export const clipReveal: Variants = {
     opacity: 1,
     transition: {
       type: 'spring',
-      stiffness: 55,
-      damping: 18,
-      mass: 1.2,
+      stiffness: 90,
+      damping: 22,
+      mass: 1.1,
     },
   },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   CARD REVEAL — translate + scale
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ CARD REVEAL ════════════════════════════════════════════════ */
 
 /**
- * cardReveal
- * @param yOffset vertical travel (px). Positive = rises up.
+ * cardReveal — for featured/hero cards only (singular, high-importance).
+ * Includes scale — do NOT use for grids of 4+ items (compositor pressure).
  */
 export const cardReveal = (yOffset = 28): Variants => ({
   hidden: { opacity: 0, y: yOffset, scale: 0.972 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: springs.smooth,
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    scale: 0.97,
-    transition: { duration: 0.14 },
-  },
+  visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
+  exit: { opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.14 } },
 });
 
 /**
- * glassCardReveal — like cardReveal with a backdrop-filter blur settle.
- * Use sparingly — promotes to compositor layer. Not for lists.
+ * gridItemReveal — for grid items (4+ cards simultaneously).
+ * v32 NEW: no scale — prevents N compositor layers on grid entrance.
+ * Same spring timing as cardReveal for consistent feel.
  */
-export const glassCardReveal = (yOffset = 28): Variants => ({
-  hidden: { opacity: 0, y: yOffset, scale: 0.972 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: springs.smooth,
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    scale: 0.97,
-    transition: { duration: 0.14 },
-  },
+export const gridItemReveal = (yOffset = 20): Variants => ({
+  hidden: { opacity: 0, y: yOffset },
+  visible: { opacity: 1, y: 0, transition: springs.smooth },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.13 } },
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SCALE-X BAR FILL — metric bars, skill levels
-   ══════════════════════════════════════════════════════════════════════════ */
+/** glassCardReveal — like cardReveal with a backdrop-filter blur settle */
+export const glassCardReveal = (yOffset = 28): Variants => ({
+  hidden: { opacity: 0, y: yOffset, scale: 0.972 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
+  exit: { opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.14 } },
+});
+
+/* ═══════════ SCALE-X BAR FILL ══════════════════════════════════════════ */
 
 export const scaleXReveal: Variants = {
-  hidden: { scaleX: 0, opacity: 0 },
+  hidden: { scaleX: 0, opacity: 0, originX: 0 },
   visible: {
     scaleX: 1,
     opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 120,
-      damping: 18,
-      mass: 0.9,
-    },
+    originX: 0,
+    transition: { type: 'spring', stiffness: 120, damping: 18, mass: 0.9 },
   },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   HOVER STATES — interactive panels
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ HOVER STATES ══════════════════════════════════════════════ */
 
-export const pillarHover = {
-  y: -3,
-  scale: 1.006,
-  transition: springs.hoverRise,
-} as const;
+export const pillarHover = { y: -3, scale: 1.006, transition: springs.hoverRise } as const;
+export const cardHover = { y: -4, scale: 1.004, transition: springs.hoverRise } as const;
+export const cardHoverReset = { y: 0, scale: 1, transition: springs.hoverRise } as const;
 
-export const cardHover = {
-  y: -4,
-  scale: 1.004,
-  transition: springs.hoverRise,
-} as const;
-
-export const cardHoverReset = {
-  y: 0,
-  scale: 1,
-  transition: springs.hoverRise,
-} as const;
-
-/** interactive — whileHover/whileTap shorthand for card components */
 export const interactive = {
   hover: { y: -3, transition: springs.snappy },
   tap: { scale: 0.97, transition: springs.snappy },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   HERO SEQUENCE
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ HERO SEQUENCE ═════════════════════════════════════════════ */
 
-/** heroContainer — stagger orchestrator for HeroSection children */
+// Hero retains 0.055 stagger — tighter for first-impression timing.
 export const heroContainer: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
+  visible: { transition: { staggerChildren: 0.055, delayChildren: 0.05 } },
 };
 
-/** heroItem — child variant for hero sequence items */
 export const heroItem: Variants = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0, transition: springs.snappy },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   ACCORDION REVEAL — AnimatePresence height collapse
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ ACCORDION ══════════════════════════════════════════════════ */
 
 export const accordionReveal: Variants = {
   hidden: { opacity: 0, height: 0 },
@@ -520,86 +454,52 @@ export const accordionReveal: Variants = {
   },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   MOBILE MENU
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ MOBILE MENU ════════════════════════════════════════════════ */
 
 export const mobileMenu: Variants = {
-  hidden: { opacity: 0, y: -12, scaleY: 0.92 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scaleY: 1,
-    transition: springs.snappy,
-  },
-  exit: {
-    opacity: 0,
-    y: -8,
-    scaleY: 0.95,
-    transition: { duration: 0.15 },
-  },
+  hidden: { opacity: 0, y: -12, scaleY: 0.92, originY: 0 },
+  visible: { opacity: 1, y: 0, scaleY: 1, originY: 0, transition: springs.snappy },
+  exit: { opacity: 0, y: -8, scaleY: 0.95, originY: 0, transition: { duration: 0.15 } },
 };
 
 export const mobileMenuItem: Variants = {
   hidden: { opacity: 0, x: -8 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: springs.smooth,
-  },
+  visible: { opacity: 1, x: 0, transition: springs.smooth },
 };
 
 export const mobileMenuItems = (stagger = 0.06): Variants => ({
   hidden: {},
-  visible: {
-    transition: { staggerChildren: stagger },
-  },
+  visible: { transition: { staggerChildren: stagger } },
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   FILTER TAB TRANSITIONS
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ FILTER TRANSITIONS ════════════════════════════════════════ */
 
 export const filterTransition: Variants = {
   hidden: { opacity: 0, y: 8 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: springs.snappy,
-  },
-  exit: {
-    opacity: 0,
-    y: -4,
-    transition: { duration: 0.1 },
-  },
+  visible: { opacity: 1, y: 0, transition: springs.snappy },
+  exit: { opacity: 0, y: -4, transition: { duration: 0.1 } },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SCROLL-LINKED HERO PARALLAX
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ HERO PARALLAX ═════════════════════════════════════════════ */
 
 export const HERO_SCROLL_CONFIG = {
   offset: ['start start', 'end start'] as ['start start', 'end start'],
   textRange: [0, 1] as [number, number],
-  textOutput: ['0%', '7%'] as [string, string],   // was 10% — reduced for smoother feel
+  textOutput: ['0%', '7%'] as [string, string],
   visualRange: [0, 1] as [number, number],
-  visualOutput: ['0%', '4%'] as [string, string],  // was 6% — subtler parallax on visual panel
-  opacityRange: [0, 0.8] as [number, number],       // was 0.65 — fade starts at 80% scroll, not 65%
+  visualOutput: ['0%', '4%'] as [string, string],
+  opacityRange: [0, 0.8] as [number, number],
   opacityOutput: [1, 0] as [number, number],
 } as const;
 
-/* ══════════════════════════════════════════════════════════════════════════
-   NO-MOTION ACCESSIBILITY FALLBACK
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ ACCESSIBILITY FALLBACK ════════════════════════════════════ */
 
 export const noMotion: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0 } },
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
-   PAGE TRANSITION
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════ PAGE TRANSITION ═══════════════════════════════════════════ */
 
 export const pageTransition: Variants = {
   hidden: { opacity: 0 },
