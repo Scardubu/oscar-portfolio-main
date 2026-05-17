@@ -123,33 +123,43 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <>
-      <div
-        ref={scrollRef}
-        className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)]"
-        style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
-        role="region"
-        aria-label="Production proof pillars"
-      >
-        {PROOF_COLUMNS.map((col) => (
-          <m.article
-            key={col.label}
-            variants={card}
-            className="mobile-carousel-item proof-card"
-            whileHover={
-              reducedMotion
-                ? undefined
-                : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
-            }
-            aria-label={col.label}
-          >
-            <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
-              {col.label}
-            </p>
-            <p className="text-sm leading-7" style={{ marginTop: "0.75rem", color: "oklch(94% 0.007 80 / 0.62)" }}>
-              {col.body}
-            </p>
-          </m.article>
-        ))}
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)]"
+          style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
+          role="region"
+          aria-label="Production proof pillars"
+        >
+          {PROOF_COLUMNS.map((col) => (
+            <m.article
+              key={col.label}
+              variants={card}
+              className="mobile-carousel-item proof-card"
+              whileHover={
+                reducedMotion
+                  ? undefined
+                  : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+              }
+              aria-label={col.label}
+            >
+              <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
+                {col.label}
+              </p>
+              <p className="text-sm leading-7" style={{ marginTop: "0.75rem", color: "oklch(94% 0.007 80 / 0.62)" }}>
+                {col.body}
+              </p>
+            </m.article>
+          ))}
+        </div>
+        {/* Scroll affordance fade — hidden at sm+ where 2-col grid has no overflow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:hidden"
+          style={{
+            background: 'linear-gradient(to right, transparent, var(--color-bg) 90%)',
+          }}
+        />
       </div>
 
       <div className="carousel-dots" aria-hidden="true">
