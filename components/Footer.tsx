@@ -16,7 +16,7 @@
 
 import Link from 'next/link';
 
-import { CONTACT_EMAIL, anchorUrl } from '@/lib/config';
+import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 
 const NAV_LINKS = [
   { label: 'Projects', href: anchorUrl('section-projects') },
@@ -161,7 +161,7 @@ export function Footer() {
 
               <li role="listitem">
                 <a
-                  href="/cv/oscar-ndugbu-resume.pdf"
+                  href={CV_ASSET_PATH}
                   download
                   className="group inline-flex min-h-11 items-center gap-1.5 text-sm transition-colors duration-200 hover:translate-x-1 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                   style={{ color: 'var(--color-text-secondary)' }}
