@@ -1,39 +1,42 @@
-// CONVICTION ENGINE v20.0 — AboutSection
+// CONVICTION ENGINE v26.0 — AboutSection
 //
-// v20 vs v19:
-//   [CHANGE 1]: Opening subheadline paragraph restores live-site copy (which diverged from ZIP).
-//     Previous ZIP copy: "Built the digital learning infrastructure for 40 million Nigerian
-//     students at UBEC, Abuja HQ. Then shipped three production platforms from Lagos that hold at 2am."
-//     Restored: "Constraint makes the engineer. Lagos makes the constraint visible. Federal scale.
-//     Production ML. Full-stack delivery." — thesis-forward, tighter, Layer 1 optimised.
-//     UBEC proof point moved into first narrative paragraph where it belongs (Layer 2).
-//     (Hook Model: Trigger must open a loop, not deliver a résumé line)
-//   [CHANGE 2]: Closing narrative line — removed defensive framing.
-//     Previous: "The point is not where the journey started — it is the quality of
-//     reasoning now visible in the work." — defensive; implies awareness of bias against origin.
-//     Replaced: "Constraint is the credential. The work is the record." — closes with
-//     agency; deploys throughline thesis; no hedge; active voice.
-//     (Cialdini: Consistency — closing line resolves thesis, does not apologise for it)
-//   KEEP: All v19 impact stats, quick facts, stack strip, cert cards, grid layout,
-//     constraint code card, narrative paragraphs 1-2, motion choreography.
+// v26.0 vs v20.0:
+//   [FIX P3-E AUDIENCE_MISMATCH]: h2 and subheadline rewritten to pass the Dual
+//     Conviction Test at Layer 1 (5-second scan).
 //
-//   UBEC NARRATIVE — FULL REPLACEMENT:
-//     The UBEC callout card has been removed entirely.
-//     Replaced with a “Constraint Code” card — Oscar’s non-negotiable
-//     engineering standards expressed as active declarations, not resume lines.
+//     PREVIOUS h2:      "Built to ship. Wired to hold."
+//     PREVIOUS subhead: "I build systems where constraint stays visible. Lagos,
+//                        federal scale, production ML, and full-stack delivery are
+//                        part of the same operating model."
 //
-//   WHY IT WORKS:
-//     Institutional memory is passive. Staff+ hiring is about judgment under
-//     pressure. The new card shows how Oscar reasons when the systems are messy,
-//     the data is incomplete, and the cost of getting it wrong is real.
+//     PROBLEM: "Built to ship. Wired to hold." is thesis-forward — it opens a loop
+//     for technical evaluators but gives non-technical founders/investors/PMs zero
+//     instant authority signal in their 5-second scan window. The v26 spec requires
+//     Layer 1 content to be visible outcome + scale, not abstract thesis.
 //
-//   NARRATIVE PARAGRAPHS — REFRAMED:
-//     The opening copy now leads with the engineering environment and the
-//     habits it creates: first-principles thinking, explicit failure modes,
-//     and writing decisions down so the next engineer can move faster.
+//     NEW h2:      "Federal scale. Production ML. Lagos → Global."
+//     NEW subhead: "Built the digital learning infrastructure for 40 million Nigerian
+//                   students at UBEC (Abuja HQ). Then shipped three production systems
+//                   from Lagos that hold at 2am."
 //
-//   KEEP: Impact stats, quick facts, stack strip, cert cards, grid layout,
-//     motion choreography, availability chip, and right column structure.
+//     WHY IT WORKS:
+//       Technical evaluators: "Federal scale" reads as institutional complexity;
+//         "Production ML" reads as inference-in-prod; "Lagos → Global" reads as
+//         constraint-tested environment. All three are engineering signals.
+//       Non-technical evaluators: "40 million Nigerian students" is unambiguous
+//         institutional authority. "Three production systems · hold at 2am" resolves
+//         the hero thesis without requiring them to decode it.
+//       The UBEC proof moves from Layer 2 (narrative paragraph) to Layer 1 (subhead),
+//         which is where the spec places it. The narrative paragraphs below reinforce,
+//         they no longer introduce.
+//
+//     (Dual Conviction Test · Fogg Behavior Model: Authority reduces perceived risk
+//      before ability or motivation become relevant for non-technical evaluators)
+//
+//   KEEP: All v20 structure — impact stats, quick facts, narrative paragraphs 1-3,
+//     stack strip, constraint code card, cert cards, right column headshot + certs +
+//     quick facts, closing "Lagos-built. Running globally." line, full motion
+//     choreography, all ARIA labels, all CSS class names.
 //
 'use client';
 
@@ -125,6 +128,12 @@ export function AboutSection() {
               <span className="section-label">ABOUT</span>
             </m.div>
 
+            {/* v26 FIX: h2 rewritten for Dual Conviction Test Layer 1.
+                "Federal scale. Production ML. Lagos → Global." surfaces three
+                high-signal facts readable by both technical and non-technical
+                audiences in a single 5-second scan. Previous "Built to ship.
+                Wired to hold." was thesis-forward — correct for engineers,
+                opaque for founders and investors who need outcome before framing. */}
             <m.h2
               variants={headingVariant}
               id="about-heading"
@@ -138,9 +147,13 @@ export function AboutSection() {
               Lagos → Global.
             </m.h2>
 
-            {/* v26 FIX: AUDIENCE_MISMATCH — UBEC outcome surfaces at Layer 1 (5-second scan)
-                per Dual Conviction Test. Non-technical evaluators need federal scale + outcome
-                in the headline; technical proof follows in the narrative paragraph (Layer 2). */}
+            {/* v26 FIX: Subheadline now delivers the spec-prescribed Layer 1 outcome
+                sentence — UBEC + 40M students + "systems that hold at 2am."
+                Non-technical evaluators get institutional authority in 5 seconds.
+                Technical evaluators read federal scale + operating environment.
+                The narrative paragraphs below reinforce and expand; they no longer
+                introduce a proof point that should have landed here.
+                (Dual Conviction Test · Three-Layer Audience Depth: spec §III) */}
             <m.p
               variants={itemVariants}
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
@@ -252,7 +265,7 @@ export function AboutSection() {
               ))}
             </m.div>
 
-            {/* Constraint Code — replaces UBEC callout */}
+            {/* Constraint Code — non-negotiable engineering standards as active declarations */}
             <m.div
               variants={cardVariant}
               className="glass-surface mt-8 rounded-[var(--radius-lg)] p-5 sm:p-6"
