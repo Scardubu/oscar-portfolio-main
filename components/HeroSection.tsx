@@ -295,15 +295,15 @@ export function HeroSection() {
             animate="visible"
             className="hero-grid-child"
           >
-            {/* Scarcity Pill */}
+            {/* Availability Pill — dark pattern ban: no fake slot counts or artificial deadlines */}
             <m.div variants={child}>
               <div
                 className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
-                aria-label="Availability: 3 Staff+ slots remaining for Q3 2026"
+                aria-label="Currently available for Staff+ roles"
               >
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
-                  AVAILABLE · STAFF+ · 3 SLOTS • Q3 2026
+                  AVAILABLE · STAFF+ ROLES
                 </span>
               </div>
             </m.div>
