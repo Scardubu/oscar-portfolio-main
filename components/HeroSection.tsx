@@ -42,11 +42,12 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
 
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 
+// HeroSection.tsx line 46–50 — SURGICAL EDIT
 const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Filing time', stat: 'filing' },
-  { value: '99.9%+', label: '90-day uptime', stat: 'uptime' },
-  { value: 'sub-150ms', label: 'API p99', stat: 'latency' },
-  { value: '45% faster', label: 'Alert detection', stat: 'mttd' },
+  { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
+  { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
+  { value: 'sub-150ms',  label: 'API p99',        stat: 'latency' },
+  { value: '45% MTTD',   label: 'Improvement',   stat: 'mttd'    },
 ] as const;
 
 const PROOF_COLUMNS = [
