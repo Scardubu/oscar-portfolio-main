@@ -129,7 +129,7 @@ function CopyInstall({ text }: { text: string }) {
 
 export function OpenSourceSection() {
   const ref           = useRef<HTMLElement>(null);
-  const inView        = useInView(ref, { once: true, margin: '-80px' });
+  const inView        = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
   const container     = useMemo(() => staggerContainer(0.09, 0.05), []);
   const child         = reducedMotion ? noMotion : fadeRise;
