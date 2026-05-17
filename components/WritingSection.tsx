@@ -1,11 +1,19 @@
-// CONVICTION ENGINE v22.1 — WritingSection
-// Mobile-native: 320–430px is the source of truth. Lagos → Global.
+// CONVICTION ENGINE v23.0 — WritingSection
 //
-// v22.1 vs v22.0:
-//   • Filter chips: trailing spacer ensures right-edge padding shows after
-//     horizontal scroll — FINTECH no longer clipped on 390px viewport.
-//     (overflow-x: auto ignores padding-right without explicit spacer element)
-//   • All other behaviour preserved verbatim from v22.0.
+// v23 vs v22.1:
+//   [CHANGE]: Section intro — editorial 2-col at lg+.
+//     Previous: kicker + h2 + description + filter chips stacked single-column.
+//     Problem: At desktop, the full-width heading sits alone while the description
+//       and filter chips follow below in a single column — same "blown-up phone"
+//       pattern that was corrected in Projects (v25) and Open Source (v24).
+//     Fix: Wrap kicker+heading and description in `section-intro-editorial` div
+//       (layout.css). At lg+ this becomes heading-left / description-right with
+//       editorial alignment. Filter chips remain full-width below both columns.
+//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
+//     (Nielsen: Flexible and Efficient Use — desktop canvas used intentionally)
+//   KEEP: All v22.1 behaviour — flex-wrap filter chips on mobile, overflow-x:auto
+//     at sm+, article list, featured card, view-all CTA, motion choreography,
+//     reduced-motion fallbacks, all copy and microcopy.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -52,41 +60,53 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
           {/* ── Section header ────────────────────────────────────────────── */}
           <m.div variants={child} className="mb-8 sm:mb-12">
-            <div className="section-kicker-row">
-              <span className="section-number" aria-hidden="true">05</span>
-              <span className="section-label">Writing</span>
+            {/*
+              v23 CHANGE: Editorial intro — section-intro-editorial (layout.css).
+              Mobile: kicker, h2, description, and filter chips stack vertically (unchanged).
+              lg+: kicker+h2 anchor the left column; description sits right with
+                editorial alignment — richer desktop composition, not blown-up mobile.
+              Filter chips remain full-width below the editorial pair on all viewports.
+            */}
+            <div className="section-intro-editorial mb-5 sm:mb-6">
+              {/* Left: kicker + heading */}
+              <div>
+                <div className="section-kicker-row">
+                  <span className="section-number" aria-hidden="true">05</span>
+                  <span className="section-label">Writing</span>
+                </div>
+
+                <m.h2
+                  variants={reducedMotion ? child : clipReveal}
+                  id="writing-heading"
+                  className="mt-[var(--space-2)] max-w-[22ch]"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  Writing that ships decisions.
+                </m.h2>
+              </div>
+
+              {/* Right: description — editorial counterweight at lg+ */}
+              <div className="lg:flex lg:flex-col lg:justify-end">
+                <m.p
+                  variants={child}
+                  className="mt-4 lg:mt-0 max-w-[52ch] text-sm sm:text-base leading-[1.8]"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  Architecture calls, ML trade-offs, and what actually held in
+                  production — from Lagos to the world.
+                </m.p>
+              </div>
             </div>
-
-            <m.h2
-              variants={reducedMotion ? child : clipReveal}
-              id="writing-heading"
-              className="mt-[var(--space-2)] max-w-[22ch]"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              Writing that ships decisions.
-            </m.h2>
-
-            <m.p
-              variants={child}
-              className="mt-4 max-w-[52ch] text-sm sm:text-base leading-[1.8]"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Architecture calls, ML trade-offs, and what actually held in
-              production — from Lagos to the world.
-            </m.p>
 
             {/*
               Filter chips: flex-wrap on mobile so all labels are fully visible.
-              v31 FIX: Replaced overflow-x:auto (which hid RELIABILITY/FINTECH behind
-              the fade overlay) with flex-wrap:wrap at <640px. All chips are visible
-              without requiring scroll — Nielsen: zero hidden content, no truncated labels.
-              At sm+ (640px+) the row stays single-line; horizontal scroll only activates
-              if the viewport is narrower than the combined chip widths.
-              fade-right overlay hidden below sm — wrap removes the need for scroll affordance.
+              v22.1 FIX: Replaced overflow-x:auto (which hid RELIABILITY/FINTECH)
+              with flex-wrap:wrap at <640px. At sm+ single-row with overflow-x:auto.
+              fade-right overlay hidden below sm — wrap removes scroll affordance need.
             */}
             <m.div
               variants={child}
-              className="filter-chip-row mt-5 flex flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto sm:-mx-[clamp(1rem,5vw,3rem)] sm:px-[clamp(1rem,5vw,3rem)] pb-1"
+              className="filter-chip-row flex flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto sm:-mx-[clamp(1rem,5vw,3rem)] sm:px-[clamp(1rem,5vw,3rem)] pb-1"
               style={{ scrollbarWidth: 'none' }}
               role="group"
               aria-label="Filter articles by topic"
