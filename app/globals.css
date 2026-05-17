@@ -347,7 +347,7 @@ body {
   overflow-x: hidden;
   /* Contain scroll momentum within the page — prevents browser overscroll effects from bleeding */
   overscroll-behavior-y: none;
-  padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
+  /* padding-bottom: removed — no BottomNav component rendered; phantom 72px gap eliminated */
   position: relative;
 }
 @media (min-width: 769px) { body { padding-bottom: 0; } }
