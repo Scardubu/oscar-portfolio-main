@@ -131,19 +131,24 @@ export function AboutSection() {
               className="mt-4"
               style={{ color: 'var(--color-text-primary)' }}
             >
-              Built to ship.{' '}
+              Federal scale.{' '}
               <br className="hidden sm:block" />
-              Wired to hold.
+              Production ML.{' '}
+              <br className="hidden sm:block" />
+              Lagos → Global.
             </m.h2>
 
-            {/* v20 CHANGE: Subheadline restored to live-site copy — thesis-forward, Layer 1 optimised.
-                UBEC proof point belongs in narrative paragraph (Layer 2), not the 5-second subheadline. */}
+            {/* v26 FIX: AUDIENCE_MISMATCH — UBEC outcome surfaces at Layer 1 (5-second scan)
+                per Dual Conviction Test. Non-technical evaluators need federal scale + outcome
+                in the headline; technical proof follows in the narrative paragraph (Layer 2). */}
             <m.p
               variants={itemVariants}
               className="mt-3 max-w-[44ch] text-lg leading-relaxed"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              I build systems where constraint stays visible. Lagos, federal scale, production ML, and full-stack delivery are part of the same operating model.
+              Built the digital learning infrastructure for 40 million Nigerian
+              students at UBEC (Abuja HQ). Then shipped three production systems
+              from Lagos that hold at 2am.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
