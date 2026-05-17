@@ -197,12 +197,11 @@ export function AboutSection() {
                 className="about-narrative-p mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
                 style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
               >
-                Built the digital learning infrastructure for 40 million Nigerian
-                students at UBEC (Abuja HQ). Then shipped three production platforms
-                from Lagos — systems with no padded support layer, no forgiving staging
-                mirror, no room for vague ownership. First-principles thinking, explicit
-                failure modes, and engineering decisions that stay readable long after
-                deploy.
+                The UBEC work meant no staging mirror, no padded support layer, and
+                no room for vague ownership at federal scale. That operating constraint
+                carried into every system after it. First-principles thinking, explicit
+                failure modes, architecture decisions written so the next engineer
+                can read the reasoning long after deploy.
               </m.p>
 
               <m.p
