@@ -415,7 +415,7 @@ export function ContactSection() {
             id="contact-heading"
             className="mb-4 md:mb-5"
           >
-            The system is ready. Are you?
+            Tell me the constraint.
           </m.h2>
 
           <m.p
@@ -423,8 +423,8 @@ export function ContactSection() {
             className="mb-6 max-w-[52ch] text-base leading-8"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Hiring for Staff+, building from scratch, or putting out a production
-            fire — tell me the constraint. I respond within 24 hours, usually faster.
+            Hiring for Staff+, building from scratch, or containing a production
+            incident — send the constraint. I respond within 24 hours, usually faster.
           </m.p>
 
           <m.div
