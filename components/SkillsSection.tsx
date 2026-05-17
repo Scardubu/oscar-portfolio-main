@@ -99,7 +99,7 @@ const FEATURED_SKILLS = [
 export function SkillsSection() {
   const ref        = useRef<HTMLElement>(null);
   const cardsRef   = useRef<HTMLDivElement>(null);
-  const inView     = useInView(ref,      { once: true, margin: '-80px' });
+  const inView     = useInView(ref,      { once: true, margin: '-40px' });
   const cardsInView = useInView(cardsRef, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
   const child = reducedMotion ? noMotion : fadeRise;
@@ -183,7 +183,7 @@ export function SkillsSection() {
           <m.div
             ref={cardsRef}
             variants={child}
-            className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
+            className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-7"
             aria-label="Top skills — production-traced"
             role="list"
           >
