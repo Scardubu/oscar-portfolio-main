@@ -2692,6 +2692,44 @@ main, section, .container {
    Extends the existing design token layer without replacing any tokens.
    ════════════════════════════════════════════════════════════════════════════ */
 
+/* ── v34: label-mono flex safety ────────────────────────────────────────────
+   In project card headers, label-mono sits inside a flex row
+   (flex items-start justify-between gap-3). Without min-width: 0, the
+   element cannot shrink below its content width on sub-360px viewports,
+   causing overflow that bypasses overflow-wrap. Adding min-width: 0 lets
+   the flex algorithm apply the overflow-wrap: anywhere rule from v32 correctly.
+   The max-width cap prevents the label from crowding the status badge sibling.
+*/
+.label-mono {
+  min-width: 0;
+  max-width: calc(100% - 5rem); /* always leaves room for the status badge */
+}
+
+/* Restore unrestricted width inside non-constrained contexts (stack strips, kicker rows) */
+.section-kicker-row .label-mono,
+.section-kicker-row .section-label,
+.stack-chip .label-mono,
+.live-bar-wrapper-hero .label-mono {
+  max-width: none;
+}
+
+/* ── v34: response reassurance — increase presence without losing restraint ──
+   Current: oklch(93% 0.006 264 / 0.35) — barely readable on OLED dark panels.
+   Fix: raise opacity to 0.50 and anchor with a 1px left border teal accent
+   so the trust signal is immediately visible without competing with the CTA.
+   The border-left uses the same 4% teal surface used throughout, keeping
+   the signal warm rather than loud.
+   Applied via the .response-reassurance utility class added to the element.
+*/
+.response-reassurance {
+  padding-left: 0.625rem;
+  border-left: 1px solid oklch(70% 0.21 188 / 0.22);
+}
+.response-reassurance p,
+.response-reassurance span {
+  color: oklch(93% 0.006 264 / 0.50) !important;
+}
+
 /* ── Section shell ──────────────────────────────────────────────────────── */
 .section-shell {
   position: relative;
