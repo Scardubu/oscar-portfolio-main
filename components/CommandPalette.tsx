@@ -66,10 +66,11 @@ const PANEL_VARIANTS_MOBILE = {
 };
 
 export function CommandPalette() {
-  const [open,        setOpen]        = useState(false);
-  const [query,       setQuery]       = useState('');
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMobile,    setIsMobile]    = useState(false);
+  const [open,         setOpen]         = useState(false);
+  const [query,        setQuery]        = useState('');
+  const [activeIndex,  setActiveIndex]  = useState(0);
+  const [isMobile,     setIsMobile]     = useState(false);
+  const [whyLagosOpen, setWhyLagosOpen] = useState(false);
 
   const inputRef       = useRef<HTMLInputElement>(null);
   const openRef        = useRef(open);
@@ -156,6 +157,17 @@ export function CommandPalette() {
         action: () => {
           const root = document.documentElement;
           root.classList.toggle('light');
+          close();
+        },
+      },
+      // Easter Eggs — v32.0 Change 9: §DELIGHT_MISS:personality
+      {
+        id: 'why-lagos',
+        group: 'Easter Eggs',
+        label: '/why-lagos',
+        description: 'The design philosophy',
+        action: () => {
+          setWhyLagosOpen(true);
           close();
         },
       },
@@ -446,6 +458,77 @@ export function CommandPalette() {
           <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">⌘</span>
         </button>
       )}
+
+      {/* /why-lagos modal — v32.0 Change 9: §DELIGHT_MISS:personality easter egg.
+          Spec verbatim: "Constraint is a design tool. Lagos constraint is a sharper one."
+          Dismiss on Escape or click-outside. */}
+      <AnimatePresence>
+        {whyLagosOpen && (
+          <m.div
+            key="why-lagos-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-6"
+            style={{ background: 'oklch(0% 0 0 / 0.75)' }}
+            onClick={() => setWhyLagosOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Why Lagos"
+            onKeyDown={(e) => { if (e.key === 'Escape') setWhyLagosOpen(false); }}
+            tabIndex={-1}
+          >
+            <m.div
+              key="why-lagos-panel"
+              initial={{ opacity: 0, y: 16, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              className="relative max-w-sm w-full rounded-[var(--radius-xl)] border p-8"
+              style={{
+                background: 'oklch(14% 0.008 264)',
+                borderColor: 'var(--color-border)',
+                boxShadow: '0 32px 80px oklch(0% 0 0 / 0.6)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p
+                className="font-mono text-[10px] tracking-widest uppercase mb-4"
+                style={{ color: 'var(--color-film-teal)' }}
+              >
+                /why-lagos
+              </p>
+              <p
+                className="text-base leading-8 font-medium"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Constraint is a design tool.
+                <br />
+                Lagos constraint is a sharper one.
+              </p>
+              <p
+                className="mt-4 text-sm leading-7"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Power cuts at 2am. Rate-limited government APIs. Audit pressure
+                with a 48-hour window. Every system I build has been shaped by
+                these constraints — not despite them, but because of them.
+                Comfortable conditions produce comfortable systems.
+              </p>
+              <button
+                type="button"
+                onClick={() => setWhyLagosOpen(false)}
+                className="mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
+                style={{ color: 'var(--color-text-muted)' }}
+                autoFocus
+              >
+                Dismiss ↩
+              </button>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
