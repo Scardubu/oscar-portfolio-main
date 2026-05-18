@@ -1,7 +1,16 @@
-'use client';
-// CONVICTION ENGINE v22.0 — SkillsMap
+// CONVICTION ENGINE v22.1 — SkillsMap
 //
-// v22 vs v21:
+// v22.1 vs v22.0:
+//   [FIX MICROCOPY-3]: LEVEL_CONFIG 'foundational' label: 'Found.' → 'Foundational'.
+//     'Found.' is ambiguous at 9–10px mono text — it parses as past tense of
+//     "find" before it parses as an abbreviated expertise tier. At the sizes
+//     used in the skill card the extra characters fit on all breakpoints.
+//     'Expert' and 'Pro' are short enough that no abbreviation was ever needed;
+//     'Foundational' should not have been abbreviated either.
+//   KEEP: All v22 filter tab logic, SkillCard layout, bar animations,
+//     aria-pressed filter buttons, live count region, AnimatePresence grid.
+
+
 //   [FIX]: Filter tab row — Responsive Failure resolved.
 //     Previous: overflow-x-auto + no-scrollbar on all viewports.
 //     Problem: "Backend & APIs", "Data & Storage", "DevOps & SRE" scroll
@@ -34,7 +43,7 @@ const LEVEL_CONFIG = {
     labelColor: 'oklch(72% 0.17 160)',
   },
   foundational: {
-    label: 'Found.',
+    label: 'Foundational',
     width: '35%',
     barColor: 'oklch(100% 0 0 / 0.3)',
     labelColor: 'var(--color-text-muted)',
