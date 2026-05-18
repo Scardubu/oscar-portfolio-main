@@ -262,6 +262,67 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
+// v32.0 Change 7: Count-up animation for CONVICTION_STATS.
+// Numeric values animate 0 → target over 600ms (easeOutQuart) on first viewport
+// intersection. Non-numeric strings ("4h → 15min", "sub-150ms", "45% MTTD")
+// render immediately — intentional per spec. prefers-reduced-motion respected.
+function ConvictionStat({
+  value,
+  label,
+  stat,
+  reducedMotion,
+  shouldAnimate,
+}: {
+  value: string;
+  label: string;
+  stat: string;
+  reducedMotion: boolean;
+  shouldAnimate: boolean;
+}) {
+  const [displayed, setDisplayed] = useState(value);
+  const frameRef = useRef<number | null>(null);
+  const numericMatch = value.match(/^(\d+(?:\.\d+)?)(.*)/);
+
+  useEffect(() => {
+    if (reducedMotion || !shouldAnimate || !numericMatch) {
+      setDisplayed(value);
+      return;
+    }
+    const target = parseFloat(numericMatch[1]);
+    const suffix = numericMatch[2];
+    const duration = 600;
+    const start = performance.now();
+
+    function easeOutQuart(t: number) { return 1 - Math.pow(1 - t, 4); }
+
+    function tick(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = target * easeOutQuart(progress);
+      const formatted = Number.isInteger(target)
+        ? Math.round(current).toString()
+        : current.toFixed(1);
+      setDisplayed(formatted + suffix);
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      } else {
+        setDisplayed(value);
+      }
+    }
+
+    frameRef.current = requestAnimationFrame(tick);
+    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldAnimate, reducedMotion]);
+
+  return (
+    <div className="conviction-stat" data-stat={stat} role="listitem">
+      <span className="conviction-stat-value">{displayed}</span>
+      <span className="conviction-stat-label">{label}</span>
+    </div>
+  );
+}
+
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
@@ -293,6 +354,20 @@ export function HeroSection() {
   const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
+
+  // v32.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [statsVisible, setStatsVisible] = useState(false);
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStatsVisible(true); observer.disconnect(); } },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <m.section
@@ -434,14 +509,18 @@ export function HeroSection() {
               Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
-            {/* Stats Strip */}
-            <m.div variants={child} aria-label="Performance metrics">
+            {/* Stats Strip — v32.0 Change 7: count-up on viewport intersection */}
+            <m.div variants={child} aria-label="Performance metrics" ref={statsRef}>
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label, stat }) => (
-                  <div key={label} className="conviction-stat" data-stat={stat} role="listitem">
-                    <span className="conviction-stat-value">{value}</span>
-                    <span className="conviction-stat-label">{label}</span>
-                  </div>
+                  <ConvictionStat
+                    key={label}
+                    value={value}
+                    label={label}
+                    stat={stat}
+                    reducedMotion={Boolean(reducedMotion)}
+                    shouldAnimate={statsVisible}
+                  />
                 ))}
               </div>
             </m.div>
@@ -518,9 +597,45 @@ export function HeroSection() {
               </a>
             </m.div>
 
+            {/* v32.0 Change 2: Warmup micro-CTA — per spec §CONVERSION_MISS:warmup.
+                For the evaluating visitor who reads before committing.
+                mono 12px, opacity 0.45, not a button. */}
+            <m.div variants={child} className="mt-2">
+              <Link
+                href={anchorUrl('section-writing')}
+                className="font-mono text-[12px] opacity-45 hover:opacity-70 transition-opacity"
+                style={{ color: 'var(--color-text-muted)' }}
+                aria-label="Read how the 2am constraint became the design system"
+              >
+                Or read how the 2am constraint became the design system →
+              </Link>
+            </m.div>
+
             {/* Proof Carousel */}
             <m.div variants={proofContainer} initial="hidden" animate="visible">
               <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
+            </m.div>
+
+            {/* v32.0 Change 8: ⌘K hint — surfaces the command palette for power users.
+                Per spec §DELIGHT_MISS:personality. Hidden from screen readers (aria-hidden). */}
+            <m.div
+              variants={child}
+              className="mt-4 flex justify-end transform-gpu"
+              aria-hidden="true"
+            >
+              <button
+                type="button"
+                onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
+                className="inline-flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase opacity-30 hover:opacity-60 transition-opacity cursor-pointer"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-muted)',
+                }}
+                aria-label="Open command palette"
+              >
+                <kbd>⌘K</kbd>
+                <span>Navigate</span>
+              </button>
             </m.div>
           </m.div>
 
