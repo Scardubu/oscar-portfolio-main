@@ -42,6 +42,7 @@
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
@@ -476,6 +477,17 @@ export function AboutSection() {
             </m.div>
           </aside>
         </m.div>
+
+        {/* Flow hook — v32.0 Change 6d: §Flow Mechanics §About */}
+        <m.p
+          variants={itemVariants}
+          className="mt-8 font-mono text-[13px]"
+          style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+        >
+          <Link href={anchorUrl('section-writing')} className="hover:opacity-80 transition-opacity">
+            Architecture calls documented →
+          </Link>
+        </m.p>
       </div>
     </section>
   );
