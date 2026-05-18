@@ -68,6 +68,7 @@ export const HERO = {
   subHeadline:  "That's not a slogan. It's a design constraint.",
   body:         'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
   availability: 'AVAILABLE · STAFF+ ROLES',
+  availabilityUpdated: 'May 2026',   // update every 45 days per spec §Recency Protocol
   location:     'Lagos, Nigeria 🇳🇬',
   trustStrip:   'Shipped in Lagos · Running globally · Battle-tested in audit season',
   cta: {
