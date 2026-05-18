@@ -242,6 +242,19 @@ export function SkillsSection() {
 
         {/* Full interactive SkillsMap — tabbed by pillar */}
         <SkillsMap />
+
+        {/* Flow hook + discovery hook — v32.0 Change 6c: §Flow Mechanics §Skills + §Engagement Protocol */}
+        <m.p
+          variants={child}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          className="mt-8 font-mono text-[13px]"
+          style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+        >
+          <Link href={anchorUrl('section-projects')} className="hover:opacity-80 transition-opacity">
+            These 62 skills map to three live systems →
+          </Link>
+        </m.p>
       </div>
     </section>
   );
