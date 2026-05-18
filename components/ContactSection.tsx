@@ -389,7 +389,7 @@ function ContactForm() {
               style={{ background: 'var(--color-success)' }}
               aria-hidden="true"
             />
-            Send it — I&apos;ll respond within 24h
+            Send — I&apos;ll respond within 24h
           </>
         )}
       </button>
