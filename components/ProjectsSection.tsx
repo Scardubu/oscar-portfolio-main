@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 
 import { ArchDecision } from '@/components/ArchDecision';
+import { anchorUrl } from '@/lib/config';
 import {
   accordionReveal,
   cardReveal,
@@ -495,6 +496,17 @@ export function ProjectsSection() {
               ))}
             </div>
           )}
+
+          {/* Flow hook — v32.0 Change 6a: §Flow Mechanics §Projects */}
+          <m.p
+            variants={child}
+            className="mt-10 font-mono text-[13px]"
+            style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+          >
+            <Link href={anchorUrl('open-source')} className="hover:opacity-80 transition-opacity">
+              Packages extracted from this work →
+            </Link>
+          </m.p>
         </m.div>
       </div>
     </section>
