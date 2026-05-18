@@ -1,6 +1,20 @@
-// CONVICTION ENGINE v30.3 — Footer
+// CONVICTION ENGINE v30.4 — Footer
 //
-// Final polish goals:
+// v30.4 vs v30.3:
+//   [FIX MICROCOPY-1]: SOCIAL_LINKS — replaced 'scardubu.dev' with 'Email'.
+//     'scardubu.dev' listed under "Connect" was redundant: the reader is already
+//     on scardubu.dev. Listing your own URL as a connection point on your own
+//     site is a no-op at best and slightly confusing at worst.
+//     Replaced with a direct mailto: link to oscar@scardubu.dev. This puts the
+//     fastest contact path (email) where both technical evaluators and non-technical
+//     founders scan first — the Connect column in the footer.
+//     The Resume download link below it still provides the CV path. Both are in
+//     the same column so the footer's "Connect" section now has three genuinely
+//     distinct channels: GitHub (code proof), LinkedIn (professional record),
+//     Email (direct contact).
+//   KEEP: All v30.3 structure, nav links, brand block, CTA button, bottom strip.
+//
+// v30.3 GOALS:
 // - Keep the footer compact and high-signal
 // - Preserve the dark premium identity
 // - Strengthen the final CTA without inventing proof
@@ -28,9 +42,9 @@ const NAV_LINKS = [
 ] as const;
 
 const SOCIAL_LINKS = [
-  { label: 'GitHub', href: 'https://github.com/Scardubu', external: true },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/oscardubu', external: true },
-  { label: 'scardubu.dev', href: 'https://scardubu.dev', external: true },
+  { label: 'GitHub',   href: 'https://github.com/Scardubu',       external: true  },
+  { label: 'LinkedIn', href: 'https://linkedin.com/in/oscardubu', external: true  },
+  { label: 'Email',    href: `mailto:${CONTACT_EMAIL}`,           external: false },
 ] as const;
 
 export function Footer() {
