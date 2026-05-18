@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v9.0 — FULL REPLACEMENT
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // app/api/live-data/route.ts
 // ─────────────────────────────────────────────────────────────────────────────
 // Lightweight proxy that resolves GitHub star counts and npm download totals.

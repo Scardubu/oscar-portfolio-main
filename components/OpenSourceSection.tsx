@@ -1,16 +1,5 @@
-// CONVICTION ENGINE v32.0 — OpenSourceSection
-//
-// v32.0 vs v25.0:
-//   [CHANGE 4 CONVERSION_MISS:reciprocity]: Reciprocity frame added before card grid.
-//     "Four packages extracted from production TaxBridge and SabiScore — solved for real,
-//     then published." signals maturity + generosity before proof. Per spec §Reciprocity Engine.
-//   [CHANGE 4 MISSING_PROOF]: OSS transparency footer added after proof strip.
-//     "All packages are publicly auditable → GitHub" eliminates "is this real?" doubt.
-//   [CHANGE 6b FLOW_BREAK]: Flow hook added after transparency footer.
-//     Links to Skills section. Per spec §Flow Mechanics §Open-source.
-//   KEEP: All v25.0 card structure, OSS_PROJECTS data, CopyInstall useAnimate()
-//     sequence, proof strip, section-intro-editorial layout, motion choreography,
-//     GitHub icon, reduced-motion fallbacks, all design tokens.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { m, useAnimate, useInView, useReducedMotion } from 'framer-motion';
@@ -19,11 +8,11 @@ import { useMemo, useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
 import {
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    noMotion,
+    staggerContainer,
 } from '@/lib/motionVariants';
 
 const OSS_PROJECTS = [
@@ -193,7 +182,7 @@ export function OpenSourceSection() {
             </div>
           </m.div>
 
-          {/* Reciprocity frame — v32.0 Change 4: gift framing before proof. Per spec §Reciprocity Engine.
+          {/* Reciprocity frame — V1.0 Change 4: gift framing before proof. Per spec §Reciprocity Engine.
               "extracted from production" signals maturity; "solved for real, then published"
               signals generosity. Must appear before the first package card. */}
           <m.p
@@ -316,7 +305,7 @@ export function OpenSourceSection() {
             ))}
           </m.div>
 
-          {/* OSS transparency footer — v32.0 Change 4: eliminates "is this real?" doubt */}
+          {/* OSS transparency footer — V1.0 Change 4: eliminates "is this real?" doubt */}
           <m.p
             variants={child}
             className="mt-5 font-mono text-[11px] opacity-40"
@@ -334,7 +323,7 @@ export function OpenSourceSection() {
             </a>
           </m.p>
 
-          {/* Flow hook — v32.0 Change 6b: §Flow Mechanics §Open-source */}
+          {/* Flow hook — V1.0 Change 6b: §Flow Mechanics §Open-source */}
           <m.p
             variants={child}
             className="mt-4 font-mono text-[13px]"

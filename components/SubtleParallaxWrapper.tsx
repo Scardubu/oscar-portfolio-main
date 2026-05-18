@@ -1,7 +1,9 @@
 'use client';
 /**
- * SubtleParallaxWrapper.tsx — CONVICTION ENGINE v20.0
- * CSS-native scroll-driven parallax (transform only, GPU-safe).
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
+ * SubtleParallaxWrapper — CSS-native scroll-driven parallax (transform only, GPU-safe).
  *
  * MOBILE: Completely disabled. At <768px viewport widths the vertical
  * scroll distance is too short for parallax to register meaningfully,
@@ -31,7 +33,7 @@
  */
 
 import { cn } from '@/lib/utils';
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface SubtleParallaxWrapperProps {
   children:   React.ReactNode;

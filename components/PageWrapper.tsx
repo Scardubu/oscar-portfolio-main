@@ -1,6 +1,7 @@
 'use client';
 // components/PageWrapper.tsx
-// CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Mobile-native page shell: bottom-nav padding, scroll-reveal init,
 // reduced-motion safety. Page transitions removed from mobile path —
 // they add ~120ms perceived latency on Android mid-range.

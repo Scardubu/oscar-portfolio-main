@@ -2,6 +2,14 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-18 — Conviction Engine V1.0 major reset
+
+- Standardized Conviction Engine headers and version identity to `V1.0` across active TS/TSX/CSS/config surfaces.
+- Replaced legacy top-of-file evolution blocks with concise canonical headers to reduce maintenance noise and improve scanability.
+- Promoted `CONVICTION_ENGINE_V1_0.md` as the canonical system guideline and moved legacy process guidance into explicit archive-only scope (`ARCHIVE — v32.0`).
+- Preserved runtime behavior and styling output; this pass focused on documentation, header consistency, and governance clarity.
+- Validation attempt blocked by transient npm registry timeouts during dependency install (`ETIMEDOUT`/`ECONNRESET`) in this environment.
+
 ## 2026-03-28
 
 - Fixed home navigation so `Projects`, `About`, and `Contact` resolve correctly from subpages instead of pointing to broken in-page anchors.

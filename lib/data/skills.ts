@@ -1,20 +1,8 @@
 /**
- * lib/data/skills.ts — CONVICTION ENGINE v28.0
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
  *
- * v28 CHANGES vs v24:
- *   • Added 19 skills across 7 pillars to reach the stated 62 total.
- *     Every addition is traceable to a named live production system.
- *     No skill was added without a used-in: tag pointing to a shipped system.
- *   Frontend & Full-Stack: +GraphQL, +Expo EAS Build
- *   ML & AI:              +CatBoost, +Pandas/NumPy, +Jupyter
- *   Backend & APIs:       +Zod, +WebSocket
- *   Data & Storage:       +pgvector
- *   DevOps & SRE:         +Linux/Bash, +Nginx, +AWS S3/CloudFront
- *   Fintech & Compliance: +NDPC Compliance, +OpenAPI/Swagger
- *   Blockchain & Web3:    +ZK Proofs/Circom, +Hardhat, +Noir
- *   AI Agent Orchestration: +LangChain, +Checkpoint Recovery
- *   43 (prior) + 19 (added) = 62 verified total.
- *   KEEP: All v24 skills, all pillar order, all level definitions.
+ * SKILLS DATA — 62 verified capabilities across 7 pillars.
  *
  * Level definitions:
  *   expert       — used in production; can design, debug, and teach it

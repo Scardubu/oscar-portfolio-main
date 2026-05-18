@@ -4,11 +4,19 @@ Staff+ Full-Stack / Infra / AI portfolio. Production systems that stay alive whe
 
 **Live site:** [https://scardubu.dev](https://scardubu.dev)
 
+**Canonical system spec:** [CONVICTION_ENGINE_V1_0.md](CONVICTION_ENGINE_V1_0.md)
+
 ---
 
 ## What it is
 
 A proof system, not a brag sheet. Four production case studies, four open-source packages, 62 verified skills, and writing that explains the decisions behind the work.
+
+## Documentation and governance
+
+- **Primary operating standard:** `CONVICTION_ENGINE_V1_0.md`
+- **Release correction history:** `docs/deployment-history/CORRECTIONS.md`
+- **Legacy guidance:** archived inside the `## ARCHIVE — v32.0` section of `CONVICTION_ENGINE_V1_0.md` (historical context only)
 
 ## Tech stack
 

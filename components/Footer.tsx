@@ -1,30 +1,5 @@
-// CONVICTION ENGINE v30.4 — Footer
-//
-// v30.4 vs v30.3:
-//   [FIX MICROCOPY-1]: SOCIAL_LINKS — replaced 'scardubu.dev' with 'Email'.
-//     'scardubu.dev' listed under "Connect" was redundant: the reader is already
-//     on scardubu.dev. Listing your own URL as a connection point on your own
-//     site is a no-op at best and slightly confusing at worst.
-//     Replaced with a direct mailto: link to oscar@scardubu.dev. This puts the
-//     fastest contact path (email) where both technical evaluators and non-technical
-//     founders scan first — the Connect column in the footer.
-//     The Resume download link below it still provides the CV path. Both are in
-//     the same column so the footer's "Connect" section now has three genuinely
-//     distinct channels: GitHub (code proof), LinkedIn (professional record),
-//     Email (direct contact).
-//   KEEP: All v30.3 structure, nav links, brand block, CTA button, bottom strip.
-//
-// v30.3 GOALS:
-// - Keep the footer compact and high-signal
-// - Preserve the dark premium identity
-// - Strengthen the final CTA without inventing proof
-// - Improve accessibility, focus states, and mobile spacing
-// - Avoid redundant vertical weight below the fold
-//
-// Maintainers:
-// - Navigation is intentionally hidden on mobile because the bottom nav already
-//   covers core sections there.
-// - The CTA remains a simple mailto link so it degrades cleanly without JS.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 'use client';
 

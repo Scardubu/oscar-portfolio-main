@@ -1,16 +1,5 @@
-// CONVICTION ENGINE v3.0 — 404 Not Found
-//
-// v3.0 vs v2.0:
-//   [FIX P3-C]: Headline now matches CE spec exactly.
-//     Previous: "This page doesn't exist." (CE spec requires "The system does." appended)
-//     Updated:  "This page doesn't exist. The system does."
-//     Principle: CE microcopy spec — the 404 is the one place the portfolio's
-//     reliability thesis should show up even in its absence state.
-//   [FIX P3-C]: Sub-line tightened to remove the uptime self-reference ("99.9%+ promise").
-//     Replacing it with the CE spec assurance line to close the loop without
-//     the site appearing to be boasting about its own uptime on its own error page.
-//   KEEP: glass card, film-teal CTA, mono kicker, ambient glow, nav strip,
-//     Lagos footer tag, all design tokens, all motion classes, focus states.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import type { Metadata } from 'next';
 import Link from 'next/link';

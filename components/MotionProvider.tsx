@@ -1,8 +1,10 @@
 'use client';
 
 /**
- * MotionProvider — CONVICTION ENGINE v20.0
- * LazyMotion + MotionConfig wrapper.
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
+ * MotionProvider — LazyMotion + MotionConfig wrapper.
  *
  * reducedMotion="user": MotionConfig reads prefers-reduced-motion from OS and
  * disables all animations when set. This means every m.* element in the tree

@@ -1,4 +1,120 @@
-# CONVICTION ENGINE v6.0 — PORTFOLIO SYSTEM PROMPT
+# CONVICTION ENGINE V1.0 — OSCAR NDUGBU PORTFOLIO SYSTEM
+
+**Major Reset:** Lagos → Global | Production Conviction Architecture | Full-Stack ML Engineering
+
+---
+
+## CHANGELOG — V1.0
+
+- Canonical header reset completed across TS/TSX/CSS and config surfaces.
+- Version identity unified to V1.0 for all active guidance.
+- Historical guidance retained under archive-only scope for traceability.
+
+**TL;DR:** V1.0 is the definitive production baseline for scardubu.dev. Historical versions remain archived for context only.
+
+---
+
+## QUICK START
+
+### Prerequisites
+- Node ≥ 20
+- pnpm ≥ 9
+- Git + GitHub CLI (for live activity integration)
+
+### Development
+
+```bash
+pnpm install
+pnpm run dev              # http://localhost:3000
+pnpm run build && pnpm run start
+pnpm run lint && pnpm run type-check
+```
+
+### Deployment
+- **Primary:** Vercel (auto-deploy from `main`)
+- **CI:** GitHub Actions (type-check → lint → build → e2e smoke tests)
+
+---
+
+## ARCHITECTURE AT A GLANCE
+
+**Frontend Stack:** Next.js 15 (App Router) · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui
+**Motion:** Framer Motion v11+ (LazyMotion + domAnimation, no fade-only animations)
+**Data Layer:** Portfolio-data.ts (hero/profile) · projects.ts · skills.ts · blog-articles.ts
+**Content:** MDX blog (/content/blog/) · Project case studies (/content/work/) · Writing (/content/writing/)
+**Design:** Liquid glass · 8pt grid · dark theme · glassmorphism depth · spring physics motion
+**Monitoring:** Vercel Analytics + Speed Insights · Lighthouse ≥97 all categories
+
+---
+
+## FOLDER STRUCTURE
+
+```
+app/                      → Routes, layouts, API (App Router only)
+components/               → All reusable UI (single source of truth)
+  ├─ [section]/          → Hero, Projects, Skills, etc.
+  ├─ shared/             → Buttons, cards, common patterns
+  └─ ui/                 → Radix/shadcn/ui primitives
+lib/                      → Data access, utilities, types
+  ├─ data/               → Skills, testimonials, articles
+  ├─ portfolio-data.ts   → Hero, profile, stats (SSoT for home)
+  ├─ projects.ts        → All project metadata + OG images
+  └─ motionVariants.ts  → Motion vocabulary (spring presets, viewport configs)
+content/                  → MDX-based content
+  ├─ blog/              → Articles with structured frontmatter
+  ├─ work/              → Project case studies
+  └─ writing/           → Essays & thought pieces
+hooks/                    → React hooks (useInView, useScrollReveal, etc.)
+styles/                   → Global design tokens, layout utilities
+agents/                   → OscarForge agent + skill definitions
+```
+
+---
+
+## PRODUCTION CHECKLIST
+
+Before shipping to Vercel:
+
+- [ ] `pnpm run type-check` → 0 errors
+- [ ] `pnpm run lint` → 0 errors
+- [ ] `pnpm run build` → Success · No route >150KB first-load JS
+- [ ] Lighthouse ≥97 (all categories) · LCP ≤2.5s · INP ≤200ms · CLS = 0
+- [ ] E2E smoke tests pass (Playwright)
+- [ ] Mobile <375px: no overflow, hero above fold, focus traps work
+- [ ] All project demoUrl links resolve (not 404)
+- [ ] Reading progress functional on `/work/[slug]` and `/writing/[slug]`
+
+---
+
+## KEY EXPORTS & DATA SOURCES
+
+**lib/portfolio-data.ts:**
+- `PROFILE` — Name, title, location, bio
+- `HERO` — Headline, kicker, CTAs
+- `CONVICTION_STATS` — Key metrics (Staff+ level, systems built, etc.)
+- `LIVE_METRICS` — Real-time GitHub activity integration
+
+**lib/projects.ts:**
+- Full project catalog with: title, subtitle, status (LIVE/ARCHIVED), stack tags, Chosen/Over/Because reasoning, OG images per project
+
+**lib/data/skills.ts:**
+- 62 verified capabilities across 7 pillars: Frontend, Backend, ML/AI, Data, DevOps, Fintech, Web3
+
+**components/[Section]:**
+- HeroSection, ProjectsSection, SkillsSection, TestimonialsSection, WritingSection, ContactSection
+- All use server-side data, spring physics motion, glass system, accessibility-first
+
+---
+
+## DESIGN & MOTION PRINCIPLES
+
+**Visual Hierarchy:** Typography scales fluidly · Color constrainment (dark theme + glass) · 8pt spacing grid
+**Motion:** Spring physics only (no linear easing) · No fade-only animations · Respect `prefers-reduced-motion`
+**Glassmorphism:** GradientMesh + GrainOverlay ambient layers · Frosted glass cards · Fresnel borders
+**Accessibility:** ARIA landmarks · Focus traps · Keyboard nav (⌘K command palette) · WCAG AA
+**Mobile:** 320px source of truth · No overflow · Touch-friendly CTAs · Responsive typography
+
+---
 
 ## STEP 2 — DEPENDENCIES
 
@@ -1290,20 +1406,20 @@ export function ScrollRevealInit(): null { useScrollReveal(); return null; }
 
 ### Universal rules — enforced at review, no exceptions
 
-| Rule | Enforcement |
-|------|-------------|
-| `any` / `@ts-ignore` | Forbidden — explicit interfaces or `unknown` + type guards |
-| `<img>` | Forbidden — `next/image` with explicit `width` and `height` |
-| Empty `alt=""` | Forbidden — descriptive alt text required |
-| External `<a>` without `rel` | Must have `rel="noopener noreferrer"` |
-| First-person in rendered text | Forbidden |
-| Unverifiable metrics | Forbidden — no percentages, ROI, "improved by" |
-| Animation | GPU only — `transform` and `opacity` exclusively |
-| Spring config | Import `springConfig` from `@/lib/motion` |
-| Spacing | Only `--space-N` CSS tokens — no arbitrary pixel values in style props |
-| `useReducedMotion` | Import from `@/hooks/useReducedMotion` — call before any motion code |
-| `\u2192` | Forbidden — use `→` directly in source |
-| `"24/7"` or `"Active users"` | Forbidden |
+| Rule                          | Enforcement                                                            |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| `any` / `@ts-ignore`          | Forbidden — explicit interfaces or `unknown` + type guards             |
+| `<img>`                       | Forbidden — `next/image` with explicit `width` and `height`            |
+| Empty `alt=""`                | Forbidden — descriptive alt text required                              |
+| External `<a>` without `rel`  | Must have `rel="noopener noreferrer"`                                  |
+| First-person in rendered text | Forbidden                                                              |
+| Unverifiable metrics          | Forbidden — no percentages, ROI, "improved by"                         |
+| Animation                     | GPU only — `transform` and `opacity` exclusively                       |
+| Spring config                 | Import `springConfig` from `@/lib/motion`                              |
+| Spacing                       | Only `--space-N` CSS tokens — no arbitrary pixel values in style props |
+| `useReducedMotion`            | Import from `@/hooks/useReducedMotion` — call before any motion code   |
+| `\u2192`                      | Forbidden — use `→` directly in source                                 |
+| `"24/7"` or `"Active users"`  | Forbidden                                                              |
 
 **After each file:** `pnpm exec tsc --noEmit`
 
@@ -1749,17 +1865,17 @@ export function ProjectCard({ project, featured = false, revealDelay }: ProjectC
 
 ### Permanently forbidden — zero tolerance
 
-| Forbidden | Rule |
-|-----------|------|
-| `"Active users. 24/7."` | Unverifiable metric |
-| `"24/7"` anywhere | Unverifiable metric |
-| `Case study \u2192` | Unicode escape bug |
-| Any `%` improvement claim | Unverifiable |
-| Counter animations | Fabricated signal |
-| `"Self-taught from Nigeria"` | First-person identity claim |
-| `"I built"` / `"I love"` / `"I designed"` | First-person |
-| `"world-class"` / `"cutting-edge"` / `"innovative"` | Unverifiable adjective |
-| `REPLACE_BEFORE_COMMIT` in any deployed commit | Placeholder |
+| Forbidden                                           | Rule                        |
+| --------------------------------------------------- | --------------------------- |
+| `"Active users. 24/7."`                             | Unverifiable metric         |
+| `"24/7"` anywhere                                   | Unverifiable metric         |
+| `Case study \u2192`                                 | Unicode escape bug          |
+| Any `%` improvement claim                           | Unverifiable                |
+| Counter animations                                  | Fabricated signal           |
+| `"Self-taught from Nigeria"`                        | First-person identity claim |
+| `"I built"` / `"I love"` / `"I designed"`           | First-person                |
+| `"world-class"` / `"cutting-edge"` / `"innovative"` | Unverifiable adjective      |
+| `REPLACE_BEFORE_COMMIT` in any deployed commit      | Placeholder                 |
 
 ### Final locked copy — apply verbatim
 
@@ -2583,25 +2699,25 @@ pnpm test                                     # all 5 configs pass
 
 > **45-second rule:** After 45 seconds, any colleague must be able to describe Oscar accurately, specifically, and confidently — without context.
 
-| Audience | Question | Required answer |
-|----------|----------|-----------------|
-| Recruiter (0–3s) | "Does this person operate at a senior level?" | Yes — interface quality, name prominent, no clutter, clear availability signal |
-| Recruiter (3–10s) | "What does this person build?" | "Production AI/fintech — credit scoring, blockchain, ML consulting" |
-| Hiring Manager | "Level? Ownership?" | "Staff — live systems, full-stack, architecture decisions visible, not just outcomes" |
-| Tech Lead | "Systems thinking?" | "Yes — chosen/rejected tradeoffs documented with reasoning in every project card" |
-| Committee | "Can I forward this without context?" | Yes — OG images per project, `/work/[slug]` self-contained, `/writing` proves communication quality |
+| Audience          | Question                                      | Required answer                                                                                     |
+| ----------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Recruiter (0–3s)  | "Does this person operate at a senior level?" | Yes — interface quality, name prominent, no clutter, clear availability signal                      |
+| Recruiter (3–10s) | "What does this person build?"                | "Production AI/fintech — credit scoring, blockchain, ML consulting"                                 |
+| Hiring Manager    | "Level? Ownership?"                           | "Staff — live systems, full-stack, architecture decisions visible, not just outcomes"               |
+| Tech Lead         | "Systems thinking?"                           | "Yes — chosen/rejected tradeoffs documented with reasoning in every project card"                   |
+| Committee         | "Can I forward this without context?"         | Yes — OG images per project, `/work/[slug]` self-contained, `/writing` proves communication quality |
 
 **Doubt elimination — every doubt closed on the same screen it opens:**
 
-| Doubt | Closer |
-|-------|--------|
-| "Is this production or a demo?" | Status badge LIVE + `demoUrl` that resolves |
-| "Full-stack or just ML?" | Stack pills: FastAPI · XGBoost · Redis · Postgres · Next.js |
-| "Does he reason about tradeoffs?" | Chosen/Over/Because panel in every project card |
-| "Can he communicate at this level?" | Writing section — article titles visible on scroll |
-| "Is the code quality genuine?" | Interface itself proves it — glass system, zero jank, command palette |
-| "Is he available right now?" | Green dot + "Available — Staff+" in hero and nav |
-| "Will this link look good in Slack?" | OG images tested per route |
+| Doubt                                | Closer                                                                |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| "Is this production or a demo?"      | Status badge LIVE + `demoUrl` that resolves                           |
+| "Full-stack or just ML?"             | Stack pills: FastAPI · XGBoost · Redis · Postgres · Next.js           |
+| "Does he reason about tradeoffs?"    | Chosen/Over/Because panel in every project card                       |
+| "Can he communicate at this level?"  | Writing section — article titles visible on scroll                    |
+| "Is the code quality genuine?"       | Interface itself proves it — glass system, zero jank, command palette |
+| "Is he available right now?"         | Green dot + "Available — Staff+" in hero and nav                      |
+| "Will this link look good in Slack?" | OG images tested per route                                            |
 
 **If any answer is unclear → revise copy. Never revise layout to compensate for weak copy.**
 
@@ -2656,27 +2772,41 @@ git push origin main
 
 ## COMPLETION CHECKLIST — ALL MUST HOLD SIMULTANEOUSLY
 
-| Category | Criteria |
-|----------|----------|
-| **TypeScript** | `tsc --noEmit` → 0 errors |
-| **Lint** | `next lint` → 0 errors |
-| **Build** | Succeeds · No route >150KB first-load JS |
-| **E2E** | 17 smoke tests pass · 5 browser/device configs |
-| **Lighthouse** | ≥ 97 all 4 categories · LCP ≤ 2.5s · INP ≤ 200ms · CLS = 0 |
-| **Mobile** | Zero overflow at 375px · hero above fold · name single line · focus trap works |
-| **A11y** | Skip nav · ARIA landmarks · focus trap in nav + command palette · WCAG AA |
-| **Content** | Zero first-person · zero unverifiable metrics · zero placeholder URLs · all demoUrls live |
-| **Copy** | All Step 10 copy verbatim · zero "24/7" · zero "Active users" · zero unicode escapes |
-| **Writing** | ≥ 1 published article · MDX renders · reading progress functional |
-| **Routes** | All 9 routes return 200 · per-project OG images serve |
-| **SEO** | `sitemap.ts` · `robots.ts` · `generateMetadata` per page · canonical URLs · JSON-LD schemas |
-| **Analytics** | Vercel Analytics + Speed Insights active |
-| **New features** | Command palette · theme toggle · reading progress · print styles — all functional |
-| **Assets** | og PNG · per-project og PNGs · headshot.webp · resume.pdf all serve |
-| **Repo** | Root: README + CORRECTIONS only · clean git log · no secrets · no placeholders |
-| **Perception** | All 5 audience questions answered in <10s on first load |
-| **Signal** | 30s test: Staff ML engineer · live systems · thought leadership · clear CTA · no doubt |
+| Category         | Criteria                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| **TypeScript**   | `tsc --noEmit` → 0 errors                                                                   |
+| **Lint**         | `next lint` → 0 errors                                                                      |
+| **Build**        | Succeeds · No route >150KB first-load JS                                                    |
+| **E2E**          | 17 smoke tests pass · 5 browser/device configs                                              |
+| **Lighthouse**   | ≥ 97 all 4 categories · LCP ≤ 2.5s · INP ≤ 200ms · CLS = 0                                  |
+| **Mobile**       | Zero overflow at 375px · hero above fold · name single line · focus trap works              |
+| **A11y**         | Skip nav · ARIA landmarks · focus trap in nav + command palette · WCAG AA                   |
+| **Content**      | Zero first-person · zero unverifiable metrics · zero placeholder URLs · all demoUrls live   |
+| **Copy**         | All Step 10 copy verbatim · zero "24/7" · zero "Active users" · zero unicode escapes        |
+| **Writing**      | ≥ 1 published article · MDX renders · reading progress functional                           |
+| **Routes**       | All 9 routes return 200 · per-project OG images serve                                       |
+| **SEO**          | `sitemap.ts` · `robots.ts` · `generateMetadata` per page · canonical URLs · JSON-LD schemas |
+| **Analytics**    | Vercel Analytics + Speed Insights active                                                    |
+| **New features** | Command palette · theme toggle · reading progress · print styles — all functional           |
+| **Assets**       | og PNG · per-project og PNGs · headshot.webp · resume.pdf all serve                         |
+| **Repo**         | Root: README + CORRECTIONS only · clean git log · no secrets · no placeholders              |
+| **Perception**   | All 5 audience questions answered in <10s on first load                                     |
+| **Signal**       | 30s test: Staff ML engineer · live systems · thought leadership · clear CTA · no doubt      |
 
 ---
 
-*CONVICTION ENGINE v6.0 — COMPLETE SYSTEM — ZERO GAPS — SHIP ON FULL COMPLIANCE ONLY*
+## ARCHIVE — v32.0
+
+The content below documents the evolution from v6.0 (initial system prompt) through v32.0 refinements. All setup steps, implementation notes, and versioned changelogs are preserved for architectural continuity and debugging context.
+
+**Authority:** V1.0 is the new canonical version. Refer to this section only for:
+- Historical context on why certain patterns exist
+- Tradeoff decisions made in prior iterations
+- Debugging production incidents traced to pre-V1.0 code
+- Refactoring justification when touching legacy sections
+
+**Do not treat v6.0–v32.0 instructions as current best practice.** This entire codebase runs on V1.0 principles and APIs. When in doubt, follow the V1.0 section above.
+
+---
+
+*CONVICTION ENGINE V1.0 — MAJOR RESET — Full-Stack Production Baseline*

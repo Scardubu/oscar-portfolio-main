@@ -1,9 +1,7 @@
 'use client';
-
-// CONVICTION ENGINE v21.0 — GlassCard
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Mobile-native: hover animation strictly guard-gated.
-// v21: pointer:fine check inlined via CSS media class pattern;
-// whileHover disabled for touch-primary devices without JS overhead.
 
 import { m, useReducedMotion } from 'framer-motion';
 import type { CSSProperties, ReactNode } from 'react';

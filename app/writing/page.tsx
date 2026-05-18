@@ -1,4 +1,5 @@
-// app/writing/page.tsx — CONVICTION ENGINE v21.1
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // FIXED: Was incorrectly populated with WritingPostPage (slug page) content.
 //   /writing route was calling notFound() on every request since params.slug
 //   is undefined at the non-dynamic segment. This is the correct list page.

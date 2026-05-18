@@ -1,11 +1,9 @@
 'use client';
-// CONVICTION ENGINE v2.0 — Error Boundary Page
-// v2: Glass card treatment, film-teal accents, on-brand micro-copy.
-//     ChunkLoadError: auto-reload preserved.
-//     v1 was a bare centered div — inconsistent with every other page.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
-import { useEffect } from 'react';
 import { CONTACT_EMAIL } from '@/lib/config';
+import { useEffect } from 'react';
 
 function isChunkLoadError(error: Error): boolean {
   return (

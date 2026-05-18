@@ -1,5 +1,6 @@
 'use client';
-// components/ProductionPatterns.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Architecture depth signal: four production patterns, each expandable.
 // Mobile-native: tap to expand, 48px touch targets, spring physics.
 // Migrated from legacy @/lib/motion → @/lib/motionVariants.

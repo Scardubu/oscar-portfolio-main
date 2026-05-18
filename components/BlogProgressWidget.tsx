@@ -1,5 +1,6 @@
 'use client';
-// components/BlogProgressWidget.tsx — CONVICTION ENGINE v21.1
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // FIXED:
 //   - /blog/${slug} → /writing/${slug} (blog redirects to /writing per next.config)
 //   - /blog → /writing

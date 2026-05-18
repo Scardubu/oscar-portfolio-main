@@ -1,5 +1,6 @@
 'use client';
-// components/GrainOverlay.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Grain is purely decorative. On mobile (pointer:coarse) use a lighter,
 // faster static SVG grain vs desktop's animated canvas grain.
 // Never blocks render — deferred via requestIdleCallback.

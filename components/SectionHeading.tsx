@@ -1,4 +1,5 @@
-// CONVICTION ENGINE — SectionHeading.tsx
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // Standardizes editorial section hierarchy across all portfolio sections.
 // Encapsulates: eyebrow, title, and optional description in a consistent

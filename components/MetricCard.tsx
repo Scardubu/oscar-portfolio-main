@@ -1,4 +1,5 @@
-// components/MetricCard.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Mobile-native: consistent spacing scale, accessible article structure.
 // Used as a standalone card in any section needing a labelled metric display.
 

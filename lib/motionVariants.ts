@@ -1,10 +1,10 @@
 /**
- * CONVICTION ENGINE v32.1 — MOTION VOCABULARY
+ * CONVICTION ENGINE V1.0 — MOTION VOCABULARY
  * THE SINGLE SOURCE OF MOTION TRUTH.
  *
  * MERGE NOTES:
  *   - Absorbed the v15.0 lib/motion.ts exports into this canonical module.
- *   - Preserved the v32 scroll-smoothness pass and retained the newer, calmer timings.
+ *   - Preserved the V1 scroll-smoothness pass and retained the newer, calmer timings.
  *   - mobileReducedVariant only reduces timing values on mobile; it never mutates transforms.
  *   - viewportOnceDefault remains a backward-compat alias for viewportOnce.
  *
@@ -34,7 +34,7 @@ export const springConfig: Transition = springs.smooth;
 
 /* ═══════════ VIEWPORT CONFIG ════════════════════════════════════════════ */
 
-// v32: -80px — reveals start when 80px of section is visible.
+// V1: -80px — reveals start when 80px of section is visible.
 // Gives spring animations more runway before the element reaches center.
 export const viewportOnce = { once: true, margin: '-80px' } as const;
 export const viewportRelaxed = { once: true, margin: '-40px' } as const;
@@ -144,7 +144,7 @@ export const stagger: Variants = {
 
 /**
  * fadeRise — body text, secondary elements, proof cards.
- * v32: y 14 → 12. Shorter travel = less perceived jank.
+ * V1: y 14 → 12. Shorter travel = less perceived jank.
  */
 export const fadeRise: Variants = {
   hidden: { opacity: 0, y: 12 },
@@ -349,7 +349,7 @@ export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants =>
 
 /**
  * clipReveal — left-to-right clip wipe for section headings.
- * v32: stiffness 55 → 90, damping 18 → 22.
+ * V1: stiffness 55 → 90, damping 18 → 22.
  * Completes in ~0.5s vs ~1.4s — reliable at any scroll speed.
  */
 export const clipReveal: Variants = {
@@ -380,7 +380,7 @@ export const cardReveal = (yOffset = 28): Variants => ({
 
 /**
  * gridItemReveal — for grid items (4+ cards simultaneously).
- * v32 NEW: no scale — prevents N compositor layers on grid entrance.
+ * V1 NEW: no scale — prevents N compositor layers on grid entrance.
  * Same spring timing as cardReveal for consistent feel.
  */
 export const gridItemReveal = (yOffset = 20): Variants => ({

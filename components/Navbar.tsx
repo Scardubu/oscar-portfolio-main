@@ -1,99 +1,12 @@
 'use client';
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
-// CONVICTION ENGINE v23.1 — Navbar
-//
-// v23.1 vs v23:
-//   [FIX MENU_OPEN_FLICKER-1]: Added `transform-gpu` to the hamburger button element.
-//     Root cause: the header, backdrop overlay, and menu panel are all pre-promoted to
-//     their own compositor layers via `transform-gpu`. The button was the only element
-//     in the animated chain without permanent promotion. When `setMobileOpen(true)` fires
-//     and the backdrop (z-40) + panel (z-50) mount, the browser creates new stacking
-//     contexts and repaints the header and all non-promoted children — the button was
-//     one of those children, producing the visible flash at click time.
-//     Fix: `transform-gpu` on the button. Permanent layer promotion means the browser
-//     never repaints the button during stacking context changes from backdrop/panel mount.
-//     Matches the compositor strategy already in place on every other animated element.
-//     Zero API change — single class addition.
-//
-// v23 vs v22:
-//   [FIX MENU_FLICKER-1]: Removed `backdrop-blur-md` from the mobile backdrop overlay.
-//     Root cause: AnimatePresence mounts the backdrop element fresh on each open,
-//     triggering on-demand GPU compositor layer promotion for the backdrop-filter.
-//     That promotion is the visible flash — identical to the header flash fixed in v22
-//     but on the overlay element. The dark overlay (`bg-black/80`) reads identically
-//     to the eye without the blur. The blur was purely decorative and actively harmful.
-//
-//   [FIX MENU_FLICKER-2]: Added `transform-gpu` to both the backdrop overlay and the
-//     menu panel. This pre-promotes both elements to their own compositor layers via
-//     `will-change: transform` before Framer Motion starts the entrance animation.
-//     Without this, the layer is created mid-animation, causing a visible flash at
-//     the start of the open transition. Permanent promotion via `transform-gpu`
-//     eliminates the on-demand layer creation cost.
-//
-//   [FIX MENU_FLICKER-3]: Increased backdrop panel opacity from `bg-black/90` to
-//     `bg-[#0d0d0d]/97` to compensate visually for the removed backdrop-blur-2xl
-//     on the panel being the primary depth cue. Panel backdrop-blur kept but guarded
-//     with `transform-gpu` so compositor layer exists before blur activates.
-//
-//   KEEP: All v22 fixes intact — scroll flicker guards, icon crossfade,
-//     IntersectionObserver, mobile overflow lock, keyboard nav, ARIA.
-//
-// v22 vs v21:
-//   [FIX SCROLL_FLICKER-1]: Removed `activeSection` from scroll useEffect deps.
-//     Previous: `}, [activeSection])` — the dependency caused the entire scroll
-//     listener to teardown and re-register every time a section boundary was crossed.
-//     Each re-registration cycle triggered a React re-render of the header, which
-//     forced the GPU compositor to re-evaluate the backdrop-blur stacking context
-//     and caused the hamburger button to flash visibly.
-//     Fix: `activeSectionRef` stores the current section for use inside the RAF
-//     closure. `setActiveSection` still uses functional updates for correctness.
-//     Effect deps: `[]` — registered once on mount, cleaned up on unmount.
-//
-//   [FIX SCROLL_FLICKER-2]: Added `scrolledRef` guard to `setScrolled`.
-//     Previous: `setScrolled(window.scrollY > 16)` fired on every scroll event,
-//     even when the boolean hadn't changed. While React bails on same-value state
-//     updates, the scheduler overhead still touched the fiber tree on every tick.
-//     Fix: Compare new value to ref before calling setState — zero re-renders when
-//     the scroll position is already past or before the 16px threshold.
-//
-//   [FIX SCROLL_FLICKER-3]: Removed `backdrop-blur-xl` from the hamburger button.
-//     Root cause: when the header conditionally gains `backdrop-blur-2xl` on scroll,
-//     the browser must promote the header to a new GPU compositor layer to render
-//     the backdrop filter. The child button's own `backdrop-blur-xl` forced a
-//     *nested* compositor context inside the newly promoted parent — this rebuild
-//     produced the visible flash on the button at the scroll threshold boundary.
-//     Fix: Remove the button's backdrop-blur. It sits inside a header that already
-//     handles blur when scrolled; the button's own filter was redundant AND harmful.
-//
-//   [FIX SCROLL_FLICKER-4]: Button `transition-all duration-300` → `transition-colors duration-200`.
-//     `transition-all` was catching every CSS property change, including compositor-
-//     triggered repaints from the parent header. Scoping to `transition-colors`
-//     prevents the button from responding to non-color layout changes.
-//
-//   [FIX SCROLL_FLICKER-5]: Added `will-change: transform` (via Tailwind `transform-gpu`)
-//     and `translateZ(0)` to the header. This permanently promotes the header to its
-//     own compositor layer before any scroll interaction occurs. Without this, the
-//     layer is created on-demand when `backdrop-blur-2xl` first activates — the
-//     on-demand promotion itself is the flash. Permanent promotion eliminates it.
-//
-//   [FIX SCROLL_FLICKER-6]: Scoped header class transition from `transition-all` to
-//     `transition-[background-color,border-color,backdrop-filter]`. This prevents
-//     the CSS transition engine from catching unrelated property changes during
-//     Framer Motion's entrance animation and scroll-parallax transforms.
-//
-//   [FIX UX]: Icon swap (Menu ↔ X) now uses AnimatePresence with opacity crossfade.
-//     Previous: hard switch caused a perceived flash as the icon changed abruptly.
-//     Fix: 120ms opacity fade through zero — imperceptible duration, removes flash.
-//
-//   KEEP: All v21 nav tracking logic (IntersectionObserver + scroll fallback),
-//     mobile overflow lock, resize close, keyboard navigation, active pill layoutId,
-//     all ARIA attributes, all focus rings, all touch targets.
-
-import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { anchorUrl } from '@/lib/config';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { anchorUrl } from '@/lib/config';
+import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type SectionId =
   | 'section-projects'

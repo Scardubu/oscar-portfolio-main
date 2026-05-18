@@ -1,32 +1,6 @@
 'use client';
-// CONVICTION ENGINE v23.1 — GradientMesh
-//
-// v23.1 vs v23.0:
-//   [FIX SCROLL_PERF-1]: Gate all scroll-driven parallax on isPointerFine.
-//
-//   Root cause: useScroll() was called unconditionally. On mobile/touch
-//   (isPointerFine === false) the three useTransform subscriptions
-//   (indigoY, greenY, amberY) still fired on every scroll frame, even though:
-//     (a) CSS overrides `.gradient-mesh-orb { will-change: auto }` for mobile
-//         — no compositor layer benefit.
-//     (b) Orbs are blurred at 80px. A 0→15% Y shift is imperceptible through
-//         that blur radius on a short mobile viewport.
-//     (c) No orbital CSS animations exist on mobile — that guard already existed.
-//   3 dead MotionValue evaluations per rAF on every Lagos mid-range scroll tick.
-//
-//   Fix: two code paths via sub-components so hook calls are correctly scoped.
-//     • DesktopOrbs (isPointerFine): useScroll() + useTransform() as before.
-//       Parallax ranges unchanged: indigo 0→15%, green 0→-10%, amber 0→-6%.
-//     • MobileOrbs: static `style={{ y: 0 }}` — no scroll subscription, no
-//       MotionValues, no JS on scroll. m.div still renders for compositor
-//       layer consistency with desktop; y is a literal number, never changes.
-//   isPointerFine initialises false (mobile-first) so no scroll sub is ever
-//   created on mobile, not even before the matchMedia effect resolves.
-//
-//   Also hardened useIsPointerFine with a MediaQueryList 'change' listener
-//   so orientation/device changes (e.g. plugging in a mouse) update correctly.
-//
-//   KEEP: ORBITAL_STYLES string, all orbital class names, reducedMotion guard.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';

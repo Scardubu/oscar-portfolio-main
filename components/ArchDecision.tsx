@@ -1,5 +1,6 @@
 'use client';
-// components/ArchDecision.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Mobile-native: BECAUSE is the hero signal — dominant type, colored border, full-width.
 // CHOSEN / OVER: secondary rows, 48px min touch target, compact on mobile, expanded sm+.
 

@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // constants/z-index.ts
 // Single source of truth for all z-index values.
 // Every layer comment maps to a real element in the codebase.

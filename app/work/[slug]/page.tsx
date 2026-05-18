@@ -1,4 +1,5 @@
-// app/work/[slug]/page.tsx — CONVICTION ENGINE v21.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Mobile-native case study. Sidebar rendered below content on mobile (<xl).
 // Lagos, Nigeria → Global.
 import type { Metadata } from 'next';

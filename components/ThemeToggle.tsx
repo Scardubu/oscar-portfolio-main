@@ -1,5 +1,6 @@
 'use client';
-// components/ThemeToggle.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Sun/Moon toggle with spring-physics icon swap.
 // Min touch target: 48×48px (WCAG 2.2 §2.5.8).
 // Imports: framer-motion directly, no legacy bridge.

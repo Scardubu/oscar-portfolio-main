@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v8.0 — FULL REPLACEMENT
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { AnimatePresence, m } from 'framer-motion';

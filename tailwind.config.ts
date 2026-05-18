@@ -1,6 +1,9 @@
 /**
- * tailwind.config.ts — CONVICTION ENGINE v20.0
- * ─────────────────────────────────────────────────────────────────────────────
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
+ * tailwind.config.ts — Tailwind utility generation only.
+ *
  * PHASE 2 CLEANUP:
  *   - Removed arbitrary spacing overrides (use CSS custom properties in
  *     globals.css instead — they don't tree-shake well in Tailwind v4)

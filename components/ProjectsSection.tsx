@@ -1,19 +1,5 @@
-// CONVICTION ENGINE v25.0 — ProjectsSection
-//
-// v25 vs v24:
-//   [CHANGE]: Section intro — editorial 2-col at lg+.
-//     Previous: kicker + h2 + description stacked single-column on all viewports.
-//     Problem: At desktop, a full-width heading over a full-width paragraph
-//       wastes the wider canvas and creates a "blown-up phone screen" reading
-//       pattern — excessively short line measure on the heading, unnecessarily
-//       wide measure on the paragraph.
-//     Fix: Wrap kicker+heading and description paragraph in `section-intro-editorial`
-//       div (layout.css). At lg+ this becomes a 2-col grid (heading left,
-//       description right) with editorial alignment. Mobile unchanged.
-//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
-//   KEEP: All v24 card structure, motion, arch decision accordion, tech strips,
-//     grid layout, all CTA text, StatusBadge, TechStrip, FeaturedProjectCard,
-//     SecondaryFeaturedCard, ProjectCard, spring physics, reduced-motion fallbacks.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -24,12 +10,12 @@ import { useMemo, useRef, useState } from 'react';
 import { ArchDecision } from '@/components/ArchDecision';
 import { anchorUrl } from '@/lib/config';
 import {
-  accordionReveal,
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
+    accordionReveal,
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    noMotion,
+    staggerContainer,
 } from '@/lib/motionVariants';
 import { PROJECTS, type Project } from '@/lib/projects';
 
@@ -497,7 +483,7 @@ export function ProjectsSection() {
             </div>
           )}
 
-          {/* Flow hook — v32.0 Change 6a: §Flow Mechanics §Projects */}
+          {/* Flow hook — V1.0 Change 6a: §Flow Mechanics §Projects */}
           <m.p
             variants={child}
             className="mt-10 font-mono text-[13px]"

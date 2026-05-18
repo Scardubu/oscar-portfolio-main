@@ -1,43 +1,5 @@
-// CONVICTION ENGINE v26.0 — AboutSection
-//
-// v26.0 vs v20.0:
-//   [FIX P3-E AUDIENCE_MISMATCH]: h2 and subheadline rewritten to pass the Dual
-//     Conviction Test at Layer 1 (5-second scan).
-//
-//     PREVIOUS h2:      "Built to ship. Wired to hold."
-//     PREVIOUS subhead: "I build systems where constraint stays visible. Lagos,
-//                        federal scale, production ML, and full-stack delivery are
-//                        part of the same operating model."
-//
-//     PROBLEM: "Built to ship. Wired to hold." is thesis-forward — it opens a loop
-//     for technical evaluators but gives non-technical founders/investors/PMs zero
-//     instant authority signal in their 5-second scan window. The v26 spec requires
-//     Layer 1 content to be visible outcome + scale, not abstract thesis.
-//
-//     NEW h2:      "Federal scale. Production ML. Lagos → Global."
-//     NEW subhead: "Built the digital learning infrastructure for 40 million Nigerian
-//                   students at UBEC (Abuja HQ). Then shipped three production systems
-//                   from Lagos that hold at 2am."
-//
-//     WHY IT WORKS:
-//       Technical evaluators: "Federal scale" reads as institutional complexity;
-//         "Production ML" reads as inference-in-prod; "Lagos → Global" reads as
-//         constraint-tested environment. All three are engineering signals.
-//       Non-technical evaluators: "40 million Nigerian students" is unambiguous
-//         institutional authority. "Three production systems · hold at 2am" resolves
-//         the hero thesis without requiring them to decode it.
-//       The UBEC proof moves from Layer 2 (narrative paragraph) to Layer 1 (subhead),
-//         which is where the spec places it. The narrative paragraphs below reinforce,
-//         they no longer introduce.
-//
-//     (Dual Conviction Test · Fogg Behavior Model: Authority reduces perceived risk
-//      before ability or motivation become relevant for non-technical evaluators)
-//
-//   KEEP: All v20 structure — impact stats, quick facts, narrative paragraphs 1-3,
-//     stack strip, constraint code card, cert cards, right column headshot + certs +
-//     quick facts, closing "Lagos-built. Running globally." line, full motion
-//     choreography, all ARIA labels, all CSS class names.
-//
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -478,7 +440,7 @@ export function AboutSection() {
           </aside>
         </m.div>
 
-        {/* Flow hook — v32.0 Change 6d: §Flow Mechanics §About */}
+        {/* Flow hook — V1.0 Change 6d: §Flow Mechanics §About */}
         <m.p
           variants={itemVariants}
           className="mt-8 font-mono text-[13px]"

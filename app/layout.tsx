@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v20.0 — Root Layout
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // CHANGELOG from v12.0:
 //

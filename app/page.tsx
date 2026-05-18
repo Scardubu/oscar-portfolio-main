@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v28.1 — Home Page
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // Section render order and orchestration rationale:
 //

@@ -2,10 +2,11 @@
 @import '../styles/layout.css';
 
 /* ════════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v32.0 — OSCAR NDUGBU DESIGN SYSTEM
+   CONVICTION ENGINE V1.0 — OSCAR NDUGBU DESIGN SYSTEM
+   Major Reset • Lagos → Global • Production Conviction Architecture
+
    MOBILE-NATIVE — Source of truth: 320-430px
    A24 Cinematic Authority · Liquid Glass · Stripe Conversion Architecture
-   Location: Lagos, Nigeria → Global
    ════════════════════════════════════════════════════════════════════════════ */
 
 @property --glass-thickness { syntax: "<length>"; inherits: false; initial-value: 1px; }
@@ -989,8 +990,7 @@ h3, .h3 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v24.0 — GLOBALS.CSS ADDITIONS
-   APPEND THIS BLOCK TO THE END OF app/globals.css
+   CONVICTION ENGINE V1.0 — GLOBALS.CSS EXTENSIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ════ HERO HEADSHOT RING — v24 ════
@@ -1056,7 +1056,7 @@ h3, .h3 {
 }
 .stack-chip:hover { border-color: var(--glass-border-hover); }
 
-/* ════ NAV TAGLINE UPDATE — v32 ════
+/* ════ NAV TAGLINE UPDATE — V1 ════
    ".nav-tagline" used in Navbar wordmark subtitle.
    Desktop and tablet should show the full role line; mobile keeps a tight
    ellipsis fallback only when width is genuinely constrained.
@@ -1220,8 +1220,7 @@ h3, .h3 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE — GLOBALS.CSS ADDITIONS
-   APPEND THIS ENTIRE BLOCK TO THE VERY END OF app/globals.css
+   CONVICTION ENGINE V1.0 — GLOBALS.CSS ADDITIONS
    ═══════════════════════════════════════════════════════════════════════════
 
    WHAT THIS FIXES:
@@ -1709,7 +1708,7 @@ h3, .h3 {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v27.0 — GLOBALS.CSS PATCH
+   CONVICTION ENGINE V1.0 — GLOBALS.CSS PATCH
    Mobile blank-space guard + typography micro-polish + section flow fixes.
    ════════════════════════════════════════════════════════════════════════════ */
 
@@ -1866,9 +1865,9 @@ section.border-t + section.border-t {
   body { padding-bottom: 0 !important; }
 }
 
-/* ════ CONVICTION ENGINE v20.0 — CSS PATCH ════
-   Appended below existing v18 rules. These override or supplement specific
-   selectors. Order preserved: last rule wins on equal specificity.
+/* ════ CONVICTION ENGINE V1.0 — CSS PATCH ════
+   Overrides and supplements specific selectors.
+   Order preserved: last rule wins on equal specificity.
    ════════════════════════════════════════════ */
 
 /* ── v20: Mobile headshot — larger, more dramatic presence ────────────────
@@ -1943,8 +1942,8 @@ section.border-t + section.border-t {
   }
 }
 
-/* ════ CONVICTION ENGINE v20.1 — CSS PATCH (ContactSection + misc) ════
-   Appended. ContactSection cta-secondary--lg, About narrative spacing,
+/* ════ CONVICTION ENGINE V1.0 — CSS PATCH (ContactSection + misc) ════
+   ContactSection cta-secondary--lg, About narrative spacing,
    and contact form field refinements.
    ════════════════════════════════════════════ */
 
@@ -2078,7 +2077,7 @@ section.border-t + section.border-t {
   }
 }
 
-/* ════ CONVICTION ENGINE v21.0 — CSS PATCH ════
+/* ════ CONVICTION ENGINE V1.0 — CSS PATCH ════
    Critical layout improvements:
    1. Mobile headshot: larger + more centered + better breathing room
    2. Desktop headshot: more commanding column presence
@@ -2311,9 +2310,9 @@ section.border-t {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v29.1 — DESKTOP EDITORIAL IMPROVEMENTS
+   CONVICTION ENGINE V1.0 — DESKTOP EDITORIAL IMPROVEMENTS
    Surgical additions. Every rule is additive at a breakpoint where smaller
-   viewports are unaffected. Source: audit pass on v29 screenshots.
+   viewports are unaffected.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── P3-A: Writing filter chip row — clean desktop alignment ──────────────
@@ -2387,7 +2386,7 @@ section.border-t {
 */
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v30.0 — SCROLL SMOOTHNESS + SECTION TRANSITIONS
+   CONVICTION ENGINE V1.0 — SCROLL SMOOTHNESS + SECTION TRANSITIONS
    Surgical additions for seamless page scroll experience.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -2531,9 +2530,8 @@ main, section, .container {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v31.0 — DESKTOP EDITORIAL IMPROVEMENTS
+   CONVICTION ENGINE V1.0 — DESKTOP EDITORIAL IMPROVEMENTS
    Surgical additions for richer tablet/desktop layouts.
-   Source: v31 audit against live screenshots + system prompt responsive rules.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── v31: Writing filter chips — flex-wrap on mobile ───────────────────────
@@ -2608,7 +2606,7 @@ main, section, .container {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CONVICTION ENGINE v32.0 — RESPONSIVE EDITORIAL & PREMIUM POLISH
+   CONVICTION ENGINE V1.0 — RESPONSIVE EDITORIAL & PREMIUM POLISH
    CSS-only refinement for tablet/desktop scale, overflow safety, and cleaner
    micro-interactions. No markup or JS changes required.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -2781,7 +2779,7 @@ main, section, .container {
   }
 }
 
-/* CONVICTION ENGINE v33 — Layout System Extension
+/* CONVICTION ENGINE V1.0 — Layout System Extension
    Extends the existing design token layer without replacing any tokens.
    ════════════════════════════════════════════════════════════════════════════ */
 
@@ -2790,7 +2788,7 @@ main, section, .container {
    (flex items-start justify-between gap-3). Without min-width: 0, the
    element cannot shrink below its content width on sub-360px viewports,
    causing overflow that bypasses overflow-wrap. Adding min-width: 0 lets
-   the flex algorithm apply the overflow-wrap: anywhere rule from v32 correctly.
+   the flex algorithm apply the overflow-wrap: anywhere rule from V1 correctly.
    No max-width cap — contact cards, hire cards, and kicker rows all use
    label-mono without a badge sibling, so a blanket cap would clip their text.
    The flex-wrap on the parent container handles badge overflow instead.
@@ -2884,7 +2882,7 @@ html, body { max-width: 100vw; overflow-x: hidden; }
    ========================================================================== */
 
 /*
- * CONVICTION ENGINE v33 — Layout System Extension
+ * CONVICTION ENGINE V1.0 — Layout System Extension
  * Extends the existing design token layer without replacing any tokens.
  */
 

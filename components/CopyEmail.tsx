@@ -1,5 +1,6 @@
 'use client';
-// components/CopyEmail.tsx — CONVICTION ENGINE v21.1
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // FIXED (v21.1): Missing <a opening tag — broken JSX causing build failure.
 // Renders as <a href="mailto:..."> — opens mail client on touch devices.
 // On desktop with clipboard API: intercepts click and copies address.

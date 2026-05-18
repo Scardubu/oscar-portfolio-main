@@ -1,13 +1,5 @@
-// CONVICTION ENGINE v27.0 — Projects Data
-// v27 CHANGES vs v26:
-//   P2-B SwarmXQ: description now explicitly names the triadic LLM stack
-//     (Ollama · Phi-4-mini router · Qwen2.5-Coder · DeepSeek-R1 reasoning).
-//     Stack updated to match: Ollama added, React Native added (dashboard mobile),
-//     PostgreSQL → Redis 7 (primary queue store), WebSocket retained.
-//   P2-B UBEC: description now states "40 million students" (defensible from
-//     UBEC's published beneficiary count under the Universal Basic Education Fund).
-//     Abuja HQ context added to tagline so the card-level copy matches About section.
-//   KEEP: All other projects, interface, and schema unchanged.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 export interface Project {
   readonly slug: string;

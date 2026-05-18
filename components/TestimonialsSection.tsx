@@ -1,32 +1,16 @@
 'use client';
-// CONVICTION ENGINE v2.0 — TestimonialsSection
-//
-// v2.0 vs v1.1:
-//   [CHANGE 1]: Section content — replaced 4 unverified named testimonials with 4
-//     verifiable system proof cards sourced directly from lib/projects.ts.
-//     The component header in v1.1 contained an explicit warning: "⚠ VERIFICATION
-//     REQUIRED — MUST NOT go live unverified." They were live. This closes that risk.
-//     Framework: Cialdini Authority — specificity and traceability outperform
-//     unverifiable social proof for technical evaluators and for basic honesty.
-//   [CHANGE 2]: Section number "01.5" removed from rendered output.
-//     v1.1 comment stated this was the intent; the code never executed it.
-//     Interstitial sections do not carry a number — consistent with the sequence
-//     contract (01 Projects → 02 OSS → 03 Skills → 04 About → 05 Writing → 06 Contact).
-//     (Nielsen: Minimalist Design)
-//   [CHANGE 3]: Heading — "What the teams say." → "Shipped systems. Verified outcomes."
-//     Traceable claim replaces unverifiable framing.
-//   KEEP: Grid layout, motion choreography, card border-left accent pattern,
-//     all CSS variables and design tokens, section ID for nav anchor compatibility.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 
 import {
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    noMotion,
+    staggerContainer,
 } from '@/lib/motionVariants';
 
 // ── Proof card data — sourced from lib/projects.ts verified outcomes ──────────

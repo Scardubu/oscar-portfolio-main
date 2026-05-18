@@ -1,27 +1,5 @@
-// CONVICTION ENGINE v22.1 — SkillsMap
-//
-// v22.1 vs v22.0:
-//   [FIX MICROCOPY-3]: LEVEL_CONFIG 'foundational' label: 'Found.' → 'Foundational'.
-//     'Found.' is ambiguous at 9–10px mono text — it parses as past tense of
-//     "find" before it parses as an abbreviated expertise tier. At the sizes
-//     used in the skill card the extra characters fit on all breakpoints.
-//     'Expert' and 'Pro' are short enough that no abbreviation was ever needed;
-//     'Foundational' should not have been abbreviated either.
-//   KEEP: All v22 filter tab logic, SkillCard layout, bar animations,
-//     aria-pressed filter buttons, live count region, AnimatePresence grid.
-
-
-//   [FIX]: Filter tab row — Responsive Failure resolved.
-//     Previous: overflow-x-auto + no-scrollbar on all viewports.
-//     Problem: "Backend & APIs", "Data & Storage", "DevOps & SRE" scroll
-//       off the right edge with no visible affordance. Users on mobile
-//       never discover the additional filter categories.
-//       (Nielsen: zero hidden content — if the user can't see it, it doesn't exist)
-//     Fix: flex-wrap at mobile so all 6 tabs are visible without any scroll.
-//       At sm+ (640px), single-row with overflow-x-auto activates only if
-//       the combined tab widths exceed viewport — consistent with WritingSection v22.1.
-//     KEEP: All v21 shrink-0, min-h-[44px] touch targets, aria-pressed,
-//       focus rings, spring bar animations, SkillCard layout.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import { filterTransition } from '@/lib/motionVariants';

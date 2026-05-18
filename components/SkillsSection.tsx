@@ -1,20 +1,6 @@
 'use client';
-// CONVICTION ENGINE v32.0 — SkillsSection
-//
-// v32.0 vs v28.0:
-//   [CHANGE 6c FLOW_BREAK]: Flow hook + discovery hook added after SkillsMap.
-//     Per spec §Flow Mechanics §Skills + §Engagement Protocol.
-//     "These 62 skills map to three live systems →" — links back to Projects.
-//     Renders as: font-mono 13px, opacity 0.5, letter-spacing 0.06em.
-//     Link and anchorUrl imported to support this.
-//
-// v28.0 vs v27.0:
-//   EDITORIAL INTRO: Skills now uses the same desktop expansion pattern as the
-//     rest of the homepage — heading left, proof right at lg+ — so the section
-//     feels intentional on tablet and desktop instead of simply stretched.
-//   COPY TIGHTENING: Section thesis now foregrounds reliability and production
-//     traceability without adding new claims.
-//   KEEP: TRUST_METRICS, FEATURED_SKILLS, in-view bar animation, and SkillsMap.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
@@ -243,7 +229,7 @@ export function SkillsSection() {
         {/* Full interactive SkillsMap — tabbed by pillar */}
         <SkillsMap />
 
-        {/* Flow hook + discovery hook — v32.0 Change 6c: §Flow Mechanics §Skills + §Engagement Protocol */}
+        {/* Flow hook + discovery hook — V1.0 Change 6c: §Flow Mechanics §Skills + §Engagement Protocol */}
         <m.p
           variants={child}
           initial="hidden"

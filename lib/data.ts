@@ -1,9 +1,11 @@
 /**
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
  * lib/data.ts — DEPRECATED · DO NOT IMPORT
- * Oscar Ndugbu | scardubu.dev
  *
  * ⚠️  This file is an orphan. Nothing in the active codebase imports from it.
- *     It predates the v24–v28 data layer refactor and its content is stale.
+ *     It predates the v24 data layer refactor and is maintained as a reference only.
  *
  * CANONICAL SOURCES — import from these instead:
  *   Projects      → lib/projects.ts

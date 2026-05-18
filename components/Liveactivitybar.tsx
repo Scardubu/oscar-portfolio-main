@@ -1,12 +1,6 @@
 'use client';
-// components/Liveactivitybar.tsx — CONVICTION ENGINE v21.2
-// v21.2 vs v21.1:
-//   [FIX MICROCOPY-2]: FALLBACK copy updated.
-//     repo: 'oscar-portfolio-main' → 'scardubu.dev' (live domain, not stale repo slug)
-//     message: 'Active development' → 'Building in production' (on-brand, matches
-//     the portfolio's operating thesis — not a generic developer activity label)
-//   KEEP: All v21.1 fetch logic, PulseDot, typeLabel map, loading state,
-//   AbortController cleanup, aria-live region, sha display.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { useEffect, useState } from 'react';
 

@@ -1,13 +1,6 @@
-// CONVICTION ENGINE v20.0 — SectionSkeleton
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Suspense fallback for dynamically-imported sections.
-//
-// v20 fix:
-//   • Replaced `section-gap` (undefined class) with `py-[var(--section-py)]`
-//     which matches the real section padding token.
-//   • Added `container` for consistent max-width / padding alignment.
-//   • Height clamp: never locks layout to a fixed pixel value on mobile —
-//     `max(height, 30vh)` prevents excessive whitespace on small viewports.
-//   • aria-busy + aria-label preserved for assistive tech.
 
 interface SectionSkeletonProps {
   id:     string;

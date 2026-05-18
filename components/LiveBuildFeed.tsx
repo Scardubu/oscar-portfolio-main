@@ -1,5 +1,6 @@
 'use client';
-// components/LiveBuildFeed.tsx — CONVICTION ENGINE v21.1
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // FIXED (v21.1): Missing <a opening tag on "View all on GitHub" footer CTA.
 // Mobile-native: 52px row targets, skeleton states, graceful API failure.
 // Refresh: every 5 minutes. AbortController on unmount.

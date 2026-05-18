@@ -1,10 +1,5 @@
-// CONVICTION ENGINE v2.0 — Loading Skeleton
-// v2: Skeleton structure reflects actual page layout — nav bar placeholder,
-//     hero left column structure (kicker, h1 lines, stat strip, CTA row),
-//     and a right-column metric panel stub. Shimmer animation uses CSS
-//     keyframe instead of Tailwind animate-pulse for tighter control.
-//     v1 was a bare five-element column — no structural resemblance to the
-//     page, causing a jarring layout shift on hydration.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 export default function Loading() {
   return (

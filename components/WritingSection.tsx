@@ -1,17 +1,5 @@
-// CONVICTION ENGINE v32.0 — WritingSection
-//
-// v32.0 vs v23.0:
-//   [CHANGE 5a MICROCOPY_MISS]: Featured badge replaced. Previous: "Featured · N articles · X min read"
-//     — two of three signals self-referential. New: "TIER 1 · STAFF+ SIGNAL · X min read"
-//     TIER 1 signals curation; STAFF+ SIGNAL signals audience relevance; min read serves visitor.
-//   [CHANGE 5b CONVERSION_MISS:warmup]: Warmup CTA added above featured article.
-//     "Start here if you want to understand how these systems were designed."
-//     Per spec §CTA Warmup Path: mono, 12px, opacity 0.50, not a button.
-//   [CHANGE 6e FLOW_BREAK]: Flow hook added after otherPosts list.
-//     "The system is ready. Bring your constraint." Links to contact section.
-//     Per spec §Flow Mechanics §Writing.
-//   KEEP: All v23.0 layout, filter chips, article list, featured card, view-all CTA,
-//     motion choreography, reduced-motion fallbacks.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -19,8 +7,8 @@ import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 
-import type { WritingPost } from '@/lib/content';
 import { anchorUrl } from '@/lib/config';
+import type { WritingPost } from '@/lib/content';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { formatDate } from '@/lib/utils';
 
@@ -144,7 +132,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
           {featuredPost ? (
             <>
               {/* ── Featured article ───────────────────────────────────────── */}
-              {/* v32.0 Change 5b: Warmup CTA — for the evaluating Type A visitor who reads
+              {/* V1.0 Change 5b: Warmup CTA — for the evaluating Type A visitor who reads
                   before they commit. Per spec §CTA Warmup Path: mono, 12px, opacity 0.50. */}
               <m.p
                 variants={child}
@@ -158,7 +146,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 variants={card}
                 className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
               >
-                {/* v32.0 Change 5a: TIER 1 signals curation; STAFF+ SIGNAL signals audience
+                {/* V1.0 Change 5a: TIER 1 signals curation; STAFF+ SIGNAL signals audience
                     relevance; min read is the only metric that serves the visitor directly. */}
                 <div className="flex flex-wrap items-center gap-2.5">
                   <span className="pill pill-cyan" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.08em' }}>
@@ -300,7 +288,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 </Link>
               </m.div>
 
-              {/* Flow hook — v32.0 Change 6e: §Flow Mechanics §Writing */}
+              {/* Flow hook — V1.0 Change 6e: §Flow Mechanics §Writing */}
               <m.p
                 variants={child}
                 className="mt-10 font-mono text-[13px]"

@@ -1,78 +1,5 @@
-// CONVICTION ENGINE v21.0 — ContactSection
-//
-// v21.0 vs v20.0:
-//   [FIX DATA_INTEGRITY-1]: INQUIRY_TYPES last entry: value 'other' → 'advisory'.
-//     Root cause: the label was "Advisory" but the value sent to the API was
-//     'other'. The email template uses `data.inquiryType.toUpperCase()` in the
-//     subject line and body copy — Oscar's inbox received "Type: other" / subject
-//     "OTHER inquiry from …" when the sender chose "Advisory". Semantically wrong
-//     and confusing for triage. Fix: value now matches label ('advisory').
-//     validations.ts Zod enum updated in lockstep:
-//       z.enum(['job', 'consulting', 'collaboration', 'other'])
-//       → z.enum(['job', 'consulting', 'collaboration', 'advisory'])
-//     The default form state ('job') and success-state reset ('job') are unaffected.
-//   KEEP: All v20.0 layout, form fields, validation, error states, loading state,
-//     contact cards, two-column grid, social links, trust badges, motion
-//     choreography, all ARIA labels, all CSS class names.
-//
-// v20.0 vs v19.0:
-//   [CHANGE LAYOUT]: Section intro — editorial 2-col at lg+.
-//     Previous: kicker, h2, and description subhead stacked single-column on all
-//       viewports. On desktop the full-width heading over a full-width paragraph
-//       produced the same "blown-up phone screen" pattern corrected across every
-//       other section: Projects (v25), OSS (v24), Writing (v23), Skills (v28).
-//       Contact was the only section in the system still running the v18 layout.
-//     Fix: Wrapped kicker+heading and description in `section-intro-editorial`
-//       div (layout.css). At lg+ this activates the 2-col grid — heading left,
-//       description right with editorial alignment. Mobile unchanged.
-//     Trust badges remain full-width below the editorial pair on all viewports.
-//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
-//
-//   KEEP: All v19 copy, form layout, field structure, validation logic, error
-//     handling, loading state, contact cards, two-column grid, social links,
-//     motion choreography, all ARIA labels, all CSS class names.
-//
-// v19 CHANGES vs v18:
-//
-//   SECTION HEADING (Hook Model: Trigger):
-//     "The system is ready. Are you?" — KEEP. It is authoritative and sharp.
-//
-//   SECTION SUBHEADLINE (Fogg: Motivation + Ability):
-//     Previous: "Hiring for Staff+, building something from scratch, or putting
-//       out a fire — the conversation starts here. Response within 24 hours."
-//     Upgraded: Specificity replaces generality. Each scenario maps to a
-//       concrete outcome Oscar drives. "Response within 24 hours" moved inline
-//       as its own sentence for visual emphasis.
-//
-//   CONTACT CARDS (Authority + Social Proof — Cialdini):
-//     STAFF+/PRINCIPAL: headline now names the specific delivery surface
-//       ("mobile app through production API") — outcome-first for non-technical
-//       founders who need to visualize what Oscar actually ships.
-//     TECHNICAL CO-FOUNDER: "The system should outlast the seed deck" — KEEP.
-//       Add: specific compliance credential (NDPC, NRS 2026) so fintech/legal
-//       readers see domain depth without needing to read the projects section.
-//     INFRASTRUCTURE CONSULTING: "You get working infrastructure — not
-//       billable-hour reports" — KEEP. Add specificity on engagement types.
-//
-//   TRUST BADGES (Unity — Cialdini):
-//     Added fourth badge: "NRS · NDPC Compliant" — domain-specific credibility
-//     signal for Nigerian fintech decision-makers. Ethically accurate.
-//
-//   FORM MICROCOPY:
-//     Submit button: "Send message" → "Send it — I'll respond in 24h"
-//       Specificity removes uncertainty (Fogg: Ability). The word "it" is
-//       conversational and reduces the psychological weight of clicking send.
-//     Success state headline: "Message sent." → "Received. You'll hear from me."
-//       Active voice — Oscar owns the next action, not the visitor.
-//     Message placeholder: sharper, more specific.
-//
-//   DARK PATTERNS AUDIT (all clear):
-//     No fake urgency, no misleading hierarchy, no hidden costs,
-//     no manipulative social proof claims. All proof is traceable.
-//
-//   KEEP: Form layout, field structure, validation logic, error handling,
-//     loading state, two-column grid, social links, motion choreography.
-//
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
@@ -80,14 +7,14 @@ import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'rea
 
 import { CopyEmail } from '@/components/CopyEmail';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
-import React from 'react';
 import {
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    noMotion,
+    staggerContainer,
 } from '@/lib/motionVariants';
+import React from 'react';
 
 const CONTACT_CARDS = [
   {
@@ -167,7 +94,7 @@ function ContactForm() {
     inquiryType: 'job',
     message: '',
   });
-  // Change 1d — v32.0: field-level validation errors per spec §Form State Copy
+  // Change 1d — V1.0: field-level validation errors per spec §Form State Copy
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
 
   const FIELD_ERRORS: Record<string, string> = {

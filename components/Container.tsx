@@ -1,4 +1,5 @@
-// CONVICTION ENGINE — Container.tsx
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // Centralizes max-width, responsive horizontal padding, and horizontal
 // overflow protection across all sections.

@@ -72,7 +72,7 @@ Shell:          PowerShell (pwsh.exe) — ALL commands MUST be PowerShell syntax
 ### 1.2 Brand, Identity & Audience
 
 - **Owner:** Oscar Ndugbu · @Scardubu · Staff Full-Stack ML Engineer
-- **Deployed at:** scardubu.dev (CONVICTION ENGINE v15.0+)
+- **Deployed at:** scardubu.dev (CONVICTION ENGINE V1.0)
 - **Target employers:** Stripe · Cloudflare · Coinbase · Shopify · Vercel
 - **Audience duality:** Technical leads (depth, architecture) AND non-technical
   decision-makers (impact, story, trust). Every component must serve BOTH.

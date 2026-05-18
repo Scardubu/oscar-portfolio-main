@@ -1,29 +1,5 @@
-// CONVICTION ENGINE v27.1 — HeroSection
-//
-// v27.1 vs v26.1:
-//   [FIX MOBILE_RHYTHM-1]: Response reassurance line — flex row replaces
-//     inline-block + align-middle. On iOS Safari, a h-1.5 inline-block dot
-//     with align-middle visually merges with the capital "I" at 10px mono —
-//     the baseline offset collapses the gap that mr-1.5 should create.
-//     Flex + items-center is cross-browser reliable. (line ~478)
-//   [FIX PROOF_CALLOUT-1]: Proof callout block — each system on its own line
-//     via <span className="block">. At sm viewport the three system lines were
-//     wrapping mid-sentence producing orphaned partial lines. Block spans force
-//     clean wraps at system boundaries. (line ~435)
-//   KEEP: All v26.1 stat data, PROOF_COLUMNS, carousel logic, scroll-parallax,
-//     motion choreography, headshot, CTAs, availability pill, full layout.
-//
-// v26.1 vs v26.0:
-//   [FIX P3-A CONVICTION_STATS]: Fourth entry corrected from '45% faster' / 'Alert detection'
-//     to '45% MTTD' / 'Improvement'. MTTD is the precise engineering term used in
-//     SabiScore's Prometheus data; the vaguer "faster alerts" framing diverged from
-//     lib/portfolio-data.ts (canonical source) and the PROOF_COLUMNS body copy in this
-//     same file. All three references now use identical language.
-//   [FIX P3-A PROOF_COLUMNS]: LIVE IN PRODUCTION body copy updated to match — "45% MTTD
-//     improvement over reactive alerting baseline" replaces "45% faster alert detection".
-//   [FIX P3-A PROOF_CALLOUT]: Inline proof callout updated to "45% MTTD" for consistency.
-//   KEEP: All v25.2 behaviour — keyboard nav, scroll-snap, IntersectionObserver, live region,
-//     scroll-parallax, motion choreography, headshot, CTAs, availability pill, full layout.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 'use client';
 
@@ -35,16 +11,16 @@ import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 're
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
-import { HERO } from '@/lib/portfolio-data';
 import {
-  HERO_SCROLL_CONFIG,
-  cardReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
-  wordReveal,
-  wordRevealContainer,
+    HERO_SCROLL_CONFIG,
+    cardReveal,
+    fadeRise,
+    noMotion,
+    staggerContainer,
+    wordReveal,
+    wordRevealContainer,
 } from '@/lib/motionVariants';
+import { HERO } from '@/lib/portfolio-data';
 
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
@@ -262,7 +238,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-// v32.0 Change 7: Count-up animation for CONVICTION_STATS.
+// V1.0 Change 7: Count-up animation for CONVICTION_STATS.
 // Numeric values animate 0 → target over 600ms (easeOutQuart) on first viewport
 // intersection. Non-numeric strings ("4h → 15min", "sub-150ms", "45% MTTD")
 // render immediately — intentional per spec. prefers-reduced-motion respected.
@@ -355,7 +331,7 @@ export function HeroSection() {
   const child = reducedMotion ? noMotion : fadeRise;
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
 
-  // v32.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
+  // V1.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
   useEffect(() => {
@@ -509,7 +485,7 @@ export function HeroSection() {
               Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
-            {/* Stats Strip — v32.0 Change 7: count-up on viewport intersection */}
+            {/* Stats Strip — V1.0 Change 7: count-up on viewport intersection */}
             <m.div variants={child} aria-label="Performance metrics" ref={statsRef}>
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label, stat }) => (
@@ -597,7 +573,7 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* v32.0 Change 2: Warmup micro-CTA — per spec §CONVERSION_MISS:warmup.
+            {/* V1.0 Change 2: Warmup micro-CTA — per spec §CONVERSION_MISS:warmup.
                 For the evaluating visitor who reads before committing.
                 mono 12px, opacity 0.45, not a button. */}
             <m.div variants={child} className="mt-2">
@@ -616,7 +592,7 @@ export function HeroSection() {
               <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
             </m.div>
 
-            {/* v32.0 Change 8: ⌘K hint — surfaces the command palette for power users.
+            {/* V1.0 Change 8: ⌘K hint — surfaces the command palette for power users.
                 Per spec §DELIGHT_MISS:personality. Hidden from screen readers (aria-hidden). */}
             <m.div
               variants={child}

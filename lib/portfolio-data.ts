@@ -1,6 +1,7 @@
 /**
- * portfolio-data.ts — CONVICTION ENGINE v28.2
- * ─────────────────────────────────────────────────────────────────────────────
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
  * Single source of truth for profile-level portfolio content.
  *
  * SCOPE: This file owns PROFILE, HERO copy, CONVICTION_STATS, LIVE_METRICS,

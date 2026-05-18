@@ -1,40 +1,6 @@
 'use client';
-// components/CommandPalette.tsx — CONVICTION ENGINE v22.0
-//
-// v22 vs v21:
-//
-//   [BUG FIX SCROLL-1]: `scrollTo('about')` → `scrollTo('section-about')`.
-//     Root cause: The DOM element has `id="section-about"` (set in AboutSection.tsx).
-//     `document.getElementById('about')` returned null — the command silently did
-//     nothing. The nav anchor contract is: Projects=section-projects, OSS=open-source,
-//     Skills=skills, About=section-about, Writing=section-writing, Contact=section-contact.
-//
-//   [BUG FIX SCROLL-2]: `scrollTo('contact')` → `scrollTo('section-contact')`.
-//     Same root cause as SCROLL-1 — `id="section-contact"` in ContactSection.tsx.
-//
-//   [BUG FIX ARIA-1]: Moved `role="dialog" aria-modal="true" aria-label="Command palette"`
-//     from the outer overlay div to the inner panel div.
-//     Root cause: The outer div is the backdrop — its onClick closes the palette.
-//     A clickable-to-dismiss element is not a dialog; the panel is. Screen readers
-//     were announcing the dismissible overlay as the dialog and finding the panel
-//     as an anonymous child. Also added aria-hidden="true" to the backdrop so AT
-//     ignores it entirely. The panel now carries the correct dialog semantics.
-//
-//   [FIX COMPOSITOR-1]: Removed `backdropFilter: 'blur(4px)'` from the overlay div.
-//     Root cause: Same GPU compositor flash as Navbar v22 SCROLL_FLICKER-3.
-//     When AnimatePresence mounts the overlay cold, backdrop-filter triggers
-//     on-demand GPU layer promotion — the promotion IS the flash.
-//     `rgba(0,0,0,0.72)` is visually equivalent to the previous blur+opacity combo.
-//
-//   [FIX COMPOSITOR-2]: Removed `backdrop-blur-xl` from the mobile FAB button.
-//     When the command palette closes, AnimatePresence unmounts the overlay and the
-//     FAB re-appears. Without backdrop-blur-xl, the FAB appears without triggering
-//     any compositor layer work. `bg-black/85` is opaque enough to not need blur.
-//     `transform-gpu` permanently pre-promotes the FAB so re-appearance is instant.
-//
-//   KEEP: All v21 keyboard navigation, group rendering, search filtering, mobile
-//     bottom-sheet layout, drag handle, safe-area inset, iOS focus delay,
-//     all command items, all motion variants and spring physics.
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
@@ -160,7 +126,7 @@ export function CommandPalette() {
           close();
         },
       },
-      // Easter Eggs — v32.0 Change 9: §DELIGHT_MISS:personality
+      // Easter Eggs — V1.0 Change 9: §DELIGHT_MISS:personality
       {
         id: 'why-lagos',
         group: 'Easter Eggs',
@@ -459,7 +425,7 @@ export function CommandPalette() {
         </button>
       )}
 
-      {/* /why-lagos modal — v32.0 Change 9: §DELIGHT_MISS:personality easter egg.
+      {/* /why-lagos modal — V1.0 Change 9: §DELIGHT_MISS:personality easter egg.
           Spec verbatim: "Constraint is a design tool. Lagos constraint is a sharper one."
           Dismiss on Escape or click-outside. */}
       <AnimatePresence>

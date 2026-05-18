@@ -1,4 +1,5 @@
-// CONVICTION ENGINE — SectionDivider.tsx
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // Lightweight editorial separator for use between major content blocks
 // within a section (not between sections — sections use `border-t`).

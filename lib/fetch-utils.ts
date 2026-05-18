@@ -1,6 +1,7 @@
 /**
- * lib/fetch-utils.ts — CONVICTION ENGINE v19.0
- * ─────────────────────────────────────────────────────────────────────────────
+ * CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+ * Major Reset • Lagos → Global • Production Conviction Architecture
+ *
  * Mobile-first fetch utilities:
  *   fetchWithTimeout — cancels after n ms (default 8s). Prevents indefinite
  *     loading spinners on intermittent Lagos / mobile networks.

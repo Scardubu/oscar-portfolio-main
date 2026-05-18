@@ -1,5 +1,6 @@
 'use client';
-// components/SystemStatus.tsx — CONVICTION ENGINE v22.0
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 // Live operational status pill for the Navbar.
 // Fetches /api/live-metrics → systemStatus field.
 // States: loading | operational (teal pulse) | degraded (amber) | down (red)

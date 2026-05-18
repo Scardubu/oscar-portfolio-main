@@ -1,4 +1,5 @@
-// CONVICTION ENGINE v15.0 — HeroVisual
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// Major Reset • Lagos → Global • Production Conviction Architecture
 //
 // CHANGELOG from v11.0:
 //
