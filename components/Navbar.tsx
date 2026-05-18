@@ -1,6 +1,19 @@
 'use client';
 
-// CONVICTION ENGINE v23.0 — Navbar
+// CONVICTION ENGINE v23.1 — Navbar
+//
+// v23.1 vs v23:
+//   [FIX MENU_OPEN_FLICKER-1]: Added `transform-gpu` to the hamburger button element.
+//     Root cause: the header, backdrop overlay, and menu panel are all pre-promoted to
+//     their own compositor layers via `transform-gpu`. The button was the only element
+//     in the animated chain without permanent promotion. When `setMobileOpen(true)` fires
+//     and the backdrop (z-40) + panel (z-50) mount, the browser creates new stacking
+//     contexts and repaints the header and all non-promoted children — the button was
+//     one of those children, producing the visible flash at click time.
+//     Fix: `transform-gpu` on the button. Permanent layer promotion means the browser
+//     never repaints the button during stacking context changes from backdrop/panel mount.
+//     Matches the compositor strategy already in place on every other animated element.
+//     Zero API change — single class addition.
 //
 // v23 vs v22:
 //   [FIX MENU_FLICKER-1]: Removed `backdrop-blur-md` from the mobile backdrop overlay.
@@ -369,18 +382,19 @@ export default function Navbar() {
             Hire Oscar
           </Link>
 
-          {/* Hamburger — FIX v22:
-              - backdrop-blur-xl REMOVED: was fighting parent header's compositing
-                layer and causing flash on scroll threshold crossing.
-              - transition-all → transition-colors: scopes CSS transitions to color
-                properties only, preventing the button from catching parent repaints.
-              - AnimatePresence on icon: crossfade eliminates hard icon-swap flash. */}
+          {/* Hamburger — FIX v23.1:
+              transform-gpu added to the button itself. The header, backdrop, and panel
+              are all pre-promoted; the button was the only element in the chain without
+              its own compositor layer. When backdrop/panel mount (new stacking contexts),
+              the browser repaints the header and its non-promoted children — this button
+              was in that group. Permanent promotion eliminates the on-demand cost at
+              click time and matches the layer strategy of every other animated element. */}
           <button
             type="button"
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white transition-colors duration-200 hover:border-white/20 hover:bg-white/10 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="relative flex h-11 w-11 transform-gpu items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white transition-colors duration-200 hover:border-white/20 hover:bg-white/10 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             <AnimatePresence mode="wait" initial={false}>
               {mobileOpen ? (
