@@ -1,6 +1,21 @@
-// CONVICTION ENGINE v20.0 — ContactSection
+// CONVICTION ENGINE v21.0 — ContactSection
 //
-// v20 vs v19:
+// v21.0 vs v20.0:
+//   [FIX DATA_INTEGRITY-1]: INQUIRY_TYPES last entry: value 'other' → 'advisory'.
+//     Root cause: the label was "Advisory" but the value sent to the API was
+//     'other'. The email template uses `data.inquiryType.toUpperCase()` in the
+//     subject line and body copy — Oscar's inbox received "Type: other" / subject
+//     "OTHER inquiry from …" when the sender chose "Advisory". Semantically wrong
+//     and confusing for triage. Fix: value now matches label ('advisory').
+//     validations.ts Zod enum updated in lockstep:
+//       z.enum(['job', 'consulting', 'collaboration', 'other'])
+//       → z.enum(['job', 'consulting', 'collaboration', 'advisory'])
+//     The default form state ('job') and success-state reset ('job') are unaffected.
+//   KEEP: All v20.0 layout, form fields, validation, error states, loading state,
+//     contact cards, two-column grid, social links, trust badges, motion
+//     choreography, all ARIA labels, all CSS class names.
+//
+// v20.0 vs v19.0:
 //   [CHANGE LAYOUT]: Section intro — editorial 2-col at lg+.
 //     Previous: kicker, h2, and description subhead stacked single-column on all
 //       viewports. On desktop the full-width heading over a full-width paragraph
@@ -108,10 +123,10 @@ const TRUST_BADGES = [
 ] as const;
 
 const INQUIRY_TYPES = [
-  { value: 'job',            label: 'Staff+ / Full-time role'  },
-  { value: 'consulting',      label: 'Consulting / Contract'   },
-  { value: 'collaboration',   label: 'Co-founder'              },
-  { value: 'other',            label: 'Advisory'               },
+  { value: 'job',           label: 'Staff+ / Full-time role' },
+  { value: 'consulting',    label: 'Consulting / Contract'   },
+  { value: 'collaboration', label: 'Co-founder'              },
+  { value: 'advisory',      label: 'Advisory'                },
 ] as const;
 
 function GitHubIcon() {
