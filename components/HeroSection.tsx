@@ -496,7 +496,7 @@ export function HeroSection() {
                   style={{ background: 'var(--color-success)' }}
                   aria-hidden="true"
                 />
-                I respond to every message within 24 hours.
+                I respond within 24 hours — usually faster.
               </p>
             </m.div>
 
