@@ -1,5 +1,5 @@
 /**
- * portfolio-data.ts — CONVICTION ENGINE v28.1
+ * portfolio-data.ts — CONVICTION ENGINE v28.2
  * ─────────────────────────────────────────────────────────────────────────────
  * Single source of truth for profile-level portfolio content.
  *
@@ -13,6 +13,17 @@
  *   - Live activity feed     → app/api/activity/route.ts (GitHub proxy)
  *                              Consumed by: components/Liveactivitybar.tsx
  *
+ * v28.2 CHANGES vs v28.1:
+ *   • HERO mirror synced with live HeroSection.tsx v27.1 copy (3 mismatches found):
+ *       1. kicker: '· Lagos → Global' was absent — mirror had been truncated.
+ *       2. cta.primary.label: 'Start a conversation' → 'Tell me your constraints'
+ *       3. cta.secondary.label: 'View Projects' → 'See the work'
+ *     These drifted when HeroSection.tsx was updated to v27 and the mirror was
+ *     not updated in lockstep. The live component was always correct; this file
+ *     was tracking pre-v27 copy. Mirror comment now says "HeroSection.tsx v27.1".
+ *   • Version bumped to v28.2.
+ *   • KEEP: PROFILE, CONVICTION_STATS, LIVE_METRICS, SOCIAL — unchanged.
+ *
  * v28.1 CHANGES vs v28.0:
  *   • ACTIVITY_FEED export removed — it was a dead export.
  *     LiveActivityBar fetches from /api/activity (GitHub proxy, real commit
@@ -20,9 +31,7 @@
  *     strings ("2h ago", "6h ago") were stale on every deploy.
  *     Canonical live activity source: app/api/activity/route.ts
  *   • SCOPE comment updated to reflect ACTIVITY_FEED removal.
- *   • HERO mirror reference updated from v26 to v28.
  *   • Version bumped to v28.1.
- *   • KEEP: PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS, SOCIAL — unchanged.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
@@ -44,7 +53,7 @@ export const PROFILE = {
 } as const;
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
-// Reference mirror of HeroSection.tsx v28 live copy.
+// Reference mirror of HeroSection.tsx v27.1 live copy.
 // Components consume HeroSection.tsx directly — this is a canonical reference
 // so the hero copy is traceable to a single written record outside the component.
 //
@@ -54,7 +63,7 @@ export const PROFILE = {
 export const HERO = {
   name:         'Oscar Ndugbu',
   title:        'Staff+ Full-Stack · Infra · ML',
-  kicker:       'Full-Stack · React Native · Next.js 15 · AI Systems',
+  kicker:       'Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global',
   h1:           'The system has to work at 2am.',
   subHeadline:  "That's not a slogan. It's a design constraint.",
   body:         'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
@@ -64,9 +73,9 @@ export const HERO = {
   cta: {
     // anchorUrl() returns root-relative '/#section-contact' — correct for Next.js
     // <Link> same-page navigation. mailto: bypasses the contact form and was removed.
-    primary:   { label: 'Start a conversation', href: anchorUrl('section-contact') },
-    secondary: { label: 'View Projects',        href: anchorUrl('section-projects') },
-    cv:        { label: 'Download CV',          href: CV_ASSET_PATH },
+    primary:   { label: 'Tell me your constraints', href: anchorUrl('section-contact') },
+    secondary: { label: 'See the work',             href: anchorUrl('section-projects') },
+    cv:        { label: 'Download CV',              href: CV_ASSET_PATH },
   },
 } as const;
 
