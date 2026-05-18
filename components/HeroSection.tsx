@@ -1,6 +1,19 @@
-// CONVICTION ENGINE v26.1 — HeroSection
+// CONVICTION ENGINE v27.1 — HeroSection
 //
-// v26.0 vs v25.2:
+// v27.1 vs v26.1:
+//   [FIX MOBILE_RHYTHM-1]: Response reassurance line — flex row replaces
+//     inline-block + align-middle. On iOS Safari, a h-1.5 inline-block dot
+//     with align-middle visually merges with the capital "I" at 10px mono —
+//     the baseline offset collapses the gap that mr-1.5 should create.
+//     Flex + items-center is cross-browser reliable. (line ~478)
+//   [FIX PROOF_CALLOUT-1]: Proof callout block — each system on its own line
+//     via <span className="block">. At sm viewport the three system lines were
+//     wrapping mid-sentence producing orphaned partial lines. Block spans force
+//     clean wraps at system boundaries. (line ~435)
+//   KEEP: All v26.1 stat data, PROOF_COLUMNS, carousel logic, scroll-parallax,
+//     motion choreography, headshot, CTAs, availability pill, full layout.
+//
+// v26.1 vs v26.0:
 //   [FIX P3-A CONVICTION_STATS]: Fourth entry corrected from '45% faster' / 'Alert detection'
 //     to '45% MTTD' / 'Improvement'. MTTD is the precise engineering term used in
 //     SabiScore's Prometheus data; the vaguer "faster alerts" framing diverged from
