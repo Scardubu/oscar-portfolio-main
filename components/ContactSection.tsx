@@ -1,4 +1,21 @@
-// CONVICTION ENGINE v19.0 — ContactSection
+// CONVICTION ENGINE v20.0 — ContactSection
+//
+// v20 vs v19:
+//   [CHANGE LAYOUT]: Section intro — editorial 2-col at lg+.
+//     Previous: kicker, h2, and description subhead stacked single-column on all
+//       viewports. On desktop the full-width heading over a full-width paragraph
+//       produced the same "blown-up phone screen" pattern corrected across every
+//       other section: Projects (v25), OSS (v24), Writing (v23), Skills (v28).
+//       Contact was the only section in the system still running the v18 layout.
+//     Fix: Wrapped kicker+heading and description in `section-intro-editorial`
+//       div (layout.css). At lg+ this activates the 2-col grid — heading left,
+//       description right with editorial alignment. Mobile unchanged.
+//     Trust badges remain full-width below the editorial pair on all viewports.
+//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
+//
+//   KEEP: All v19 copy, form layout, field structure, validation logic, error
+//     handling, loading state, contact cards, two-column grid, social links,
+//     motion choreography, all ARIA labels, all CSS class names.
 //
 // v19 CHANGES vs v18:
 //
@@ -410,22 +427,35 @@ export function ContactSection() {
             <span className="section-label">Contact</span>
           </m.div>
 
-          <m.h2
-            variants={headingVariant}
-            id="contact-heading"
-            className="mb-4 md:mb-5"
-          >
-            The system is ready. Are you?
-          </m.h2>
+          {/*
+            v20 CHANGE: Editorial intro — section-intro-editorial (layout.css).
+            Mobile: kicker, h2, and description stack vertically (unchanged).
+            lg+: kicker+h2 anchor the left column; description sits right with
+              editorial alignment — consistent with Projects, OSS, Writing, Skills.
+            Trust badges remain full-width below the editorial pair on all viewports.
+          */}
+          <div className="section-intro-editorial mb-6 sm:mb-8">
+            {/* Left: heading */}
+            <m.h2
+              variants={headingVariant}
+              id="contact-heading"
+              className="mt-4 lg:mt-0"
+            >
+              The system is ready. Are you?
+            </m.h2>
 
-          <m.p
-            variants={child}
-            className="mb-6 max-w-[52ch] text-base leading-8"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            Hiring for Staff+, building from scratch, or containing a production
-            incident — send the constraint. I respond within 24 hours, usually faster.
-          </m.p>
+            {/* Right: description — editorial counterweight at lg+ */}
+            <div className="lg:flex lg:flex-col lg:justify-end">
+              <m.p
+                variants={child}
+                className="mt-4 lg:mt-0 max-w-[52ch] text-base leading-8"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Hiring for Staff+, building from scratch, or containing a production
+                incident — send the constraint. I respond within 24 hours, usually faster.
+              </m.p>
+            </div>
+          </div>
 
           <m.div
             variants={child}
