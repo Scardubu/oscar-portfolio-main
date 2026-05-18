@@ -2494,13 +2494,19 @@ main, section, .container {
 /* ── Smooth glass-nav scroll transition ─────────────────────────────────────
    The nav switches appearance when scrolled. Ensure the transition uses
    GPU-friendly properties only (opacity, backdrop-filter, background).
+   v34.1 fix: backdrop-filter reduced from var(--dur-slow)=340ms →
+   var(--dur-base)=200ms. At 340ms the transition window overlaps ongoing
+   scroll frames, splitting the compositor budget between the nav backdrop
+   repaint and scroll compositing — visible as a momentary hesitation at
+   the scroll-threshold trigger point (scrollY ~20px). 200ms closes before
+   the next scroll event batch arrives on a typical mobile mid-range device.
 */
 .glass-nav {
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
-    backdrop-filter var(--dur-slow) var(--ease-out),
-    box-shadow var(--dur-slow) var(--ease-out);
+    backdrop-filter var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
 }
 
 /* ── Desktop: about section layout — wider reading column at xl ─────────────
