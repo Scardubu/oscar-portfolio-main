@@ -35,6 +35,7 @@ import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 're
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
+import { HERO } from '@/lib/portfolio-data';
 import {
   HERO_SCROLL_CONFIG,
   cardReveal,
@@ -326,6 +327,12 @@ export function HeroSection() {
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
+                  <span
+                    className="ml-2 opacity-50 normal-case tracking-normal"
+                    style={{ fontSize: '9px' }}
+                  >
+                    · Updated {HERO.availabilityUpdated}
+                  </span>
                 </span>
               </div>
             </m.div>
