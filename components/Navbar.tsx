@@ -1,6 +1,29 @@
 'use client';
 
-// CONVICTION ENGINE v22.0 — Navbar
+// CONVICTION ENGINE v23.0 — Navbar
+//
+// v23 vs v22:
+//   [FIX MENU_FLICKER-1]: Removed `backdrop-blur-md` from the mobile backdrop overlay.
+//     Root cause: AnimatePresence mounts the backdrop element fresh on each open,
+//     triggering on-demand GPU compositor layer promotion for the backdrop-filter.
+//     That promotion is the visible flash — identical to the header flash fixed in v22
+//     but on the overlay element. The dark overlay (`bg-black/80`) reads identically
+//     to the eye without the blur. The blur was purely decorative and actively harmful.
+//
+//   [FIX MENU_FLICKER-2]: Added `transform-gpu` to both the backdrop overlay and the
+//     menu panel. This pre-promotes both elements to their own compositor layers via
+//     `will-change: transform` before Framer Motion starts the entrance animation.
+//     Without this, the layer is created mid-animation, causing a visible flash at
+//     the start of the open transition. Permanent promotion via `transform-gpu`
+//     eliminates the on-demand layer creation cost.
+//
+//   [FIX MENU_FLICKER-3]: Increased backdrop panel opacity from `bg-black/90` to
+//     `bg-[#0d0d0d]/97` to compensate visually for the removed backdrop-blur-2xl
+//     on the panel being the primary depth cue. Panel backdrop-blur kept but guarded
+//     with `transform-gpu` so compositor layer exists before blur activates.
+//
+//   KEEP: All v22 fixes intact — scroll flicker guards, icon crossfade,
+//     IntersectionObserver, mobile overflow lock, keyboard nav, ARIA.
 //
 // v22 vs v21:
 //   [FIX SCROLL_FLICKER-1]: Removed `activeSection` from scroll useEffect deps.
@@ -392,24 +415,28 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — FIX v23: backdrop-blur-md removed (on-demand compositor
+                layer creation was the flash). transform-gpu pre-promotes the element.
+                bg-black/80 replaces bg-black/70 backdrop-blur-md — reads the same. */}
             <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md lg:hidden"
+              className="fixed inset-0 z-40 transform-gpu bg-black/80 lg:hidden"
               onClick={closeMenu}
               aria-hidden="true"
             />
 
-            {/* Panel */}
+            {/* Panel — FIX v23: transform-gpu pre-promotes compositor layer so
+                backdrop-blur-2xl activates on an existing layer, not a new one.
+                bg-[#0d0d0d]/97 replaces bg-black/90 for better depth without blur flash. */}
             <m.div
               initial="hidden"
               animate="visible"
               exit="hidden"
               variants={mobileMenuVariants}
-              className="fixed inset-x-4 top-20 z-50 overflow-hidden rounded-3xl border border-white/10 bg-black/90 shadow-2xl backdrop-blur-2xl lg:hidden"
+              className="fixed inset-x-4 top-20 z-50 transform-gpu overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d]/97 shadow-2xl backdrop-blur-2xl lg:hidden"
               role="dialog"
               aria-modal="true"
               aria-label="Navigation menu"
