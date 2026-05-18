@@ -1,9 +1,12 @@
 'use client';
-// components/Liveactivitybar.tsx — CONVICTION ENGINE v21.1
-// UPGRADED from v19.0: align to v21 token names, add aria-live region,
-// pulse animation via CSS var reference (no hardcoded color strings).
-// Live GitHub commit feed strip used in hero/navbar contexts.
-// Falls back gracefully; never blocks render.
+// components/Liveactivitybar.tsx — CONVICTION ENGINE v21.2
+// v21.2 vs v21.1:
+//   [FIX MICROCOPY-2]: FALLBACK copy updated.
+//     repo: 'oscar-portfolio-main' → 'scardubu.dev' (live domain, not stale repo slug)
+//     message: 'Active development' → 'Building in production' (on-brand, matches
+//     the portfolio's operating thesis — not a generic developer activity label)
+//   KEEP: All v21.1 fetch logic, PulseDot, typeLabel map, loading state,
+//   AbortController cleanup, aria-live region, sha display.
 
 import { useEffect, useState } from 'react';
 
@@ -18,8 +21,8 @@ interface ActivityData {
 const FALLBACK: ActivityData = {
   ago:     'Recently',
   type:    'PushEvent',
-  repo:    'oscar-portfolio-main',
-  message: 'Active development',
+  repo:    'scardubu.dev',
+  message: 'Building in production',
 };
 
 function typeLabel(type: string): string {
