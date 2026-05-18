@@ -1,19 +1,17 @@
-// CONVICTION ENGINE v23.0 — WritingSection
+// CONVICTION ENGINE v32.0 — WritingSection
 //
-// v23 vs v22.1:
-//   [CHANGE]: Section intro — editorial 2-col at lg+.
-//     Previous: kicker + h2 + description + filter chips stacked single-column.
-//     Problem: At desktop, the full-width heading sits alone while the description
-//       and filter chips follow below in a single column — same "blown-up phone"
-//       pattern that was corrected in Projects (v25) and Open Source (v24).
-//     Fix: Wrap kicker+heading and description in `section-intro-editorial` div
-//       (layout.css). At lg+ this becomes heading-left / description-right with
-//       editorial alignment. Filter chips remain full-width below both columns.
-//     (layout.css `.section-intro-editorial` — desktop expansion, not mobile change)
-//     (Nielsen: Flexible and Efficient Use — desktop canvas used intentionally)
-//   KEEP: All v22.1 behaviour — flex-wrap filter chips on mobile, overflow-x:auto
-//     at sm+, article list, featured card, view-all CTA, motion choreography,
-//     reduced-motion fallbacks, all copy and microcopy.
+// v32.0 vs v23.0:
+//   [CHANGE 5a MICROCOPY_MISS]: Featured badge replaced. Previous: "Featured · N articles · X min read"
+//     — two of three signals self-referential. New: "TIER 1 · STAFF+ SIGNAL · X min read"
+//     TIER 1 signals curation; STAFF+ SIGNAL signals audience relevance; min read serves visitor.
+//   [CHANGE 5b CONVERSION_MISS:warmup]: Warmup CTA added above featured article.
+//     "Start here if you want to understand how these systems were designed."
+//     Per spec §CTA Warmup Path: mono, 12px, opacity 0.50, not a button.
+//   [CHANGE 6e FLOW_BREAK]: Flow hook added after otherPosts list.
+//     "The system is ready. Bring your constraint." Links to contact section.
+//     Per spec §Flow Mechanics §Writing.
+//   KEEP: All v23.0 layout, filter chips, article list, featured card, view-all CTA,
+//     motion choreography, reduced-motion fallbacks.
 'use client';
 
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
@@ -22,6 +20,7 @@ import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 
 import type { WritingPost } from '@/lib/content';
+import { anchorUrl } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { formatDate } from '@/lib/utils';
 
@@ -145,13 +144,29 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
           {featuredPost ? (
             <>
               {/* ── Featured article ───────────────────────────────────────── */}
+              {/* v32.0 Change 5b: Warmup CTA — for the evaluating Type A visitor who reads
+                  before they commit. Per spec §CTA Warmup Path: mono, 12px, opacity 0.50. */}
+              <m.p
+                variants={child}
+                className="mb-4 font-mono text-[12px]"
+                style={{ color: 'var(--color-text-muted)', opacity: 0.50 }}
+              >
+                Start here if you want to understand how these systems were designed.
+              </m.p>
+
               <m.article
                 variants={card}
                 className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
               >
+                {/* v32.0 Change 5a: TIER 1 signals curation; STAFF+ SIGNAL signals audience
+                    relevance; min read is the only metric that serves the visitor directly. */}
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="pill pill-cyan">Featured</span>
-                  <span className="badge-muted">{posts.length} articles</span>
+                  <span className="pill pill-cyan" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.08em' }}>
+                    TIER 1
+                  </span>
+                  <span className="badge-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.06em' }}>
+                    STAFF+ SIGNAL
+                  </span>
                   <span
                     className="font-mono text-xs"
                     style={{ color: 'var(--color-text-muted)' }}
@@ -284,6 +299,17 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </m.div>
+
+              {/* Flow hook — v32.0 Change 6e: §Flow Mechanics §Writing */}
+              <m.p
+                variants={child}
+                className="mt-10 font-mono text-[13px]"
+                style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+              >
+                <Link href={anchorUrl('section-contact')} className="hover:opacity-80 transition-opacity">
+                  The system is ready. Bring your constraint.
+                </Link>
+              </m.p>
             </>
           ) : null}
         </m.div>
