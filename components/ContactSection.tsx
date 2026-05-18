@@ -80,6 +80,7 @@ import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'rea
 
 import { CopyEmail } from '@/components/CopyEmail';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
+import React from 'react';
 import {
   cardReveal,
   clipReveal,
@@ -166,6 +167,24 @@ function ContactForm() {
     inquiryType: 'job',
     message: '',
   });
+  // Change 1d — v32.0: field-level validation errors per spec §Form State Copy
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
+
+  const FIELD_ERRORS: Record<string, string> = {
+    name:        "Your name helps me know who I'm writing to.",
+    email:       'Need a working address to respond.',
+    inquiryType: 'Select the best fit — it shapes the response.',
+    message:     'This is the important part — describe the constraint.',
+  };
+
+  function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    if (!value.trim()) {
+      setFieldErrors((prev) => ({ ...prev, [name]: FIELD_ERRORS[name] }));
+    } else {
+      setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  }
 
   function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -219,10 +238,11 @@ function ContactForm() {
           </svg>
         </div>
         <p className="font-display text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
-          Received. You&apos;ll hear from me.
+          Constraint received.
         </p>
         <p className="text-sm leading-7 max-w-[40ch]" style={{ color: 'var(--color-text-secondary)' }}>
-          I respond within 24 hours — usually faster. For urgent matters, email{' '}
+          I&apos;ll review and respond within 24 hours — usually faster. For urgent
+          matters, email{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="underline underline-offset-2"
@@ -272,10 +292,16 @@ function ContactForm() {
             maxLength={50}
             value={values.name}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Your name"
             className="contact-field-input"
             disabled={state === 'loading'}
           />
+          {fieldErrors.name && (
+            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+              {fieldErrors.name}
+            </p>
+          )}
         </div>
 
         <div className="contact-field-group">
@@ -290,10 +316,16 @@ function ContactForm() {
             required
             value={values.email}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="you@company.com"
             className="contact-field-input"
             disabled={state === 'loading'}
           />
+          {fieldErrors.email && (
+            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+              {fieldErrors.email}
+            </p>
+          )}
         </div>
       </div>
 
@@ -326,6 +358,7 @@ function ContactForm() {
             required
             value={values.inquiryType}
             onChange={handleChange}
+            onBlur={handleBlur}
             className="contact-field-input contact-field-select"
             disabled={state === 'loading'}
           >
@@ -333,6 +366,11 @@ function ContactForm() {
               <option key={value} value={value}>{label}</option>
             ))}
           </select>
+          {fieldErrors.inquiryType && (
+            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+              {fieldErrors.inquiryType}
+            </p>
+          )}
         </div>
       </div>
 
@@ -349,10 +387,16 @@ function ContactForm() {
           rows={4}
           value={values.message}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Describe the constraint, deadline, and risk."
           className="contact-field-input contact-field-textarea"
           disabled={state === 'loading'}
         />
+        {fieldErrors.message && (
+          <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+            {fieldErrors.message}
+          </p>
+        )}
         <p className="mt-1.5 font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
           {values.message.length}/500 characters
         </p>
@@ -365,7 +409,17 @@ function ContactForm() {
           role="alert"
           aria-live="assertive"
         >
-          {errorMsg || 'Something went wrong. Please try again or email directly.'}
+          {errorMsg
+            ? `Something interrupted the send. Try again, or reach me directly at ${CONTACT_EMAIL}.`
+            : 'Something interrupted the send. Try again, or reach me directly at '
+          }
+          {!errorMsg && (
+            <a href={`mailto:${CONTACT_EMAIL}`} className="underline underline-offset-2"
+               style={{ color: 'var(--color-film-teal)' }}>
+              {CONTACT_EMAIL}
+            </a>
+          )}
+          {!errorMsg && '.'}
         </p>
       )}
 
@@ -380,7 +434,7 @@ function ContactForm() {
               className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
               aria-hidden="true"
             />
-            Sending…
+            Sending your constraint...
           </>
         ) : (
           <>
