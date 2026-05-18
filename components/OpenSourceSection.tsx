@@ -1,22 +1,23 @@
-'use client';
-
-// CONVICTION ENGINE v25.0 — OpenSourceSection
+// CONVICTION ENGINE v32.0 — OpenSourceSection
 //
-// v25 vs v24:
-//   [FIX P3-C MICROCOPY_MISS]: Section description copy aligned to CE spec.
-//     Previous: "Four production-hardened packages extracted from real systems —
-//       each fills a gap general-purpose libraries leave open."
-//     Updated: "Four production-hardened packages from the fintech trenches —
-//       each solving a gap that general-purpose libraries don't address."
-//     Principle: CE spec §P3-C exact wording. "fintech trenches" situates origin
-//     (authority signal); "solving a gap" is active voice. Neither claim is invented.
-//   KEEP: All v24 card structure, OSS_PROJECTS data, CopyInstall useAnimate()
+// v32.0 vs v25.0:
+//   [CHANGE 4 CONVERSION_MISS:reciprocity]: Reciprocity frame added before card grid.
+//     "Four packages extracted from production TaxBridge and SabiScore — solved for real,
+//     then published." signals maturity + generosity before proof. Per spec §Reciprocity Engine.
+//   [CHANGE 4 MISSING_PROOF]: OSS transparency footer added after proof strip.
+//     "All packages are publicly auditable → GitHub" eliminates "is this real?" doubt.
+//   [CHANGE 6b FLOW_BREAK]: Flow hook added after transparency footer.
+//     Links to Skills section. Per spec §Flow Mechanics §Open-source.
+//   KEEP: All v25.0 card structure, OSS_PROJECTS data, CopyInstall useAnimate()
 //     sequence, proof strip, section-intro-editorial layout, motion choreography,
 //     GitHub icon, reduced-motion fallbacks, all design tokens.
+'use client';
 
 import { m, useAnimate, useInView, useReducedMotion } from 'framer-motion';
+import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
+import { anchorUrl } from '@/lib/config';
 import {
   cardReveal,
   clipReveal,
@@ -192,6 +193,18 @@ export function OpenSourceSection() {
             </div>
           </m.div>
 
+          {/* Reciprocity frame — v32.0 Change 4: gift framing before proof. Per spec §Reciprocity Engine.
+              "extracted from production" signals maturity; "solved for real, then published"
+              signals generosity. Must appear before the first package card. */}
+          <m.p
+            variants={child}
+            className="mb-6 max-w-[60ch] text-sm leading-7"
+            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
+          >
+            Four packages extracted from production TaxBridge and SabiScore — solved for real,
+            then published.
+          </m.p>
+
           {/* Card grid: 1-col mobile → 2-col sm → 4-col xl */}
           <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {OSS_PROJECTS.map((item) => (
@@ -302,6 +315,35 @@ export function OpenSourceSection() {
               </div>
             ))}
           </m.div>
+
+          {/* OSS transparency footer — v32.0 Change 4: eliminates "is this real?" doubt */}
+          <m.p
+            variants={child}
+            className="mt-5 font-mono text-[11px] opacity-40"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            All packages are publicly auditable →{' '}
+            <a
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+              style={{ color: 'var(--color-film-teal)' }}
+            >
+              GitHub
+            </a>
+          </m.p>
+
+          {/* Flow hook — v32.0 Change 6b: §Flow Mechanics §Open-source */}
+          <m.p
+            variants={child}
+            className="mt-4 font-mono text-[13px]"
+            style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+          >
+            <Link href={anchorUrl('skills')} className="hover:opacity-80 transition-opacity">
+              The stack that makes these possible →
+            </Link>
+          </m.p>
         </m.div>
       </div>
     </section>
