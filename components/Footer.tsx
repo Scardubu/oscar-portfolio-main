@@ -78,8 +78,7 @@ export function Footer() {
 
           <div className="flex flex-col gap-1 font-mono text-[10px] tracking-wide">
             <p className="flex items-center gap-2" style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}>
-              <SystemStatus showLabel={false} />
-              <span>All systems operational</span>
+              <SystemStatus labelMode="full" />
             </p>
             <p style={{ color: 'oklch(93% 0.006 264 / 0.24)' }}>
               TaxBridge · SabiScore · SwarmXQ

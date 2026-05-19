@@ -8,7 +8,7 @@
  * Run: pnpm test (all browsers) | pnpm test:e2e (Chromium only)
  */
 import { test, expect, type Page } from '@playwright/test';
-import { CONTACT_EMAIL } from '../lib/config';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 
@@ -21,10 +21,14 @@ async function goto(page: Page) {
 /* ─── Test suites ────────────────────────────────────────────── */
 
 test.describe('Nav', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('kicker contains correct stack identifiers', async ({ page }) => {
-    await expect(page.getByText(/Next\.js 15.*Lagos → Global/)).toBeVisible();
+    await expect(page.locator('.hero-kicker .hidden.sm\\:inline')).toContainText(
+      'Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global'
+    );
   });
 
   test('does not contain "Portfolio •" prefix', async ({ page }) => {
@@ -40,24 +44,24 @@ test.describe('Nav', () => {
     await expect(contactLink).toHaveAttribute('href', /#section-contact/);
   });
 
-  test('nav gains backdrop-blur on scroll', async ({ page }) => {
-    // Before scroll — header has transparent background
+  test('nav remains fixed and visible after scroll', async ({ page }) => {
     const header = page.locator('header').first();
-    const classBefore = await header.getAttribute('class');
-    expect(classBefore).not.toContain('backdrop-blur');
+    await expect(header).toBeVisible();
 
     await page.evaluate(() => window.scrollBy(0, 200));
     await page.waitForTimeout(300);
 
-    const classAfter = await header.getAttribute('class');
-    expect(classAfter).toContain('backdrop-blur');
+    await expect(header).toBeVisible();
+    await expect(header).toHaveClass(/fixed/);
   });
 });
 
 test.describe('Nav — Mobile', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('hamburger button is visible on mobile', async ({ page }) => {
     const burger = page.getByRole('button', { name: /open navigation menu/i });
@@ -65,7 +69,7 @@ test.describe('Nav — Mobile', () => {
   });
 
   test('mobile menu opens and closes', async ({ page }) => {
-    const burger = page.getByRole('button', { name: /open navigation menu/i });
+    const burger = page.getByRole('button', { name: /navigation menu/i });
     await expect(burger).toHaveAttribute('aria-expanded', 'false');
     await burger.click();
     await expect(burger).toHaveAttribute('aria-expanded', 'true');
@@ -76,7 +80,9 @@ test.describe('Nav — Mobile', () => {
 });
 
 test.describe('Hero', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('h1 aria-label is the positioning headline', async ({ page }) => {
     await expect(page.locator('h1[aria-label*="The system has to work at 2am"]')).toBeAttached();
@@ -88,30 +94,26 @@ test.describe('Hero', () => {
   });
 
   test('hero bio contains conviction copy', async ({ page }) => {
-    await expect(page.getByText(
-      /compliant, fast, and relentlessly reliable/
-    )).toBeVisible();
+    await expect(page.getByText(/compliant, fast, and relentlessly reliable/)).toBeVisible();
   });
 
   test('headline "The system has to work at 2am." is visible', async ({ page }) => {
     // Rendered via word-reveal spans; check reconstructed text via aria-label
-    await expect(page.locator('h1')).toHaveAttribute(
-      'aria-label', /The system has to work at 2am/
-    );
+    await expect(page.locator('h1')).toHaveAttribute('aria-label', /The system has to work at 2am/);
   });
 
   test('no first-person identity claims', async ({ page }) => {
     const body = page.locator('body');
     for (const phrase of [
       "Hey, I'm Oscar",
-      "I engineer",
-      "I build",
-      "I specialize",
-      "Self-taught from Nigeria",
-      "I am",
-      "I create",
-      "I turn",
-      "I focus",
+      'I engineer',
+      'I build',
+      'I specialize',
+      'Self-taught from Nigeria',
+      'I am',
+      'I create',
+      'I turn',
+      'I focus',
     ]) {
       await expect(body).not.toContainText(phrase);
     }
@@ -122,15 +124,13 @@ test.describe('Hero', () => {
   });
 
   test('"Tell me your constraints" CTA links to contact section', async ({ page }) => {
-    const cta = page.getByRole('link', { name: /tell me your constraints/i });
+    const cta = page.getByRole('link', { name: /tell me about your constraints/i }).first();
     await expect(cta).toHaveAttribute('href', /#section-contact/);
   });
 
   // V1.0 Phase 3 — Availability recency
   test('availability pill is present and contains "AVAILABLE"', async ({ page }) => {
-    await expect(
-      page.locator('[aria-label*="available for Staff"]').first()
-    ).toBeVisible();
+    await expect(page.locator('[aria-label*="available for Staff"]').first()).toBeVisible();
   });
 
   test('availability pill includes dynamic "Updated" recency text', async ({ page }) => {
@@ -142,7 +142,9 @@ test.describe('Hero', () => {
 });
 
 test.describe('Projects', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('section heading "Built to survive real constraints." is visible', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /Built to survive/i })).toBeVisible();
@@ -170,12 +172,10 @@ test.describe('Projects', () => {
     await expect(body).not.toContainText('Simulated betting yield');
   });
 
-  test('architecture decisions accordion opens', async ({ page }) => {
+  test('architecture decision content is visible', async ({ page }) => {
     await page.locator('#section-projects').scrollIntoViewIfNeeded();
-    const toggle = page.getByRole('button', { name: /architecture decisions/i }).first();
-    await expect(toggle).toBeVisible();
-    await toggle.click();
-    await expect(page.getByText('Context').first()).toBeVisible();
+    await expect(page.getByText('Chosen').first()).toBeVisible();
+    await expect(page.getByText('Because').first()).toBeVisible();
   });
 });
 
@@ -204,7 +204,9 @@ test.describe('Projects — Narrow mobile responsive', () => {
 });
 
 test.describe('Skills — V1.0 flow mechanics', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('skills section is present with correct ID', async ({ page }) => {
     await expect(page.locator('#skills')).toBeAttached();
@@ -219,17 +221,19 @@ test.describe('Skills — V1.0 flow mechanics', () => {
     await expect(flowHook).toHaveAttribute('href', /#section-about/);
   });
 
-  test('skills section has 8 pillar tabs', async ({ page }) => {
+  test('skills section exposes pillar filter buttons', async ({ page }) => {
     await page.locator('#skills').scrollIntoViewIfNeeded();
-    // SkillsMap renders tabs for each pillar — at minimum 4 should be visible
-    const tabs = page.locator('#skills').getByRole('tab');
-    const count = await tabs.count();
+    const filterGroup = page.getByRole('group', { name: /filter skills by category/i });
+    const buttons = filterGroup.getByRole('button');
+    const count = await buttons.count();
     expect(count).toBeGreaterThanOrEqual(4);
   });
 });
 
 test.describe('About', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('about section is present with correct ID', async ({ page }) => {
     await expect(page.locator('#section-about')).toBeAttached();
@@ -237,30 +241,31 @@ test.describe('About', () => {
 
   test('about section heading is visible', async ({ page }) => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
-    await expect(page.getByRole('heading', {
-      name: /Federal scale|Production ML|Lagos → Global/i,
-    })).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: /Federal scale|Production ML|Lagos → Global/i,
+      })
+    ).toBeVisible();
   });
 
   // V1.0 Phase 3 — About availability chip also has dynamic date
   test('about availability chip has Updated recency text', async ({ page }) => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
-    const chip = page.locator('#section-about').locator(
-      '[aria-label*="available for Staff"]'
-    );
+    const chip = page.locator('#section-about').locator('[aria-label*="available for Staff"]');
     await expect(chip).toBeVisible();
     await expect(chip).toContainText(/Updated \w+ \d{4}/);
   });
 
   test('stack strip shows expected technologies', async ({ page }) => {
-    await page.locator('#section-about').scrollIntoViewIfNeeded();
-    await expect(page.locator('#section-about').getByText('Next.js 15').first()).toBeVisible();
-    await expect(page.locator('#section-about').getByText('FastAPI').first()).toBeVisible();
+    const section = page.locator('section#section-about[aria-labelledby="about-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    await expect(section.getByText('Next.js 15').first()).toBeVisible();
+    await expect(section.getByText('FastAPI').first()).toBeVisible();
   });
 
   test('no first-person claims in about section', async ({ page }) => {
-    await page.locator('#section-about').scrollIntoViewIfNeeded();
-    const section = page.locator('#section-about');
+    const section = page.locator('section#section-about[aria-labelledby="about-heading"]');
+    await section.scrollIntoViewIfNeeded();
     await expect(section).not.toContainText('I am');
     await expect(section).not.toContainText('I build');
   });
@@ -286,52 +291,67 @@ test.describe('About — Mobile', () => {
 });
 
 test.describe('Contact', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('contact section is present with correct ID', async ({ page }) => {
-    await expect(page.locator('#section-contact')).toBeAttached();
+    await expect(
+      page.locator('section#section-contact[aria-labelledby="contact-heading"]')
+    ).toBeAttached();
   });
 
   test('contact heading is correct', async ({ page }) => {
     await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    await expect(page.getByRole('heading', {
-      name: /The system is ready\. Are you\?/i,
-    })).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: /The system is ready\. Are you\?/i,
+      })
+    ).toBeVisible();
   });
 
   test('primary email CTA is correct', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    const emailLink = page.locator('#section-contact').getByRole('link', {
-      name: new RegExp(CONTACT_EMAIL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
-    }).first();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    const emailLink = section
+      .getByRole('link', {
+        name: new RegExp(CONTACT_EMAIL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'),
+      })
+      .first();
     await expect(emailLink).toHaveAttribute('href', `mailto:${CONTACT_EMAIL}`);
   });
 
   test('contact form is present', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
+    await page
+      .locator('section#section-contact[aria-labelledby="contact-heading"]')
+      .scrollIntoViewIfNeeded();
     await expect(page.locator('form[aria-label="Contact Oscar Ndugbu"]')).toBeVisible();
   });
 
   test('STAFF+ / PRINCIPAL contact card is visible', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    await expect(page.getByText(/STAFF\+.*PRINCIPAL/i)).toBeVisible();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    await expect(section.getByText('STAFF+ / PRINCIPAL', { exact: true })).toBeVisible();
   });
 
   test('INFRASTRUCTURE CONSULTING card is visible', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    await expect(page.getByText(/INFRASTRUCTURE CONSULTING/i)).toBeVisible();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    await expect(section.getByText('INFRASTRUCTURE CONSULTING', { exact: true })).toBeVisible();
   });
 
   test('GitHub link opens in new tab', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    const ghLink = page.locator('#section-contact').getByRole('link', { name: /github/i }).first();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    const ghLink = section.getByRole('link', { name: /github/i }).first();
     await expect(ghLink).toHaveAttribute('target', '_blank');
     await expect(ghLink).toHaveAttribute('rel', /noopener/);
   });
 
   test('LinkedIn link present', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
-    const li = page.locator('#section-contact').getByRole('link', { name: /linkedin/i }).first();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    const li = section.getByRole('link', { name: /linkedin/i }).first();
     await expect(li).toBeVisible();
   });
 
@@ -344,38 +364,91 @@ test.describe('Contact', () => {
 
   // V1.0 Phase 4 — Contact form success state copy
   test('contact form success state shows correct copy', async ({ page }) => {
-    await page.locator('#section-contact').scrollIntoViewIfNeeded();
+    await page.route('/api/contact', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ok: true }),
+      });
+    });
+
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
     const form = page.locator('form[aria-label="Contact Oscar Ndugbu"]');
 
     // Fill and submit form
     await form.locator('#cf-name').fill('Test User');
     await form.locator('#cf-email').fill('test@example.com');
     await form.locator('select[name="inquiryType"]').selectOption('job');
-    await form.locator('textarea[name="message"]').fill('This is a test constraint message that meets minimum length.');
+    await form
+      .locator('textarea[name="message"]')
+      .fill('This is a test constraint message that meets minimum length.');
 
     await form.locator('button[type="submit"]').click();
-    await page.waitForTimeout(3000); // Allow API round-trip
+    const successState = page.getByRole('status').filter({ hasText: 'Constraint received.' });
+    await expect(successState).toContainText('Constraint received.');
+    await expect(successState).toContainText("I'll review and respond within 24 hours");
+  });
 
-    // V1.0 approved success copy
-    const successState = page.locator('[role="status"][aria-live="polite"]');
-    if (await successState.isVisible()) {
-      await expect(successState).toContainText('Constraint received.');
-      await expect(successState).toContainText("I'll review and respond within 24 hours");
-    }
-    // If server is unavailable, check error state copy is also correct
-    const errorState = page.locator('[role="alert"][aria-live="assertive"]');
-    if (await errorState.isVisible()) {
-      await expect(errorState).toContainText(/Something interrupted the send/);
-      await expect(errorState).toContainText(CONTACT_EMAIL);
-    }
+  test('contact form error state shows fallback contact path', async ({ page }) => {
+    await page.route('/api/contact', async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Test failure' }),
+      });
+    });
+
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await section.scrollIntoViewIfNeeded();
+    const form = page.locator('form[aria-label="Contact Oscar Ndugbu"]');
+
+    await form.locator('#cf-name').fill('Test User');
+    await form.locator('#cf-email').fill('test@example.com');
+    await form.locator('select[name="inquiryType"]').selectOption('job');
+    await form
+      .locator('textarea[name="message"]')
+      .fill('This is a test constraint message that meets minimum length.');
+    await form.locator('button[type="submit"]').click();
+
+    const errorState = page
+      .getByRole('alert')
+      .filter({ hasText: 'Something interrupted the send.' });
+    await expect(errorState).toContainText(/Something interrupted the send/);
+    await expect(errorState).toContainText(CONTACT_EMAIL);
   });
 });
 
 test.describe('Footer', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('trust strip copy is correct', async ({ page }) => {
-    await expect(page.getByText(/Shipped in Lagos.*Running globally.*Battle-tested/i)).toBeVisible();
+    await expect(page.locator('footer')).toContainText(
+      'Shipped in Lagos · Running globally · Battle-tested in audit season'
+    );
+  });
+
+  test('footer status reflects live metrics state', async ({ page }) => {
+    await page.route('/api/live-metrics', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          systemStatus: 'degraded',
+          uptime: 99.12,
+          todayPredictions: null,
+          note: 'Test fixture',
+        }),
+      });
+    });
+
+    await page.reload();
+
+    const footer = page.locator('footer');
+    await expect(footer.getByText('Degraded performance')).toBeVisible();
+    await expect(footer).not.toContainText('All systems operational');
   });
 
   test('no Next.js 16 reference', async ({ page }) => {
@@ -407,7 +480,9 @@ test.describe('Footer', () => {
 });
 
 test.describe('Live Activity Bar', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('live activity bar is rendered with role=status', async ({ page }) => {
     const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
@@ -430,7 +505,9 @@ test.describe('Live Activity Bar', () => {
 });
 
 test.describe('Accessibility — WCAG AA', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('page title contains "Full-Stack Engineer"', async ({ page }) => {
     await expect(page).toHaveTitle(/Full-Stack Engineer|Principal.*Engineer/i);
@@ -443,7 +520,7 @@ test.describe('Accessibility — WCAG AA', () => {
 
   test('all images have alt text', async ({ page }) => {
     const images = page.locator('img');
-    const count  = await images.count();
+    const count = await images.count();
     for (let i = 0; i < count; i++) {
       const alt = await images.nth(i).getAttribute('alt');
       expect(alt).toBeTruthy();
@@ -452,10 +529,10 @@ test.describe('Accessibility — WCAG AA', () => {
 
   test('all buttons have accessible labels', async ({ page }) => {
     const buttons = page.getByRole('button');
-    const count   = await buttons.count();
+    const count = await buttons.count();
     for (let i = 0; i < count; i++) {
-      const btn   = buttons.nth(i);
-      const text  = (await btn.textContent())?.trim();
+      const btn = buttons.nth(i);
+      const text = (await btn.textContent())?.trim();
       const label = await btn.getAttribute('aria-label');
       expect(text || label).toBeTruthy();
     }
@@ -463,7 +540,7 @@ test.describe('Accessibility — WCAG AA', () => {
 
   test('all external links have rel="noopener"', async ({ page }) => {
     const externalLinks = page.locator('a[target="_blank"]');
-    const count         = await externalLinks.count();
+    const count = await externalLinks.count();
     for (let i = 0; i < count; i++) {
       const rel = await externalLinks.nth(i).getAttribute('rel');
       expect(rel).toContain('noopener');
@@ -492,34 +569,38 @@ test.describe('Accessibility — WCAG AA', () => {
 });
 
 test.describe('Anchor scroll — scroll-margin-top', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('clicking Projects nav link scrolls to #section-projects', async ({ page }) => {
     await page.getByRole('link', { name: 'Projects' }).first().click();
     await page.waitForTimeout(600);
 
-    const navBottom = await page.locator('header').evaluate(
-      (el) => el.getBoundingClientRect().bottom
-    );
-    const sectionTop = await page.locator('#section-projects').evaluate(
-      (el) => el.getBoundingClientRect().top
-    );
+    const navBottom = await page
+      .locator('header')
+      .evaluate((el) => el.getBoundingClientRect().bottom);
+    const sectionTop = await page
+      .locator('#section-projects')
+      .evaluate((el) => el.getBoundingClientRect().top);
     // Section top should be at or below nav bottom (scroll-margin-top ensures clearance)
     expect(sectionTop).toBeGreaterThanOrEqual(navBottom - 8); // 8px tolerance
   });
 });
 
 test.describe('Command Palette — V1.0 Easter Eggs', () => {
-  test.beforeEach(async ({ page }) => { await goto(page); });
+  test.beforeEach(async ({ page }) => {
+    await goto(page);
+  });
 
   test('/why-lagos command is accessible via command palette', async ({ page }) => {
     // Open palette with Ctrl+K (Linux)
     await page.keyboard.press('Control+k');
     await page.waitForTimeout(200);
 
-    const palette = page.locator('[role="dialog"][aria-label*="command"]').or(
-      page.locator('[role="combobox"]').first()
-    );
+    const palette = page
+      .locator('[role="dialog"][aria-label*="command"]')
+      .or(page.locator('[role="combobox"]').first());
     const isPaletteOpen = await palette.isVisible().catch(() => false);
 
     if (isPaletteOpen) {

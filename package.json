@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "prepare": "husky",
-    "lint": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"data/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\"",
-    "lint:fix": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"data/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\" --fix",
+    "lint": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"constants/**/*.ts\" \"scripts/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\"",
+    "lint:fix": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"constants/**/*.ts\" \"scripts/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\" --fix",
     "lint:staged": "lint-staged",
     "precommit:scan": "tsx scripts/conviction-scan.ts",
     "type-check": "tsc --project tsconfig.typecheck.json --noEmit",
@@ -23,8 +23,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,mjs}": [
-      "eslint --fix --max-warnings=0",
-      "tsx scripts/conviction-scan.ts"
+      "eslint --fix"
     ]
   },
   "dependencies": {

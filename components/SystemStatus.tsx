@@ -13,22 +13,30 @@ import { StatusPulseDot } from '@/components/shared/StatusPulseDot';
 
 type StatusValue = 'operational' | 'degraded' | 'down';
 
-const STATUS_CONFIG: Record<StatusValue, { label: string; color: string }> = {
+interface SystemStatusProps {
+  showLabel?: boolean;
+  labelMode?: 'short' | 'full';
+}
+
+const STATUS_CONFIG: Record<StatusValue, { label: string; shortLabel: string; color: string }> = {
   operational: {
     label: 'All systems operational',
+    shortLabel: 'Systems OK',
     color: 'var(--color-film-teal)',
   },
   degraded: {
     label: 'Degraded performance',
+    shortLabel: 'Degraded',
     color: 'var(--color-warning)',
   },
   down: {
     label: 'Service disruption',
+    shortLabel: 'Down',
     color: 'var(--color-danger)',
   },
 };
 
-export function SystemStatus({ showLabel = true }: { showLabel?: boolean } = {}) {
+export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemStatusProps = {}) {
   const [status, setStatus]   = useState<StatusValue>('operational');
   const [mounted, setMounted] = useState(false);
 
@@ -71,18 +79,13 @@ export function SystemStatus({ showLabel = true }: { showLabel?: boolean } = {})
       role="status"
       aria-label={cfg.label}
       title={cfg.label}
-      className="relative inline-flex items-center gap-1.5 select-none font-mono text-[10px] tracking-widest uppercase"
-      style={{ color: 'var(--color-text-muted)' }}
+      className="relative inline-flex items-center gap-1.5 select-none font-mono text-[10px] tracking-widest uppercase text-color-text-muted"
     >
       <StatusPulseDot color={cfg.color} pulseDuration="1.4s" />
 
       {showLabel && (
-        <span className="hidden sm:inline">
-          {status === 'operational'
-            ? 'Systems OK'
-            : status === 'degraded'
-              ? 'Degraded'
-              : 'Down'}
+        <span className={labelMode === 'full' ? 'inline' : 'hidden sm:inline'}>
+          {labelMode === 'full' ? cfg.label : cfg.shortLabel}
         </span>
       )}
     </span>

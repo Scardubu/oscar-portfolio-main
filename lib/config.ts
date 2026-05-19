@@ -5,14 +5,14 @@
  *
  * CRITICAL DISTINCTION — two functions, two contexts:
  *
- *   anchorUrl('#contact')
- *     → Returns '/#contact' (root-relative)
+ *   anchorUrl('section-contact')
+ *     → Returns '/#section-contact' (root-relative)
  *     → USE FOR: Next.js <Link href>, HTML <a href> for same-page anchors
  *     → WHY: Next.js Link with an absolute URL triggers a full hard page reload.
  *            A root-relative path uses client-side navigation correctly.
  *
- *   canonicalSectionUrl('contact')
- *     → Returns 'https://scardubu.dev/#contact' (absolute)
+ *   canonicalSectionUrl('section-contact')
+ *     → Returns 'https://scardubu.dev/#section-contact' (absolute)
  *     → USE FOR: <meta> tags, og:url, sitemap.xml, JSON-LD only
  *     → NEVER USE IN: <Link href> or <a href> for in-page navigation
  *
@@ -21,11 +21,10 @@
  * nav click. That function is removed. Use anchorUrl() instead.
  */
 
-export const SITE_URL: string =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://scardubu.dev'
+export const SITE_URL: string = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://scardubu.dev';
 
-export const BLOG_BASE: string = `${SITE_URL}/blog`
-export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf'
+export const BLOG_BASE: string = `${SITE_URL}/blog`;
+export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf';
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 
@@ -51,14 +50,14 @@ export const CV_ASSET_PATH = '/cv/oscar-ndugbu-resume.pdf'
  * ⚠️  VERIFY: Ensure oscar@scardubu.dev is configured in your Resend dashboard
  *     and set as the RESEND_TO_EMAIL environment variable in Vercel.
  */
-export const CONTACT_EMAIL = 'oscar@scardubu.dev'
+export const CONTACT_EMAIL = 'oscar@scardubu.dev';
 
 /**
  * SENDER_EMAIL — the "from" address used by Resend when sending contact
  * form submissions. Must be a verified domain sender in the Resend dashboard.
  * Do NOT hardcode this string anywhere else — import this constant.
  */
-export const SENDER_EMAIL = 'noreply@scardubu.dev'
+export const SENDER_EMAIL = 'noreply@scardubu.dev';
 
 // ─── Blog URLs ────────────────────────────────────────────────────────────────
 
@@ -68,7 +67,7 @@ export const SENDER_EMAIL = 'noreply@scardubu.dev'
  * These are external links — absolute URLs are correct here.
  */
 export function blogUrl(slug: string): string {
-  return `${BLOG_BASE}/${slug}`
+  return `${BLOG_BASE}/${slug}`;
 }
 
 // ─── In-page anchor navigation ────────────────────────────────────────────────
@@ -79,13 +78,13 @@ export function blogUrl(slug: string): string {
  * Returns: '/#section-id'
  *
  * Example:
- *   anchorUrl('contact')  → '/#contact'
- *   anchorUrl('projects') → '/#projects'
+ *   anchorUrl('section-contact')  → '/#section-contact'
+ *   anchorUrl('section-projects') → '/#section-projects'
  *
  * Use everywhere a nav link or CTA points to a section on the homepage.
  */
 export function anchorUrl(anchor: string): string {
-  return `/#${anchor}`
+  return `/#${anchor}`;
 }
 
 // ─── Canonical absolute URLs (meta/SEO only) ──────────────────────────────────
@@ -97,7 +96,7 @@ export function anchorUrl(anchor: string): string {
  * Returns: 'https://scardubu.dev/#section-id'
  */
 export function canonicalSectionUrl(anchor: string): string {
-  return `${SITE_URL}/#${anchor}`
+  return `${SITE_URL}/#${anchor}`;
 }
 
 // ─── GitHub API proxy ─────────────────────────────────────────────────────────
@@ -106,4 +105,4 @@ export function canonicalSectionUrl(anchor: string): string {
  * Base path for the server-side GitHub stats proxy.
  * Prevents unauthenticated rate limits (60 req/hr per IP).
  */
-export const GITHUB_PROXY_BASE = '/api/github'
+export const GITHUB_PROXY_BASE = '/api/github';

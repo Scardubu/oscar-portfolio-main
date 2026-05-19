@@ -4,7 +4,17 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT = process.cwd();
-const INCLUDED_DIRECTORIES = ['app', 'components', 'data', 'e2e', 'hooks', 'lib', 'scripts', 'src', 'tests'];
+
+// Directories scanned when no explicit file list is provided (whole-tree mode).
+const INCLUDED_DIRECTORIES = ['app', 'components', 'constants', 'hooks', 'lib'];
+
+// When lint-staged passes specific files, only check design-system directories.
+// Test directories (e2e, tests) use TypeScript/Playwright — not Tailwind — so the
+// inline-style and arbitrary-value checks produce false positives there.
+const DESIGN_SYSTEM_DIRECTORIES = new Set<string>([
+  'app', 'components', 'constants', 'hooks', 'lib',
+]);
+
 const IGNORED_DIRECTORIES = new Set<string>([
   '.git',
   '.next',
@@ -21,6 +31,12 @@ function isSupportedFile(filePath: string): boolean {
   return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
 }
 
+function isDesignSystemFile(filePath: string): boolean {
+  const relative = path.relative(ROOT, filePath);
+  const topLevel = relative.split(path.sep)[0];
+  return DESIGN_SYSTEM_DIRECTORIES.has(topLevel);
+}
+
 function normalizeFilePath(filePath: string): string {
   return path.isAbsolute(filePath) ? filePath : path.resolve(ROOT, filePath);
 }
@@ -33,11 +49,19 @@ function scanFile(filePath: string): string[] {
     issues.push('Inline styles detected');
   }
 
-  if (/\[[^\]]+\]/.test(content)) {
+  // Match actual Tailwind arbitrary-value syntax: prefix-[value] e.g. text-[14px], w-[100px].
+  // The pattern requires a word-prefix before the brackets to avoid matching TypeScript
+  // array syntax, Playwright attribute selectors, and other non-Tailwind brackets.
+  if (/\b\w+(?:-\w+)*-\[[^\]]+\]/.test(content)) {
     issues.push('Arbitrary Tailwind values detected');
   }
 
-  if (content.includes('initial={{') || content.includes('animate={{') || content.includes('exit={{')) {
+  // Only flag Framer Motion inline objects in JSX component files (.tsx).
+  // Plain .ts files (utilities, hooks) may legitimately reference these strings in types.
+  if (
+    path.extname(filePath) === '.tsx' &&
+    (content.includes('initial={{') || content.includes('animate={{') || content.includes('exit={{'))
+  ) {
     issues.push('Inline motion detected');
   }
 
@@ -65,7 +89,12 @@ function collectCandidateFiles(): string[] {
     .slice(2)
     .map(normalizeFilePath)
     .filter((filePath: string): boolean => {
-      return fs.existsSync(filePath) && fs.statSync(filePath).isFile() && isSupportedFile(filePath);
+      return (
+        fs.existsSync(filePath) &&
+        fs.statSync(filePath).isFile() &&
+        isSupportedFile(filePath) &&
+        isDesignSystemFile(filePath)
+      );
     });
 
   if (providedFiles.length > 0) {

@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 const sections = [
-  { name: 'Projects', id: 'projects' },
-  { name: 'About', id: 'about' },
-  { name: 'Contact', id: 'contact' },
+  { name: 'Projects', id: 'section-projects' },
+  { name: 'About', id: 'section-about' },
+  { name: 'Contact', id: 'section-contact' },
 ] as const;
 
 test('hero is visible above the fold', async ({ page }) => {
@@ -11,10 +11,12 @@ test('hero is visible above the fold', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: /The engineer you bring in when AI behavior, platform reliability, and product clarity/i,
+      name: /The system has to work at 2am/i,
     })
   ).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('Available — Staff+ · Co-founder · Consulting');
+  await expect(page.locator('[aria-label*="available for Staff"]').first()).toContainText(
+    /Updated \w+ \d{4}/
+  );
 });
 
 test('mobile viewport has no horizontal overflow', async ({ page, browserName }) => {
@@ -40,13 +42,18 @@ test('all required project cards render', async ({ page }) => {
 test('nav links scroll to matching sections', async ({ page }) => {
   await page.goto('/');
 
-  const navToggle = page.getByRole('button', { name: 'Toggle navigation' });
+  const navToggle = page.getByRole('button', {
+    name: /Open navigation menu|Close navigation menu/i,
+  });
   const isMobileNavigation = await navToggle.isVisible();
 
   for (const section of sections) {
     if (isMobileNavigation) {
       await navToggle.click();
-      await page.locator('#mobile-navigation').getByRole('link', { name: section.name }).click();
+      await page
+        .getByRole('dialog', { name: 'Navigation menu' })
+        .getByRole('link', { name: section.name })
+        .click();
     } else {
       await page.getByRole('link', { name: section.name }).first().click();
     }

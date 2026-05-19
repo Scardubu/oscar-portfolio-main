@@ -6,16 +6,20 @@ test('recruiter journey moves from hero to projects to contact', async ({ page }
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: /The engineer you bring in when AI behavior, platform reliability, and product clarity/i,
+      name: /The system has to work at 2am/i,
     })
   ).toBeVisible();
-  await page.getByRole('link', { name: 'View Projects' }).click();
-  await expect(page.locator('#projects')).toBeInViewport();
+  await page.getByRole('link', { name: 'See the work' }).click();
+  await expect(page.locator('#section-projects')).toBeInViewport();
 
-  await expect(page.getByRole('heading', { level: 2, name: 'Work that shipped' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 2, name: /Built to survive real constraints/i })
+  ).toBeVisible();
   await expect(page.locator('[data-project-id="sabiscore"]')).toBeVisible();
 
-  await page.getByRole('link', { name: 'Get in Touch' }).click();
-  await expect(page.locator('#contact')).toBeInViewport();
-  await expect(page.getByRole('heading', { level: 2, name: 'Available. Direct path.' })).toBeVisible();
+  await page.getByRole('link', { name: 'Contact' }).first().click();
+  await expect(page.locator('#section-contact')).toBeInViewport();
+  await expect(
+    page.getByRole('heading', { level: 2, name: /The system is ready\. Are you\?/i })
+  ).toBeVisible();
 });

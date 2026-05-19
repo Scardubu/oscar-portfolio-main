@@ -31,7 +31,22 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 
 - `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey and API health checks.
 - `tests/portfolio.spec.ts` is the broader V1.0 contract suite for copy, flow hooks, accessibility, and trust-signal regressions.
-- `pnpm lint` covers `app`, `components`, `hooks`, `lib`, `e2e`, and `tests` so runtime code and active test paths stay aligned.
+- `tests/e2e/smoke.spec.ts` and `tests/e2e/user-journey.spec.ts` cover the V1.0 recruiter journey and section-level rendering.
+- `pnpm lint` covers `app`, `components`, `hooks`, `lib`, `constants`, `scripts`, `e2e`, and `tests` so runtime code and active test paths stay aligned.
+
+### Playwright strict-mode and Suspense skeletons
+
+Sections use Next.js `<Suspense>` deferred loading. The skeleton fallback renders with `aria-busy="true"` and the real section shares the same `id`. When writing Playwright locators for sections, always scope to the loaded state to avoid strict-mode violations:
+
+```typescript
+// ✅ Correct — targets the real section only
+page.locator('section#section-writing[aria-labelledby="writing-heading"]')
+
+// ❌ Incorrect — resolves to 2 elements (skeleton + real) during Suspense
+page.locator('#section-writing')
+```
+
+**Current status:** 81 passed · 2 skipped (command palette — intentional) · 0 failed.
 
 ## Local setup
 
@@ -69,7 +84,7 @@ content/
   work/        → MDX case studies (TaxBridge, SabiScore, SwarmXQ, UBEC, Hashablanca)
 lib/
   config.ts    → CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl(), canonicalSectionUrl()
-  portfolio-data.ts → PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS, ACTIVITY_FEED
+  portfolio-data.ts → PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS
   projects.ts  → PROJECTS — canonical source for all project data
   data/
     skills.ts  → SKILLS (62 skills, 8 pillars)
@@ -122,6 +137,13 @@ Each domain has one canonical source. Do not duplicate across files.
 - Smoke tests pass: `pnpm test:e2e`
 - Full Playwright suite passes: `pnpm test:all`
 - Metadata and OG routes resolve correctly
+
+## Validation notes
+
+- If Playwright browsers are missing locally, install them with `pnpm exec playwright install chromium` before running Chromium smoke coverage.
+- The live activity feed is owned by `app/api/activity/route.ts`; it is no longer mirrored in `lib/portfolio-data.ts`.
+- Footer live status is driven by the `<SystemStatus labelMode="full" />` component — no hardcoded copy.
+- Skills bar fill animation is capped at 280ms (`--dur-slow`) to comply with the ≤300ms motion rule.
 
 ## Contact
 

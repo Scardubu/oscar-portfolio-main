@@ -214,8 +214,8 @@ export function SkillsSection() {
                       reducedMotion
                         ? { duration: 0 }
                         : {
-                            delay: idx * 0.06 + 0.2,
-                            duration: 0.8,
+                            delay: idx * 0.04 + 0.08,
+                            duration: 0.28,
                             ease: [0.16, 1, 0.3, 1],
                           }
                     }
