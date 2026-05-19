@@ -46,7 +46,7 @@ page.locator('section#section-writing[aria-labelledby="writing-heading"]')
 page.locator('#section-writing')
 ```
 
-**Current status:** 81 passed · 2 skipped (command palette — intentional) · 0 failed.
+**Current status:** 82 passed · 2 skipped (command palette — intentional) · 0 failed.
 
 ## Local setup
 
@@ -68,6 +68,7 @@ pnpm start        # run built app
 pnpm lint         # ESLint checks
 pnpm lint:fix     # auto-fix lint issues
 pnpm type-check   # strict TypeScript checks
+pnpm test:smoke   # production build + Chromium smoke subset used by pre-commit
 pnpm test:e2e     # Playwright smoke suite (Chromium)
 pnpm test:all     # full Playwright matrix
 pnpm audit:copy   # content compliance checks
@@ -133,6 +134,7 @@ Each domain has one canonical source. Do not duplicate across files.
 
 - Build passes: `pnpm build`
 - Type checks pass: `pnpm type-check`
+- Pre-commit smoke passes: `pnpm test:smoke`
 - Lint passes: `pnpm lint`
 - Smoke tests pass: `pnpm test:e2e`
 - Full Playwright suite passes: `pnpm test:all`
@@ -141,6 +143,7 @@ Each domain has one canonical source. Do not duplicate across files.
 ## Validation notes
 
 - If Playwright browsers are missing locally, install them with `pnpm exec playwright install chromium` before running Chromium smoke coverage.
+- `.husky/pre-commit` runs `lint-staged`, `pnpm run type-check`, and `pnpm run test:smoke`.
 - Root-level Playwright smoke specs under `e2e/` are included in the TypeScript project so `@/` aliases resolve during editor and CI checks.
 - The live activity feed is owned by `app/api/activity/route.ts`; it is no longer mirrored in `lib/portfolio-data.ts`.
 - Footer live status is driven by the `<SystemStatus labelMode="full" />` component — no hardcoded copy.

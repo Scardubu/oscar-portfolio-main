@@ -1,8 +1,9 @@
 #!/bin/sh
 
-echo "🔍 Running pre-commit checks..."
+echo "🔍 Running pre-commit pipeline..."
 
 pnpm exec lint-staged || exit 1
 pnpm run type-check || exit 1
+pnpm run test:smoke || exit 1
 
-echo "✅ Pre-commit checks passed."
+echo "✅ All checks passed."

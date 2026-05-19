@@ -306,15 +306,11 @@ html {
     0 4px 16px -2px oklch(0% 0 0 / 0.38), 0 0 0 1px oklch(100% 0 0 / 0.06);
 
   --glow-projects:
-    radial-gradient(ellipse 70% 60% at 20% 20%, oklch(70% 0.21 188 / 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, oklch(73% 0.17 65 / 0.04) 0%, transparent 60%);
-  --glow-about: radial-gradient(
-    ellipse 60% 50% at 80% 30%,
-    oklch(70% 0.21 188 / 0.05) 0%,
-    transparent 70%
-  );
+    radial-gradient(circle at 20% 20%, oklch(70% 0.21 188 / 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, oklch(73% 0.17 65 / 0.04) 0%, transparent 60%);
+  --glow-about: radial-gradient(circle at 80% 30%, oklch(70% 0.21 188 / 0.05) 0%, transparent 70%);
   --glow-contact: radial-gradient(
-    ellipse 70% 60% at 30% 50%,
+    circle at 30% 50%,
     oklch(65% 0.18 155 / 0.04) 0%,
     transparent 60%
   );
@@ -428,11 +424,7 @@ body::after {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    transparent 40%,
-    oklch(4% 0.01 265 / 0.4) 100%
-  );
+  background: radial-gradient(circle at center, transparent 40%, oklch(4% 0.01 265 / 0.4) 100%);
 }
 @media (max-width: 768px) {
   body::after {
