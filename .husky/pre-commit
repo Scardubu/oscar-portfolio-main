@@ -1,5 +1,8 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
-pnpm exec lint-staged
-pnpm run type-check
+echo "🔍 Running pre-commit checks..."
+
+pnpm exec lint-staged || exit 1
+pnpm run type-check || exit 1
+
+echo "✅ Pre-commit checks passed."
