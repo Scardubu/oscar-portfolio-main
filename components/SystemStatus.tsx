@@ -78,7 +78,7 @@ export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemSt
       role="status"
       aria-label={cfg.label}
       title={cfg.label}
-      className="text-color-text-muted relative inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase select-none"
+      className="text-color-text-muted text-2xs relative inline-flex items-center gap-1.5 font-mono tracking-widest uppercase select-none"
     >
       <StatusPulseDot color={cfg.color} pulseDuration="1.4s" />
 

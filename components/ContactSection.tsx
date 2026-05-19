@@ -7,13 +7,7 @@ import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'rea
 
 import { CopyEmail } from '@/components/CopyEmail';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
-import {
-    cardReveal,
-    clipReveal,
-    fadeRise,
-    noMotion,
-    staggerContainer,
-} from '@/lib/motionVariants';
+import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import React from 'react';
 
 const CONTACT_CARDS = [
@@ -22,7 +16,8 @@ const CONTACT_CARDS = [
     title: 'STAFF+ / PRINCIPAL',
     headline: 'Full-stack delivery · mobile app through production API',
     body: 'Staff+ and Principal roles at fintech and AI-native companies. Ownership of the entire surface — React Native mobile, Next.js dashboard, Fastify API, PostgreSQL RLS data layer. Multi-tenant isolation and zero-downtime deployments are baseline, not negotiated features.',
-    objection: 'TypeScript 5 · Effect-TS · React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Turborepo.',
+    objection:
+      'TypeScript 5 · Effect-TS · React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Turborepo.',
     accentColor: 'var(--color-success)',
   },
   {
@@ -30,7 +25,8 @@ const CONTACT_CARDS = [
     title: 'TECHNICAL CO-FOUNDER',
     headline: 'Pre-seed to Series A · Africa / emerging markets',
     body: 'Four years shipping production platforms from scratch under compliance pressure — NRS/DigiTax 2026, NDPC, and FIRS audit requirements. Systems that hold through due diligence, not just through the demo.',
-    objection: 'The system should outlast the seed deck. Available for full-time equity engagements.',
+    objection:
+      'The system should outlast the seed deck. Available for full-time equity engagements.',
     accentColor: 'var(--color-accent)',
   },
   {
@@ -38,7 +34,8 @@ const CONTACT_CARDS = [
     title: 'INFRASTRUCTURE CONSULTING',
     headline: 'Production reliability · compliance remediation · ML backends',
     body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NRS 2026 / FIRS DigiTax), ML inference optimisation, and multi-tenant PostgreSQL RLS implementation.',
-    objection: 'You get working infrastructure and documented decisions — not a billable-hour report.',
+    objection:
+      'You get working infrastructure and documented decisions — not a billable-hour report.',
     accentColor: 'var(--color-cyan)',
   },
 ] as const;
@@ -50,11 +47,19 @@ const TRUST_BADGES = [
   'NRS · NDPC Compliant',
 ] as const;
 
+// V1.0 §Form State Copy — field validation messages (hoisted: static, no closure deps)
+const FIELD_ERRORS: Record<string, string> = {
+  name: "Your name helps me know who I'm writing to.",
+  email: 'Need a working address to respond.',
+  inquiryType: 'Select the best fit — it shapes the response.',
+  message: 'This is the important part — describe the constraint.',
+};
+
 const INQUIRY_TYPES = [
-  { value: 'job',           label: 'Staff+ / Full-time role' },
-  { value: 'consulting',    label: 'Consulting / Contract'   },
-  { value: 'collaboration', label: 'Co-founder'              },
-  { value: 'advisory',      label: 'Advisory'                },
+  { value: 'job', label: 'Staff+ / Full-time role' },
+  { value: 'consulting', label: 'Consulting / Contract' },
+  { value: 'collaboration', label: 'Co-founder' },
+  { value: 'advisory', label: 'Advisory' },
 ] as const;
 
 function GitHubIcon() {
@@ -96,14 +101,9 @@ function ContactForm() {
   // Change 1d — V1.0: field-level validation errors per spec §Form State Copy
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
 
-  const FIELD_ERRORS: Record<string, string> = {
-    name:        "Your name helps me know who I'm writing to.",
-    email:       'Need a working address to respond.',
-    inquiryType: 'Select the best fit — it shapes the response.',
-    message:     'This is the important part — describe the constraint.',
-  };
-
-  function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleBlur(
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     const { name, value } = e.target;
     if (!value.trim()) {
       setFieldErrors((prev) => ({ ...prev, [name]: FIELD_ERRORS[name] }));
@@ -146,8 +146,11 @@ function ContactForm() {
   if (state === 'success') {
     return (
       <div
-        className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 sm:p-10 text-center"
-        style={{ borderColor: 'oklch(65% 0.18 155 / 0.4)', background: 'oklch(65% 0.18 155 / 0.06)' }}
+        className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 text-center sm:p-10"
+        style={{
+          borderColor: 'oklch(65% 0.18 155 / 0.4)',
+          background: 'oklch(65% 0.18 155 / 0.06)',
+        }}
         role="status"
         aria-live="polite"
       >
@@ -155,21 +158,31 @@ function ContactForm() {
           className="flex h-12 w-12 items-center justify-center rounded-full"
           style={{ background: 'oklch(65% 0.18 155 / 0.15)' }}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-success)' }} aria-hidden="true">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-color-success"
+            aria-hidden="true"
+          >
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p className="font-display text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
+        <p className="font-display text-color-text-primary text-lg font-bold">
           Constraint received.
         </p>
-        <p className="text-sm leading-7 max-w-[40ch]" style={{ color: 'var(--color-text-secondary)' }}>
+        <p className="text-color-text-secondary max-w-[40ch] text-sm leading-7">
           I&apos;ll review and respond within 24 hours — usually faster.
         </p>
         <button
           type="button"
           onClick={() => setState('idle')}
-          className="mt-2 min-h-[48px] px-4 font-mono text-xs tracking-widest uppercase transition hover:opacity-70"
-          style={{ color: 'var(--color-text-muted)' }}
+          className="text-color-text-muted mt-2 min-h-[48px] px-4 font-mono text-xs tracking-widest uppercase transition hover:opacity-70"
           aria-label="Send another message"
         >
           Send another ↩
@@ -186,14 +199,15 @@ function ContactForm() {
       noValidate
       aria-label="Contact Oscar Ndugbu"
     >
-      <p className="label-mono mb-5" style={{ color: 'var(--color-film-teal)' }}>
-        START A CONVERSATION
-      </p>
+      <p className="label-mono text-color-film-teal mb-5">START A CONVERSATION</p>
 
-      <div className="grid gap-4 sm:grid-cols-2 mb-4">
+      <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <div className="contact-field-group">
           <label htmlFor="cf-name" className="contact-field-label">
-            Name <span aria-hidden="true" style={{ color: 'var(--color-success)' }}>*</span>
+            Name{' '}
+            <span aria-hidden="true" className="text-color-success">
+              *
+            </span>
           </label>
           <input
             id="cf-name"
@@ -211,7 +225,7 @@ function ContactForm() {
             disabled={state === 'loading'}
           />
           {fieldErrors.name && (
-            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
               {fieldErrors.name}
             </p>
           )}
@@ -219,7 +233,10 @@ function ContactForm() {
 
         <div className="contact-field-group">
           <label htmlFor="cf-email" className="contact-field-label">
-            Email <span aria-hidden="true" style={{ color: 'var(--color-success)' }}>*</span>
+            Email{' '}
+            <span aria-hidden="true" className="text-color-success">
+              *
+            </span>
           </label>
           <input
             id="cf-email"
@@ -235,14 +252,14 @@ function ContactForm() {
             disabled={state === 'loading'}
           />
           {fieldErrors.email && (
-            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
               {fieldErrors.email}
             </p>
           )}
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 mb-4">
+      <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <div className="contact-field-group">
           <label htmlFor="cf-company" className="contact-field-label">
             Company <span className="contact-field-optional">(optional)</span>
@@ -263,7 +280,10 @@ function ContactForm() {
 
         <div className="contact-field-group">
           <label htmlFor="cf-type" className="contact-field-label">
-            Inquiry type <span aria-hidden="true" style={{ color: 'var(--color-success)' }}>*</span>
+            Inquiry type{' '}
+            <span aria-hidden="true" className="text-color-success">
+              *
+            </span>
           </label>
           <select
             id="cf-type"
@@ -276,11 +296,13 @@ function ContactForm() {
             disabled={state === 'loading'}
           >
             {INQUIRY_TYPES.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
           {fieldErrors.inquiryType && (
-            <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
               {fieldErrors.inquiryType}
             </p>
           )}
@@ -289,7 +311,10 @@ function ContactForm() {
 
       <div className="contact-field-group mb-5">
         <label htmlFor="cf-message" className="contact-field-label">
-          What are we solving? <span aria-hidden="true" style={{ color: 'var(--color-success)' }}>*</span>
+          What are we solving?{' '}
+          <span aria-hidden="true" className="text-color-success">
+            *
+          </span>
         </label>
         <textarea
           id="cf-message"
@@ -306,11 +331,11 @@ function ContactForm() {
           disabled={state === 'loading'}
         />
         {fieldErrors.message && (
-          <p className="mt-1 font-mono text-[10px]" style={{ color: 'var(--color-film-teal)' }} role="alert">
+          <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
             {fieldErrors.message}
           </p>
         )}
-        <p className="mt-1.5 font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+        <p className="text-2xs text-color-text-muted mt-1.5 font-mono">
           {values.message.length}/500 characters
         </p>
       </div>
@@ -318,15 +343,18 @@ function ContactForm() {
       {state === 'error' && (
         <p
           className="mb-4 rounded-lg px-3 py-2.5 text-sm font-medium"
-          style={{ background: 'oklch(60% 0.22 25 / 0.10)', color: 'oklch(72% 0.18 28)', border: '1px solid oklch(60% 0.22 25 / 0.25)' }}
+          style={{
+            background: 'oklch(60% 0.22 25 / 0.10)',
+            color: 'oklch(72% 0.18 28)',
+            border: '1px solid oklch(60% 0.22 25 / 0.25)',
+          }}
           role="alert"
           aria-live="assertive"
         >
           Something interrupted the send. Try again, or reach me directly at{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="underline underline-offset-2"
-            style={{ color: 'var(--color-film-teal)' }}
+            className="text-color-film-teal underline underline-offset-2"
           >
             {CONTACT_EMAIL}
           </a>
@@ -350,8 +378,7 @@ function ContactForm() {
         ) : (
           <>
             <span
-              className="inline-block h-2 w-2 rounded-full"
-              style={{ background: 'var(--color-success)' }}
+              className="bg-color-success inline-block h-2 w-2 rounded-full"
               aria-hidden="true"
             />
             Send — I&apos;ll respond within 24h
@@ -359,12 +386,11 @@ function ContactForm() {
         )}
       </button>
 
-      <p className="mt-3 text-center font-mono text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+      <p className="text-2xs text-color-text-muted mt-3 text-center font-mono">
         Or email directly:{' '}
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          className="underline underline-offset-2 transition hover:opacity-70"
-          style={{ color: 'var(--color-film-teal)' }}
+          className="text-color-film-teal underline underline-offset-2 transition hover:opacity-70"
         >
           {CONTACT_EMAIL}
         </a>
@@ -393,17 +419,14 @@ export function ContactSection() {
       id="section-contact"
       ref={ref}
       aria-labelledby="contact-heading"
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
     >
       <div className="container">
-        <m.div
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-        >
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.div variants={child} className="section-kicker-row">
-            <span className="section-number" aria-hidden="true">06</span>
+            <span className="section-number" aria-hidden="true">
+              06
+            </span>
             <span className="section-label">Contact</span>
           </m.div>
 
@@ -416,11 +439,7 @@ export function ContactSection() {
           */}
           <div className="section-intro-editorial mb-6 sm:mb-8">
             {/* Left: heading */}
-            <m.h2
-              variants={headingVariant}
-              id="contact-heading"
-              className="mt-4 lg:mt-0"
-            >
+            <m.h2 variants={headingVariant} id="contact-heading" className="mt-4 lg:mt-0">
               The system is ready. Are you?
             </m.h2>
 
@@ -428,27 +447,21 @@ export function ContactSection() {
             <div className="lg:flex lg:flex-col lg:justify-end">
               <m.p
                 variants={child}
-                className="mt-4 lg:mt-0 max-w-[52ch] text-base leading-8"
-                style={{ color: 'var(--color-text-secondary)' }}
+                className="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
               >
-                Hiring for Staff+, building from scratch, or containing a production
-                incident — send the constraint. I respond within 24 hours, usually faster.
+                Hiring for Staff+, building from scratch, or containing a production incident — send
+                the constraint. I respond within 24 hours, usually faster.
               </m.p>
             </div>
           </div>
 
-          <m.div
-            variants={child}
-            className="mb-8 flex flex-wrap gap-2"
-            aria-label="Trust signals"
-          >
+          <m.div variants={child} className="mb-8 flex flex-wrap gap-2" aria-label="Trust signals">
             {TRUST_BADGES.map((badge) => (
               <span
                 key={badge}
-                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] tracking-widest uppercase"
+                className="text-2xs text-color-text-muted inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono tracking-widest uppercase"
                 style={{
                   borderColor: 'var(--color-border-glass)',
-                  color: 'var(--color-text-muted)',
                   background: 'oklch(100% 0 0 / 0.03)',
                 }}
               >
@@ -458,10 +471,7 @@ export function ContactSection() {
           </m.div>
 
           {/* Two-column: Form left, Cards right */}
-          <m.div
-            variants={container}
-            className="grid gap-6 lg:grid-cols-2"
-          >
+          <m.div variants={container} className="grid gap-6 lg:grid-cols-2">
             <m.div variants={child}>
               <ContactForm />
             </m.div>
@@ -471,7 +481,7 @@ export function ContactSection() {
                 <m.div
                   key={card_item.id}
                   variants={cardVariant(i)}
-                  className="rounded-[var(--radius-xl)] p-5 relative overflow-hidden glass-medium"
+                  className="glass-medium relative overflow-hidden rounded-[var(--radius-xl)] p-5"
                   style={{ borderLeft: `3px solid ${card_item.accentColor}` }}
                   whileHover={
                     reducedMotion
@@ -479,15 +489,15 @@ export function ContactSection() {
                       : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
                   }
                 >
-                  <p
-                    className="label-mono mb-2"
-                    style={{ color: card_item.accentColor }}
-                  >
+                  <p className="label-mono mb-2" style={{ color: card_item.accentColor }}>
                     {card_item.title}
                   </p>
                   <p
-                    className="text-sm font-semibold leading-snug mb-2"
-                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}
+                    className="mb-2 text-sm leading-snug font-semibold"
+                    style={{
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-display)',
+                    }}
                   >
                     {card_item.headline}
                   </p>
@@ -495,8 +505,11 @@ export function ContactSection() {
                     {card_item.body}
                   </p>
                   <p
-                    className="mt-2 text-[11px] leading-5 italic border-t pt-2"
-                    style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-muted)' }}
+                    className="mt-2 border-t pt-2 text-[11px] leading-5 italic"
+                    style={{
+                      borderColor: 'var(--color-border-subtle)',
+                      color: 'var(--color-text-muted)',
+                    }}
                   >
                     {card_item.objection}
                   </p>
@@ -515,7 +528,7 @@ export function ContactSection() {
                 href="https://github.com/Scardubu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm transition-colors min-h-11 min-w-11"
+                className="inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
                 style={{ color: 'var(--color-text-muted)' }}
                 aria-label="GitHub profile"
               >
@@ -526,7 +539,7 @@ export function ContactSection() {
                 href="https://linkedin.com/in/oscardubu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm transition-colors min-h-11 min-w-11"
+                className="inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
                 style={{ color: 'var(--color-text-muted)' }}
                 aria-label="LinkedIn profile"
               >
@@ -537,7 +550,7 @@ export function ContactSection() {
               <a
                 href={CV_ASSET_PATH}
                 download
-                className="hidden sm:inline-flex items-center gap-1.5 text-sm transition-colors min-h-11 hover:text-white"
+                className="hidden min-h-11 items-center gap-1.5 text-sm transition-colors hover:text-white sm:inline-flex"
                 style={{ color: 'var(--color-text-muted)' }}
                 aria-label="Download Oscar's resume PDF"
               >
@@ -546,7 +559,7 @@ export function ContactSection() {
             </div>
 
             <p
-              className="font-mono text-[10px] tracking-wider uppercase max-w-[36ch] text-right hidden md:block"
+              className="hidden max-w-[36ch] text-right font-mono text-[10px] tracking-wider uppercase md:block"
               style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}
             >
               Systems that work at 2am.

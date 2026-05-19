@@ -14,47 +14,47 @@ import { m, useReducedMotion } from 'framer-motion';
 
 interface KineticHeadlineProps {
   /** The text to animate character by character */
-  text:         string;
+  text: string;
   /** Wrapper element — defaults to h1 */
-  as?:          'h1' | 'h2' | 'h3' | 'span';
+  as?: 'h1' | 'h2' | 'h3' | 'span';
   /** Apply gradient text style */
-  gradient?:    boolean;
+  gradient?: boolean;
   /** Stagger delay per character (seconds) */
-  stagger?:     number;
+  stagger?: number;
   /** Initial reveal delay (seconds) */
-  delay?:       number;
-  className?:   string;
+  delay?: number;
+  className?: string;
   /** If false, render as static text (for section headings) */
-  animated?:    boolean;
+  animated?: boolean;
 }
 
 const CHAR_VARIANTS = {
-  hidden:  { opacity: 0, y: 24,  rotateX: -30, filter: 'blur(4px)' },
-  visible: { opacity: 1, y: 0,   rotateX:   0, filter: 'blur(0px)' },
+  hidden: { opacity: 0, y: 24, rotateX: -30, filter: 'blur(4px)' },
+  visible: { opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)' },
 };
 
 const WORD_VARIANTS = {
-  hidden:  { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0  },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
 };
 
 export default function KineticHeadline({
   text,
-  as: Tag  = 'h1',
-  gradient  = false,
-  stagger   = 0.028,
-  delay     = 0,
+  as: Tag = 'h1',
+  gradient = false,
+  stagger = 0.028,
+  delay = 0,
   className,
-  animated  = true,
+  animated = true,
 }: KineticHeadlineProps) {
   const shouldReduce = useReducedMotion();
 
   const containerVariants = {
-    hidden:  {},
+    hidden: {},
     visible: {
       transition: {
-        staggerChildren:  shouldReduce ? 0 : stagger,
-        delayChildren:    delay,
+        staggerChildren: shouldReduce ? 0 : stagger,
+        delayChildren: delay,
       },
     },
   };
@@ -62,21 +62,12 @@ export default function KineticHeadline({
   const charVariant = shouldReduce ? WORD_VARIANTS : CHAR_VARIANTS;
 
   const charTransition = {
-    duration:  shouldReduce ? 0.3 : 0.5,
-    ease:      [0.34, 1.56, 0.64, 1] as [number,number,number,number], // spring
+    duration: shouldReduce ? 0.2 : 0.28,
+    ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number], // spring
   };
 
   if (!animated) {
-    return (
-      <Tag
-        className={cn(
-          gradient && 'text-gradient-kinetic',
-          className
-        )}
-      >
-        {text}
-      </Tag>
-    );
+    return <Tag className={cn(gradient && 'text-gradient-kinetic', className)}>{text}</Tag>;
   }
 
   // Split into words to enable line wrapping, animate per-character
@@ -102,11 +93,7 @@ export default function KineticHeadline({
             ))}
             {/* Non-breaking space between words */}
             {wi < words.length - 1 && (
-              <m.span
-                variants={charVariant}
-                transition={charTransition}
-                className="inline-block"
-              >
+              <m.span variants={charVariant} transition={charTransition} className="inline-block">
                 &nbsp;
               </m.span>
             )}

@@ -214,8 +214,10 @@ test.describe('Skills — V1.0 flow mechanics', () => {
 
   // V1.0 Phase 2 — Skills flow hook links to #section-about (not #section-projects)
   test('skills flow hook links to the About section', async ({ page }) => {
-    await page.locator('#skills').scrollIntoViewIfNeeded();
-    const flowHook = page.locator('#skills').getByRole('link', {
+    // Use the strict selector to avoid matching the Suspense skeleton (aria-busy)
+    const skillsSection = page.locator('section#skills[aria-labelledby="skills-heading"]');
+    await skillsSection.scrollIntoViewIfNeeded();
+    const flowHook = skillsSection.getByRole('link', {
       name: /62 skills map to three live systems/i,
     });
     await expect(flowHook).toHaveAttribute('href', /#section-about/);
