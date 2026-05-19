@@ -4,6 +4,10 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { CONTACT_EMAIL } from '@/lib/config';
 
+type CommandPaletteGlobal = typeof globalThis & {
+  __commandPaletteRequested?: boolean;
+};
+
 async function goto(page: Page) {
   await page.goto('/');
   await expect(page.locator('h1')).toBeVisible();
@@ -89,8 +93,7 @@ test.describe('Portfolio smoke tests', () => {
     await goto(page);
 
     await page.addInitScript(() => {
-      (globalThis as Window & { __commandPaletteRequested?: boolean }).__commandPaletteRequested =
-        true;
+      (globalThis as CommandPaletteGlobal).__commandPaletteRequested = true;
     });
     await page.reload();
     await expect(page.locator('h1')).toBeVisible();

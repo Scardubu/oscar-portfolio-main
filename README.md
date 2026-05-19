@@ -29,7 +29,7 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 
 ## Testing strategy
 
-- `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey and API health checks.
+- `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey, API health checks, and mobile overflow regressions.
 - `tests/portfolio.spec.ts` is the broader V1.0 contract suite for copy, flow hooks, accessibility, and trust-signal regressions.
 - `tests/e2e/smoke.spec.ts` and `tests/e2e/user-journey.spec.ts` cover the V1.0 recruiter journey and section-level rendering.
 - `pnpm lint` covers `app`, `components`, `hooks`, `lib`, `constants`, `scripts`, `e2e`, and `tests` so runtime code and active test paths stay aligned.
@@ -96,16 +96,16 @@ public/
 
 ## Site sections
 
-| #    | Section           | ID                     | What it proves                                           |
-| ---- | ----------------- | ---------------------- | -------------------------------------------------------- |
-| 00   | Hero              | —                      | Positioning, conviction stats, proof carousel            |
-| 01   | Projects          | `section-projects`     | 4 case studies with arch decisions                       |
-| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes)         |
-| 02   | Open Source       | `open-source`          | 4 production packages                                    |
-| 03   | Skills            | `skills`               | 62 skills across 8 pillars, each traced to a live system |
-| 04   | About             | `section-about`        | Operating context and credibility                        |
-| 05   | Writing           | `section-writing`      | 6 technical posts                                        |
-| 06   | Contact           | `section-contact`      | 3 engagement types + contact form                        |
+| #    | Section           | ID                     | What it proves                                             |
+| ---- | ----------------- | ---------------------- | ---------------------------------------------------------- |
+| 00   | Hero              | —                      | Positioning, conviction stats, proof carousel              |
+| 01   | Projects          | `section-projects`     | 4 case studies with arch decisions                         |
+| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes)           |
+| 02   | Open Source       | `open-source`          | 4 production packages                                      |
+| 03   | Skills            | `skills`               | L1 trust layer + L2 lineage strip + full 62-skill explorer |
+| 04   | About             | `section-about`        | Operating context and credibility                          |
+| 05   | Writing           | `section-writing`      | 6 technical posts                                          |
+| 06   | Contact           | `section-contact`      | 3 engagement types + contact form                          |
 
 ## Data layer
 
@@ -127,7 +127,7 @@ Each domain has one canonical source. Do not duplicate across files.
 1. Push to `main` → Vercel auto-builds with `pnpm build`
 2. Verify production routes: `/`, `/work/[slug]`, `/writing`, `/api/og`
 3. Confirm resume download: `/cv/oscar-ndugbu-resume.pdf`
-4. Confirm Skills section at `/#skills` renders all 8 pillars
+4. Confirm Skills section at `/#skills` renders the L1 trust layer, L2 lineage strip, and all 8 explorer pillars
 
 ## Quality gates
 
@@ -141,6 +141,7 @@ Each domain has one canonical source. Do not duplicate across files.
 ## Validation notes
 
 - If Playwright browsers are missing locally, install them with `pnpm exec playwright install chromium` before running Chromium smoke coverage.
+- Root-level Playwright smoke specs under `e2e/` are included in the TypeScript project so `@/` aliases resolve during editor and CI checks.
 - The live activity feed is owned by `app/api/activity/route.ts`; it is no longer mirrored in `lib/portfolio-data.ts`.
 - Footer live status is driven by the `<SystemStatus labelMode="full" />` component — no hardcoded copy.
 - Skills bar fill animation is capped at 280ms (`--dur-slow`) to comply with the ≤300ms motion rule.

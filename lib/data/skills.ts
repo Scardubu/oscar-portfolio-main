@@ -501,9 +501,113 @@ export const ALL_PILLARS: SkillPillar[] = [
 ];
 
 export function getSkillsByPillar(pillar: SkillPillar): SkillNode[] {
-  return SKILLS.filter(s => s.pillar === pillar);
+  return SKILLS.filter((s) => s.pillar === pillar);
 }
 
 export function getSkillsBySystem(systemId: string): SkillNode[] {
-  return SKILLS.filter(s => (s.tags as readonly string[]).includes(`used-in:${systemId}`));
+  return SKILLS.filter((s) => (s.tags as readonly string[]).includes(`used-in:${systemId}`));
 }
+
+// ── L1 Core Production Skills ─────────────────────────────────────────────────
+// Ordered by strategic trust impact: full-stack range → compliance backend →
+// reliability infrastructure → production ML → AI orchestration → fintech constraint.
+// IDs are stable references to the SKILLS array above — display values derive from there.
+const L1_SKILL_IDS: readonly string[] = [
+  // Full-stack range (mobile → web → API)
+  'typescript',
+  'react',
+  'nextjs',
+  'react-native',
+  // Compliance-grade backend
+  'fastapi',
+  'java17',
+  'postgresql',
+  // Reliability infrastructure
+  'redis',
+  'prometheus',
+  // Production ML
+  'xgboost',
+  // AI orchestration
+  'agent-orchestration',
+  // Fintech constraint
+  'rls',
+];
+
+/** Returns the 12 L1 core skills in declared order, derived from the canonical SKILLS array. */
+export function getCoreProductionSkills(): SkillNode[] {
+  const skillMap = new Map(SKILLS.map((s) => [s.id, s]));
+  return L1_SKILL_IDS.map((id) => skillMap.get(id)).filter((s): s is SkillNode => s !== undefined);
+}
+
+// ── L2 System Lineage ─────────────────────────────────────────────────────────
+// Curated skill-ID lists per production system for the section lineage preview strip.
+// IDs are stable references; all display values (names, levels) derive from SKILLS.
+const LINEAGE_CONFIG: Array<{
+  system: string;
+  accent: string;
+  ids: readonly string[];
+}> = [
+  {
+    system: 'TaxBridge',
+    accent: 'var(--color-film-teal)',
+    ids: [
+      'typescript',
+      'java17',
+      'springboot',
+      'postgresql',
+      'fastify',
+      'react-native',
+      'bullmq',
+      'rls',
+    ],
+  },
+  {
+    system: 'SabiScore',
+    accent: 'oklch(72% 0.17 160)',
+    ids: [
+      'xgboost',
+      'lightgbm',
+      'catboost',
+      'fastapi',
+      'redis',
+      'prometheus',
+      'python',
+      'feature-eng',
+    ],
+  },
+  {
+    system: 'SwarmXQ',
+    accent: 'oklch(75% 0.16 300)',
+    ids: [
+      'nextjs',
+      'fastapi',
+      'llm-routing',
+      'agent-orchestration',
+      'checkpoint-recovery',
+      'python',
+      'ollama',
+      'pgvector',
+    ],
+  },
+];
+
+export type SystemLineageEntry = {
+  system: string;
+  accent: string;
+  skills: SkillNode[];
+};
+
+/**
+ * System × skill lineage map, pre-computed from canonical SKILLS data.
+ * Used in SkillsSection L2 provenance strip.
+ */
+export const SYSTEM_LINEAGE: SystemLineageEntry[] = LINEAGE_CONFIG.map(
+  ({ system, accent, ids }) => {
+    const skillMap = new Map(SKILLS.map((s) => [s.id, s]));
+    return {
+      system,
+      accent,
+      skills: ids.map((id) => skillMap.get(id)).filter((s): s is SkillNode => s !== undefined),
+    };
+  }
+);

@@ -58,6 +58,8 @@
 
     "next.config.ts",
     "playwright.config.ts",
+    "e2e/**/*.ts",
+    "tests/**/*.ts",
     "tests/e2e/**/*.ts",
     ".next/types/**/*.ts"
   ],

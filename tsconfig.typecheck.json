@@ -29,6 +29,7 @@
     "components/Navbar.tsx",
     "components/ProjectCard.tsx",
     "components/ProjectsSection.tsx",
+    "components/SkillsSection.tsx",
     "components/AboutSection.tsx",
     "components/ReadingProgress.tsx",
     "components/ScrollRevealInit.tsx",
@@ -37,11 +38,10 @@
     "components/ThemeToggle.tsx",
     "components/WritingSection.tsx",
     "components/CursorGlow.tsx",
-    "components/ProductionPatternsVisualization.tsx"
+    "components/ProductionPatternsVisualization.tsx",
+    "e2e/**/*.ts",
+    "tests/**/*.ts",
+    "playwright.config.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "app/blog/BlogPostAnalytics.tsx"
-  ]
+  "exclude": ["node_modules", ".next", "app/blog/BlogPostAnalytics.tsx"]
 }

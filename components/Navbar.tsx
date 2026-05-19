@@ -6,7 +6,7 @@ import { anchorUrl } from '@/lib/config';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 
 type SectionId =
   | 'section-projects'
@@ -34,17 +34,17 @@ const SECTION_IDS = [
 ] as const satisfies readonly SectionId[];
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Projects',    href: '#section-projects',    id: 'section-projects'    },
-  { label: 'Record',      href: '#section-testimonials',id: 'section-testimonials'},
-  { label: 'Open Source', href: '#open-source',          id: 'open-source'         },
-  { label: 'Skills',      href: '#skills',               id: 'skills'              },
-  { label: 'About',       href: '#section-about',        id: 'section-about'       },
-  { label: 'Writing',     href: '#section-writing',      id: 'section-writing'     },
-  { label: 'Contact',     href: '#section-contact',      id: 'section-contact'     },
+  { label: 'Projects', href: '#section-projects', id: 'section-projects' },
+  { label: 'Record', href: '#section-testimonials', id: 'section-testimonials' },
+  { label: 'Open Source', href: '#open-source', id: 'open-source' },
+  { label: 'Skills', href: '#skills', id: 'skills' },
+  { label: 'About', href: '#section-about', id: 'section-about' },
+  { label: 'Writing', href: '#section-writing', id: 'section-writing' },
+  { label: 'Contact', href: '#section-contact', id: 'section-contact' },
 ];
 
 const navbarVariants = {
-  hidden:  { y: -32, opacity: 0 },
+  hidden: { y: -32, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
@@ -66,30 +66,30 @@ const mobileMenuVariants = {
 };
 
 const mobileItemVariants = {
-  hidden:  { opacity: 0, x: -12 },
-  visible: { opacity: 1, x: 0  },
+  hidden: { opacity: 0, x: -12 },
+  visible: { opacity: 1, x: 0 },
 };
 
 // Icon crossfade variants — 120ms is imperceptible but eliminates the hard flash
 const iconVariants = {
-  hidden:  { opacity: 0, scale: 0.8 },
+  hidden: { opacity: 0, scale: 0.8 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.12 } },
-  exit:    { opacity: 0, scale: 0.8, transition: { duration: 0.08 } },
+  exit: { opacity: 0, scale: 0.8, transition: { duration: 0.08 } },
 };
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen]     = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionId>('section-projects');
-  const [scrolled, setScrolled]         = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const reducedMotion = useReducedMotion();
 
   // Refs used inside RAF closures — avoid stale closure reads without
   // putting these values into useEffect dependency arrays.
-  const tickingRef        = useRef(false);
-  const visibilityRef     = useRef<Map<SectionId, number>>(new Map());
-  const activeSectionRef  = useRef<SectionId>('section-projects');
-  const scrolledRef       = useRef(false);
+  const tickingRef = useRef(false);
+  const visibilityRef = useRef<Map<SectionId, number>>(new Map());
+  const activeSectionRef = useRef<SectionId>('section-projects');
+  const scrolledRef = useRef(false);
 
   const navItems = useMemo(() => NAV_ITEMS, []);
 
@@ -189,7 +189,9 @@ export default function Navbar() {
     if (!mobileOpen) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = originalOverflow; };
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
   }, [mobileOpen]);
 
   // ── Close mobile menu on desktop resize ──────────────────────────────────────
@@ -202,6 +204,33 @@ export default function Navbar() {
   }, []);
 
   const closeMenu = () => setMobileOpen(false);
+
+  const navigateToSection = (sectionId: SectionId) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+    const targetTop = section.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+
+    window.history.replaceState(null, '', anchorUrl(sectionId));
+    window.scrollTo({
+      top: Math.max(targetTop, 0),
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+
+    activeSectionRef.current = sectionId;
+    setActiveSection(sectionId);
+  };
+
+  const handleNavClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    sectionId: SectionId,
+    onAfterNavigate?: () => void
+  ) => {
+    event.preventDefault();
+    navigateToSection(sectionId);
+    onAfterNavigate?.();
+  };
 
   return (
     <>
@@ -220,9 +249,7 @@ export default function Navbar() {
         className={[
           'fixed inset-x-0 top-0 z-50 transform-gpu',
           'transition-[background-color,border-color,backdrop-filter] duration-300',
-          scrolled
-            ? 'border-b border-white/10 bg-black/70 backdrop-blur-2xl'
-            : 'bg-transparent',
+          scrolled ? 'border-b border-white/10 bg-black/70 backdrop-blur-2xl' : 'bg-transparent',
         ].join(' ')}
         style={{ translateZ: 0 }}
       >
@@ -230,7 +257,7 @@ export default function Navbar() {
           {/* Wordmark */}
           <Link
             href="/"
-            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
             aria-label="Oscar Ndugbu — Homepage"
           >
             <m.span
@@ -251,9 +278,7 @@ export default function Navbar() {
               >
                 Oscar
               </m.span>
-              <span className="nav-tagline text-white/50">
-                Staff+ Engineer · Lagos → Global
-              </span>
+              <span className="nav-tagline text-white/50">Staff+ Engineer · Lagos → Global</span>
             </div>
           </Link>
 
@@ -262,7 +287,12 @@ export default function Navbar() {
             {navItems.map((item) => {
               const active = activeSection === item.id;
               return (
-                <Link key={item.id} href={item.href} className="relative">
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onClick={(event) => handleNavClick(event, item.id)}
+                  className="relative"
+                >
                   <div
                     className={[
                       'relative overflow-hidden rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300',
@@ -286,7 +316,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <Link
             href={anchorUrl('section-contact')}
-            className="hidden lg:inline-flex min-h-[44px] items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black hover:bg-[oklch(73%_0.18_196_/_0.08)]"
+            className="hidden min-h-[44px] items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-colors duration-200 hover:bg-[oklch(73%_0.18_196_/_0.08)] focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:inline-flex"
             style={{
               borderColor: 'oklch(73% 0.18 196 / 0.55)',
               color: 'oklch(73% 0.18 196)',
@@ -307,7 +337,7 @@ export default function Navbar() {
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="relative flex h-11 w-11 transform-gpu items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white transition-colors duration-200 hover:border-white/20 hover:bg-white/10 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="relative flex h-11 w-11 transform-gpu items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white transition-colors duration-200 hover:border-white/20 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:hidden"
           >
             <AnimatePresence mode="wait" initial={false}>
               {mobileOpen ? (
@@ -379,7 +409,7 @@ export default function Navbar() {
                     >
                       <Link
                         href={item.href}
-                        onClick={closeMenu}
+                        onClick={(event) => handleNavClick(event, item.id, closeMenu)}
                         className={[
                           'flex items-center justify-between rounded-2xl px-4 py-4 text-sm font-medium transition-colors duration-200',
                           active
