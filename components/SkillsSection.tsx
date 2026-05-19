@@ -237,7 +237,7 @@ export function SkillsSection() {
           className="mt-8 font-mono text-[13px]"
           style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
         >
-          <Link href={anchorUrl('section-projects')} className="hover:opacity-80 transition-opacity">
+          <Link href={anchorUrl('section-about')} className="hover:opacity-80 transition-opacity">
             These 62 skills map to three live systems →
           </Link>
         </m.p>

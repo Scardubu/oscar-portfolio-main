@@ -15,6 +15,13 @@ import {
   noMotion,
   staggerContainer,
 } from '@/lib/motionVariants';
+import { HERO } from '@/lib/portfolio-data';
+
+function formatAvailabilityMonthYear(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return 'Recently verified';
+  return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
+}
 
 const CERTS = [
   { name: 'AWS Certified Developer',                   date: 'Dec 2023', provider: 'AWS' },
@@ -347,12 +354,18 @@ export function AboutSection() {
             <m.div variants={itemVariants} className="mb-6">
               <a
                 href={anchorUrl('section-contact')}
-                className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
-                aria-label="Available for Staff+ roles — contact Oscar"
+                className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
+                aria-label="Currently available for Staff+ roles — contact Oscar"
               >
                 <span className="dot-live" aria-hidden="true" />
-                <span className="font-mono text-[11px] tracking-widest text-white/70 uppercase">
-                  Available · Staff+ Roles
+                <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
+                  AVAILABLE · STAFF+ ROLES
+                  <span
+                    className="ml-2 opacity-50 normal-case tracking-normal"
+                    style={{ fontSize: '9px' }}
+                  >
+                    · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
+                  </span>
                 </span>
               </a>
             </m.div>

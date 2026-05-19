@@ -31,10 +31,17 @@ function fallbackActivity(status = 200) {
       type: 'PushEvent',
       repo: 'oscar-portfolio-main',
       sha: 'unknown',
-      message: 'Recent update',
+      message: 'Building in production',
     },
     { status }
   );
+}
+
+function trimCommitMessage(message: string): string {
+  const line = message.split('\n')[0]?.trim() ?? '';
+  if (!line) return 'Building in production';
+  if (line.length <= 60) return line;
+  return `${line.slice(0, 57)}...`;
 }
 
 export async function GET() {
@@ -76,7 +83,7 @@ export async function GET() {
         type: 'PushEvent',
         repo: 'Scardubu/oscar-portfolio-main',
         sha: commit.sha.slice(0, 7),
-        message: commit.commit.message.split('\n')[0] ?? 'Recent update',
+        message: trimCommitMessage(commit.commit.message),
       },
       { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' } }
     );

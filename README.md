@@ -27,6 +27,12 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 - **Testing:** Playwright E2E (Chromium smoke suite)
 - **Deployment:** Vercel (main branch auto-deploys)
 
+## Testing strategy
+
+- `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey and API health checks.
+- `tests/portfolio.spec.ts` is the broader V1.0 contract suite for copy, flow hooks, accessibility, and trust-signal regressions.
+- `pnpm lint` covers `app`, `components`, `hooks`, `lib`, `e2e`, and `tests` so runtime code and active test paths stay aligned.
+
 ## Local setup
 
 **Requirements:** Node.js ≥ 20, pnpm ≥ 9
@@ -75,29 +81,29 @@ public/
 
 ## Site sections
 
-| # | Section | ID | What it proves |
-|---|---|---|---|
-| 00 | Hero | — | Positioning, conviction stats, proof carousel |
-| 01 | Projects | `section-projects` | 4 case studies with arch decisions |
-| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes) |
-| 02 | Open Source | `open-source` | 4 production packages |
-| 03 | Skills | `skills` | 62 skills across 8 pillars, each traced to a live system |
-| 04 | About | `section-about` | Operating context and credibility |
-| 05 | Writing | `section-writing` | 6 technical posts |
-| 06 | Contact | `section-contact` | 3 engagement types + contact form |
+| #    | Section           | ID                     | What it proves                                           |
+| ---- | ----------------- | ---------------------- | -------------------------------------------------------- |
+| 00   | Hero              | —                      | Positioning, conviction stats, proof carousel            |
+| 01   | Projects          | `section-projects`     | 4 case studies with arch decisions                       |
+| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes)         |
+| 02   | Open Source       | `open-source`          | 4 production packages                                    |
+| 03   | Skills            | `skills`               | 62 skills across 8 pillars, each traced to a live system |
+| 04   | About             | `section-about`        | Operating context and credibility                        |
+| 05   | Writing           | `section-writing`      | 6 technical posts                                        |
+| 06   | Contact           | `section-contact`      | 3 engagement types + contact form                        |
 
 ## Data layer
 
 Each domain has one canonical source. Do not duplicate across files.
 
-| Domain | Canonical source |
-|---|---|
-| Projects | `lib/projects.ts` |
-| Skills | `lib/data/skills.ts` |
-| Hero / Profile | `lib/portfolio-data.ts` |
+| Domain                 | Canonical source                                     |
+| ---------------------- | ---------------------------------------------------- |
+| Projects               | `lib/projects.ts`                                    |
+| Skills                 | `lib/data/skills.ts`                                 |
+| Hero / Profile         | `lib/portfolio-data.ts`                              |
 | Production proof cards | `components/TestimonialsSection.tsx` → `PROOF_CARDS` |
-| Writing posts | `content/writing/*.mdx` via `lib/content.ts` |
-| Config / URLs | `lib/config.ts` |
+| Writing posts          | `content/writing/*.mdx` via `lib/content.ts`         |
+| Config / URLs          | `lib/config.ts`                                      |
 
 `lib/data.ts` is a deprecated orphan from pre-v24. It is not imported by anything. Do not import from it. See the deprecation header in that file for canonical alternatives.
 
@@ -114,6 +120,7 @@ Each domain has one canonical source. Do not duplicate across files.
 - Type checks pass: `pnpm type-check`
 - Lint passes: `pnpm lint`
 - Smoke tests pass: `pnpm test:e2e`
+- Full Playwright suite passes: `pnpm test:all`
 - Metadata and OG routes resolve correctly
 
 ## Contact

@@ -9,27 +9,26 @@
 
 import { useEffect, useState } from 'react';
 
+import { StatusPulseDot } from '@/components/shared/StatusPulseDot';
+
 type StatusValue = 'operational' | 'degraded' | 'down';
 
-const STATUS_CONFIG: Record<StatusValue, { label: string; color: string; glow: string }> = {
+const STATUS_CONFIG: Record<StatusValue, { label: string; color: string }> = {
   operational: {
     label: 'All systems operational',
     color: 'var(--color-film-teal)',
-    glow:  'var(--color-film-teal-glow)',
   },
   degraded: {
     label: 'Degraded performance',
     color: 'var(--color-warning)',
-    glow:  'var(--color-film-amber-glow)',
   },
   down: {
     label: 'Service disruption',
     color: 'var(--color-danger)',
-    glow:  'oklch(60% 0.22 25 / 0.18)',
   },
 };
 
-export function SystemStatus() {
+export function SystemStatus({ showLabel = true }: { showLabel?: boolean } = {}) {
   const [status, setStatus]   = useState<StatusValue>('operational');
   const [mounted, setMounted] = useState(false);
 
@@ -60,7 +59,7 @@ export function SystemStatus() {
         className="relative inline-flex items-center gap-1.5 select-none"
         aria-hidden="true"
       >
-        <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--color-film-teal)' }} />
+        <StatusPulseDot color="var(--color-film-teal)" pulseDuration="1.4s" />
       </span>
     );
   }
@@ -75,28 +74,17 @@ export function SystemStatus() {
       className="relative inline-flex items-center gap-1.5 select-none font-mono text-[10px] tracking-widest uppercase"
       style={{ color: 'var(--color-text-muted)' }}
     >
-      {/* CSS-only pulse dot — zero JS ticks */}
-      <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
-        <span
-          className="absolute inline-flex h-full w-full rounded-full opacity-75"
-          style={{
-            background: cfg.color,
-            animation: 'ping 1.4s cubic-bezier(0,0,0.2,1) infinite',
-          }}
-        />
-        <span
-          className="relative inline-flex h-1.5 w-1.5 rounded-full"
-          style={{ background: cfg.color }}
-        />
-      </span>
+      <StatusPulseDot color={cfg.color} pulseDuration="1.4s" />
 
-      <span className="hidden sm:inline">
-        {status === 'operational'
-          ? 'Systems OK'
-          : status === 'degraded'
-            ? 'Degraded'
-            : 'Down'}
-      </span>
+      {showLabel && (
+        <span className="hidden sm:inline">
+          {status === 'operational'
+            ? 'Systems OK'
+            : status === 'degraded'
+              ? 'Degraded'
+              : 'Down'}
+        </span>
+      )}
     </span>
   );
 }

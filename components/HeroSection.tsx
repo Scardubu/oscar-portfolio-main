@@ -67,6 +67,18 @@ const PROOF_COLUMNS = [
   },
 ] as const;
 
+function formatAvailabilityMonthYear(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) {
+    return 'Recently verified';
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
 function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -382,7 +394,7 @@ export function HeroSection() {
                     className="ml-2 opacity-50 normal-case tracking-normal"
                     style={{ fontSize: '9px' }}
                   >
-                    · Updated {HERO.availabilityUpdated}
+                    · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
               </div>

@@ -19,7 +19,7 @@ interface UseAnimatedCounterOptions {
  */
 export function useAnimatedCounter({
   end,
-  duration = 1800,
+  duration = 300,
   delay = 0,
   prefix = "",
   suffix = "",

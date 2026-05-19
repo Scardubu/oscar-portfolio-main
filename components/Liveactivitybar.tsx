@@ -4,6 +4,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { StatusPulseDot } from '@/components/shared/StatusPulseDot';
+
 interface ActivityData {
   ago:      string;
   type:     string;
@@ -27,24 +29,6 @@ function typeLabel(type: string): string {
     IssuesEvent:      'Issue activity',
   };
   return map[type] ?? 'Recent activity';
-}
-
-function PulseDot() {
-  return (
-    <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
-      <span
-        className="absolute inline-flex h-full w-full rounded-full opacity-75"
-        style={{
-          background: 'var(--color-live)',
-          animation: 'ping 1s cubic-bezier(0,0,0.2,1) infinite',
-        }}
-      />
-      <span
-        className="relative inline-flex h-1.5 w-1.5 rounded-full"
-        style={{ background: 'var(--color-live)' }}
-      />
-    </span>
-  );
 }
 
 export function LiveActivityBar() {
@@ -103,7 +87,7 @@ export function LiveActivityBar() {
       aria-label="Latest commit activity"
       className="flex items-center gap-2 overflow-hidden min-h-[24px]"
     >
-      <PulseDot />
+      <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
 
       {activity.sha && activity.sha !== 'unknown' && (
         <span

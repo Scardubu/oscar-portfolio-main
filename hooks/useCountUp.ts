@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface UseCountUpOptions {
   target:    number;
-  duration?: number;   // ms — default 1800
+  duration?: number;   // ms — default 300
   decimals?: number;   // decimal places — default 0
   delay?:    number;   // ms before animation starts
   start?:    boolean;  // gate — only animates when true
@@ -22,7 +22,7 @@ function easeOutExpo(t: number): number {
 
 export function useCountUp({
   target,
-  duration = 1800,
+  duration = 300,
   decimals = 0,
   delay    = 0,
   start    = true,

@@ -86,7 +86,6 @@ interface FormValues {
 
 function ContactForm() {
   const [state, setState] = useState<FormState>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
   const [values, setValues] = useState<FormValues>({
     name: '',
     email: '',
@@ -124,7 +123,6 @@ function ContactForm() {
     if (state === 'loading') return;
 
     setState('loading');
-    setErrorMsg('');
 
     try {
       const res = await fetch('/api/contact', {
@@ -140,11 +138,8 @@ function ContactForm() {
 
       setState('success');
       setValues({ name: '', email: '', company: '', inquiryType: 'job', message: '' });
-    } catch (err) {
+    } catch {
       setState('error');
-      setErrorMsg(
-        err instanceof Error ? err.message : 'Unexpected error. Please email directly.'
-      );
     }
   }
 
@@ -168,16 +163,7 @@ function ContactForm() {
           Constraint received.
         </p>
         <p className="text-sm leading-7 max-w-[40ch]" style={{ color: 'var(--color-text-secondary)' }}>
-          I&apos;ll review and respond within 24 hours — usually faster. For urgent
-          matters, email{' '}
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="underline underline-offset-2"
-            style={{ color: 'var(--color-film-teal)' }}
-          >
-            {CONTACT_EMAIL}
-          </a>{' '}
-          directly.
+          I&apos;ll review and respond within 24 hours — usually faster.
         </p>
         <button
           type="button"
@@ -336,17 +322,15 @@ function ContactForm() {
           role="alert"
           aria-live="assertive"
         >
-          {errorMsg
-            ? `Something interrupted the send. Try again, or reach me directly at ${CONTACT_EMAIL}.`
-            : 'Something interrupted the send. Try again, or reach me directly at '
-          }
-          {!errorMsg && (
-            <a href={`mailto:${CONTACT_EMAIL}`} className="underline underline-offset-2"
-               style={{ color: 'var(--color-film-teal)' }}>
-              {CONTACT_EMAIL}
-            </a>
-          )}
-          {!errorMsg && '.'}
+          Something interrupted the send. Try again, or reach me directly at{' '}
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="underline underline-offset-2"
+            style={{ color: 'var(--color-film-teal)' }}
+          >
+            {CONTACT_EMAIL}
+          </a>
+          .
         </p>
       )}
 

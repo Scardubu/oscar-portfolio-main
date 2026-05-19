@@ -278,7 +278,7 @@ html { scrollbar-gutter: stable; }
   --spectrum-b: oklch(65% 0.23 258 / 0.35);
 
   --dur-instant: 80ms; --dur-fast: 140ms; --dur-base: 200ms;
-  --dur-slow: 340ms; --dur-glacial: 800ms;
+  --dur-slow: 280ms; --dur-glacial: 300ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -389,6 +389,21 @@ a, button, [role="button"], .bottom-nav-item, .cta-primary, .cta-secondary, .cta
   transition: top var(--dur-fast) var(--ease-out);
 }
 .skip-nav:focus { top: 1rem; }
+
+.continue-reading-banner-shell {
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 5rem);
+}
+
+@media (min-width: 768px) {
+  .continue-reading-banner-shell {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: 24rem;
+  }
+}
 
 .section-deferred { content-visibility: auto; contain-intrinsic-size: 0 640px; }
 .hero-below-fold { content-visibility: auto; contain-intrinsic-size: 0 480px; }
@@ -661,7 +676,7 @@ h3, .h3 {
     box-shadow: 0 4px 20px -2px var(--color-film-teal-glow), 0 2px 8px oklch(0% 0 0 / 0.5), 0 1px 0 oklch(100% 0 0 / 0.3) inset;
     -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) var(--ease-out), opacity var(--dur-slow) var(--ease-out);
-    animation: floatIn 0.6s var(--ease-spring) 2s both;
+    animation: floatIn 0.28s var(--ease-spring) 2s both;
     will-change: transform, opacity;
   }
   .floating-hire-cta:active { transform: scale(0.94); box-shadow: 0 2px 10px -2px var(--color-film-teal-glow); }
@@ -685,7 +700,7 @@ h3, .h3 {
     box-shadow: 0 4px 20px -2px var(--color-film-teal-glow), 0 2px 8px oklch(0% 0 0 / 0.5);
     -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) var(--ease-out), opacity var(--dur-slow) var(--ease-out);
-    animation: floatIn 0.6s var(--ease-spring) 1.5s both;
+    animation: floatIn 0.28s var(--ease-spring) 1.5s both;
   }
   .contact-sticky-cta:active { transform: scale(0.94); box-shadow: 0 2px 10px -2px var(--color-film-teal-glow); }
   .contact-sticky-cta[data-hidden='true'] { opacity: 0; pointer-events: none; transform: translateY(12px) scale(0.9); }
@@ -888,7 +903,7 @@ h3, .h3 {
 .project-metric-value { font-family: var(--font-mono); font-size: 1rem; font-weight: var(--weight-bold); letter-spacing: -0.01em; color: var(--color-film-teal); line-height: 1; }
 .project-metric-label { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-muted); }
 .project-metric-bar { height: 2px; background: var(--skill-bar-track); border-radius: var(--radius-full); overflow: hidden; margin-top: 0.2rem; }
-.project-metric-fill { height: 100%; border-radius: var(--radius-full); transition: width 1.4s var(--ease-expo) 0.4s; background: var(--color-film-teal); }
+.project-metric-fill { height: 100%; border-radius: var(--radius-full); transition: width 0.28s var(--ease-expo) 0.12s; background: var(--color-film-teal); }
 .project-metric-fill[data-color='amber'] { background: var(--color-film-amber); }
 .project-metric-fill[data-color='green'] { background: var(--color-success); }
 .project-metric-fill[data-color='violet'] { background: var(--color-film-violet); }
@@ -913,7 +928,7 @@ h3, .h3 {
 .live-bar-text { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; }
 
 /* ════ METRIC PULSE ════ */
-.metric-pulse { animation: metric-pop 0.6s var(--ease-spring) both; }
+.metric-pulse { animation: metric-pop 0.28s var(--ease-spring) both; }
 @keyframes metric-pop { 0% { opacity: 0; transform: scale(0.88) translateY(6px); } 60% { transform: scale(1.04) translateY(-2px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
 /* ════ HERO GLOW ════ */
@@ -949,7 +964,7 @@ h3, .h3 {
 
 /* ════ SKILL COMPONENTS ════ */
 .skill-cluster { border: 1px solid var(--glass-border); border-radius: var(--radius-xl); background: var(--glass-bg); overflow: hidden; isolation: isolate; }
-.skill-bar-fill { height: 3px; border-radius: var(--radius-full); background: var(--color-film-teal); transform-origin: left; transition: transform 1s var(--ease-expo); }
+.skill-bar-fill { height: 3px; border-radius: var(--radius-full); background: var(--color-film-teal); transform-origin: left; transition: transform 0.28s var(--ease-expo); }
 
 /* ════ CMD PALETTE ════ */
 .cmd-overlay { position: fixed; inset: 0; z-index: var(--z-modal); background: oklch(5% 0.01 265 / 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
@@ -1197,7 +1212,7 @@ h3, .h3 {
   height: 100%;
   border-radius: inherit;
   width: 0%;
-  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.12s;
 }
 .featured-skill-bar-fill.visible {
   width: var(--bar-width, 95%);
@@ -1209,7 +1224,7 @@ h3, .h3 {
    Fires once on load, not on hover.
 */
 .hero-proof-callout {
-  animation: callout-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+  animation: callout-reveal 0.28s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
 }
 @keyframes callout-reveal {
   from { opacity: 0; transform: translateX(-8px); }

@@ -5,6 +5,7 @@
 
 import Link from 'next/link';
 
+import { SystemStatus } from '@/components/SystemStatus';
 import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 
 const NAV_LINKS = [
@@ -77,12 +78,8 @@ export function Footer() {
 
           <div className="flex flex-col gap-1 font-mono text-[10px] tracking-wide">
             <p className="flex items-center gap-2" style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}>
-              <span
-                className="inline-block h-1.5 w-1.5 rounded-full ring-1 ring-offset-2 ring-offset-[var(--color-background)]"
-                style={{ background: 'var(--color-success)' }}
-                aria-hidden="true"
-              />
-              All systems operational
+              <SystemStatus showLabel={false} />
+              <span>All systems operational</span>
             </p>
             <p style={{ color: 'oklch(93% 0.006 264 / 0.24)' }}>
               TaxBridge · SabiScore · SwarmXQ
