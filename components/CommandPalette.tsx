@@ -10,11 +10,11 @@ import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 
 interface CommandItem {
-  id:        string;
-  label:     string;
+  id: string;
+  label: string;
   shortcut?: string;
-  group:     string;
-  action:    () => void;
+  group: string;
+  action: () => void;
 }
 
 interface LiveStatusSnapshot {
@@ -26,34 +26,34 @@ interface LiveStatusSnapshot {
 type CommandPaletteWindow = Window & { __commandPaletteRequested?: boolean };
 
 const PANEL_VARIANTS_DESKTOP = {
-  hidden:  { opacity: 0, y: -12, scale: 0.98 },
-  visible: { opacity: 1, y: 0,   scale: 1    },
-  exit:    { opacity: 0, y: -8,  scale: 0.98 },
+  hidden: { opacity: 0, y: -12, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -8, scale: 0.98 },
 };
 
 const PANEL_VARIANTS_MOBILE = {
-  hidden:  { opacity: 0, y: 72 },
-  visible: { opacity: 1, y: 0  },
-  exit:    { opacity: 0, y: 72 },
+  hidden: { opacity: 0, y: 72 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 72 },
 };
 
 export function CommandPalette() {
-  const [open,         setOpen]         = useState(false);
-  const [query,        setQuery]        = useState('');
-  const [activeIndex,  setActiveIndex]  = useState(0);
-  const [isMobile,     setIsMobile]     = useState(false);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const [whyLagosOpen, setWhyLagosOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [statusAvailable, setStatusAvailable] = useState(false);
   const [statusSnapshot, setStatusSnapshot] = useState<LiveStatusSnapshot | null>(null);
 
-  const inputRef       = useRef<HTMLInputElement>(null);
-  const openRef        = useRef(open);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const openRef = useRef(open);
   const activeIndexRef = useRef(activeIndex);
-  const filteredRef    = useRef<CommandItem[]>([]);
+  const filteredRef = useRef<CommandItem[]>([]);
 
-  const router        = useRouter();
-  const pathname      = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -67,7 +67,11 @@ export function CommandPalette() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data: LiveStatusSnapshot | null) => {
         if (cancelled || !data) return;
-        if (data.systemStatus === 'operational' || data.systemStatus === 'degraded' || data.systemStatus === 'down') {
+        if (
+          data.systemStatus === 'operational' ||
+          data.systemStatus === 'degraded' ||
+          data.systemStatus === 'down'
+        ) {
           setStatusSnapshot(data);
           setStatusAvailable(true);
         }
@@ -104,53 +108,125 @@ export function CommandPalette() {
   const commands = useMemo<CommandItem[]>(
     () => [
       // FIX v22: IDs corrected to match actual DOM ids in each section component.
-      { id: 'nav-projects',    group: 'Navigate', label: 'Projects',    action: () => scrollTo('section-projects') },
-      { id: 'nav-open-source', group: 'Navigate', label: 'Open Source', action: () => scrollTo('open-source')     },
-      { id: 'nav-skills',      group: 'Navigate', label: 'Skills',      action: () => scrollTo('skills')          },
-      { id: 'nav-about',       group: 'Navigate', label: 'About',       action: () => scrollTo('section-about')   },
-      { id: 'nav-writing',     group: 'Navigate', label: 'Writing',     action: () => scrollTo('section-writing') },
-      { id: 'nav-contact',     group: 'Navigate', label: 'Contact',     action: () => scrollTo('section-contact') },
       {
-        id: 'cs-taxbridge',  group: 'Case Studies', label: 'TaxBridge case study',
-        action: () => { router.push('/work/taxbridge');   close(); },
+        id: 'nav-projects',
+        group: 'Navigate',
+        label: 'Projects',
+        action: () => scrollTo('section-projects'),
       },
       {
-        id: 'cs-sabiscore',  group: 'Case Studies', label: 'SabiScore case study',
-        action: () => { router.push('/work/sabiscore');   close(); },
+        id: 'nav-open-source',
+        group: 'Navigate',
+        label: 'Open Source',
+        action: () => scrollTo('open-source'),
+      },
+      { id: 'nav-skills', group: 'Navigate', label: 'Skills', action: () => scrollTo('skills') },
+      {
+        id: 'nav-about',
+        group: 'Navigate',
+        label: 'About',
+        action: () => scrollTo('section-about'),
       },
       {
-        id: 'cs-hashablanca', group: 'Case Studies', label: 'Hashablanca case study',
-        action: () => { router.push('/work/hashablanca'); close(); },
+        id: 'nav-writing',
+        group: 'Navigate',
+        label: 'Writing',
+        action: () => scrollTo('section-writing'),
       },
       {
-        id: 'action-writing', group: 'Actions', label: 'All writing',
-        action: () => { router.push('/writing'); close(); },
+        id: 'nav-contact',
+        group: 'Navigate',
+        label: 'Contact',
+        action: () => scrollTo('section-contact'),
       },
       {
-        id: 'action-resume', group: 'Actions', label: 'Open résumé', shortcut: 'R',
-        action: () => { window.open(CV_ASSET_PATH, '_blank', 'noopener,noreferrer'); close(); },
+        id: 'cs-taxbridge',
+        group: 'Case Studies',
+        label: 'TaxBridge case study',
+        action: () => {
+          router.push('/work/taxbridge');
+          close();
+        },
       },
       {
-        id: 'action-copy-email', group: 'Actions', label: 'Copy email', shortcut: 'C',
+        id: 'cs-sabiscore',
+        group: 'Case Studies',
+        label: 'SabiScore case study',
+        action: () => {
+          router.push('/work/sabiscore');
+          close();
+        },
+      },
+      {
+        id: 'cs-hashablanca',
+        group: 'Case Studies',
+        label: 'Hashablanca case study',
+        action: () => {
+          router.push('/work/hashablanca');
+          close();
+        },
+      },
+      {
+        id: 'action-writing',
+        group: 'Actions',
+        label: 'All writing',
+        action: () => {
+          router.push('/writing');
+          close();
+        },
+      },
+      {
+        id: 'action-resume',
+        group: 'Actions',
+        label: 'Open résumé',
+        shortcut: 'R',
+        action: () => {
+          window.open(CV_ASSET_PATH, '_blank', 'noopener,noreferrer');
+          close();
+        },
+      },
+      {
+        id: 'action-copy-email',
+        group: 'Actions',
+        label: 'Copy email',
+        shortcut: 'C',
         action: () => {
           void navigator.clipboard.writeText(CONTACT_EMAIL);
           close();
         },
       },
       {
-        id: 'action-email', group: 'Actions', label: 'Send email', shortcut: 'E',
-        action: () => { globalThis.location.href = `mailto:${CONTACT_EMAIL}`; close(); },
+        id: 'action-email',
+        group: 'Actions',
+        label: 'Send email',
+        shortcut: 'E',
+        action: () => {
+          globalThis.location.href = `mailto:${CONTACT_EMAIL}`;
+          close();
+        },
       },
       {
-        id: 'action-github', group: 'Actions', label: 'Open GitHub',
-        action: () => { window.open('https://github.com/Scardubu', '_blank', 'noopener,noreferrer'); close(); },
+        id: 'action-github',
+        group: 'Actions',
+        label: 'Open GitHub',
+        action: () => {
+          window.open('https://github.com/Scardubu', '_blank', 'noopener,noreferrer');
+          close();
+        },
       },
       {
-        id: 'action-linkedin', group: 'Actions', label: 'Open LinkedIn',
-        action: () => { window.open('https://linkedin.com/in/oscardubu', '_blank', 'noopener,noreferrer'); close(); },
+        id: 'action-linkedin',
+        group: 'Actions',
+        label: 'Open LinkedIn',
+        action: () => {
+          window.open('https://linkedin.com/in/oscardubu', '_blank', 'noopener,noreferrer');
+          close();
+        },
       },
       {
-        id: 'action-theme', group: 'Actions', label: 'Toggle theme',
+        id: 'action-theme',
+        group: 'Actions',
+        label: 'Toggle theme',
         action: () => {
           const root = document.documentElement;
           root.classList.toggle('light');
@@ -188,17 +264,17 @@ export function CommandPalette() {
     const q = query.trim().toLowerCase();
     if (!q) return commands;
     return commands.filter(
-      (c) =>
-        c.label.toLowerCase().includes(q) ||
-        c.group.toLowerCase().includes(q)
+      (c) => c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q)
     );
   }, [commands, query]);
 
-  openRef.current        = open;
+  openRef.current = open;
   activeIndexRef.current = activeIndex;
-  filteredRef.current    = filtered;
+  filteredRef.current = filtered;
 
-  const execute = useCallback((cmd: CommandItem) => { cmd.action(); }, []);
+  const execute = useCallback((cmd: CommandItem) => {
+    cmd.action();
+  }, []);
 
   // Keyboard navigation
   useEffect(() => {
@@ -212,9 +288,19 @@ export function CommandPalette() {
         return;
       }
       if (!openRef.current) return;
-      if (e.key === 'Escape')    { e.preventDefault(); close(); return; }
-      if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, Math.max(filteredRef.current.length - 1, 0))); }
-      if (e.key === 'ArrowUp')   { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)); }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.min(i + 1, Math.max(filteredRef.current.length - 1, 0)));
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.max(i - 1, 0));
+      }
       if (e.key === 'Enter') {
         e.preventDefault();
         const cmd = filteredRef.current[activeIndexRef.current];
@@ -258,7 +344,7 @@ export function CommandPalette() {
     return map;
   }, [filtered]);
 
-  const panelVariants   = isMobile ? PANEL_VARIANTS_MOBILE : PANEL_VARIANTS_DESKTOP;
+  const panelVariants = isMobile ? PANEL_VARIANTS_MOBILE : PANEL_VARIANTS_DESKTOP;
   const panelTransition = reducedMotion ? { duration: 0 } : springs.smooth;
 
   return (
@@ -271,8 +357,7 @@ export function CommandPalette() {
           //   - aria-hidden="true": the backdrop is not a dialog — it's a dismiss target.
           //     The inner panel below carries role="dialog" and the actual semantics.
           <m.div
-            className="fixed inset-0 z-[500]"
-            style={{ background: 'rgba(0,0,0,0.72)' }}
+            className="fixed inset-0 z-[500] bg-[rgba(0,0,0,0.72)]"
             initial={reducedMotion ? {} : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reducedMotion ? {} : { opacity: 0 }}
@@ -283,10 +368,10 @@ export function CommandPalette() {
                 The outer overlay div above is the dismissible backdrop (aria-hidden). */}
             <m.div
               className={[
-                'absolute glass-full overflow-hidden',
+                'glass-full absolute overflow-hidden',
                 isMobile
-                  ? 'bottom-0 left-0 right-0 rounded-t-[var(--radius-xl)] max-h-[80vh]'
-                  : 'top-[15vh] left-1/2 -translate-x-1/2 w-full max-w-[540px] rounded-[var(--radius-xl)]',
+                  ? 'right-0 bottom-0 left-0 max-h-[80vh] rounded-t-[var(--radius-xl)]'
+                  : 'top-[15vh] left-1/2 w-full max-w-[540px] -translate-x-1/2 rounded-[var(--radius-xl)]',
               ].join(' ')}
               role="dialog"
               aria-modal="true"
@@ -300,38 +385,31 @@ export function CommandPalette() {
             >
               {/* Drag handle — enlarged tap target on mobile */}
               {isMobile && (
-                <div
-                  className="flex justify-center items-center pt-4 pb-2"
-                  aria-hidden="true"
-                  style={{ minHeight: '48px' }}
-                >
-                  <div
-                    className="h-1 w-10 rounded-full"
-                    style={{ background: 'var(--color-border)' }}
-                  />
+                <div className="flex min-h-[48px] items-center justify-center pt-4 pb-2">
+                  <div className="bg-color-border h-1 w-10 rounded-full" />
                 </div>
               )}
 
               {/* Search input */}
-              <div
-                className="border-b px-4 py-3 flex items-center gap-3"
-                style={{ borderColor: 'var(--color-border)' }}
-              >
+              <div className="border-color-border flex items-center gap-3 border-b px-4 py-3">
                 <svg
-                  className="h-4 w-4 shrink-0"
-                  style={{ color: 'var(--color-text-muted)' }}
+                  className="text-color-text-muted h-4 w-4 shrink-0"
                   viewBox="0 0 20 20"
                   fill="none"
                   aria-hidden="true"
                 >
                   <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path
+                    d="M13.5 13.5L17 17"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
                 </svg>
 
                 <input
                   ref={inputRef}
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:font-mono placeholder:text-xs placeholder:tracking-wide"
-                  style={{ color: 'var(--color-text-primary)' }}
+                  className="text-color-text-primary flex-1 bg-transparent text-sm outline-none placeholder:font-mono placeholder:text-xs placeholder:tracking-wide"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search or jump to…"
@@ -343,10 +421,7 @@ export function CommandPalette() {
                 />
 
                 {!isMobile && (
-                  <kbd
-                    className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]"
-                    style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
-                  >
+                  <kbd className="border-color-border text-color-text-muted shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]">
                     ESC
                   </kbd>
                 )}
@@ -355,13 +430,11 @@ export function CommandPalette() {
               {/* Results */}
               <div
                 className="overflow-y-auto"
+                // eslint-disable-next-line no-restricted-syntax
                 style={{ maxHeight: isMobile ? 'calc(80vh - 96px)' : '360px' }}
               >
                 {filtered.length === 0 ? (
-                  <p
-                    className="px-4 py-6 text-center font-mono text-xs"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <p className="text-color-text-muted px-4 py-6 text-center font-mono text-xs">
                     No results for &ldquo;{query}&rdquo;
                   </p>
                 ) : (
@@ -373,25 +446,21 @@ export function CommandPalette() {
 
                     return (
                       <div key={groupName}>
-                        <p
-                          className="px-4 pb-1 pt-3 font-mono text-[10px] tracking-widest uppercase"
-                          style={{ color: 'var(--color-text-muted)' }}
-                        >
+                        <p className="text-color-text-muted px-4 pt-3 pb-1 font-mono text-[10px] tracking-widest uppercase">
                           {groupName}
                         </p>
                         {items.map((cmd, localI) => {
                           const flatIndex = runningIndex + localI;
-                          const isActive  = flatIndex === activeIndex;
+                          const isActive = flatIndex === activeIndex;
 
                           return (
                             <button
                               key={cmd.id}
                               type="button"
-                              className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left transition-colors focus-visible:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-white/20"
+                              className="flex min-h-[48px] w-full items-center gap-3 px-4 text-left transition-colors focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:outline-none focus-visible:ring-inset"
+                              // eslint-disable-next-line no-restricted-syntax
                               style={{
-                                background: isActive
-                                  ? 'oklch(100% 0 0 / 0.06)'
-                                  : 'transparent',
+                                background: isActive ? 'oklch(100% 0 0 / 0.06)' : 'transparent',
                                 color: isActive
                                   ? 'var(--color-text-primary)'
                                   : 'var(--color-text-secondary)',
@@ -402,20 +471,13 @@ export function CommandPalette() {
                             >
                               <span className="flex-1 text-sm">{cmd.label}</span>
                               {cmd.shortcut && (
-                                <kbd
-                                  className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]"
-                                  style={{
-                                    borderColor: 'var(--color-border)',
-                                    color: 'var(--color-text-muted)',
-                                  }}
-                                >
+                                <kbd className="border-color-border text-color-text-muted shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px]">
                                   {cmd.shortcut}
                                 </kbd>
                               )}
                               {isActive && (
                                 <svg
-                                  className="h-3 w-3 shrink-0"
-                                  style={{ color: 'var(--color-film-teal)' }}
+                                  className="text-color-film-teal h-3 w-3 shrink-0"
                                   viewBox="0 0 12 12"
                                   fill="none"
                                   aria-hidden="true"
@@ -440,8 +502,7 @@ export function CommandPalette() {
                 {/* Safe zone: iOS home indicator */}
                 {isMobile && (
                   <div
-                    className="h-6"
-                    style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                    className="h-6 [padding-bottom:env(safe-area-inset-bottom,0px)]"
                     aria-hidden="true"
                   />
                 )}
@@ -461,10 +522,11 @@ export function CommandPalette() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Open command palette"
-          className="fixed bottom-6 right-4 z-40 transform-gpu flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 transition-colors duration-200 hover:border-white/20 hover:text-white lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-          style={{ boxShadow: '0 4px 24px oklch(0% 0 0 / 0.4)' }}
+          className="fixed right-4 bottom-6 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none lg:hidden"
         >
-          <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">⌘</span>
+          <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">
+            ⌘
+          </span>
         </button>
       )}
 
@@ -479,13 +541,14 @@ export function CommandPalette() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-6"
-            style={{ background: 'oklch(0% 0 0 / 0.75)' }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[oklch(0%_0_0_/_0.75)] p-6"
             onClick={() => setStatusOpen(false)}
             role="dialog"
             aria-modal="true"
             aria-label="Live system status"
-            onKeyDown={(e) => { if (e.key === 'Escape') setStatusOpen(false); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setStatusOpen(false);
+            }}
             tabIndex={-1}
           >
             <m.div
@@ -494,34 +557,20 @@ export function CommandPalette() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              className="relative max-w-sm w-full rounded-[var(--radius-xl)] border p-8"
-              style={{
-                background: 'oklch(14% 0.008 264)',
-                borderColor: 'var(--color-border)',
-                boxShadow: '0 32px 80px oklch(0% 0 0 / 0.6)',
-              }}
+              className="border-color-border relative w-full max-w-sm rounded-[var(--radius-xl)] border bg-[oklch(14%_0.008_264)] p-8 shadow-[0_32px_80px_oklch(0%_0_0_/_0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <p
-                className="font-mono text-[10px] tracking-widest uppercase mb-4"
-                style={{ color: 'var(--color-film-teal)' }}
-              >
+              <p className="text-color-film-teal mb-4 font-mono text-[10px] tracking-widest uppercase">
                 /status
               </p>
-              <p
-                className="text-base leading-8 font-medium"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
+              <p className="text-color-text-primary text-base leading-8 font-medium">
                 {statusSnapshot.systemStatus === 'operational'
                   ? 'All systems operational.'
                   : statusSnapshot.systemStatus === 'degraded'
                     ? 'Systems are degraded.'
                     : 'Service disruption detected.'}
               </p>
-              <p
-                className="mt-4 text-sm leading-7"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <p className="text-color-text-secondary mt-4 text-sm leading-7">
                 {typeof statusSnapshot.uptime === 'number'
                   ? `Reported uptime: ${statusSnapshot.uptime.toFixed(2)}%.`
                   : 'Live metrics available.'}{' '}
@@ -532,8 +581,7 @@ export function CommandPalette() {
               <button
                 type="button"
                 onClick={() => setStatusOpen(false)}
-                className="mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
                 autoFocus
               >
                 Dismiss ↩
@@ -549,13 +597,14 @@ export function CommandPalette() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-6"
-            style={{ background: 'oklch(0% 0 0 / 0.75)' }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[oklch(0%_0_0_/_0.75)] p-6"
             onClick={() => setWhyLagosOpen(false)}
             role="dialog"
             aria-modal="true"
             aria-label="Why Lagos"
-            onKeyDown={(e) => { if (e.key === 'Escape') setWhyLagosOpen(false); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setWhyLagosOpen(false);
+            }}
             tabIndex={-1}
           >
             <m.div
@@ -564,42 +613,26 @@ export function CommandPalette() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              className="relative max-w-sm w-full rounded-[var(--radius-xl)] border p-8"
-              style={{
-                background: 'oklch(14% 0.008 264)',
-                borderColor: 'var(--color-border)',
-                boxShadow: '0 32px 80px oklch(0% 0 0 / 0.6)',
-              }}
+              className="border-color-border relative w-full max-w-sm rounded-[var(--radius-xl)] border bg-[oklch(14%_0.008_264)] p-8 shadow-[0_32px_80px_oklch(0%_0_0_/_0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <p
-                className="font-mono text-[10px] tracking-widest uppercase mb-4"
-                style={{ color: 'var(--color-film-teal)' }}
-              >
+              <p className="text-color-film-teal mb-4 font-mono text-[10px] tracking-widest uppercase">
                 /why-lagos
               </p>
-              <p
-                className="text-base leading-8 font-medium"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
+              <p className="text-color-text-primary text-base leading-8 font-medium">
                 Constraint is a design tool.
                 <br />
                 Lagos constraint is a sharper one.
               </p>
-              <p
-                className="mt-4 text-sm leading-7"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                Power cuts at 2am. Rate-limited government APIs. Audit pressure
-                with a 48-hour window. Every system I build has been shaped by
-                these constraints — not despite them, but because of them.
-                Comfortable conditions produce comfortable systems.
+              <p className="text-color-text-secondary mt-4 text-sm leading-7">
+                Power cuts at 2am. Rate-limited government APIs. Audit pressure with a 48-hour
+                window. Every system I build has been shaped by these constraints — not despite
+                them, but because of them. Comfortable conditions produce comfortable systems.
               </p>
               <button
                 type="button"
                 onClick={() => setWhyLagosOpen(false)}
-                className="mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
                 autoFocus
               >
                 Dismiss ↩

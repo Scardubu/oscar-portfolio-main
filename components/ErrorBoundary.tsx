@@ -3,13 +3,13 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
-  children:  ReactNode;
+  children: ReactNode;
   fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  message:  string;
+  message: string;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -41,20 +41,15 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           role="alert"
-          className="flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 text-center"
-          style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-surface)' }}
+          className="border-color-border bg-color-surface flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 text-center"
         >
-          <p
-            className="text-sm font-medium"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
+          <p className="text-color-text-secondary text-sm font-medium">
             Something went wrong rendering this section.
           </p>
           <button
             type="button"
             onClick={this.handleReset}
-            className="inline-flex min-h-[48px] items-center rounded-full border px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+            className="border-color-border text-color-text-muted inline-flex min-h-[48px] items-center rounded-full border px-5 py-2.5 font-mono text-xs tracking-widest uppercase transition"
             aria-label="Try again — reload this section"
           >
             Try again

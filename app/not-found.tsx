@@ -21,58 +21,40 @@ export default function NotFound() {
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10"
+        // eslint-disable-next-line no-restricted-syntax
         style={{
           background:
             'radial-gradient(ellipse 60% 50% at 50% 40%, oklch(70% 0.21 188 / 0.06) 0%, transparent 65%)',
         }}
       />
 
-      <div
-        className="glass-surface w-full max-w-md rounded-[var(--radius-2xl)] p-8 sm:p-10 text-center"
-        style={{ borderTop: '1px solid oklch(70% 0.21 188 / 0.22)' }}
-      >
+      <div className="glass-surface w-full max-w-md rounded-[var(--radius-2xl)] border-t border-[oklch(70%_0.21_188_/_0.22)] p-8 text-center sm:p-10">
         {/* Kicker */}
-        <p
-          className="font-mono text-[10px] tracking-[0.25em] uppercase mb-6"
-          style={{ color: 'var(--color-film-teal)' }}
-        >
+        <p className="text-color-film-teal mb-6 font-mono text-[10px] tracking-[0.25em] uppercase">
           404 · Not Found
         </p>
 
         {/* Headline — CE spec: "This page doesn't exist. The system does." */}
         <h1
           id="not-found-heading"
-          className="mb-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl"
-          style={{ color: 'var(--color-text-primary)' }}
+          className="font-display text-color-text-primary mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl"
         >
           This page doesn&apos;t exist.{' '}
-          <span style={{ color: 'var(--color-film-teal)' }}>
-            The system does.
-          </span>
+          <span className="text-color-film-teal">The system does.</span>
         </h1>
 
         {/* Didone sub-line */}
-        <p
-          className="mb-2 font-didone text-base italic sm:text-lg"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
+        <p className="font-didone text-color-text-secondary mb-2 text-base italic sm:text-lg">
           Unlike the systems behind this site, this URL has no uptime record.
         </p>
 
         {/* Trust signal */}
-        <p
-          className="mb-8 font-mono text-[10px] tracking-widest uppercase"
-          style={{ color: 'var(--color-text-muted)' }}
-        >
+        <p className="text-color-text-muted mb-8 font-mono text-[10px] tracking-widest uppercase">
           Response within 24h · Zero data-loss record · Shipped from Lagos.
         </p>
 
         {/* Divider */}
-        <div
-          className="mb-8 h-px w-full"
-          style={{ background: 'var(--color-border-subtle)' }}
-          aria-hidden="true"
-        />
+        <div className="bg-color-border-subtle mb-8 h-px w-full" aria-hidden="true" />
 
         {/* Primary CTA */}
         <Link
@@ -80,34 +62,21 @@ export default function NotFound() {
           className="cta-primary cta-primary--lg tactile-press w-full justify-center"
           aria-label="Return to Oscar Ndugbu's portfolio homepage"
         >
-          <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{ background: 'var(--color-success)' }}
-            aria-hidden="true"
-          />
+          <span className="bg-color-success inline-block h-2 w-2 rounded-full" aria-hidden="true" />
           Back to production
         </Link>
 
         {/* Secondary nav strip */}
-        <nav
-          className="mt-6 flex items-center justify-center gap-4"
-          aria-label="Quick navigation"
-        >
+        <nav className="mt-6 flex items-center justify-center gap-4" aria-label="Quick navigation">
           {[
             { label: 'Projects', href: anchorUrl('section-projects') },
-            { label: 'About',    href: anchorUrl('section-about')    },
-            { label: 'Contact',  href: anchorUrl('section-contact')  },
+            { label: 'About', href: anchorUrl('section-about') },
+            { label: 'Contact', href: anchorUrl('section-contact') },
           ].map(({ label, href }) => (
             <Link
               key={href}
               href={href}
-              className="font-mono text-[11px] tracking-wider uppercase transition-colors hover:text-white"
-              style={{
-                color: 'var(--color-text-muted)',
-                minHeight: '44px',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
+              className="text-color-text-muted inline-flex min-h-[44px] items-center font-mono text-[11px] tracking-wider uppercase transition-colors hover:text-white"
             >
               {label}
             </Link>
@@ -116,10 +85,7 @@ export default function NotFound() {
       </div>
 
       {/* Footer tag */}
-      <p
-        className="mt-8 font-mono text-[10px] tracking-wider uppercase"
-        style={{ color: 'oklch(93% 0.006 264 / 0.20)' }}
-      >
+      <p className="mt-8 font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.20)] uppercase">
         Lagos precision. Global scale.
       </p>
     </main>

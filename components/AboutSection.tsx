@@ -8,13 +8,7 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
-import {
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
-} from '@/lib/motionVariants';
+import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
 function formatAvailabilityMonthYear(isoDate: string): string {
@@ -24,44 +18,60 @@ function formatAvailabilityMonthYear(isoDate: string): string {
 }
 
 const CERTS = [
-  { name: 'AWS Certified Developer',                   date: 'Dec 2023', provider: 'AWS' },
-  { name: 'GCP Associate Cloud Engineer',              date: 'Aug 2023', provider: 'GCP' },
-  { name: 'OpenJS Node.js Services Developer (JSNSD)', date: 'May 2024', provider: 'JS'  },
-  { name: 'PostgreSQL 14 Associate',                   date: 'Mar 2024', provider: 'PG'  },
+  { name: 'AWS Certified Developer', date: 'Dec 2023', provider: 'AWS' },
+  { name: 'GCP Associate Cloud Engineer', date: 'Aug 2023', provider: 'GCP' },
+  { name: 'OpenJS Node.js Services Developer (JSNSD)', date: 'May 2024', provider: 'JS' },
+  { name: 'PostgreSQL 14 Associate', date: 'Mar 2024', provider: 'PG' },
 ] as const;
 
 // Full-stack range: mobile → web → API → data → ML — one visual scan
 const STACK_STRIP = [
-  { name: 'React Native',  cat: 'Mobile',   dot: 'oklch(75% 0.16 300)' },
-  { name: 'Next.js 15',    cat: 'Web',      dot: 'var(--color-film-teal)' },
-  { name: 'React 19',      cat: 'UI',       dot: 'oklch(72% 0.19 196)' },
-  { name: 'TypeScript',    cat: 'Language', dot: 'oklch(70% 0.18 230)' },
-  { name: 'FastAPI',       cat: 'API',      dot: 'oklch(72% 0.17 160)' },
-  { name: 'PostgreSQL 15', cat: 'Data',     dot: 'oklch(68% 0.14 244)' },
-  { name: 'Python 3.11+',  cat: 'ML',       dot: 'oklch(80% 0.16 60)'  },
-  { name: 'Redis 7',       cat: 'Cache',    dot: 'oklch(66% 0.22 22)'  },
+  { name: 'React Native', cat: 'Mobile', dot: 'oklch(75% 0.16 300)' },
+  { name: 'Next.js 15', cat: 'Web', dot: 'var(--color-film-teal)' },
+  { name: 'React 19', cat: 'UI', dot: 'oklch(72% 0.19 196)' },
+  { name: 'TypeScript', cat: 'Language', dot: 'oklch(70% 0.18 230)' },
+  { name: 'FastAPI', cat: 'API', dot: 'oklch(72% 0.17 160)' },
+  { name: 'PostgreSQL 15', cat: 'Data', dot: 'oklch(68% 0.14 244)' },
+  { name: 'Python 3.11+', cat: 'ML', dot: 'oklch(80% 0.16 60)' },
+  { name: 'Redis 7', cat: 'Cache', dot: 'oklch(66% 0.22 22)' },
 ] as const;
 
 // Outcome numbers — scannable for non-technical founders
 const IMPACT_STATS = [
-  { value: '4h → 15min', label: 'Tax filing time',     color: 'var(--color-film-teal)' },
-  { value: '99.9%+',     label: 'Sustained uptime',    color: 'oklch(72% 0.17 160)'    },
-  { value: '3',          label: 'Production platforms', color: 'oklch(75% 0.16 300)'    },
+  { value: '4h → 15min', label: 'Tax filing time', color: 'var(--color-film-teal)' },
+  { value: '99.9%+', label: 'Sustained uptime', color: 'oklch(72% 0.17 160)' },
+  { value: '3', label: 'Production platforms', color: 'oklch(75% 0.16 300)' },
 ] as const;
 
 // Quick facts for the sidebar — scannable proof at a glance
 const QUICK_FACTS = [
-  { value: '4',   label: 'Cloud certs'  },
+  { value: '4', label: 'Cloud certs' },
   { value: '15+', label: 'Upstream PRs' },
-  { value: '4+',  label: 'Yrs in prod.' },
+  { value: '4+', label: 'Yrs in prod.' },
 ] as const;
 
 // Provider-specific accent colours
 const PROVIDER_STYLES: Record<string, { bg: string; color: string; border: string }> = {
-  AWS: { bg: 'oklch(75% 0.17 65 / 0.12)',  color: 'oklch(78% 0.17 65)',  border: 'oklch(75% 0.17 65 / 0.3)'  },
-  GCP: { bg: 'oklch(68% 0.18 220 / 0.12)', color: 'oklch(72% 0.18 220)', border: 'oklch(68% 0.18 220 / 0.3)' },
-  JS:  { bg: 'oklch(80% 0.16 90 / 0.12)',  color: 'oklch(80% 0.16 90)',  border: 'oklch(80% 0.16 90 / 0.3)'  },
-  PG:  { bg: 'oklch(68% 0.14 244 / 0.12)', color: 'oklch(72% 0.14 244)', border: 'oklch(68% 0.14 244 / 0.3)' },
+  AWS: {
+    bg: 'oklch(75% 0.17 65 / 0.12)',
+    color: 'oklch(78% 0.17 65)',
+    border: 'oklch(75% 0.17 65 / 0.3)',
+  },
+  GCP: {
+    bg: 'oklch(68% 0.18 220 / 0.12)',
+    color: 'oklch(72% 0.18 220)',
+    border: 'oklch(68% 0.18 220 / 0.3)',
+  },
+  JS: {
+    bg: 'oklch(80% 0.16 90 / 0.12)',
+    color: 'oklch(80% 0.16 90)',
+    border: 'oklch(80% 0.16 90 / 0.3)',
+  },
+  PG: {
+    bg: 'oklch(68% 0.14 244 / 0.12)',
+    color: 'oklch(72% 0.14 244)',
+    border: 'oklch(68% 0.14 244 / 0.3)',
+  },
 };
 
 export function AboutSection() {
@@ -79,8 +89,7 @@ export function AboutSection() {
       id="section-about"
       ref={ref}
       aria-labelledby="about-heading"
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
     >
       <div className="container">
         <m.div
@@ -107,13 +116,10 @@ export function AboutSection() {
             <m.h2
               variants={headingVariant}
               id="about-heading"
-              className="mt-4"
-              style={{ color: 'var(--color-text-primary)' }}
+              className="text-color-text-primary mt-4"
             >
-              Federal scale.{' '}
-              <br className="hidden sm:block" />
-              Production ML.{' '}
-              <br className="hidden sm:block" />
+              Federal scale. <br className="hidden sm:block" />
+              Production ML. <br className="hidden sm:block" />
               Lagos → Global.
             </m.h2>
 
@@ -126,33 +132,28 @@ export function AboutSection() {
                 (Dual Conviction Test · Three-Layer Audience Depth: spec §III) */}
             <m.p
               variants={itemVariants}
-              className="mt-3 max-w-[44ch] text-lg leading-relaxed"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="text-color-text-secondary mt-3 max-w-[44ch] text-lg leading-relaxed"
             >
-              Built the digital learning infrastructure for 40 million Nigerian
-              students at UBEC (Abuja HQ). Then shipped three production systems
-              from Lagos that hold at 2am.
+              Built the digital learning infrastructure for 40 million Nigerian students at UBEC
+              (Abuja HQ). Then shipped three production systems from Lagos that hold at 2am.
             </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
             <m.div
               variants={itemVariants}
-              className="mt-7 flex flex-wrap gap-x-8 gap-y-4 border-t border-b py-5"
-              style={{ borderColor: 'var(--color-border-subtle)' }}
+              className="border-color-border-subtle mt-7 flex flex-wrap gap-x-8 gap-y-4 border-t border-b py-5"
               aria-label="Impact stats"
             >
               {IMPACT_STATS.map(({ value, label, color }) => (
                 <div key={label} className="flex flex-col gap-0.5">
                   <span
                     className="font-mono text-base font-semibold tracking-tight tabular-nums"
+                    // eslint-disable-next-line no-restricted-syntax
                     style={{ color }}
                   >
                     {value}
                   </span>
-                  <span
-                    className="font-mono text-[10px] tracking-widest uppercase"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <span className="text-color-text-muted font-mono text-[10px] tracking-widest uppercase">
                     {label}
                   </span>
                 </div>
@@ -164,36 +165,31 @@ export function AboutSection() {
             <div className="about-narrative-block">
               <m.p
                 variants={itemVariants}
-                className="about-narrative-p mt-7 max-w-[var(--max-width-prose)] text-base leading-8"
-                style={{ color: 'var(--color-text-primary)', opacity: 0.82 }}
+                className="about-narrative-p text-color-text-primary mt-7 max-w-[var(--max-width-prose)] text-base leading-8 opacity-[0.82]"
               >
-                The UBEC work meant no staging mirror, no padded support layer, and
-                no room for vague ownership at federal scale. That operating constraint
-                carried into every system after it. First-principles thinking, explicit
-                failure modes, architecture decisions written so the next engineer
-                can read the reasoning long after deploy.
+                The UBEC work meant no staging mirror, no padded support layer, and no room for
+                vague ownership at federal scale. That operating constraint carried into every
+                system after it. First-principles thinking, explicit failure modes, architecture
+                decisions written so the next engineer can read the reasoning long after deploy.
               </m.p>
 
               <m.p
                 variants={itemVariants}
-                className="about-narrative-p mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
-                style={{ color: 'var(--color-text-primary)', opacity: 0.75 }}
+                className="about-narrative-p text-color-text-primary mt-5 max-w-[var(--max-width-prose)] text-base leading-8 opacity-75"
               >
-                TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS
-                for tenant isolation.
-                SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost) behind a
-                Next.js 15 dashboard — 99.9%+ uptime across a 90-day Prometheus window.
+                TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS for
+                tenant isolation. SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost)
+                behind a Next.js 15 dashboard — 99.9%+ uptime across a 90-day Prometheus window.
                 SwarmXQ: self-improving AI agent fleet with live ops visibility.
               </m.p>
 
               <m.p
                 variants={itemVariants}
-                className="about-narrative-p mt-5 max-w-[var(--max-width-prose)] text-base leading-8"
-                style={{ color: 'var(--color-text-primary)', opacity: 0.65 }}
+                className="about-narrative-p text-color-text-primary mt-5 max-w-[var(--max-width-prose)] text-base leading-8 opacity-[0.65]"
               >
-                Fifteen-plus upstream contributions merged, four cloud certifications,
-                and public code that outlives any single job title.{' '}
-                Constraint is the credential. The work is the record.
+                Fifteen-plus upstream contributions merged, four cloud certifications, and public
+                code that outlives any single job title. Constraint is the credential. The work is
+                the record.
               </m.p>
             </div>
 
@@ -206,30 +202,19 @@ export function AboutSection() {
               {STACK_STRIP.map(({ name, cat, dot }) => (
                 <div
                   key={name}
-                  className="flex items-center gap-2 rounded-md border px-3 py-1.5"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    background: 'oklch(100% 0 0 / 0.025)',
-                  }}
+                  className="border-color-border flex items-center gap-2 rounded-md border bg-[oklch(100%_0_0_/_0.025)] px-3 py-1.5"
                   title={`Category: ${cat}`}
                 >
                   <span
                     className="h-1.5 w-1.5 shrink-0 rounded-full"
+                    // eslint-disable-next-line no-restricted-syntax
                     style={{ background: dot }}
                     aria-hidden="true"
                   />
-                  <span
-                    className="font-mono text-[9px] tracking-widest uppercase"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <span className="text-color-text-muted font-mono text-[9px] tracking-widest uppercase">
                     {cat}
                   </span>
-                  <span
-                    className="text-xs font-medium"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
-                    {name}
-                  </span>
+                  <span className="text-color-text-secondary text-xs font-medium">{name}</span>
                 </div>
               ))}
             </m.div>
@@ -237,65 +222,52 @@ export function AboutSection() {
             {/* Constraint Code — non-negotiable engineering standards as active declarations */}
             <m.div
               variants={cardVariant}
-              className="glass-surface mt-8 rounded-[var(--radius-lg)] p-5 sm:p-6"
-              style={{ borderLeft: '2px solid var(--color-film-teal)' }}
+              className="glass-surface border-l-color-film-teal mt-8 rounded-[var(--radius-lg)] border-l-2 p-5 sm:p-6"
             >
-              <p
-                className="mb-2 font-mono text-[10px] tracking-widest uppercase font-semibold"
-                style={{ color: 'var(--color-film-teal)' }}
-              >
+              <p className="text-color-film-teal mb-2 font-mono text-[10px] font-semibold tracking-widest uppercase">
                 Constraint Code · Non-Negotiable Standards
               </p>
               <div className="flex flex-col gap-4" role="list">
                 {[
                   {
                     declaration: 'Correctness is a product feature, not a backend preference.',
-                    proof: 'The database schema, API contracts, and UI flows all carry the burden of truth — not just the last layer to touch the request.',
+                    proof:
+                      'The database schema, API contracts, and UI flows all carry the burden of truth — not just the last layer to touch the request.',
                   },
                   {
                     declaration: 'Silent failures are design failures.',
-                    proof: 'Retries, dead-letter handling, structured logs, and metrics exist before the first incident, not after the apology.',
+                    proof:
+                      'Retries, dead-letter handling, structured logs, and metrics exist before the first incident, not after the apology.',
                   },
                   {
                     declaration: 'Every critical decision deserves a written rationale.',
-                    proof: 'The next engineer should be able to understand the choice, the tradeoff, and what was consciously rejected.',
+                    proof:
+                      'The next engineer should be able to understand the choice, the tradeoff, and what was consciously rejected.',
                   },
                   {
                     declaration: 'If a system cannot be observed, it cannot be trusted.',
-                    proof: 'Health checks, traces, and dashboards are treated as part of the product surface — not optional operations decoration.',
+                    proof:
+                      'Health checks, traces, and dashboards are treated as part of the product surface — not optional operations decoration.',
                   },
                 ].map(({ declaration, proof }) => (
                   <div key={declaration} className="flex flex-col gap-1" role="listitem">
-                    <p
-                      className="text-sm font-semibold leading-snug"
-                      style={{ color: 'var(--color-text-primary)' }}
-                    >
+                    <p className="text-color-text-primary text-sm leading-snug font-semibold">
                       {declaration}
                     </p>
-                    <p
-                      className="text-xs leading-6"
-                      style={{ color: 'var(--color-text-muted)' }}
-                    >
-                      {proof}
-                    </p>
+                    <p className="text-color-text-muted text-xs leading-6">{proof}</p>
                   </div>
                 ))}
               </div>
-              <p
-                className="font-mono text-[10px] tracking-wider"
-                style={{ marginTop: '1.25rem', color: 'var(--color-text-muted)', opacity: 0.6 }}
-              >
+              <p className="text-color-text-muted mt-5 font-mono text-[10px] tracking-wider opacity-60">
                 Traced to live production decisions across TaxBridge · SabiScore · SwarmXQ
               </p>
             </m.div>
 
             <m.p
               variants={itemVariants}
-              className="mt-8 text-lg font-semibold"
-              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}
+              className="text-color-text-primary font-display mt-8 text-lg font-semibold"
             >
-              Lagos-built.{' '}
-              <span style={{ color: 'var(--color-film-teal)' }}>Running globally.</span>
+              Lagos-built. <span className="text-color-film-teal">Running globally.</span>
             </m.p>
           </div>
 
@@ -304,20 +276,19 @@ export function AboutSection() {
             {/* Headshot — desktop only; hero handles mobile */}
             <m.div
               variants={itemVariants}
-              className="mb-6 hidden lg:flex flex-col items-center gap-3"
+              className="mb-6 hidden flex-col items-center gap-3 lg:flex"
             >
               <m.div
                 className="relative"
                 aria-hidden="true"
-                whileHover={{ scale: 1.04, transition: { type: 'spring', stiffness: 260, damping: 22 } }}
+                whileHover={{
+                  scale: 1.04,
+                  transition: { type: 'spring', stiffness: 260, damping: 22 },
+                }}
               >
                 {/* Conic teal ring — larger radius to match 180px image */}
                 <div
-                  className="absolute -inset-[3px] rounded-full"
-                  style={{
-                    background:
-                      'conic-gradient(from 180deg, oklch(70% 0.21 188 / 0.65), transparent 55%, oklch(70% 0.21 188 / 0.28) 100%)',
-                  }}
+                  className="absolute -inset-[3px] rounded-full bg-[conic-gradient(from_180deg,oklch(70%_0.21_188_/_0.65),transparent_55%,oklch(70%_0.21_188_/_0.28)_100%)]"
                   aria-hidden="true"
                 />
                 <Image
@@ -326,25 +297,14 @@ export function AboutSection() {
                   width={180}
                   height={180}
                   priority={false}
-                  className="relative rounded-full object-cover object-top"
-                  style={{
-                    width: '180px',
-                    height: '180px',
-                    boxShadow: '0 16px 48px oklch(0% 0 0 / 0.55)',
-                  }}
+                  className="relative h-[180px] w-[180px] rounded-full object-cover object-top shadow-[0_16px_48px_oklch(0%_0_0_/_0.55)]"
                 />
               </m.div>
               <div className="text-center">
-                <p
-                  className="font-display text-sm font-bold"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <p className="font-display text-color-text-primary text-sm font-bold">
                   Oscar Ndugbu
                 </p>
-                <p
-                  className="font-mono text-[10px] tracking-widest uppercase mt-0.5"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <p className="text-color-text-muted mt-0.5 font-mono text-[10px] tracking-widest uppercase">
                   Full-Stack · Infra · ML · Lagos
                 </p>
               </div>
@@ -360,10 +320,7 @@ export function AboutSection() {
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
-                  <span
-                    className="ml-2 opacity-50 normal-case tracking-normal"
-                    style={{ fontSize: '9px' }}
-                  >
+                  <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
                     · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
@@ -373,8 +330,7 @@ export function AboutSection() {
             {/* Certifications heading */}
             <m.h3
               variants={itemVariants}
-              className="font-body text-xs uppercase tracking-widest"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="font-body text-color-text-secondary text-xs tracking-widest uppercase"
             >
               Certifications
             </m.h3>
@@ -391,28 +347,22 @@ export function AboutSection() {
                   <m.article
                     key={cert.name}
                     variants={cardVariant}
-                    className="glass-surface rounded-[var(--radius-md)] border-l-2 p-4"
-                    style={{ borderLeftColor: 'var(--color-film-teal)', minHeight: '56px' }}
+                    className="glass-surface border-l-color-film-teal min-h-[56px] rounded-[var(--radius-md)] border-l-2 p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <p
-                        className="text-sm font-medium leading-snug"
-                        style={{ color: 'var(--color-text-primary)' }}
-                      >
+                      <p className="text-color-text-primary text-sm leading-snug font-medium">
                         {cert.name}
                       </p>
                       <span
                         className="mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-widest uppercase"
+                        // eslint-disable-next-line no-restricted-syntax
                         style={{ background: ps.bg, color: ps.color, borderColor: ps.border }}
                         aria-label={`Provider: ${cert.provider}`}
                       >
                         {cert.provider}
                       </span>
                     </div>
-                    <p
-                      className="mt-1.5 font-mono text-[11px]"
-                      style={{ color: 'var(--color-text-muted)' }}
-                    >
+                    <p className="text-color-text-muted mt-1.5 font-mono text-[11px]">
                       {cert.date}
                     </p>
                   </m.article>
@@ -429,22 +379,10 @@ export function AboutSection() {
               {QUICK_FACTS.map(({ value, label }) => (
                 <div
                   key={label}
-                  className="rounded-[var(--radius-md)] border p-3 text-center"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    background: 'oklch(100% 0 0 / 0.02)',
-                  }}
+                  className="border-color-border rounded-[var(--radius-md)] border bg-[oklch(100%_0_0_/_0.02)] p-3 text-center"
                 >
-                  <p
-                    className="font-mono text-base font-semibold"
-                    style={{ color: 'var(--color-film-teal)' }}
-                  >
-                    {value}
-                  </p>
-                  <p
-                    className="mt-0.5 font-mono text-[9px] tracking-wide uppercase"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <p className="text-color-film-teal font-mono text-base font-semibold">{value}</p>
+                  <p className="text-color-text-muted mt-0.5 font-mono text-[9px] tracking-wide uppercase">
                     {label}
                   </p>
                 </div>
@@ -456,10 +394,9 @@ export function AboutSection() {
         {/* Flow hook — V1.0 Change 6d: §Flow Mechanics §About */}
         <m.p
           variants={itemVariants}
-          className="mt-8 font-mono text-[13px]"
-          style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
         >
-          <Link href={anchorUrl('section-writing')} className="hover:opacity-80 transition-opacity">
+          <Link href={anchorUrl('section-writing')} className="transition-opacity hover:opacity-80">
             Architecture calls documented →
           </Link>
         </m.p>

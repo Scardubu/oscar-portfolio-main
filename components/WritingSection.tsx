@@ -39,12 +39,10 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       id="section-writing"
       ref={ref}
       aria-labelledby="writing-heading"
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
     >
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-
           {/* ── Section header ────────────────────────────────────────────── */}
           <m.div variants={child} className="mb-8 sm:mb-12">
             {/*
@@ -58,15 +56,16 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               {/* Left: kicker + heading */}
               <div>
                 <div className="section-kicker-row">
-                  <span className="section-number" aria-hidden="true">05</span>
+                  <span className="section-number" aria-hidden="true">
+                    05
+                  </span>
                   <span className="section-label">Writing</span>
                 </div>
 
                 <m.h2
                   variants={reducedMotion ? child : clipReveal}
                   id="writing-heading"
-                  className="mt-[var(--space-2)] max-w-[22ch]"
-                  style={{ color: 'var(--color-text-primary)' }}
+                  className="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]"
                 >
                   Writing that ships decisions.
                 </m.h2>
@@ -76,11 +75,10 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <div className="lg:flex lg:flex-col lg:justify-end">
                 <m.p
                   variants={child}
-                  className="mt-4 lg:mt-0 max-w-[52ch] text-sm sm:text-base leading-[1.8]"
-                  style={{ color: 'var(--color-text-secondary)' }}
+                  className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-[1.8] sm:text-base lg:mt-0"
                 >
-                  Architecture calls, ML trade-offs, and the production decisions
-                  behind them — from Lagos to the world.
+                  Architecture calls, ML trade-offs, and the production decisions behind them — from
+                  Lagos to the world.
                 </m.p>
               </div>
             </div>
@@ -101,30 +99,30 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               aria-label="Filter articles by topic"
             >
               {/* Scroll wrapper — horizontal on mobile, wrap on md+ */}
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x md:flex-wrap md:overflow-visible">
-              {(['ALL', ...FILTER_LABELS] as const).map((label) => {
-                const isActive = activeFilter === label;
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
-                    aria-pressed={isActive}
-                    data-active={isActive ? 'true' : 'false'}
-                    className={[
-                      'writing-filter-chip shrink-0 snap-start rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase whitespace-nowrap',
-                      'transition-all duration-200 min-h-[44px] border',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
-                      'active:scale-[0.97]',
-                      isActive
-                        ? 'bg-white/10 border-white/28 text-white'
-                        : 'border-white/10 text-white/45 hover:text-white/70 hover:border-white/20',
-                    ].join(' ')}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+              <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible">
+                {(['ALL', ...FILTER_LABELS] as const).map((label) => {
+                  const isActive = activeFilter === label;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setActiveFilter(label as FilterLabel | 'ALL')}
+                      aria-pressed={isActive}
+                      data-active={isActive ? 'true' : 'false'}
+                      className={[
+                        'writing-filter-chip shrink-0 snap-start rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest whitespace-nowrap uppercase',
+                        'min-h-[44px] border transition-all duration-200',
+                        'focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none',
+                        'active:scale-[0.97]',
+                        isActive
+                          ? 'border-white/28 bg-white/10 text-white'
+                          : 'border-white/10 text-white/45 hover:border-white/20 hover:text-white/70',
+                      ].join(' ')}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </m.div>
           </m.div>
@@ -136,51 +134,38 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   before they commit. Per spec §CTA Warmup Path: mono, 12px, opacity 0.50. */}
               <m.p
                 variants={child}
-                className="mb-4 font-mono text-[12px]"
-                style={{ color: 'var(--color-text-muted)', opacity: 0.50 }}
+                className="text-color-text-muted mb-4 font-mono text-[12px] opacity-50"
               >
                 Start here if you want to understand how these systems were designed.
               </m.p>
 
               <m.article
                 variants={card}
-                className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
+                className="glass-full mb-4 rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10"
               >
                 {/* V1.0 Change 5a: TIER 1 signals curation; STAFF+ SIGNAL signals audience
                     relevance; min read is the only metric that serves the visitor directly. */}
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="pill pill-cyan" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.08em' }}>
+                  <span className="pill pill-cyan font-mono text-[10px] [letter-spacing:0.08em]">
                     TIER 1
                   </span>
-                  <span className="badge-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.06em' }}>
+                  <span className="badge-muted font-mono text-[10px] [letter-spacing:0.06em]">
                     STAFF+ SIGNAL
                   </span>
-                  <span
-                    className="font-mono text-xs"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <span className="text-color-text-muted font-mono text-xs">
                     {featuredPost.readingTime} min read
                   </span>
                 </div>
 
-                <h3
-                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight line-clamp-3 sm:line-clamp-none"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <h3 className="text-color-text-primary mt-5 line-clamp-3 max-w-[28ch] text-xl leading-snug font-bold tracking-tight sm:line-clamp-none sm:text-2xl">
                   {featuredPost.title}
                 </h3>
 
-                <p
-                  className="mt-3 max-w-[64ch] text-sm sm:text-base leading-8"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <p className="text-color-text-secondary mt-3 max-w-[64ch] text-sm leading-8 sm:text-base">
                   {featuredPost.summary}
                 </p>
 
-                <div
-                  className="mt-4 flex flex-wrap items-center gap-3 text-xs"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <div className="text-color-text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
                   <time dateTime={featuredPost.date} className="font-mono uppercase">
                     {formatDate(featuredPost.date)}
                   </time>
@@ -193,11 +178,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
                 <Link
                   href={`/writing/${featuredPost.slug}`}
-                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.97]"
-                  style={{
-                    borderColor: 'var(--color-film-teal-glow)',
-                    color: 'var(--color-film-teal)',
-                  }}
+                  className="text-color-film-teal mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-[var(--color-film-teal-glow)] px-5 py-2.5 text-sm transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
                 >
                   <span>Read the article</span>
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -209,8 +190,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 <AnimatePresence mode="popLayout">
                   <m.div
                     variants={container}
-                    className="writing-articles-list grid gap-px overflow-hidden rounded-[var(--radius-lg)]"
-                    style={{ background: 'var(--color-border)' }}
+                    className="writing-articles-list bg-color-border grid gap-px overflow-hidden rounded-[var(--radius-lg)]"
                   >
                     {otherPosts.map((post) => (
                       <m.div
@@ -218,9 +198,9 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                         variants={card}
                         exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                         layout
-                        style={{ background: 'var(--color-bg)' }}
+                        className="bg-color-bg"
                       >
-                        <Link href={`/writing/${post.slug}`} className="block group">
+                        <Link href={`/writing/${post.slug}`} className="group block">
                           <m.article
                             whileHover={
                               reducedMotion
@@ -233,36 +213,28 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                             className="flex min-h-[52px] items-center gap-3 px-4 py-3.5"
                           >
                             {/* Date — stacked on mobile, inline on sm+ */}
-                            <div className="hidden sm:block min-w-24 shrink-0">
+                            <div className="hidden min-w-24 shrink-0 sm:block">
                               <time
                                 dateTime={post.date}
-                                className="font-mono text-xs"
-                                style={{ color: 'var(--color-text-muted)' }}
+                                className="text-color-text-muted font-mono text-xs"
                               >
                                 {formatDate(post.date)}
                               </time>
                             </div>
 
-                            <div className="flex-1 min-w-0">
-                              <span
-                                className="block text-sm font-medium line-clamp-2 sm:line-clamp-2 sm:whitespace-normal transition group-hover:text-white"
-                                style={{ color: 'var(--color-text-primary)' }}
-                              >
+                            <div className="min-w-0 flex-1">
+                              <span className="text-color-text-primary line-clamp-2 block text-sm font-medium transition group-hover:text-white sm:line-clamp-2 sm:whitespace-normal">
                                 {post.title}
                               </span>
                               <time
                                 dateTime={post.date}
-                                className="sm:hidden block font-mono text-[10px] mt-0.5"
-                                style={{ color: 'var(--color-text-muted)' }}
+                                className="text-color-text-muted mt-0.5 block font-mono text-[10px] sm:hidden"
                               >
                                 {formatDate(post.date)}
                               </time>
                             </div>
 
-                            <span
-                              className="text-xs whitespace-nowrap shrink-0"
-                              style={{ color: 'var(--color-text-muted)' }}
-                            >
+                            <span className="text-color-text-muted shrink-0 text-xs whitespace-nowrap">
                               {post.readingTime} min
                             </span>
                           </m.article>
@@ -277,11 +249,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <m.div variants={child} className="mt-8">
                 <Link
                   href="/writing"
-                  className="inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-6 py-3 font-mono text-[11px] tracking-widest uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:scale-[0.97]"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-film-teal)',
-                  }}
+                  className="border-color-border text-color-film-teal inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border px-6 py-3 font-mono text-[11px] tracking-widest uppercase transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
                 >
                   See all {posts.length} articles
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -291,10 +259,12 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               {/* Flow hook — V1.0 Change 6e: §Flow Mechanics §Writing */}
               <m.p
                 variants={child}
-                className="mt-10 font-mono text-[13px]"
-                style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
               >
-                <Link href={anchorUrl('section-contact')} className="hover:opacity-80 transition-opacity">
+                <Link
+                  href={anchorUrl('section-contact')}
+                  className="transition-opacity hover:opacity-80"
+                >
                   The system is ready. Bring your constraint.
                 </Link>
               </m.p>

@@ -251,6 +251,7 @@ export default function Navbar() {
           'transition-[background-color,border-color,backdrop-filter] duration-300',
           scrolled ? 'border-b border-white/10 bg-black/70 backdrop-blur-2xl' : 'bg-transparent',
         ].join(' ')}
+        // eslint-disable-next-line no-restricted-syntax
         style={{ translateZ: 0 }}
       >
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -316,11 +317,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <Link
             href={anchorUrl('section-contact')}
-            className="hidden min-h-[44px] items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-colors duration-200 hover:bg-[oklch(73%_0.18_196_/_0.08)] focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:inline-flex"
-            style={{
-              borderColor: 'oklch(73% 0.18 196 / 0.55)',
-              color: 'oklch(73% 0.18 196)',
-            }}
+            className="hidden min-h-[44px] items-center gap-2 rounded-xl border border-[oklch(73%_0.18_196_/_0.55)] px-4 text-sm font-medium text-[oklch(73%_0.18_196)] transition-colors duration-200 hover:bg-[oklch(73%_0.18_196_/_0.08)] focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:inline-flex"
           >
             Hire Oscar
           </Link>
@@ -420,8 +417,7 @@ export default function Navbar() {
                         <span>{item.label}</span>
                         {active && (
                           <div
-                            className="h-2 w-2 rounded-full"
-                            style={{ background: 'oklch(73% 0.18 196)' }}
+                            className="h-2 w-2 rounded-full bg-[oklch(73%_0.18_196)]"
                             aria-hidden="true"
                           />
                         )}

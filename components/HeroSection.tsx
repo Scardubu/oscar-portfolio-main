@@ -12,13 +12,13 @@ import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 're
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
-    HERO_SCROLL_CONFIG,
-    cardReveal,
-    fadeRise,
-    noMotion,
-    staggerContainer,
-    wordReveal,
-    wordRevealContainer,
+  HERO_SCROLL_CONFIG,
+  cardReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
+  wordReveal,
+  wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
@@ -26,8 +26,7 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
   ssr: false,
   loading: () => (
     <div
-      className="glass-elevated rounded-[var(--radius-xl)] w-full"
-      style={{ minHeight: '320px', opacity: 0.3 }}
+      className="glass-elevated min-h-[320px] w-full rounded-[var(--radius-xl)] opacity-30"
       aria-hidden="true"
     />
   ),
@@ -39,10 +38,10 @@ const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
 // '45% MTTD' / 'Improvement' replaces '45% faster' / 'Alert detection' —
 // MTTD is the precise Prometheus-traceable metric; "faster" was imprecise.
 const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Filing time',   stat: 'filing'  },
-  { value: '99.9%+',     label: '90-day uptime', stat: 'uptime'  },
-  { value: 'sub-150ms',  label: 'API p99',        stat: 'latency' },
-  { value: '45% MTTD',   label: 'Improvement',   stat: 'mttd'    },
+  { value: '4h → 15min', label: 'Filing time', stat: 'filing' },
+  { value: '99.9%+', label: '90-day uptime', stat: 'uptime' },
+  { value: 'sub-150ms', label: 'API p99', stat: 'latency' },
+  { value: '45% MTTD', label: 'Improvement', stat: 'mttd' },
 ] as const;
 
 // v26 FIX: PROOF_COLUMNS body copy updated to match corrected stat.
@@ -185,7 +184,8 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <>
       <p id="hero-proof-help" className="sr-only">
-        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End. On larger screens, displayed as a two-column grid.
+        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End. On
+        larger screens, displayed as a two-column grid.
       </p>
       <p id="hero-proof-status" className="sr-only" aria-live="polite">
         Showing proof {activeIndex + 1} of {PROOF_COLUMNS.length}: {activeLabel}
@@ -194,8 +194,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] scroll-smooth snap-x snap-mandatory"
-          style={{ paddingInline: 'clamp(1rem, 5vw, 3rem)' }}
+          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] snap-x snap-mandatory scroll-smooth [padding-inline:clamp(1rem,5vw,3rem)]"
           role="region"
           aria-roledescription="carousel"
           aria-describedby="hero-proof-help hero-proof-status"
@@ -218,15 +217,8 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               }
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
-              <p className="label-mono" style={{ color: 'var(--color-film-teal)' }}>
-                {col.label}
-              </p>
-              <p
-                className="text-sm leading-7"
-                style={{ marginTop: '0.75rem', color: 'oklch(94% 0.007 80 / 0.62)' }}
-              >
-                {col.body}
-              </p>
+              <p className="label-mono text-color-film-teal">{col.label}</p>
+              <p className="mt-3 text-sm leading-7 text-[oklch(94%_0.007_80_/_0.62)]">{col.body}</p>
             </m.article>
           ))}
         </div>
@@ -234,16 +226,13 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         {/* Scroll fade affordance - mobile only */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:hidden"
-          style={{
-            background: 'linear-gradient(to right, transparent, var(--color-bg) 90%)',
-          }}
+          className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-[var(--color-bg)]/90 sm:hidden"
         />
       </div>
 
       <div className="carousel-dots sm:hidden" aria-hidden="true">
         {PROOF_COLUMNS.map((_, i) => (
-          <span key={i} className={`carousel-dot${i === activeIndex ? ' active' : ''}`} />
+          <span key={i} className={`carousel-dot${i === activeIndex ? 'active' : ''}`} />
         ))}
       </div>
     </>
@@ -281,7 +270,9 @@ function ConvictionStat({
     const duration = 600;
     const start = performance.now();
 
-    function easeOutQuart(t: number) { return 1 - Math.pow(1 - t, 4); }
+    function easeOutQuart(t: number) {
+      return 1 - Math.pow(1 - t, 4);
+    }
 
     function tick(now: number) {
       const elapsed = now - start;
@@ -299,8 +290,10 @@ function ConvictionStat({
     }
 
     frameRef.current = requestAnimationFrame(tick);
-    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldAnimate, reducedMotion]);
 
   return (
@@ -350,7 +343,12 @@ export function HeroSection() {
     const el = statsRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setStatsVisible(true); observer.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.5 }
     );
     observer.observe(el);
@@ -363,6 +361,7 @@ export function HeroSection() {
       ref={heroRef}
       aria-labelledby="hero-heading"
       className="relative flex min-h-[100svh] flex-col justify-start overflow-hidden sm:justify-center"
+      // eslint-disable-next-line no-restricted-syntax
       style={{
         opacity: heroOpacity,
         paddingTop: 'clamp(4rem, 6vw, 6.5rem)',
@@ -375,6 +374,7 @@ export function HeroSection() {
         <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
           {/* ── Left Column: Conviction Content ── */}
           <m.div
+            // eslint-disable-next-line no-restricted-syntax
             style={{ y: textY }}
             variants={heroContainer}
             initial="hidden"
@@ -390,10 +390,7 @@ export function HeroSection() {
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
-                  <span
-                    className="ml-2 opacity-50 normal-case tracking-normal"
-                    style={{ fontSize: '9px' }}
-                  >
+                  <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
                     · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
@@ -403,11 +400,12 @@ export function HeroSection() {
             {/* Mobile Headshot */}
             <m.div
               variants={child}
-              className="py-8 sm:py-12 flex lg:hidden justify-center"
+              className="flex justify-center py-8 sm:py-12 lg:hidden"
               aria-hidden="true"
             >
               <div
-                className="relative h-32 w-32 sm:h-36 sm:w-36 overflow-hidden rounded-full hero-headshot-ring"
+                className="hero-headshot-ring relative h-32 w-32 overflow-hidden rounded-full sm:h-36 sm:w-36"
+                // eslint-disable-next-line no-restricted-syntax
                 style={{
                   border: '3px solid oklch(70% 0.21 188 / 0.60)',
                   boxShadow: [
@@ -432,8 +430,7 @@ export function HeroSection() {
             {/* Kicker */}
             <m.p
               variants={child}
-              className="font-mono text-[11px] tracking-[0.12em] uppercase leading-relaxed hero-kicker"
-              style={{ color: 'var(--color-film-teal)' }}
+              className="hero-kicker text-color-film-teal font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase"
             >
               <span className="inline sm:hidden">
                 <span className="whitespace-nowrap">Full-Stack</span>
@@ -454,8 +451,7 @@ export function HeroSection() {
             {/* Headline */}
             <h1
               id="hero-heading"
-              className="w-full text-balance"
-              style={{ maxWidth: 'min(100%, 22rem)' }}
+              className="w-full [max-width:min(100%,22rem)] text-balance"
               aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
               <m.span
@@ -469,13 +465,17 @@ export function HeroSection() {
                   <span
                     key={`${word}-${i}`}
                     className="inline-block overflow-hidden"
+                    // eslint-disable-next-line no-restricted-syntax
                     style={{
                       marginRight: i < HEADLINE_WORDS.length - 1 ? '0.28em' : '0',
                       lineHeight: 'var(--leading-tight)',
                       verticalAlign: 'bottom',
                     }}
                   >
-                    <m.span variants={reducedMotion ? noMotion : wordReveal} className="inline-block">
+                    <m.span
+                      variants={reducedMotion ? noMotion : wordReveal}
+                      className="inline-block"
+                    >
                       {word}
                     </m.span>
                   </span>
@@ -490,11 +490,10 @@ export function HeroSection() {
             {/* Body */}
             <m.p
               variants={child}
-              className="w-full text-base leading-[1.8] hero-body-text"
-              style={{ color: 'oklch(94% 0.007 80 / 0.70)', maxWidth: 'min(100%, 56ch)' }}
+              className="hero-body-text w-full [max-width:min(100%,56ch)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
             >
-              Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable.{' '}
-              Built under Lagos constraints. Deployed to global standards.
+              Production systems that stay alive when it matters most — compliant, fast, and
+              relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
             {/* Stats Strip — V1.0 Change 7: count-up on viewport intersection */}
@@ -515,14 +514,17 @@ export function HeroSection() {
 
             {/* Proof Callout — v27.1: rhythm fix — each system on its own line via block spans for better readability at sm viewport */}
             <m.div variants={child} className="hero-proof-callout hidden overflow-hidden sm:block">
-              <p
-                className="text-sm leading-7 font-medium hero-body-text"
-                style={{ color: 'oklch(94% 0.007 80 / 0.70)' }}
-              >
-                <span className="block">TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.</span>
-                <span className="block">SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.</span>
-                <span className="block">SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.</span>
-                <span className="block mt-1" style={{ color: 'var(--color-film-teal)' }}>
+              <p className="hero-body-text text-sm leading-7 font-medium text-[oklch(94%_0.007_80_/_0.70)]">
+                <span className="block">
+                  TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.
+                </span>
+                <span className="block">
+                  SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.
+                </span>
+                <span className="block">
+                  SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.
+                </span>
+                <span className="text-color-film-teal mt-1 block">
                   Shipped in Lagos · Running globally · Battle-tested.
                 </span>
               </p>
@@ -540,8 +542,7 @@ export function HeroSection() {
                 aria-label="Tell me about your constraints"
               >
                 <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{ background: 'var(--color-success)' }}
+                  className="bg-color-success inline-block h-2 w-2 rounded-full"
                   aria-hidden="true"
                 />
                 Tell me your constraints
@@ -561,13 +562,9 @@ export function HeroSection() {
                   visually merges with the capital "I" at 10px mono — the
                   baseline offset collapses the gap that mr-1.5 should create.
                   Flex + items-center is cross-browser reliable. */}
-              <p
-                className="flex items-center gap-2 font-mono text-[10px] tracking-wider"
-                style={{ color: 'oklch(93% 0.006 264 / 0.50)' }}
-              >
+              <p className="flex items-center gap-2 font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.50)]">
                 <span
-                  className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ background: 'var(--color-success)' }}
+                  className="bg-color-success inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                   aria-hidden="true"
                 />
                 I respond within 24 hours — usually faster.
@@ -591,8 +588,7 @@ export function HeroSection() {
             <m.div variants={child} className="mt-2">
               <Link
                 href={anchorUrl('section-writing')}
-                className="font-mono text-[12px] opacity-45 hover:opacity-70 transition-opacity"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted font-mono text-[12px] opacity-45 transition-opacity hover:opacity-70"
                 aria-label="Read how the 2am constraint became the design system"
               >
                 Or read how the 2am constraint became the design system →
@@ -608,17 +604,13 @@ export function HeroSection() {
                 Per spec §DELIGHT_MISS:personality. Hidden from screen readers (aria-hidden). */}
             <m.div
               variants={child}
-              className="mt-4 flex justify-end transform-gpu"
+              className="mt-4 flex transform-gpu justify-end"
               aria-hidden="true"
             >
               <button
                 type="button"
                 onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
-                className="inline-flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase opacity-30 hover:opacity-60 transition-opacity cursor-pointer"
-                style={{
-                  borderColor: 'var(--color-border)',
-                  color: 'var(--color-text-muted)',
-                }}
+                className="border-color-border text-color-text-muted inline-flex cursor-pointer items-center gap-1.5 rounded border px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase opacity-30 transition-opacity hover:opacity-60"
                 aria-label="Open command palette"
               >
                 <kbd>⌘K</kbd>
@@ -628,10 +620,15 @@ export function HeroSection() {
           </m.div>
 
           {/* ── Right Column: Desktop Visuals ── */}
-          <m.div style={{ y: visualY }} className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6">
+          <m.div
+            // eslint-disable-next-line no-restricted-syntax
+            style={{ y: visualY }}
+            className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6"
+          >
             <div className="flex justify-end">
               <m.div
-                className="relative h-40 w-40 xl:h-52 xl:w-52 overflow-hidden rounded-full hero-headshot-ring"
+                className="hero-headshot-ring relative h-40 w-40 overflow-hidden rounded-full xl:h-52 xl:w-52"
+                // eslint-disable-next-line no-restricted-syntax
                 style={{
                   border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
                   boxShadow: [

@@ -10,7 +10,7 @@
 import { useState } from 'react';
 
 interface CopyEmailProps {
-  email:      string;
+  email: string;
   className?: string;
 }
 
@@ -35,13 +35,8 @@ export function CopyEmail({ email, className = '' }: Readonly<CopyEmailProps>) {
     <a
       href={`mailto:${email}`}
       onClick={handleClick}
-      aria-label={
-        copied
-          ? 'Email address copied to clipboard'
-          : `Send email to ${email}`
-      }
-      className={`copy-email inline-flex min-h-[44px] items-center gap-1.5 font-mono text-xs tracking-wider transition-colors ${className}`}
-      style={{ color: copied ? 'var(--color-film-teal)' : 'var(--color-text-muted)' }}
+      aria-label={copied ? 'Email address copied to clipboard' : `Send email to ${email}`}
+      className={`copy-email inline-flex min-h-[44px] items-center gap-1.5 font-mono text-xs tracking-wider transition-colors ${copied ? 'text-color-film-teal' : 'text-color-text-muted'} ${className}`}
     >
       {copied ? (
         <>

@@ -38,6 +38,7 @@ export function Footer() {
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 hidden lg:block"
+        // eslint-disable-next-line no-restricted-syntax
         style={{
           background:
             'radial-gradient(ellipse 65% 45% at 18% 100%, oklch(70% 0.21 188 / 0.05) 0%, transparent 75%)',
@@ -61,20 +62,17 @@ export function Footer() {
               <span className="text-color-text-muted">Battle-tested in audit season.</span>
             </p>
 
-            <p
-              className="text-2xs mt-2 font-mono font-medium tracking-[0.5px]"
-              style={{ color: 'oklch(70% 0.21 188 / 0.58)' }}
-            >
+            <p className="text-2xs mt-2 font-mono font-medium tracking-[0.5px] text-[oklch(70%_0.21_188_/_0.58)]">
               Constraint is the credential.
             </p>
           </div>
 
           <div className="text-2xs flex flex-col gap-1 font-mono tracking-wide">
-            <p className="flex items-center gap-2" style={{ color: 'oklch(93% 0.006 264 / 0.42)' }}>
+            <p className="flex items-center gap-2 text-[oklch(93%_0.006_264_/_0.42)]">
               <SystemStatus labelMode="full" />
             </p>
-            <p style={{ color: 'oklch(93% 0.006 264 / 0.24)' }}>TaxBridge · SabiScore · SwarmXQ</p>
-            <p style={{ color: 'oklch(93% 0.006 264 / 0.18)' }}>
+            <p className="text-[oklch(93%_0.006_264_/_0.24)]">TaxBridge · SabiScore · SwarmXQ</p>
+            <p className="text-[oklch(93%_0.006_264_/_0.18)]">
               © 2024–{year} Oscar Ndugbu · Next.js 15
             </p>
           </div>
@@ -155,10 +153,7 @@ export function Footer() {
               Tell me your constraints
             </a>
 
-            <p
-              className="text-2xs mt-3 text-center font-mono tracking-wider sm:text-left"
-              style={{ color: 'oklch(93% 0.006 264 / 0.45)' }}
-            >
+            <p className="text-2xs mt-3 text-center font-mono tracking-wider text-[oklch(93%_0.006_264_/_0.45)] sm:text-left">
               Response within 24 hours · no fluff, only signal
             </p>
           </div>
@@ -167,13 +162,10 @@ export function Footer() {
 
       <div className="border-color-border-subtle text-3xs border-t py-4 font-mono">
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-          <p
-            className="tracking-[0.5px] text-balance uppercase"
-            style={{ color: 'oklch(93% 0.006 264 / 0.22)' }}
-          >
+          <p className="tracking-[0.5px] text-balance text-[oklch(93%_0.006_264_/_0.22)] uppercase">
             Shipped in Lagos · Running globally · Battle-tested in audit season
           </p>
-          <p style={{ color: 'oklch(93% 0.006 264 / 0.16)' }}>scardubu.dev</p>
+          <p className="text-[oklch(93%_0.006_264_/_0.16)]">scardubu.dev</p>
         </div>
       </div>
     </footer>

@@ -10,19 +10,19 @@ import { useMemo, useRef, useState } from 'react';
 import { ArchDecision } from '@/components/ArchDecision';
 import { anchorUrl } from '@/lib/config';
 import {
-    accordionReveal,
-    cardReveal,
-    clipReveal,
-    fadeRise,
-    noMotion,
-    staggerContainer,
+  accordionReveal,
+  cardReveal,
+  clipReveal,
+  fadeRise,
+  noMotion,
+  staggerContainer,
 } from '@/lib/motionVariants';
 import { PROJECTS, type Project } from '@/lib/projects';
 
-const FEATURED_PRIMARY_VARIANT   = cardReveal(28);
+const FEATURED_PRIMARY_VARIANT = cardReveal(28);
 const FEATURED_SECONDARY_VARIANT = cardReveal(20);
-const GRID_VARIANT_A             = cardReveal(24);
-const GRID_VARIANT_B             = cardReveal(-20);
+const GRID_VARIANT_A = cardReveal(24);
+const GRID_VARIANT_B = cardReveal(-20);
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
@@ -30,10 +30,7 @@ function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   }
   return (
     <span className={status === 'live' ? 'badge-live' : 'badge-wip'}>
-      <span
-        className={status === 'live' ? 'dot-live' : 'dot-wip'}
-        aria-hidden="true"
-      />
+      <span className={status === 'live' ? 'dot-live' : 'dot-wip'} aria-hidden="true" />
       {status === 'live' ? 'LIVE' : 'WIP'}
     </span>
   );
@@ -45,26 +42,19 @@ function TechStrip({
   limit = 5,
 }: Readonly<{ stack: readonly string[]; slug: string; limit?: number }>) {
   const visible = stack.slice(0, limit);
-  const rest    = stack.length - visible.length;
+  const rest = stack.length - visible.length;
   return (
-    <div
-      className="mt-4 flex flex-wrap gap-1.5"
-      aria-label={`${slug} technology stack`}
-    >
+    <div className="mt-4 flex flex-wrap gap-1.5" aria-label={`${slug} technology stack`}>
       {visible.map((tech) => (
         <span
           key={tech}
-          className="glass-light min-w-0 rounded-md px-2 py-1 font-mono text-[10px] tracking-wide break-words"
-          style={{ color: 'var(--color-text-muted)' }}
+          className="glass-light text-color-text-muted min-w-0 rounded-md px-2 py-1 font-mono text-[10px] tracking-wide break-words"
         >
           {tech}
         </span>
       ))}
       {rest > 0 && (
-        <span
-          className="rounded-md px-2 py-1 font-mono text-[10px]"
-          style={{ color: 'var(--color-text-muted)' }}
-        >
+        <span className="text-color-text-muted rounded-md px-2 py-1 font-mono text-[10px]">
           +{rest} more
         </span>
       )}
@@ -82,26 +72,20 @@ function FeaturedProjectCard({
   return (
     <m.article
       variants={FEATURED_PRIMARY_VARIANT}
-      className="glass-full rounded-[var(--radius-xl)] overflow-hidden mb-5"
+      className="glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
       data-project-id={featured.slug}
     >
       <div className="px-4 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
-        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <span className="label-mono">{featured.type}</span>
           <StatusBadge status={featured.status} />
         </div>
 
-        <h3
-          className="text-[clamp(1.375rem,3.5vw+0.5rem,2.75rem)] font-bold leading-[1.15] tracking-tight"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <h3 className="text-color-text-primary text-[clamp(1.375rem,3.5vw+0.5rem,2.75rem)] leading-[1.15] font-bold tracking-tight">
           {featured.title}
         </h3>
 
-        <p
-          className="mt-3 max-w-[56ch] text-sm sm:text-base leading-[1.8]"
-          style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)' }}
-        >
+        <p className="font-body text-color-text-secondary mt-3 max-w-[56ch] text-sm leading-[1.8] sm:text-base">
           {featured.tagline}
         </p>
 
@@ -113,37 +97,28 @@ function FeaturedProjectCard({
           ))}
         </ul>
 
-        <div
-          className="mt-5 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 py-3 pl-3 pr-3"
-          style={{ borderLeftColor: 'var(--color-film-teal)', background: 'oklch(73% 0.18 196 / 0.05)' }}
-        >
-          <span className="label-mono text-[10px] shrink-0 pt-0.5 w-12" style={{ color: 'var(--color-film-teal)' }}>
+        <div className="border-l-color-film-teal mt-5 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 bg-[oklch(73%_0.18_196_/_0.05)] py-3 pr-3 pl-3">
+          <span className="label-mono text-color-film-teal w-12 shrink-0 pt-0.5 text-[10px]">
             WHY
           </span>
-          <span className="text-[13px] sm:text-sm leading-[1.7] font-medium min-w-0 break-words" style={{ color: 'var(--color-text-primary)' }}>
+          <span className="text-color-text-primary min-w-0 text-[13px] leading-[1.7] font-medium break-words sm:text-sm">
             {featured.because}
           </span>
         </div>
 
-        <p
-          className="mt-3 border-l-2 pl-3 text-xs leading-[1.7] italic break-words"
-          style={{ borderLeftColor: 'oklch(73% 0.18 75 / 0.3)', color: 'var(--color-text-muted)' }}
-        >
+        <p className="text-color-text-muted mt-3 border-l-2 border-l-[oklch(73%_0.18_75_/_0.3)] pl-3 text-xs leading-[1.7] break-words italic">
           Constraint: {featured.constraint}
         </p>
 
         <TechStrip stack={featured.stack} slug={featured.slug} />
 
-        <details className="mt-5 group">
-          <summary
-            className="list-none cursor-pointer inline-flex min-h-[48px] items-center gap-1.5 rounded-full border border-white/14 px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+        <details className="group mt-5">
+          <summary className="text-color-text-muted inline-flex min-h-[48px] cursor-pointer list-none items-center gap-1.5 rounded-full border border-white/14 px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none">
             <span className="group-open:hidden">Full brief ↓</span>
             <span className="hidden group-open:inline">Hide brief ↑</span>
           </summary>
           <div className="mt-4 pb-1">
-            <p className="max-w-[72ch] text-sm sm:text-base leading-8" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-color-text-secondary max-w-[72ch] text-sm leading-8 sm:text-base">
               {featured.description}
             </p>
           </div>
@@ -154,14 +129,16 @@ function FeaturedProjectCard({
         <button
           type="button"
           onClick={() => setArchOpen((v) => !v)}
-          className="lg:hidden w-full flex items-center justify-between min-h-[48px] py-3 border-t font-mono text-[11px] tracking-widest uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-          style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+          className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-3 font-mono text-[11px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none lg:hidden"
           aria-expanded={archOpen}
           aria-controls={`arch-mobile-${featured.slug}`}
           aria-label={`Toggle architecture decision for ${featured.title}`}
         >
           <span>Architecture Decision</span>
-          <m.span animate={{ rotate: archOpen ? 180 : 0 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+          <m.span
+            animate={{ rotate: archOpen ? 180 : 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          >
             <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
           </m.span>
         </button>
@@ -171,23 +148,29 @@ function FeaturedProjectCard({
             <m.div
               id={`arch-mobile-${featured.slug}`}
               variants={reducedMotion ? undefined : accordionReveal}
-              initial="hidden" animate="visible" exit="exit"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="overflow-hidden lg:hidden"
             >
               <div className="py-4">
-                <ArchDecision chosen={featured.chosen} over={featured.over} because={featured.because} />
+                <ArchDecision
+                  chosen={featured.chosen}
+                  over={featured.over}
+                  because={featured.because}
+                />
               </div>
             </m.div>
           )}
         </AnimatePresence>
 
-        <div className="hidden lg:block pb-10">
+        <div className="hidden pb-10 lg:block">
           <ArchDecision chosen={featured.chosen} over={featured.over} because={featured.because} />
         </div>
       </div>
 
       <div className="px-4 pb-5 sm:px-8 sm:pb-8 lg:px-10 lg:pb-10">
-        <div className="mt-2 flex flex-col gap-3" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1.25rem' }}>
+        <div className="border-color-border mt-2 flex flex-col gap-3 border-t pt-5">
           {featured.caseStudy && (
             <Link href={featured.caseStudy} className="cta-primary w-full justify-center">
               Read case study
@@ -196,12 +179,22 @@ function FeaturedProjectCard({
           )}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
             {featured.demoUrl && (
-              <a href={featured.demoUrl} target="_blank" rel="noopener noreferrer" className="cta-secondary w-full justify-center sm:w-auto sm:justify-start">
+              <a
+                href={featured.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-secondary w-full justify-center sm:w-auto sm:justify-start"
+              >
                 Live demo <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
             )}
             {featured.githubUrl && (
-              <a href={featured.githubUrl} target="_blank" rel="noopener noreferrer" className="cta-ghost text-center sm:text-left min-h-[48px] flex items-center justify-center sm:justify-start">
+              <a
+                href={featured.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-ghost flex min-h-[48px] items-center justify-center text-center sm:justify-start sm:text-left"
+              >
                 View source
               </a>
             )}
@@ -222,26 +215,25 @@ function SecondaryFeaturedCard({
   return (
     <m.article
       variants={FEATURED_SECONDARY_VARIANT}
-      className="glass-full rounded-[var(--radius-xl)] overflow-hidden flex flex-col"
+      className="glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
       data-project-id={project.slug}
-      whileHover={reducedMotion ? undefined : { y: -3, transition: { type: 'spring', stiffness: 360, damping: 28 } }}
+      whileHover={
+        reducedMotion
+          ? undefined
+          : { y: -3, transition: { type: 'spring', stiffness: 360, damping: 28 } }
+      }
     >
-      <div className="px-4 pt-5 sm:px-6 sm:pt-6 flex-1">
-        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+      <div className="flex-1 px-4 pt-5 sm:px-6 sm:pt-6">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <span className="label-mono">{project.type}</span>
           <StatusBadge status={project.status} />
         </div>
 
-        <h3
-          className="text-[clamp(1.2rem,2vw+0.5rem,1.6rem)] font-bold leading-[1.2] tracking-tight"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <h3 className="text-color-text-primary text-[clamp(1.2rem,2vw+0.5rem,1.6rem)] leading-[1.2] font-bold tracking-tight">
           {project.title}
         </h3>
 
-        <p className="mt-3 text-sm leading-[1.75]" style={{ color: 'var(--color-text-secondary)' }}>
-          {project.tagline}
-        </p>
+        <p className="text-color-text-secondary mt-3 text-sm leading-[1.75]">{project.tagline}</p>
 
         <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${project.title} outcomes`}>
           {project.outcomes.map((outcome) => (
@@ -251,14 +243,11 @@ function SecondaryFeaturedCard({
           ))}
         </ul>
 
-        <div
-          className="mt-4 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 py-2.5 pl-3 pr-3"
-          style={{ borderLeftColor: 'var(--color-film-teal)', background: 'oklch(73% 0.18 196 / 0.05)' }}
-        >
-          <span className="label-mono text-[10px] shrink-0 pt-0.5 w-10" style={{ color: 'var(--color-film-teal)' }}>
+        <div className="border-l-color-film-teal mt-4 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 bg-[oklch(73%_0.18_196_/_0.05)] py-2.5 pr-3 pl-3">
+          <span className="label-mono text-color-film-teal w-10 shrink-0 pt-0.5 text-[10px]">
             WHY
           </span>
-          <span className="text-[12px] leading-[1.65] font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          <span className="text-color-text-primary text-[12px] leading-[1.65] font-medium">
             {project.because}
           </span>
         </div>
@@ -269,14 +258,16 @@ function SecondaryFeaturedCard({
           <button
             type="button"
             onClick={() => setArchOpen((v) => !v)}
-            className="w-full flex items-center justify-between min-h-[48px] py-2.5 border-t font-mono text-[10px] tracking-widest uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+            className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-2.5 font-mono text-[10px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
             aria-expanded={archOpen}
             aria-controls={`arch-secondary-${project.slug}`}
             aria-label={`Toggle architecture decision for ${project.title}`}
           >
             <span>Architecture Decision</span>
-            <m.span animate={{ rotate: archOpen ? 180 : 0 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+            <m.span
+              animate={{ rotate: archOpen ? 180 : 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            >
               <ChevronDown className="h-3 w-3" aria-hidden="true" />
             </m.span>
           </button>
@@ -286,11 +277,17 @@ function SecondaryFeaturedCard({
               <m.div
                 id={`arch-secondary-${project.slug}`}
                 variants={reducedMotion ? undefined : accordionReveal}
-                initial="hidden" animate="visible" exit="exit"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
                 className="overflow-hidden"
               >
                 <div className="py-3">
-                  <ArchDecision chosen={project.chosen} over={project.over} because={project.because} />
+                  <ArchDecision
+                    chosen={project.chosen}
+                    over={project.over}
+                    because={project.because}
+                  />
                 </div>
               </m.div>
             )}
@@ -298,23 +295,33 @@ function SecondaryFeaturedCard({
         </div>
       </div>
 
-      <div
-        className="px-4 pb-5 sm:px-6 sm:pb-6 mt-3"
-        style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}
-      >
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2 mt-3">
+      <div className="border-color-border mt-3 border-t px-4 pt-4 pb-5 sm:px-6 sm:pb-6">
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
           {project.caseStudy && (
-            <Link href={project.caseStudy} className="cta-primary justify-center sm:justify-start text-xs">
+            <Link
+              href={project.caseStudy}
+              className="cta-primary justify-center text-xs sm:justify-start"
+            >
               Read the case study <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           )}
           {project.demoUrl && (
-            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="cta-secondary justify-center sm:justify-start text-xs">
+            <a
+              href={project.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cta-secondary justify-center text-xs sm:justify-start"
+            >
               Live demo <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
             </a>
           )}
           {project.githubUrl && (
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="cta-ghost text-xs min-h-[44px] flex items-center justify-center sm:justify-start">
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cta-ghost flex min-h-[44px] items-center justify-center text-xs sm:justify-start"
+            >
               View source
             </a>
           )}
@@ -333,46 +340,67 @@ function ProjectCard({
   return (
     <m.article
       variants={variant}
-      className="glass-medium flex flex-col rounded-[var(--radius-xl)] p-4 sm:p-7 overflow-hidden"
+      className="glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
       data-project-id={project.slug}
-      whileHover={reducedMotion ? undefined : { y: -4, transition: { type: 'spring', stiffness: 360, damping: 28 } }}
+      whileHover={
+        reducedMotion
+          ? undefined
+          : { y: -4, transition: { type: 'spring', stiffness: 360, damping: 28 } }
+      }
     >
-      <div className="flex items-start justify-between gap-3 mb-4">
+      <div className="mb-4 flex items-start justify-between gap-3">
         <span className="label-mono">{project.type}</span>
         <StatusBadge status={project.status} />
       </div>
-      <h3 className="text-base sm:text-xl font-semibold leading-snug tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+      <h3 className="text-color-text-primary text-base leading-snug font-semibold tracking-tight sm:text-xl">
         {project.title}
       </h3>
-      <p className="mt-2 text-sm leading-[1.75] flex-1" style={{ color: 'var(--color-text-secondary)' }}>
+      <p className="text-color-text-secondary mt-2 flex-1 text-sm leading-[1.75]">
         {project.tagline}
       </p>
       <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${project.title} outcomes`}>
         {project.outcomes.slice(0, 3).map((outcome) => (
-          <li key={`${project.slug}-${outcome}`} className="pill-cyan shrink-0">{outcome}</li>
+          <li key={`${project.slug}-${outcome}`} className="pill-cyan shrink-0">
+            {outcome}
+          </li>
         ))}
       </ul>
-      <div className="mt-4 pt-4 border-t space-y-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+      <div className="border-color-border-subtle mt-4 space-y-2.5 border-t pt-4">
         <div className="flex items-start gap-2.5">
-          <span className="label-mono w-14 shrink-0 mt-0.5 text-[10px]" style={{ color: 'var(--color-film-teal)' }}>BECAUSE</span>
-          <span className="text-[12px] leading-[1.6] font-medium line-clamp-3" style={{ color: 'var(--color-text-primary)' }}>{project.because}</span>
+          <span className="label-mono text-color-film-teal mt-0.5 w-14 shrink-0 text-[10px]">
+            BECAUSE
+          </span>
+          <span className="text-color-text-primary line-clamp-3 text-[12px] leading-[1.6] font-medium">
+            {project.because}
+          </span>
         </div>
         <div className="flex items-start gap-2.5">
-          <span className="label-mono w-14 shrink-0 mt-0.5 text-[10px]" style={{ color: 'var(--color-success)' }}>CHOSEN</span>
-          <span className="text-[12px] leading-[1.6] line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>{project.chosen}</span>
+          <span className="label-mono text-color-success mt-0.5 w-14 shrink-0 text-[10px]">
+            CHOSEN
+          </span>
+          <span className="text-color-text-secondary line-clamp-2 text-[12px] leading-[1.6]">
+            {project.chosen}
+          </span>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-1">
         {project.stack.slice(0, 4).map((tech) => (
-          <span key={tech} className="font-mono text-[9px] tracking-wide" style={{ color: 'var(--color-text-muted)' }}>{tech}</span>
+          <span key={tech} className="text-color-text-muted font-mono text-[9px] tracking-wide">
+            {tech}
+          </span>
         ))}
         {project.stack.length > 4 && (
-          <span className="font-mono text-[9px]" style={{ color: 'var(--color-text-muted)' }}>+{project.stack.length - 4}</span>
+          <span className="text-color-text-muted font-mono text-[9px]">
+            +{project.stack.length - 4}
+          </span>
         )}
       </div>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {project.caseStudy && (
-          <Link href={project.caseStudy} className="cta-ghost text-xs min-h-[48px] flex items-center justify-center gap-1 sm:justify-start group">
+          <Link
+            href={project.caseStudy}
+            className="cta-ghost group flex min-h-[48px] items-center justify-center gap-1 text-xs sm:justify-start"
+          >
             Read case study
             <m.span
               aria-hidden="true"
@@ -385,7 +413,12 @@ function ProjectCard({
           </Link>
         )}
         {project.githubUrl && (
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="cta-ghost text-xs min-h-[48px] flex items-center justify-center sm:justify-start">
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cta-ghost flex min-h-[48px] items-center justify-center text-xs sm:justify-start"
+          >
             View source
           </a>
         )}
@@ -396,31 +429,26 @@ function ProjectCard({
 
 /* ── Section export ───────────────────────────────────────────────────────── */
 export function ProjectsSection() {
-  const ref           = useRef<HTMLElement>(null);
-  const inView        = useInView(ref, { once: true, margin: '-40px' });
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
 
   const container = useMemo(() => staggerContainer(0.09, 0.05), []);
-  const child     = reducedMotion ? noMotion : fadeRise;
+  const child = reducedMotion ? noMotion : fadeRise;
 
-  const primaryFeatured   = PROJECTS.find((p) => p.featured) ?? PROJECTS[0];
+  const primaryFeatured = PROJECTS.find((p) => p.featured) ?? PROJECTS[0];
   const secondaryFeatured = PROJECTS.filter((p) => p.featured && p.slug !== primaryFeatured.slug);
-  const gridProjects      = PROJECTS.filter((p) => !p.featured);
+  const gridProjects = PROJECTS.filter((p) => !p.featured);
 
   return (
     <section
       id="section-projects"
       ref={ref}
       aria-labelledby="projects-heading"
-      className="border-t py-[var(--section-py)] section-deferred overflow-x-clip"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border section-deferred overflow-x-clip border-t py-[var(--section-py)]"
     >
       <div className="container">
-        <m.div
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-        >
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           {/*
             v25 CHANGE: Editorial intro — section-intro-editorial (layout.css).
             Mobile: kicker, h2, and description stack vertically (unchanged).
@@ -431,28 +459,23 @@ export function ProjectsSection() {
             {/* Left: kicker + heading */}
             <div>
               <div className="section-kicker-row mb-4">
-                <span className="section-number" aria-hidden="true">01</span>
+                <span className="section-number" aria-hidden="true">
+                  01
+                </span>
                 <span className="section-label">Projects</span>
               </div>
-              <m.h2
-                variants={reducedMotion ? child : clipReveal}
-                id="projects-heading"
-              >
-                Built to survive{' '}
-                <br className="hidden lg:block" />
+              <m.h2 variants={reducedMotion ? child : clipReveal} id="projects-heading">
+                Built to survive <br className="hidden lg:block" />
                 real constraints.
               </m.h2>
             </div>
 
             {/* Right: description — editorial counterweight at lg+ */}
             <div className="lg:flex lg:flex-col lg:justify-end">
-              <p
-                className="max-w-[56ch] text-sm sm:text-base leading-8"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under
-                ensemble ML inference. AI agents that improve themselves between
-                runs. All of it shipped from Lagos. All of it running in production.
+              <p className="text-color-text-secondary max-w-[56ch] text-sm leading-8 sm:text-base">
+                4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML
+                inference. AI agents that improve themselves between runs. All of it shipped from
+                Lagos. All of it running in production.
               </p>
             </div>
           </m.div>
@@ -462,9 +485,13 @@ export function ProjectsSection() {
 
           {/* Secondary featured — 2-col on md+ */}
           {secondaryFeatured.length > 0 && (
-            <div className="grid gap-4 md:grid-cols-2 mb-5">
+            <div className="mb-5 grid gap-4 md:grid-cols-2">
               {secondaryFeatured.map((project) => (
-                <SecondaryFeaturedCard key={project.slug} project={project} reducedMotion={reducedMotion ?? false} />
+                <SecondaryFeaturedCard
+                  key={project.slug}
+                  project={project}
+                  reducedMotion={reducedMotion ?? false}
+                />
               ))}
             </div>
           )}
@@ -486,10 +513,9 @@ export function ProjectsSection() {
           {/* Flow hook — V1.0 Change 6a: §Flow Mechanics §Projects */}
           <m.p
             variants={child}
-            className="mt-10 font-mono text-[13px]"
-            style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+            className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
           >
-            <Link href={anchorUrl('open-source')} className="hover:opacity-80 transition-opacity">
+            <Link href={anchorUrl('open-source')} className="transition-opacity hover:opacity-80">
               Packages extracted from this work →
             </Link>
           </m.p>

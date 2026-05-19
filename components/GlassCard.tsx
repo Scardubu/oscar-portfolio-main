@@ -11,20 +11,20 @@ import { cn } from '@/lib/utils';
 type TagName = 'article' | 'div' | 'li' | 'section';
 
 export interface GlassCardProps {
-  children:             ReactNode;
-  className?:           string;
-  hover?:               boolean;
-  chromatic?:           boolean;
-  level?:               'full' | 'medium' | 'light';
-  as?:                  TagName;
-  id?:                  string;
-  role?:                string;
-  style?:               CSSProperties;
-  tabIndex?:            number;
-  'aria-label'?:        string;
-  'data-reveal'?:       string;
+  children: ReactNode;
+  className?: string;
+  hover?: boolean;
+  chromatic?: boolean;
+  level?: 'full' | 'medium' | 'light';
+  as?: TagName;
+  id?: string;
+  role?: string;
+  style?: CSSProperties;
+  tabIndex?: number;
+  'aria-label'?: string;
+  'data-reveal'?: string;
   'data-reveal-delay'?: string;
-  'data-project-id'?:   string;
+  'data-project-id'?: string;
 }
 
 // Each motion component has a distinct generic (HTMLDivElement, HTMLLIElement,
@@ -32,26 +32,26 @@ export interface GlassCardProps {
 // map untyped and cast only at the call-site to avoid propagating `any`.
 const TAG_MAP = {
   article: m.article,
-  div:     m.div,
-  li:      m.li,
+  div: m.div,
+  li: m.li,
   section: m.section,
 } as const;
 
 export function GlassCard({
   children,
   className,
-  hover     = true,
+  hover = true,
   chromatic = false,
-  level     = 'full',
-  as        = 'div',
+  level = 'full',
+  as = 'div',
   id,
   role,
   style,
   tabIndex,
-  'aria-label':        ariaLabel,
-  'data-reveal':       dataReveal,
+  'aria-label': ariaLabel,
+  'data-reveal': dataReveal,
   'data-reveal-delay': dataRevealDelay,
-  'data-project-id':   dataProjectId,
+  'data-project-id': dataProjectId,
 }: Readonly<GlassCardProps>) {
   const reducedMotion = useReducedMotion();
 
@@ -88,6 +88,7 @@ export function GlassCard({
     <Tag
       id={id}
       role={role}
+      // eslint-disable-next-line no-restricted-syntax
       style={style}
       tabIndex={tabIndex}
       aria-label={ariaLabel}

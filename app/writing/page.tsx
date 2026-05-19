@@ -30,80 +30,56 @@ export const metadata: Metadata = {
 export default async function WritingPage() {
   const posts = await getWritingPosts();
   const featured = posts.find((p) => p.featured) ?? posts[0];
-  const rest     = posts.filter((p) => p !== featured);
+  const rest = posts.filter((p) => p !== featured);
 
   return (
     <>
       <Navbar />
       <main id="main-content" tabIndex={-1}>
-        <section
-          className="pt-[calc(var(--nav-height)+var(--space-12))] pb-[var(--section-py)]"
-        >
+        <section className="pt-[calc(var(--nav-height)+var(--space-12))] pb-[var(--section-py)]">
           <div className="container">
-
             {/* ── Page header ─────────────────────────────────────────────── */}
             <div className="mb-10 sm:mb-14">
               <div className="section-kicker-row mb-[var(--space-2)]">
-                <span className="section-number" aria-hidden="true">05</span>
+                <span className="section-number" aria-hidden="true">
+                  05
+                </span>
                 <span className="section-label">Writing</span>
               </div>
 
-              <h1
-                className="mt-[var(--space-2)] max-w-[22ch]"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
+              <h1 className="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]">
                 Writing that ships decisions.
               </h1>
 
-              <p
-                className="mt-4 max-w-[56ch] text-base leading-8"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                Architecture calls, ML trade-offs, and what actually held in production —
-                from Lagos to the world.
+              <p className="text-color-text-secondary mt-4 max-w-[56ch] text-base leading-8">
+                Architecture calls, ML trade-offs, and what actually held in production — from Lagos
+                to the world.
               </p>
 
-              <p
-                className="mt-2 font-mono text-xs tracking-widest uppercase"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
+              <p className="text-color-text-muted mt-2 font-mono text-xs tracking-widest uppercase">
                 {posts.length} articles
               </p>
             </div>
 
             {/* ── Featured post ────────────────────────────────────────────── */}
             {featured && (
-              <article
-                className="glass-full rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10 mb-4"
-              >
+              <article className="glass-full mb-4 rounded-[var(--radius-xl)] p-5 sm:p-8 lg:p-10">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="pill pill-cyan">Featured</span>
-                  <span
-                    className="font-mono text-xs"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <span className="text-color-text-muted font-mono text-xs">
                     {featured.readingTime} min read
                   </span>
                 </div>
 
-                <h2
-                  className="mt-5 max-w-[28ch] text-xl sm:text-2xl font-bold leading-snug tracking-tight"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <h2 className="text-color-text-primary mt-5 max-w-[28ch] text-xl leading-snug font-bold tracking-tight sm:text-2xl">
                   {featured.title}
                 </h2>
 
-                <p
-                  className="mt-4 max-w-[64ch] text-base leading-8"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <p className="text-color-text-secondary mt-4 max-w-[64ch] text-base leading-8">
                   {featured.summary}
                 </p>
 
-                <div
-                  className="mt-4 flex flex-wrap items-center gap-3 text-xs"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <div className="text-color-text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
                   <time dateTime={featured.date} className="font-mono uppercase">
                     {formatDate(featured.date)}
                   </time>
@@ -116,11 +92,7 @@ export default async function WritingPage() {
 
                 <Link
                   href={`/writing/${featured.slug}`}
-                  className="mt-6 inline-flex w-full sm:w-auto min-h-[52px] items-center justify-center sm:justify-start gap-2 rounded-full border px-5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-                  style={{
-                    borderColor: 'var(--color-cyan-surface)',
-                    color: 'var(--color-film-teal)',
-                  }}
+                  className="text-color-film-teal mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-[var(--color-cyan-surface)] px-5 py-2.5 text-sm transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none sm:w-auto sm:justify-start"
                 >
                   Read article →
                 </Link>
@@ -129,55 +101,38 @@ export default async function WritingPage() {
 
             {/* ── Article list ─────────────────────────────────────────────── */}
             {rest.length > 0 && (
-              <div
-                className="grid gap-px overflow-hidden rounded-[var(--radius-lg)]"
-                style={{ background: 'var(--color-border)' }}
-              >
+              <div className="bg-color-border grid gap-px overflow-hidden rounded-[var(--radius-lg)]">
                 {rest.map((post) => (
-                  <div
-                    key={post.slug}
-                    style={{ background: 'var(--color-bg)' }}
-                  >
+                  <div key={post.slug} className="bg-color-bg">
                     <Link href={`/writing/${post.slug}`} className="block">
-                      <article className="writing-row min-h-[60px] py-3.5 px-4 sm:px-0 flex items-center gap-4">
+                      <article className="writing-row flex min-h-[60px] items-center gap-4 px-4 py-3.5 sm:px-0">
                         {/* Date: hidden on mobile — shown inline */}
                         <time
                           dateTime={post.date}
-                          className="hidden sm:block min-w-28 shrink-0 font-mono text-xs"
-                          style={{ color: 'var(--color-text-muted)' }}
+                          className="text-color-text-muted hidden min-w-28 shrink-0 font-mono text-xs sm:block"
                         >
                           {formatDate(post.date)}
                         </time>
 
-                        <div className="flex-1 min-w-0">
-                          <span
-                            className="writing-title block truncate text-sm font-medium"
-                            style={{ color: 'var(--color-text-primary)' }}
-                          >
+                        <div className="min-w-0 flex-1">
+                          <span className="writing-title text-color-text-primary block truncate text-sm font-medium">
                             {post.title}
                           </span>
                           <time
                             dateTime={post.date}
-                            className="sm:hidden block font-mono text-[10px] mt-0.5"
-                            style={{ color: 'var(--color-text-muted)' }}
+                            className="text-color-text-muted mt-0.5 block font-mono text-[10px] sm:hidden"
                           >
                             {formatDate(post.date)}
                           </time>
                         </div>
 
-                        <div className="flex items-center gap-3 shrink-0 ml-3">
+                        <div className="ml-3 flex shrink-0 items-center gap-3">
                           {post.tags.slice(0, 1).map((tag) => (
-                            <span
-                              key={tag}
-                              className="hidden sm:inline pill"
-                            >
+                            <span key={tag} className="pill hidden sm:inline">
                               {tag}
                             </span>
                           ))}
-                          <span
-                            className="text-xs whitespace-nowrap"
-                            style={{ color: 'var(--color-text-muted)' }}
-                          >
+                          <span className="text-color-text-muted text-xs whitespace-nowrap">
                             {post.readingTime} min
                           </span>
                         </div>
@@ -190,14 +145,10 @@ export default async function WritingPage() {
 
             {/* Empty state */}
             {posts.length === 0 && (
-              <p
-                className="mt-10 text-base"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
+              <p className="text-color-text-muted mt-10 text-base">
                 No articles published yet. Check back soon.
               </p>
             )}
-
           </div>
         </section>
       </main>

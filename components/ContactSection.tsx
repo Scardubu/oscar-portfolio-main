@@ -146,18 +146,11 @@ function ContactForm() {
   if (state === 'success') {
     return (
       <div
-        className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border p-8 text-center sm:p-10"
-        style={{
-          borderColor: 'oklch(65% 0.18 155 / 0.4)',
-          background: 'oklch(65% 0.18 155 / 0.06)',
-        }}
+        className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border border-[oklch(65%_0.18_155_/_0.4)] bg-[oklch(65%_0.18_155_/_0.06)] p-8 text-center sm:p-10"
         role="status"
         aria-live="polite"
       >
-        <div
-          className="flex h-12 w-12 items-center justify-center rounded-full"
-          style={{ background: 'oklch(65% 0.18 155 / 0.15)' }}
-        >
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[oklch(65%_0.18_155_/_0.15)]">
           <svg
             width="22"
             height="22"
@@ -194,8 +187,7 @@ function ContactForm() {
   return (
     <form
       onSubmit={(e) => void handleSubmit(e)}
-      className="rounded-[var(--radius-xl)] border p-5 sm:p-7"
-      style={{ borderColor: 'var(--color-border)', background: 'oklch(100% 0 0 / 0.02)' }}
+      className="border-color-border rounded-[var(--radius-xl)] border bg-[oklch(100%_0_0_/_0.02)] p-5 sm:p-7"
       noValidate
       aria-label="Contact Oscar Ndugbu"
     >
@@ -342,12 +334,7 @@ function ContactForm() {
 
       {state === 'error' && (
         <p
-          className="mb-4 rounded-lg px-3 py-2.5 text-sm font-medium"
-          style={{
-            background: 'oklch(60% 0.22 25 / 0.10)',
-            color: 'oklch(72% 0.18 28)',
-            border: '1px solid oklch(60% 0.22 25 / 0.25)',
-          }}
+          className="mb-4 rounded-lg border border-[oklch(60%_0.22_25_/_0.25)] bg-[oklch(60%_0.22_25_/_0.10)] px-3 py-2.5 text-sm font-medium text-[oklch(72%_0.18_28)]"
           role="alert"
           aria-live="assertive"
         >
@@ -459,11 +446,7 @@ export function ContactSection() {
             {TRUST_BADGES.map((badge) => (
               <span
                 key={badge}
-                className="text-2xs text-color-text-muted inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono tracking-widest uppercase"
-                style={{
-                  borderColor: 'var(--color-border-glass)',
-                  background: 'oklch(100% 0 0 / 0.03)',
-                }}
+                className="text-2xs text-color-text-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-glass)] bg-[oklch(100%_0_0_/_0.03)] px-3 py-1 font-mono tracking-widest uppercase"
               >
                 {badge}
               </span>
@@ -482,6 +465,7 @@ export function ContactSection() {
                   key={card_item.id}
                   variants={cardVariant(i)}
                   className="glass-medium relative overflow-hidden rounded-[var(--radius-xl)] p-5"
+                  // eslint-disable-next-line no-restricted-syntax
                   style={{ borderLeft: `3px solid ${card_item.accentColor}` }}
                   whileHover={
                     reducedMotion
@@ -489,28 +473,18 @@ export function ContactSection() {
                       : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
                   }
                 >
-                  <p className="label-mono mb-2" style={{ color: card_item.accentColor }}>
+                  <p
+                    className="label-mono mb-2"
+                    // eslint-disable-next-line no-restricted-syntax
+                    style={{ color: card_item.accentColor }}
+                  >
                     {card_item.title}
                   </p>
-                  <p
-                    className="mb-2 text-sm leading-snug font-semibold"
-                    style={{
-                      color: 'var(--color-text-primary)',
-                      fontFamily: 'var(--font-display)',
-                    }}
-                  >
+                  <p className="text-color-text-primary font-display mb-2 text-sm leading-snug font-semibold">
                     {card_item.headline}
                   </p>
-                  <p className="text-xs leading-6" style={{ color: 'var(--color-text-secondary)' }}>
-                    {card_item.body}
-                  </p>
-                  <p
-                    className="mt-2 border-t pt-2 text-[11px] leading-5 italic"
-                    style={{
-                      borderColor: 'var(--color-border-subtle)',
-                      color: 'var(--color-text-muted)',
-                    }}
-                  >
+                  <p className="text-color-text-secondary text-xs leading-6">{card_item.body}</p>
+                  <p className="border-color-border-subtle text-color-text-muted mt-2 border-t pt-2 text-[11px] leading-5 italic">
                     {card_item.objection}
                   </p>
                 </m.div>
@@ -528,8 +502,7 @@ export function ContactSection() {
                 href="https://github.com/Scardubu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
                 aria-label="GitHub profile"
               >
                 <GitHubIcon />
@@ -539,8 +512,7 @@ export function ContactSection() {
                 href="https://linkedin.com/in/oscardubu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
                 aria-label="LinkedIn profile"
               >
                 <LinkedInIcon />
@@ -550,18 +522,14 @@ export function ContactSection() {
               <a
                 href={CV_ASSET_PATH}
                 download
-                className="hidden min-h-11 items-center gap-1.5 text-sm transition-colors hover:text-white sm:inline-flex"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-color-text-muted hidden min-h-11 items-center gap-1.5 text-sm transition-colors hover:text-white sm:inline-flex"
                 aria-label="Download Oscar's resume PDF"
               >
                 Resume <span aria-hidden="true">↓</span>
               </a>
             </div>
 
-            <p
-              className="hidden max-w-[36ch] text-right font-mono text-[10px] tracking-wider uppercase md:block"
-              style={{ color: 'oklch(93% 0.006 264 / 0.28)' }}
-            >
+            <p className="hidden max-w-[36ch] text-right font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.28)] uppercase md:block">
               Systems that work at 2am.
               <br />
               That&apos;s the standard.

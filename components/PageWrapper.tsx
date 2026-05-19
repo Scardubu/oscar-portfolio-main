@@ -31,13 +31,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
   return (
     <div
       id="page-wrapper"
-      className="relative flex min-h-[100svh] flex-col"
-      style={{
-        // Ensure content never overflows viewport on mobile
-        overflowX: 'hidden',
-        // Isolate stacking context — prevents z-index bleed from fixed Navbar
-        isolation: 'isolate',
-      }}
+      className="relative isolate flex min-h-[100svh] flex-col overflow-x-hidden"
     >
       {children}
     </div>

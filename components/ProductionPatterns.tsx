@@ -17,7 +17,7 @@ const PRODUCTION_PATTERNS = [
     caption: 'ML SYSTEMS',
     title: 'Ensemble inference with live drift monitoring',
     description:
-      'SabiScore uses three models in production — XGBoost, LightGBM, and CatBoost — with Prometheus tracking feature drift against training baselines. When any model\'s AUC drops below threshold, the ensemble weight shifts automatically without redeployment. MTTD went from reactive-alerting hours to 45% improvement over baseline.',
+      "SabiScore uses three models in production — XGBoost, LightGBM, and CatBoost — with Prometheus tracking feature drift against training baselines. When any model's AUC drops below threshold, the ensemble weight shifts automatically without redeployment. MTTD went from reactive-alerting hours to 45% improvement over baseline.",
     accent: 'teal',
   },
   {
@@ -25,7 +25,7 @@ const PRODUCTION_PATTERNS = [
     caption: 'COMPLIANCE · FINTECH',
     title: 'Row-Level Security at the database engine',
     description:
-      'TaxBridge enforces tenant isolation at the PostgreSQL engine, not the application layer. NRS audit scrutiny requires mathematical proof that one TIN\'s data cannot be read by another session. RLS policies fire before any query reaches application code — even a full application compromise cannot leak cross-tenant records.',
+      "TaxBridge enforces tenant isolation at the PostgreSQL engine, not the application layer. NRS audit scrutiny requires mathematical proof that one TIN's data cannot be read by another session. RLS policies fire before any query reaches application code — even a full application compromise cannot leak cross-tenant records.",
     accent: 'cyan',
   },
   {
@@ -50,17 +50,21 @@ const PRODUCTION_PATTERNS = [
 const ICONS: Record<string, React.FC<{ color: string }>> = {
   mlops: ({ color }) => (
     <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <circle cx="5"  cy="14" r="3" stroke={color} strokeWidth="1.5" />
-      <circle cx="14" cy="5"  r="3" stroke={color} strokeWidth="1.5" />
+      <circle cx="5" cy="14" r="3" stroke={color} strokeWidth="1.5" />
+      <circle cx="14" cy="5" r="3" stroke={color} strokeWidth="1.5" />
       <circle cx="23" cy="14" r="3" stroke={color} strokeWidth="1.5" />
       <circle cx="14" cy="23" r="3" stroke={color} strokeWidth="1.5" />
-      <path d="M8 12l3-5M17 7l3 5M20 16l-3 5M11 21l-3-5"
-        stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+      <path
+        d="M8 12l3-5M17 7l3 5M20 16l-3 5M11 21l-3-5"
+        stroke={color}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
     </svg>
   ),
   rls: ({ color }) => (
     <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <rect x="4"  y="12" width="20" height="12" rx="2" stroke={color} strokeWidth="1.5" />
+      <rect x="4" y="12" width="20" height="12" rx="2" stroke={color} strokeWidth="1.5" />
       <path d="M9 12V9a5 5 0 0 1 10 0v3" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="14" cy="18" r="2" fill={color} />
     </svg>
@@ -74,11 +78,16 @@ const ICONS: Record<string, React.FC<{ color: string }>> = {
   ),
   observability: ({ color }) => (
     <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <polyline points="3,21 8,14 13,17 18,9 23,13 26,6"
-        stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="8"  cy="14" r="1.5" fill={color} />
-      <circle cx="18" cy="9"  r="1.5" fill={color} />
-      <circle cx="26" cy="6"  r="1.5" fill={color} />
+      <polyline
+        points="3,21 8,14 13,17 18,9 23,13 26,6"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="8" cy="14" r="1.5" fill={color} />
+      <circle cx="18" cy="9" r="1.5" fill={color} />
+      <circle cx="26" cy="6" r="1.5" fill={color} />
     </svg>
   ),
   amber: ({ color }) => (
@@ -90,10 +99,10 @@ const ICONS: Record<string, React.FC<{ color: string }>> = {
 };
 
 const ACCENT: Record<string, { color: string; bg: string }> = {
-  teal:   { color: 'var(--color-film-teal)',  bg: 'var(--color-film-teal-surface)'  },
-  cyan:   { color: 'var(--color-cyan)',        bg: 'var(--color-cyan-surface)'       },
-  violet: { color: 'var(--color-accent)',      bg: 'var(--color-accent-surface)'     },
-  amber:  { color: 'var(--color-film-amber)',  bg: 'var(--color-film-amber-surface)' },
+  teal: { color: 'var(--color-film-teal)', bg: 'var(--color-film-teal-surface)' },
+  cyan: { color: 'var(--color-cyan)', bg: 'var(--color-cyan-surface)' },
+  violet: { color: 'var(--color-accent)', bg: 'var(--color-accent-surface)' },
+  amber: { color: 'var(--color-film-amber)', bg: 'var(--color-film-amber-surface)' },
 };
 
 /* ── Pattern card ─────────────────────────────────────────────────────────── */
@@ -106,15 +115,17 @@ function PatternCard({
 }>) {
   const [expanded, setExpanded] = useState(false);
   const accent = ACCENT[pattern.accent] ?? ACCENT.teal;
-  const Icon   = ICONS[pattern.id] ?? ICONS.observability;
+  const Icon = ICONS[pattern.id] ?? ICONS.observability;
   const cardVar = reducedMotion ? noMotion : cardReveal(20);
 
-  function toggle() { setExpanded((v) => !v); }
+  function toggle() {
+    setExpanded((v) => !v);
+  }
 
   return (
     <m.div
       variants={cardVar}
-      className="glass-medium rounded-[var(--radius-xl)] overflow-hidden"
+      className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       whileHover={
         reducedMotion
           ? undefined
@@ -126,28 +137,27 @@ function PatternCard({
         onClick={toggle}
         aria-expanded={expanded}
         aria-label={`${expanded ? 'Collapse' : 'Expand'} details: ${pattern.title}`}
-        className="w-full text-left flex items-start gap-4 p-5 sm:p-6 min-h-[80px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 rounded-[var(--radius-xl)]"
+        className="flex min-h-[80px] w-full items-start gap-4 rounded-[var(--radius-xl)] p-5 text-left focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:outline-none sm:p-6"
       >
         {/* Icon */}
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl mt-0.5"
+          className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ background: accent.bg }}
         >
           <Icon color={accent.color} />
         </div>
 
         {/* Header */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <p
-            className="label-mono text-[10px] mb-1"
+            className="label-mono mb-1 text-[10px]"
+            // eslint-disable-next-line no-restricted-syntax
             style={{ color: accent.color }}
           >
             {pattern.caption}
           </p>
-          <h3
-            className="text-sm sm:text-base font-semibold leading-snug tracking-tight"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
+          <h3 className="text-color-text-primary text-sm leading-snug font-semibold tracking-tight sm:text-base">
             {pattern.title}
           </h3>
         </div>
@@ -156,7 +166,7 @@ function PatternCard({
         <m.span
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="shrink-0 mt-1"
+          className="mt-1 shrink-0"
           aria-hidden="true"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -180,14 +190,8 @@ function PatternCard({
             transition={{ type: 'spring', stiffness: 300, damping: 32, mass: 0.9 }}
             className="overflow-hidden"
           >
-            <div
-              className="px-5 pb-5 sm:px-6 sm:pb-6 border-t"
-              style={{ borderColor: 'var(--color-border-subtle)' }}
-            >
-              <p
-                className="mt-4 text-sm leading-[1.8]"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+            <div className="border-color-border-subtle border-t px-5 pb-5 sm:px-6 sm:pb-6">
+              <p className="text-color-text-secondary mt-4 text-sm leading-[1.8]">
                 {pattern.description}
               </p>
             </div>
@@ -211,35 +215,25 @@ export function ProductionPatterns() {
     <section
       ref={ref}
       aria-labelledby="patterns-heading"
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
     >
       <div className="container">
-        <m.div
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-        >
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.div variants={child} className="mb-8 sm:mb-12">
             <div className="section-kicker-row">
-              <span className="section-number" aria-hidden="true">↳</span>
+              <span className="section-number" aria-hidden="true">
+                ↳
+              </span>
               <span className="section-label">Architecture Depth</span>
             </div>
 
-            <h2
-              id="patterns-heading"
-              className="mt-3 max-w-[24ch]"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
+            <h2 id="patterns-heading" className="text-color-text-primary mt-3 max-w-[24ch]">
               Patterns that hold at 2am.
             </h2>
 
-            <p
-              className="mt-4 max-w-[52ch] text-sm sm:text-base leading-8"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              The architectural choices in every system — not retrofitted after
-              incidents, designed in before first deploy.
+            <p className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 sm:text-base">
+              The architectural choices in every system — not retrofitted after incidents, designed
+              in before first deploy.
             </p>
           </m.div>
 

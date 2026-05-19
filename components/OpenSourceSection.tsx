@@ -7,13 +7,7 @@ import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
-import {
-    cardReveal,
-    clipReveal,
-    fadeRise,
-    noMotion,
-    staggerContainer,
-} from '@/lib/motionVariants';
+import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 const OSS_PROJECTS = [
   {
@@ -61,9 +55,9 @@ const OSS_PROJECTS = [
 // CopyInstall — useAnimate() imperative sequence per Motion Contract Tier 3.
 // Sequence: COPY → scale(0.96) → COPIED ✓ (teal border pulse) → reset at 1.8s.
 function CopyInstall({ text }: { text: string }) {
-  const reducedMotion    = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
-  const labelRef         = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   async function handleCopy() {
     try {
@@ -79,7 +73,7 @@ function CopyInstall({ text }: { text: string }) {
 
     if (!reducedMotion) {
       await animate(scope.current, { scale: 0.96 }, { duration: 0.08, ease: 'easeIn' });
-      await animate(scope.current, { scale: 1    }, { type: 'spring', stiffness: 420, damping: 26 });
+      await animate(scope.current, { scale: 1 }, { type: 'spring', stiffness: 420, damping: 26 });
       await animate(
         scope.current,
         { borderColor: 'oklch(73% 0.18 196 / 0.5)' },
@@ -102,21 +96,18 @@ function CopyInstall({ text }: { text: string }) {
     <button
       ref={scope}
       type="button"
-      onClick={() => { void handleCopy(); }}
+      onClick={() => {
+        void handleCopy();
+      }}
       aria-label={`Copy install command: ${text}`}
-      className="w-full flex items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3 py-3 text-left hover:border-white/16 active:scale-[0.98] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
-      style={{ borderColor: 'oklch(100% 0 0 / 0.08)' }}
+      className="flex min-h-[48px] w-full items-center justify-between gap-3 rounded-lg border border-[oklch(100%_0_0_/_0.08)] bg-white/[0.03] px-3 py-3 text-left hover:border-white/16 focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:outline-none active:scale-[0.98]"
     >
-      <code
-        className="min-w-0 flex-1 font-mono text-[11px] tracking-wide break-words sm:break-normal"
-        style={{ color: 'var(--color-film-teal)' }}
-      >
+      <code className="text-color-film-teal min-w-0 flex-1 font-mono text-[11px] tracking-wide break-words sm:break-normal">
         {text}
       </code>
       <span
         ref={labelRef}
-        className="shrink-0 font-mono text-[10px] tracking-widest uppercase min-w-[40px] text-right"
-        style={{ color: 'var(--color-text-muted)' }}
+        className="text-color-text-muted min-w-[40px] shrink-0 text-right font-mono text-[10px] tracking-widest uppercase"
         aria-live="polite"
       >
         COPY
@@ -126,27 +117,22 @@ function CopyInstall({ text }: { text: string }) {
 }
 
 export function OpenSourceSection() {
-  const ref           = useRef<HTMLElement>(null);
-  const inView        = useInView(ref, { once: true, margin: '-40px' });
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
-  const container     = useMemo(() => staggerContainer(0.09, 0.05), []);
-  const child         = reducedMotion ? noMotion : fadeRise;
-  const card          = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
+  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
+  const child = reducedMotion ? noMotion : fadeRise;
+  const card = useMemo(() => (reducedMotion ? noMotion : cardReveal(24)), [reducedMotion]);
 
   return (
     <section
       id="open-source"
       ref={ref}
       aria-labelledby="oss-heading"
-      className="border-t py-[var(--section-py)] section-deferred overflow-x-clip"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border section-deferred overflow-x-clip border-t py-[var(--section-py)]"
     >
       <div className="container">
-        <m.div
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-        >
+        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           {/*
             v24 PATTERN: Editorial intro — section-intro-editorial (layout.css).
             Mobile: kicker, h2, description stack vertically (unchanged).
@@ -156,14 +142,15 @@ export function OpenSourceSection() {
             {/* Left: kicker + heading */}
             <div>
               <div className="section-kicker-row mb-4">
-                <span className="section-number" aria-hidden="true">02</span>
+                <span className="section-number" aria-hidden="true">
+                  02
+                </span>
                 <span className="section-label">Open Source</span>
               </div>
               <m.h2
                 variants={reducedMotion ? child : clipReveal}
                 id="oss-heading"
-                className="max-w-[26ch]"
-                style={{ color: 'var(--color-text-primary)' }}
+                className="text-color-text-primary max-w-[26ch]"
               >
                 Infrastructure for problems nobody packaged yet.
               </m.h2>
@@ -171,13 +158,9 @@ export function OpenSourceSection() {
 
             {/* Right: description — v25 copy update per CE spec §P3-C */}
             <div className="lg:flex lg:flex-col lg:justify-end">
-              <p
-                className="max-w-[52ch] text-base leading-8"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                Four production-hardened packages from the fintech trenches — each
-                solving a gap that general-purpose libraries don&apos;t address.
-                Install in minutes.
+              <p className="text-color-text-secondary max-w-[52ch] text-base leading-8">
+                Four production-hardened packages from the fintech trenches — each solving a gap
+                that general-purpose libraries don&apos;t address. Install in minutes.
               </p>
             </div>
           </m.div>
@@ -187,15 +170,14 @@ export function OpenSourceSection() {
               signals generosity. Must appear before the first package card. */}
           <m.p
             variants={child}
-            className="mb-6 max-w-[60ch] text-sm leading-7"
-            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' }}
+            className="text-color-text-muted mb-6 max-w-[60ch] font-mono text-sm leading-7"
           >
-            Four packages extracted from production TaxBridge and SabiScore — solved for real,
-            then published.
+            Four packages extracted from production TaxBridge and SabiScore — solved for real, then
+            published.
           </m.p>
 
           {/* Card grid: 1-col mobile → 2-col sm → 4-col xl */}
-          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
             {OSS_PROJECTS.map((item) => (
               <m.div
                 key={item.name}
@@ -208,15 +190,13 @@ export function OpenSourceSection() {
                 className="glass-medium flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
               >
                 {/* Stack + badge row */}
-                <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
-                  <p
-                    className="label-mono min-w-0 flex-1 pr-2 leading-snug break-words"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+                  <p className="label-mono text-color-text-muted min-w-0 flex-1 pr-2 leading-snug break-words">
                     {item.stack}
                   </p>
                   <span
-                    className="font-mono text-[9px] tracking-widest uppercase px-2 py-0.5 rounded border shrink-0 max-w-full whitespace-normal text-right leading-tight break-words"
+                    className="max-w-full shrink-0 rounded border px-2 py-0.5 text-right font-mono text-[9px] leading-tight tracking-widest break-words whitespace-normal uppercase"
+                    // eslint-disable-next-line no-restricted-syntax
                     style={{
                       color: item.badgeColor,
                       borderColor: item.badgeBorder,
@@ -226,17 +206,11 @@ export function OpenSourceSection() {
                   </span>
                 </div>
 
-                <h3
-                  className="text-lg font-semibold tracking-tight"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
+                <h3 className="text-color-text-primary text-lg font-semibold tracking-tight">
                   {item.name}
                 </h3>
 
-                <p
-                  className="mt-3 flex-1 text-sm leading-[1.8] break-words"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <p className="text-color-text-secondary mt-3 flex-1 text-sm leading-[1.8] break-words">
                   {item.desc}
                 </p>
 
@@ -251,11 +225,7 @@ export function OpenSourceSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`View ${item.name} on GitHub (opens in new tab)`}
-                  className="mt-3 flex items-center justify-between gap-3 min-h-[48px] border-t pt-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 rounded-sm"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text-muted)',
-                  }}
+                  className="border-color-border group text-color-text-muted mt-3 flex min-h-[48px] items-center justify-between gap-3 rounded-sm border-t pt-4 focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:outline-none"
                 >
                   <span className="font-mono text-[11px] tracking-wide uppercase transition group-hover:text-white">
                     View on GitHub
@@ -273,32 +243,18 @@ export function OpenSourceSection() {
           </div>
 
           {/* Proof strip */}
-          <m.div
-            variants={child}
-            className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
-          >
+          <m.div variants={child} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             {[
-              { value: '4',   label: 'production packages', detail: 'npm + pip'              },
+              { value: '4', label: 'production packages', detail: 'npm + pip' },
               { value: '15+', label: 'merged contributions', detail: 'XGBoost · scikit-learn' },
-              { value: 'MIT', label: 'open license',         detail: 'all packages'           },
+              { value: 'MIT', label: 'open license', detail: 'all packages' },
             ].map(({ value, label, detail }) => (
               <div key={value + label} className="flex items-baseline gap-2">
-                <span
-                  className="font-mono text-sm font-semibold"
-                  style={{ color: 'var(--color-film-teal)' }}
-                >
+                <span className="text-color-film-teal font-mono text-sm font-semibold">
                   {value}
                 </span>
-                <span
-                  className="font-mono text-[11px]"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  {label}
-                </span>
-                <span
-                  className="hidden sm:inline font-mono text-[10px]"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <span className="text-color-text-secondary font-mono text-[11px]">{label}</span>
+                <span className="text-color-text-muted hidden font-mono text-[10px] sm:inline">
                   · {detail}
                 </span>
               </div>
@@ -308,16 +264,14 @@ export function OpenSourceSection() {
           {/* OSS transparency footer — V1.0 Change 4: eliminates "is this real?" doubt */}
           <m.p
             variants={child}
-            className="mt-5 font-mono text-[11px] opacity-40"
-            style={{ color: 'var(--color-text-muted)' }}
+            className="text-color-text-muted mt-5 font-mono text-[11px] opacity-40"
           >
             All packages are publicly auditable →{' '}
             <a
               href="https://github.com/Scardubu"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:opacity-70 transition-opacity"
-              style={{ color: 'var(--color-film-teal)' }}
+              className="text-color-film-teal underline underline-offset-2 transition-opacity hover:opacity-70"
             >
               GitHub
             </a>
@@ -326,10 +280,9 @@ export function OpenSourceSection() {
           {/* Flow hook — V1.0 Change 6b: §Flow Mechanics §Open-source */}
           <m.p
             variants={child}
-            className="mt-4 font-mono text-[13px]"
-            style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+            className="text-color-text-muted mt-4 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
           >
-            <Link href={anchorUrl('skills')} className="hover:opacity-80 transition-opacity">
+            <Link href={anchorUrl('skills')} className="transition-opacity hover:opacity-80">
               The stack that makes these possible →
             </Link>
           </m.p>

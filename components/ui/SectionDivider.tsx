@@ -15,16 +15,9 @@ export function SectionDivider({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`relative my-4 h-px w-full overflow-hidden ${className ?? ''}`}
-      style={{ background: 'var(--color-border)' }}
+      className={`bg-color-border relative my-4 h-px w-full overflow-hidden ${className ?? ''}`}
     >
-      <div
-        className="absolute left-0 top-0 h-full w-24"
-        style={{
-          background: 'oklch(70% 0.21 188 / 0.35)',
-          filter: 'blur(2px)',
-        }}
-      />
+      <div className="absolute top-0 left-0 h-full w-24 bg-[oklch(70%_0.21_188_/_0.35)] blur-[2px]" />
     </div>
   );
 }

@@ -102,27 +102,25 @@ function CoreSkillCard({
   return (
     <div
       className="glass-surface flex h-full min-w-0 flex-col gap-2 rounded-[var(--radius-md)] p-3"
+      // eslint-disable-next-line no-restricted-syntax
       style={{ borderTop: `2px solid ${lvl.color}30` }}
       aria-label={`${skill.name} — ${lvl.label}${projectLabel ? ` — ${projectLabel}` : ''}`}
     >
       <span
         className="shrink-0 font-mono text-[9px] font-semibold tracking-widest uppercase"
+        // eslint-disable-next-line no-restricted-syntax
         style={{ color: lvl.color }}
       >
         {lvl.label}
       </span>
 
-      <span
-        className="text-xs leading-tight font-semibold break-words"
-        style={{ color: 'var(--color-text-primary)' }}
-      >
+      <span className="text-color-text-primary text-xs leading-tight font-semibold break-words">
         {skill.name}
       </span>
 
       {projectLabel ? (
         <span
-          className="font-mono text-[8px] leading-tight break-words"
-          style={{ color: 'var(--color-text-muted)' }}
+          className="text-color-text-muted font-mono text-[8px] leading-tight break-words"
           title={systemTags.join(' · ')}
         >
           {projectLabel}
@@ -130,8 +128,7 @@ function CoreSkillCard({
       ) : null}
 
       <div
-        className="mt-auto h-[2px] w-full overflow-hidden rounded-full"
-        style={{ background: 'oklch(100% 0 0 / 0.07)' }}
+        className="mt-auto h-[2px] w-full overflow-hidden rounded-full bg-[oklch(100%_0_0_/_0.07)]"
         role="meter"
         aria-valuenow={valuenow}
         aria-valuemin={0}
@@ -140,6 +137,7 @@ function CoreSkillCard({
       >
         <m.div
           className="h-full rounded-full"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ background: lvl.barColor }}
           initial={{ width: '0%' }}
           animate={{ width: shouldAnimate || reducedMotion ? lvl.barWidth : '0%' }}
@@ -174,6 +172,7 @@ function SystemLineageRow({
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
       <span
         className="shrink-0 font-mono text-[9px] font-semibold tracking-widest uppercase sm:w-[5.5rem] sm:pt-0.5"
+        // eslint-disable-next-line no-restricted-syntax
         style={{ color: accent }}
       >
         {system}
@@ -182,12 +181,7 @@ function SystemLineageRow({
         {skills.map((s) => (
           <span
             key={s.id}
-            className="rounded border px-1.5 py-0.5 font-mono text-[9px] tracking-wide"
-            style={{
-              borderColor: 'var(--color-border)',
-              color: 'var(--color-text-secondary)',
-              background: 'oklch(100% 0 0 / 0.015)',
-            }}
+            className="border-color-border text-color-text-secondary rounded border bg-[oklch(100%_0_0_/_0.015)] px-1.5 py-0.5 font-mono text-[9px] tracking-wide"
           >
             {s.name}
           </span>
@@ -213,8 +207,7 @@ export function SkillsSection() {
       id="skills"
       ref={ref}
       aria-labelledby="skills-heading"
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
     >
       <div className="container">
         <m.div initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={container}>
@@ -232,18 +225,14 @@ export function SkillsSection() {
                 <m.h2
                   variants={reducedMotion ? child : clipReveal}
                   id="skills-heading"
-                  className="mt-3 max-w-[22ch]"
-                  style={{ color: 'var(--color-text-primary)' }}
+                  className="text-color-text-primary mt-3 max-w-[22ch]"
                 >
                   The stack behind systems that hold.
                 </m.h2>
               </div>
 
               <div className="lg:flex lg:flex-col lg:justify-end">
-                <p
-                  className="mt-4 max-w-[52ch] text-sm leading-8 sm:text-base lg:mt-0"
-                  style={{ color: 'var(--color-text-secondary)', overflowWrap: 'break-word' }}
-                >
+                <p className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 [overflow-wrap:break-word] sm:text-base lg:mt-0">
                   62 tools deployed under NRS audit pressure, 99.9%+ uptime targets, and
                   multi-tenant compliance constraints. Every skill maps to a decision made in
                   production — not a tutorial, not a certification exercise, not a side project.
@@ -259,26 +248,21 @@ export function SkillsSection() {
               {TRUST_METRICS.map(({ value, label, sub, color, borderColor }) => (
                 <div
                   key={label}
-                  className="rounded-[var(--radius-md)] border p-4"
+                  className="border-color-border rounded-[var(--radius-md)] border bg-[oklch(100%_0_0_/_0.02)] p-4"
+                  // eslint-disable-next-line no-restricted-syntax
                   style={{
-                    borderColor: 'var(--color-border)',
-                    background: 'oklch(100% 0 0 / 0.02)',
                     borderTop: `2px solid ${borderColor}`,
                   }}
                 >
-                  <p className="font-mono text-sm font-semibold" style={{ color }}>
+                  <p
+                    className="font-mono text-sm font-semibold"
+                    // eslint-disable-next-line no-restricted-syntax
+                    style={{ color }}
+                  >
                     {value}
                   </p>
-                  <p
-                    className="mt-0.5 text-xs font-medium"
-                    style={{ color: 'var(--color-text-primary)' }}
-                  >
-                    {label}
-                  </p>
-                  <p
-                    className="mt-1 font-mono text-[9px] tracking-wide"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
+                  <p className="text-color-text-primary mt-0.5 text-xs font-medium">{label}</p>
+                  <p className="text-color-text-muted mt-1 font-mono text-[9px] tracking-wide">
                     {sub}
                   </p>
                 </div>
@@ -288,10 +272,7 @@ export function SkillsSection() {
 
           {/* ── L1: Core skills grid — 12 canonical production skills ─── */}
           <m.div variants={child} className="mb-3">
-            <p
-              className="mb-3 font-mono text-[10px] tracking-widest uppercase"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
               Core production stack
             </p>
           </m.div>
@@ -317,18 +298,11 @@ export function SkillsSection() {
 
           {/* ── L2: System lineage strip — always visible ─────────────── */}
           <m.div variants={child} className="mb-12">
-            <p
-              className="mb-3 font-mono text-[10px] tracking-widest uppercase"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
               Production system × skill lineage
             </p>
             <div
-              className="space-y-3 rounded-[var(--radius-lg)] border p-4 sm:p-5"
-              style={{
-                borderColor: 'var(--color-border)',
-                background: 'oklch(100% 0 0 / 0.015)',
-              }}
+              className="border-color-border space-y-3 rounded-[var(--radius-lg)] border bg-[oklch(100%_0_0_/_0.015)] p-4 sm:p-5"
               aria-label="Which skills power each live production system"
             >
               {SYSTEM_LINEAGE.map(({ system, accent, skills }) => (
@@ -339,11 +313,8 @@ export function SkillsSection() {
         </m.div>
 
         {/* ── L3: Full interactive SkillsMap — tabbed by pillar ─────────── */}
-        <div className="border-t pt-10" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          <p
-            className="mb-6 font-mono text-[10px] tracking-widest uppercase"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+        <div className="border-color-border-subtle border-t pt-10">
+          <p className="text-color-text-muted mb-6 font-mono text-[10px] tracking-widest uppercase">
             Full explorer · 62 tools · 8 pillars
           </p>
           <SkillsMap />
@@ -354,8 +325,7 @@ export function SkillsSection() {
           variants={child}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mt-8 font-mono text-[13px]"
-          style={{ opacity: 0.5, letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}
+          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
         >
           <Link href={anchorUrl('section-about')} className="transition-opacity hover:opacity-80">
             These 62 skills map to three live systems →

@@ -51,43 +51,35 @@ function DesktopOrbs({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <>
-      {!reducedMotion && (
-        <style dangerouslySetInnerHTML={{ __html: ORBITAL_STYLES }} />
-      )}
+      {!reducedMotion && <style dangerouslySetInnerHTML={{ __html: ORBITAL_STYLES }} />}
 
       <div className="gradient-mesh-wrap gradient-mesh-wrap--indigo">
         <m.div
           className="gradient-mesh-orb gradient-mesh-orb--indigo"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: indigoY, willChange: 'transform' }}
         >
-          <div
-            className={!reducedMotion ? 'orb-cw w-full h-full' : ''}
-            style={{ width: '100%', height: '100%' }}
-          />
+          <div className={(!reducedMotion ? 'orb-cw ' : '') + 'h-full w-full'} />
         </m.div>
       </div>
 
       <div className="gradient-mesh-wrap gradient-mesh-wrap--green">
         <m.div
           className="gradient-mesh-orb gradient-mesh-orb--green"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: greenY, willChange: 'transform' }}
         >
-          <div
-            className={!reducedMotion ? 'orb-ccw w-full h-full' : ''}
-            style={{ width: '100%', height: '100%' }}
-          />
+          <div className={(!reducedMotion ? 'orb-ccw ' : '') + 'h-full w-full'} />
         </m.div>
       </div>
 
       <div className="gradient-mesh-wrap gradient-mesh-wrap--amber">
         <m.div
           className="gradient-mesh-orb gradient-mesh-orb--amber"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ y: amberY, willChange: 'transform' }}
         >
-          <div
-            className={!reducedMotion ? 'orb-slow w-full h-full' : ''}
-            style={{ width: '100%', height: '100%' }}
-          />
+          <div className={(!reducedMotion ? 'orb-slow ' : '') + 'h-full w-full'} />
         </m.div>
       </div>
     </>
@@ -101,20 +93,32 @@ function MobileOrbs() {
   return (
     <>
       <div className="gradient-mesh-wrap gradient-mesh-wrap--indigo">
-        <m.div className="gradient-mesh-orb gradient-mesh-orb--indigo" style={{ y: 0 }}>
-          <div style={{ width: '100%', height: '100%' }} />
+        <m.div
+          className="gradient-mesh-orb gradient-mesh-orb--indigo"
+          // eslint-disable-next-line no-restricted-syntax
+          style={{ y: 0 }}
+        >
+          <div className="h-full w-full" />
         </m.div>
       </div>
 
       <div className="gradient-mesh-wrap gradient-mesh-wrap--green">
-        <m.div className="gradient-mesh-orb gradient-mesh-orb--green" style={{ y: 0 }}>
-          <div style={{ width: '100%', height: '100%' }} />
+        <m.div
+          className="gradient-mesh-orb gradient-mesh-orb--green"
+          // eslint-disable-next-line no-restricted-syntax
+          style={{ y: 0 }}
+        >
+          <div className="h-full w-full" />
         </m.div>
       </div>
 
       <div className="gradient-mesh-wrap gradient-mesh-wrap--amber">
-        <m.div className="gradient-mesh-orb gradient-mesh-orb--amber" style={{ y: 0 }}>
-          <div style={{ width: '100%', height: '100%' }} />
+        <m.div
+          className="gradient-mesh-orb gradient-mesh-orb--amber"
+          // eslint-disable-next-line no-restricted-syntax
+          style={{ y: 0 }}
+        >
+          <div className="h-full w-full" />
         </m.div>
       </div>
     </>
@@ -127,10 +131,7 @@ export function GradientMesh() {
 
   return (
     <div aria-hidden="true" className="gradient-mesh">
-      {isPointerFine
-        ? <DesktopOrbs reducedMotion={Boolean(reducedMotion)} />
-        : <MobileOrbs />
-      }
+      {isPointerFine ? <DesktopOrbs reducedMotion={Boolean(reducedMotion)} /> : <MobileOrbs />}
     </div>
   );
 }

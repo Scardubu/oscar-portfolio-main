@@ -47,26 +47,22 @@ export function SectionHeading({
     >
       {/* Eyebrow — section number + label */}
       <div
-        className="flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.30em]"
-        style={{ color: 'var(--color-film-teal)' }}
+        className="text-color-film-teal flex items-center gap-3 font-mono text-[11px] font-medium tracking-[0.30em] uppercase"
         aria-hidden="true"
       >
         <span>{eyebrow}</span>
-        <div
-          className="h-px w-8 shrink-0"
-          style={{ background: 'oklch(70% 0.21 188 / 0.30)' }}
-        />
+        <div className="h-px w-8 shrink-0 bg-[oklch(70%_0.21_188_/_0.30)]" />
       </div>
 
       {/* Title + optional description */}
       <div className={clsx('space-y-4', align === 'center' ? 'max-w-3xl' : 'max-w-4xl')}>
         <h2
           id={id}
-          className="text-balance font-display font-semibold leading-[0.92] tracking-tight"
+          className="font-display text-color-text-primary leading-[0.92] font-semibold tracking-tight text-balance"
+          // eslint-disable-next-line no-restricted-syntax
           style={{
             fontSize: 'clamp(2rem, 5vw, 4.5rem)',
             letterSpacing: '-0.055em',
-            color: 'var(--color-text-primary)',
           }}
         >
           {title}
@@ -74,10 +70,10 @@ export function SectionHeading({
 
         {description ? (
           <p
-            className="text-pretty leading-8"
+            className="text-color-text-secondary leading-8 text-pretty"
+            // eslint-disable-next-line no-restricted-syntax
             style={{
               fontSize: 'clamp(1rem, 1.2vw, 1.125rem)',
-              color: 'var(--color-text-secondary)',
               maxWidth: align === 'center' ? '52ch' : '58ch',
             }}
           >

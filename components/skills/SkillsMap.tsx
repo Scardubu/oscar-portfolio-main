@@ -62,20 +62,21 @@ function SkillCard({
               damping: 26,
             }
       }
-      className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-2.5 sm:p-3 transition-colors duration-200"
+      className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-2.5 transition-colors duration-200 sm:p-3"
       aria-label={cardLabel}
     >
       {/* Pillar: hidden on mobile */}
-      <p className="hidden sm:block mb-2 font-mono text-[10px] tracking-widest text-white/40 uppercase truncate">
+      <p className="mb-2 hidden truncate font-mono text-[10px] tracking-widest text-white/40 uppercase sm:block">
         {skill.pillar}
       </p>
 
       <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="text-text-primary truncate text-xs sm:text-sm leading-snug font-semibold">
+        <span className="text-text-primary truncate text-xs leading-snug font-semibold sm:text-sm">
           {skill.name}
         </span>
         <span
-          className="shrink-0 text-[9px] sm:text-[10px] font-medium font-mono"
+          className="shrink-0 font-mono text-[9px] font-medium sm:text-[10px]"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ color: lvl.labelColor }}
         >
           {lvl.label}
@@ -84,17 +85,15 @@ function SkillCard({
 
       {/* Proficiency bar */}
       <div
-        className="mb-2 h-[3px] w-full overflow-hidden rounded-full"
-        style={{ background: 'oklch(100% 0 0 / 0.08)' }}
+        className="mb-2 h-[3px] w-full overflow-hidden rounded-full bg-[oklch(100%_0_0_/_0.08)]"
         role="meter"
-        aria-valuenow={
-          skill.level === 'expert' ? 95 : skill.level === 'proficient' ? 70 : 35
-        }
+        aria-valuenow={skill.level === 'expert' ? 95 : skill.level === 'proficient' ? 70 : 35}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={`${skill.name} proficiency: ${LEVEL_CONFIG[skill.level].label}`}
       >
         <m.div
+          // eslint-disable-next-line no-restricted-syntax
           style={{ background: lvl.barColor }}
           className="h-full rounded-full"
           initial={{ width: prefersReduced ? lvl.width : '0%' }}
@@ -118,7 +117,7 @@ function SkillCard({
           - Proficient: show on sm+ only
           - Foundational: sm+ only */}
       {systemTags.length > 0 && (
-        <div className={`flex flex-wrap gap-1 mt-1 ${isExpert ? '' : 'hidden sm:flex'}`}>
+        <div className={`mt-1 flex flex-wrap gap-1 ${isExpert ? '' : 'hidden sm:flex'}`}>
           {systemTags.slice(0, isExpert ? 1 : 3).map((tag) => (
             <span
               key={`sys-${tag}`}
@@ -128,14 +127,15 @@ function SkillCard({
               {tag}
             </span>
           ))}
-          {!isExpert && metaTags.slice(0, 2).map((tag) => (
-            <span
-              key={`meta-${tag}`}
-              className="border-border-subtle bg-surface text-text-muted rounded border px-1.5 py-0.5 text-[9px] font-medium"
-            >
-              {tag}
-            </span>
-          ))}
+          {!isExpert &&
+            metaTags.slice(0, 2).map((tag) => (
+              <span
+                key={`meta-${tag}`}
+                className="border-border-subtle bg-surface text-text-muted rounded border px-1.5 py-0.5 text-[9px] font-medium"
+              >
+                {tag}
+              </span>
+            ))}
         </div>
       )}
     </m.div>
@@ -166,8 +166,7 @@ export function SkillsMap(): React.ReactElement {
           exceed viewport. Matches the WritingSection v22.1 pattern.
       */}
       <div
-        className="flex flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto sm:pb-1"
-        style={{ scrollbarWidth: 'none' }}
+        className="flex flex-wrap gap-2 [scrollbar-width:none] sm:flex-nowrap sm:overflow-x-auto sm:pb-1"
         role="group"
         aria-label="Filter skills by category"
       >
@@ -180,12 +179,12 @@ export function SkillsMap(): React.ReactElement {
               type="button"
               aria-pressed={isActive}
               className={[
-                'shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium',
-                'transition-all duration-200 min-h-[44px]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                'shrink-0 rounded-full px-3.5 py-2 text-xs font-medium whitespace-nowrap',
+                'min-h-[44px] transition-all duration-200',
+                'focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none',
                 isActive
-                  ? 'bg-white/10 text-white border border-white/25 shadow-sm'
-                  : 'border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 bg-transparent',
+                  ? 'border border-white/25 bg-white/10 text-white shadow-sm'
+                  : 'border border-white/10 bg-transparent text-white/50 hover:border-white/20 hover:text-white/80',
               ].join(' ')}
             >
               {tab}
@@ -222,11 +221,7 @@ export function SkillsMap(): React.ReactElement {
           <ul className="grid list-none grid-cols-1 gap-2 p-0 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filtered.map((skill, i) => (
               <li key={skill.id} className="h-full">
-                <SkillCard
-                  skill={skill}
-                  prefersReduced={Boolean(prefersReduced)}
-                  index={i}
-                />
+                <SkillCard skill={skill} prefersReduced={Boolean(prefersReduced)} index={i} />
               </li>
             ))}
           </ul>

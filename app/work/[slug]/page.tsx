@@ -10,9 +10,9 @@ import { ArchDecision } from '@/components/ArchDecision';
 import { Footer } from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { anchorUrl } from '@/lib/config';
 import { getWorkCase, getWorkCases } from '@/lib/content';
 import { getProject, PROJECTS, type Project } from '@/lib/projects';
-import { anchorUrl } from '@/lib/config';
 
 type WorkPageProps = Readonly<{
   params: Promise<{ slug: string }>;
@@ -20,19 +20,27 @@ type WorkPageProps = Readonly<{
 
 function getProjectStatusLabel(status?: Project['status']) {
   switch (status) {
-    case 'live':       return 'Live deployment';
-    case 'wip':        return 'Active build';
-    case 'case-study': return 'Case study';
-    default:           return 'Case study';
+    case 'live':
+      return 'Live deployment';
+    case 'wip':
+      return 'Active build';
+    case 'case-study':
+      return 'Case study';
+    default:
+      return 'Case study';
   }
 }
 
 function getCompactProjectStatusLabel(status: Project['status']) {
   switch (status) {
-    case 'live':       return 'Live';
-    case 'wip':        return 'WIP';
-    case 'case-study': return 'Case study';
-    default:           return 'Case study';
+    case 'live':
+      return 'Live';
+    case 'wip':
+      return 'WIP';
+    case 'case-study':
+      return 'Case study';
+    default:
+      return 'Case study';
   }
 }
 
@@ -66,8 +74,7 @@ function RelatedCaseStudies({ entries }: Readonly<{ entries: Project[] }>) {
             <p className="mt-3 text-sm leading-7 text-white/65">{entry.tagline}</p>
             <Link
               href={`/work/${entry.slug}`}
-              className="mt-5 inline-flex min-h-[44px] items-center gap-2 text-sm transition hover:text-white"
-              style={{ color: 'var(--color-film-teal)' }}
+              className="text-color-film-teal mt-5 inline-flex min-h-[44px] items-center gap-2 text-sm transition hover:text-white"
             >
               Read case study →
             </Link>
@@ -93,7 +100,7 @@ function ProjectLinksCard({
             href={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="pill pill-cyan inline-flex justify-center min-h-[48px] items-center"
+            className="pill pill-cyan inline-flex min-h-[48px] items-center justify-center"
           >
             View live demo
           </a>
@@ -103,7 +110,7 @@ function ProjectLinksCard({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="pill inline-flex justify-center min-h-[48px] items-center"
+            className="pill inline-flex min-h-[48px] items-center justify-center"
           >
             GitHub
           </a>
@@ -135,20 +142,12 @@ function SnapshotCard({ statusLabel }: Readonly<{ statusLabel: string }>) {
       <span className="label">Snapshot</span>
       <div className="mt-4 space-y-4">
         <div className="space-y-1">
-          <p className="text-xs tracking-[0.14em] uppercase" style={{ color: 'var(--color-text-muted)' }}>
-            Status
-          </p>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {statusLabel}
-          </p>
+          <p className="text-color-text-muted text-xs tracking-[0.14em] uppercase">Status</p>
+          <p className="text-color-text-secondary text-sm">{statusLabel}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-xs tracking-[0.14em] uppercase" style={{ color: 'var(--color-text-muted)' }}>
-            Surface
-          </p>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Case study and architecture review
-          </p>
+          <p className="text-color-text-muted text-xs tracking-[0.14em] uppercase">Surface</p>
+          <p className="text-color-text-secondary text-sm">Case study and architecture review</p>
         </div>
       </div>
     </div>
@@ -162,8 +161,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project  = await getWorkCase(slug);
-  const meta     = getProject(slug);
+  const project = await getWorkCase(slug);
+  const meta = getProject(slug);
 
   if (!project) return { title: 'Work' };
 
@@ -196,17 +195,17 @@ function caseStudyJsonLd(title: string, description: string, slug: string) {
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
-  const { slug }   = await params;
-  const project    = await getWorkCase(slug);
+  const { slug } = await params;
+  const project = await getWorkCase(slug);
 
   if (!project) notFound();
 
-  const projectMeta    = getProject(slug);
+  const projectMeta = getProject(slug);
   const relatedProjects = PROJECTS.filter((e) => e.slug !== slug).slice(0, 2);
-  const title          = projectMeta?.title ?? project.frontmatter.title;
-  const description    = projectMeta?.tagline ?? project.frontmatter.summary;
-  const tags           = projectMeta?.stack ?? project.frontmatter.tags ?? [];
-  const statusLabel    = getProjectStatusLabel(projectMeta?.status);
+  const title = projectMeta?.title ?? project.frontmatter.title;
+  const description = projectMeta?.tagline ?? project.frontmatter.summary;
+  const tags = projectMeta?.stack ?? project.frontmatter.tags ?? [];
+  const statusLabel = getProjectStatusLabel(projectMeta?.status);
 
   return (
     <>
@@ -243,10 +242,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
                   <span className="label">Case Study</span>
                   <h1 className="mt-[var(--space-2)]">{title}</h1>
-                  <p
-                    className="mt-[var(--space-4)] text-base sm:text-lg leading-8"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
+                  <p className="text-color-text-secondary mt-[var(--space-4)] text-base leading-8 sm:text-lg">
                     {description}
                   </p>
                   {projectMeta && (
@@ -290,7 +286,7 @@ export default async function WorkPage({ params }: WorkPageProps) {
                 {/* Back CTA: always visible on mobile, at natural thumb zone */}
                 <Link
                   href={anchorUrl('section-projects')}
-                  className="pill pill-cyan inline-flex w-full justify-center min-h-[48px] items-center"
+                  className="pill pill-cyan inline-flex min-h-[48px] w-full items-center justify-center"
                 >
                   ← Back to projects
                 </Link>

@@ -21,8 +21,16 @@ export function StatusPulseDot({
       className={['relative flex h-1.5 w-1.5 shrink-0', className].filter(Boolean).join(' ')}
       aria-hidden="true"
     >
-      <span className="absolute inline-flex h-full w-full rounded-full opacity-75" style={pulseStyle} />
-      <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: color }} />
+      { }
+      <span
+        className="absolute inline-flex h-full w-full rounded-full opacity-75"
+        style={pulseStyle}
+      />
+      { }
+      <span
+        className="relative inline-flex h-1.5 w-1.5 rounded-full"
+        style={{ background: color }}
+      />
     </span>
   );
 }

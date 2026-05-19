@@ -3,8 +3,8 @@
 // Suspense fallback for dynamically-imported sections.
 
 interface SectionSkeletonProps {
-  id:     string;
-  label:  string;
+  id: string;
+  label: string;
   height: number;
 }
 
@@ -12,8 +12,7 @@ export function SectionSkeleton({ id, label, height }: Readonly<SectionSkeletonP
   return (
     <section
       id={id}
-      className="border-t py-[var(--section-py)]"
-      style={{ borderColor: 'var(--color-border)' }}
+      className="border-color-border border-t py-[var(--section-py)]"
       aria-busy="true"
       aria-label={`Loading ${label}`}
     >
@@ -28,6 +27,7 @@ export function SectionSkeleton({ id, label, height }: Readonly<SectionSkeletonP
         {/* Body skeleton — clamped to avoid CLS on small viewports */}
         <div
           className="skeleton w-full rounded-2xl"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ height: `clamp(180px, 30vh, ${height}px)` }}
         />
       </div>

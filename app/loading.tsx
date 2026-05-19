@@ -7,18 +7,13 @@ export default function Loading() {
       {/* Nav bar skeleton */}
       <div
         aria-hidden="true"
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[clamp(1rem,5vw,3rem)]"
-        style={{
-          height: 'var(--nav-height)',
-          borderBottom: '1px solid var(--color-border-subtle)',
-          background: 'oklch(7% 0.010 265 / 0.7)',
-        }}
+        className="border-color-border-subtle fixed top-0 right-0 left-0 z-50 flex h-[var(--nav-height)] items-center justify-between border-b bg-[oklch(7%_0.010_265_/_0.7)] px-[clamp(1rem,5vw,3rem)]"
       >
         <div className="flex flex-col gap-1.5">
           <Shimmer width="w-28" height="h-3" />
           <Shimmer width="w-20" height="h-2" opacity="opacity-50" />
         </div>
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden items-center gap-4 md:flex">
           <Shimmer width="w-16" height="h-3" />
           <Shimmer width="w-16" height="h-3" />
           <Shimmer width="w-16" height="h-3" />
@@ -32,12 +27,11 @@ export default function Loading() {
         aria-hidden="true"
       >
         <div className="container">
-          <div className="grid lg:grid-cols-[54%_46%] gap-[clamp(2rem,4vw,4rem)] items-start">
-
+          <div className="grid items-start gap-[clamp(2rem,4vw,4rem)] lg:grid-cols-[54%_46%]">
             {/* Left column */}
             <div className="flex flex-col gap-5">
               {/* Mobile headshot */}
-              <div className="flex lg:hidden mb-2">
+              <div className="mb-2 flex lg:hidden">
                 <Shimmer width="w-16" height="h-16" rounded="rounded-full" />
               </div>
 
@@ -60,10 +54,7 @@ export default function Loading() {
               </div>
 
               {/* Conviction stat strip */}
-              <div
-                className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-x-8 py-4"
-                style={{ borderTop: '1px solid var(--color-border-subtle)', borderBottom: '1px solid var(--color-border-subtle)' }}
-              >
+              <div className="border-color-border-subtle grid grid-cols-2 gap-3 border-y py-4 sm:flex sm:flex-wrap sm:gap-x-8">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="flex flex-col gap-1.5">
                     <Shimmer width="w-20" height="h-3.5" />
@@ -79,9 +70,14 @@ export default function Loading() {
               <Shimmer width="w-48" height="h-3" />
 
               {/* CTA row */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <Shimmer width="w-full sm:w-44" height="h-14" rounded="rounded-md" />
-                <Shimmer width="w-full sm:w-36" height="h-14" rounded="rounded-md" opacity="opacity-60" />
+                <Shimmer
+                  width="w-full sm:w-36"
+                  height="h-14"
+                  rounded="rounded-md"
+                  opacity="opacity-60"
+                />
               </div>
 
               {/* Ghost CV link */}
@@ -89,13 +85,19 @@ export default function Loading() {
             </div>
 
             {/* Right column — desktop only */}
-            <div className="hidden lg:flex flex-col items-end gap-6">
+            <div className="hidden flex-col items-end gap-6 lg:flex">
               {/* Headshot */}
               <Shimmer width="w-28 xl:w-36" height="h-28 xl:h-36" rounded="rounded-[14px]" />
 
               {/* Metric panel stubs */}
               {[72, 80, 64, 56].map((h, i) => (
-                <Shimmer key={i} width="w-full" height={`h-${h === 72 ? '[72px]' : h === 80 ? '[80px]' : h === 64 ? '[64px]' : '[56px]'}`} rounded="rounded-[14px]" opacity={i > 0 ? 'opacity-60' : undefined} />
+                <Shimmer
+                  key={i}
+                  width="w-full"
+                  height={`h-${h === 72 ? '[72px]' : h === 80 ? '[80px]' : h === 64 ? '[64px]' : '[56px]'}`}
+                  rounded="rounded-[14px]"
+                  opacity={i > 0 ? 'opacity-60' : undefined}
+                />
               ))}
             </div>
           </div>
@@ -119,8 +121,7 @@ function Shimmer({
 }) {
   return (
     <div
-      className={`${width} ${height} ${rounded} ${opacity ?? ''} skeleton-shimmer`}
-      style={{ background: 'var(--color-border)' }}
+      className={`${width} ${height} ${rounded} ${opacity ?? ''} skeleton-shimmer bg-color-border`}
       aria-hidden="true"
     />
   );

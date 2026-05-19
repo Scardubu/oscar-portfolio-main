@@ -52,6 +52,7 @@ export default function ErrorPage({
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10"
+        // eslint-disable-next-line no-restricted-syntax
         style={{
           background: chunkError
             ? 'radial-gradient(ellipse 55% 45% at 50% 40%, oklch(70% 0.21 188 / 0.05) 0%, transparent 65%)'
@@ -60,67 +61,50 @@ export default function ErrorPage({
       />
 
       <div
-        className="glass-surface w-full max-w-sm rounded-[var(--radius-2xl)] p-8 sm:p-10 text-center"
+        className="glass-surface w-full max-w-sm rounded-[var(--radius-2xl)] p-8 text-center sm:p-10"
+        // eslint-disable-next-line no-restricted-syntax
         style={{
           borderTop: `1px solid ${chunkError ? 'oklch(70% 0.21 188 / 0.22)' : 'oklch(60% 0.22 25 / 0.18)'}`,
         }}
       >
         {/* Kicker */}
         <p
-          className="font-mono text-[10px] tracking-[0.22em] uppercase mb-5"
-          style={{ color: chunkError ? 'var(--color-film-teal)' : 'var(--color-warning)' }}
+          className={`mb-5 font-mono text-[10px] tracking-[0.22em] uppercase ${chunkError ? 'text-color-film-teal' : 'text-color-warning'}`}
         >
           {chunkError ? 'Assets updating…' : 'Runtime error'}
         </p>
 
         {/* Headline */}
-        <h2
-          className="mb-3 font-display text-2xl font-extrabold tracking-tight"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <h2 className="font-display text-color-text-primary mb-3 text-2xl font-extrabold tracking-tight">
           {chunkError ? 'Fetching latest assets.' : 'Something went wrong.'}
         </h2>
 
-        <p
-          className="mb-2 font-didone text-sm italic"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
+        <p className="font-didone text-color-text-secondary mb-2 text-sm italic">
           {chunkError
-            ? "A new deployment landed while you were here — reloading automatically."
-            : "An unexpected error occurred. The system logs have it."}
+            ? 'A new deployment landed while you were here — reloading automatically.'
+            : 'An unexpected error occurred. The system logs have it.'}
         </p>
 
         {/* Digest (dev mode / production debugging) */}
         {error.digest && (
-          <p
-            className="mb-6 font-mono text-[10px] tracking-widest"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-color-text-muted mb-6 font-mono text-[10px] tracking-widest">
             Digest: {error.digest}
           </p>
         )}
 
-        <div
-          className="my-6 h-px w-full"
-          style={{ background: 'var(--color-border-subtle)' }}
-          aria-hidden="true"
-        />
+        <div className="bg-color-border-subtle my-6 h-px w-full" aria-hidden="true" />
 
         <button
           type="button"
           onClick={chunkError ? () => window.location.reload() : reset}
-          className="cta-primary cta-primary--lg tactile-press w-full"
-          style={{ justifyContent: 'center' }}
+          className="cta-primary cta-primary--lg tactile-press w-full justify-center"
         >
           {chunkError ? 'Reload page' : 'Try again'}
         </button>
 
         {/* Fallback email link */}
         {!chunkError && (
-          <p
-            className="mt-5 font-mono text-[10px] tracking-wide"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+          <p className="text-color-text-muted mt-5 font-mono text-[10px] tracking-wide">
             Still stuck?{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}

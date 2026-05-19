@@ -8,20 +8,20 @@ import type { CSSProperties, ReactNode } from 'react';
 type MetricAccent = 'teal' | 'amber' | 'live' | 'accent' | 'wip';
 
 const ACCENT_COLOR: Record<MetricAccent, string> = {
-  teal:   'var(--color-film-teal)',
-  amber:  'var(--color-film-amber)',
-  live:   'var(--color-live)',
+  teal: 'var(--color-film-teal)',
+  amber: 'var(--color-film-amber)',
+  live: 'var(--color-live)',
   accent: 'var(--color-accent)',
-  wip:    'var(--color-warning)',
+  wip: 'var(--color-warning)',
 };
 
 interface MetricCardProps {
-  label:     string;
+  label: string;
   headline?: string;
-  body:      string;
-  icon?:     ReactNode;
-  breath?:   boolean;
-  accent?:   MetricAccent;
+  body: string;
+  icon?: ReactNode;
+  breath?: boolean;
+  accent?: MetricAccent;
 }
 
 export function MetricCard({
@@ -35,20 +35,22 @@ export function MetricCard({
   const accentColor = accent ? ACCENT_COLOR[accent] : 'var(--color-border)';
 
   const borderStyle: CSSProperties = { borderTopColor: accentColor };
-  const labelStyle:  CSSProperties = accent
+  const labelStyle: CSSProperties = accent
     ? { color: accentColor }
     : { color: 'var(--color-text-muted)' };
 
   return (
     <article
-      className={`glass glass-medium h-full border-t-2 p-4 sm:p-5 lg:p-6${breath ? ' metric-breath' : ''}`}
+      className={`glass glass-medium h-full border-t-2 p-4 sm:p-5 lg:p-6${breath ? 'metric-breath' : ''}`}
       aria-label={label}
       data-metric="true"
+      // eslint-disable-next-line no-restricted-syntax
       style={borderStyle}
     >
       {icon ? (
         <div
           className="mb-3"
+          // eslint-disable-next-line no-restricted-syntax
           style={{ color: accentColor }}
           aria-hidden="true"
           role="presentation"
@@ -59,26 +61,19 @@ export function MetricCard({
 
       <p
         className="mb-2 font-mono text-[10px] tracking-widest uppercase"
+        // eslint-disable-next-line no-restricted-syntax
         style={labelStyle}
       >
         {label}
       </p>
 
       {headline ? (
-        <p
-          className="mb-2 text-base font-semibold leading-snug"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <p className="text-color-text-primary mb-2 text-base leading-snug font-semibold">
           {headline}
         </p>
       ) : null}
 
-      <p
-        className="text-sm leading-[1.75]"
-        style={{ color: 'var(--color-text-secondary)' }}
-      >
-        {body}
-      </p>
+      <p className="text-color-text-secondary text-sm leading-[1.75]">{body}</p>
     </article>
   );
 }

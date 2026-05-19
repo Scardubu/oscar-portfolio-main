@@ -14,46 +14,29 @@ interface ArchDecisionProps {
 
 export function ArchDecision({ chosen, over, because, compact = false }: ArchDecisionProps) {
   return (
-    <div
-      className="rounded-[var(--radius-lg)] border"
-      style={{
-        borderColor: 'var(--color-border-subtle)',
-        background: 'oklch(100% 0 0 / 0.018)',
-      }}
-    >
+    <div className="border-color-border-subtle rounded-[var(--radius-lg)] border bg-[oklch(100%_0_0_/_0.018)]">
       {/* BECAUSE — primary conviction signal */}
       <div
-        className={`border-b ${compact ? 'px-3 py-3' : 'px-4 py-4 sm:px-6 sm:py-5'}`}
-        style={{ borderColor: 'var(--color-border-subtle)' }}
+        className={`border-color-border-subtle border-b ${compact ? 'px-3 py-3' : 'px-4 py-4 sm:px-6 sm:py-5'}`}
       >
+        <p className="label-mono text-color-film-teal mb-2 text-[10px]">BECAUSE</p>
         <p
-          className="label-mono mb-2 text-[10px]"
-          style={{ color: 'var(--color-film-teal)' }}
-        >
-          BECAUSE
-        </p>
-        <p
-          className={`leading-[1.75] font-medium ${compact ? 'text-xs line-clamp-3' : 'text-sm sm:text-base'}`}
-          style={{ color: 'var(--color-text-primary)' }}
+          className={`text-color-text-primary leading-[1.75] font-medium ${compact ? 'line-clamp-3 text-xs' : 'text-sm sm:text-base'}`}
         >
           {because}
         </p>
       </div>
 
       {/* CHOSEN / OVER — secondary rows */}
-      <div className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+      <div className="divide-color-border-subtle divide-y">
         <div
           className={`flex min-h-[48px] items-start gap-3 py-3 ${compact ? 'px-3' : 'px-4 sm:px-6'}`}
         >
-          <span
-            className="label-mono w-14 shrink-0 pt-0.5 text-[10px]"
-            style={{ color: 'var(--color-success)' }}
-          >
+          <span className="label-mono text-color-success w-14 shrink-0 pt-0.5 text-[10px]">
             CHOSEN
           </span>
           <span
-            className={`leading-[1.7] ${compact ? 'text-[11px] line-clamp-2' : 'text-xs sm:text-sm'}`}
-            style={{ color: 'var(--color-text-secondary)' }}
+            className={`text-color-text-secondary leading-[1.7] ${compact ? 'line-clamp-2 text-[11px]' : 'text-xs sm:text-sm'}`}
           >
             {chosen}
           </span>
@@ -62,15 +45,11 @@ export function ArchDecision({ chosen, over, because, compact = false }: ArchDec
         <div
           className={`flex min-h-[48px] items-start gap-3 py-3 ${compact ? 'px-3' : 'px-4 sm:px-6'}`}
         >
-          <span
-            className="label-mono w-14 shrink-0 pt-0.5 text-[10px]"
-            style={{ color: 'var(--color-warning)' }}
-          >
+          <span className="label-mono text-color-warning w-14 shrink-0 pt-0.5 text-[10px]">
             OVER
           </span>
           <span
-            className={`leading-[1.7] ${compact ? 'text-[11px] line-clamp-2' : 'text-xs sm:text-sm'}`}
-            style={{ color: 'var(--color-text-muted)' }}
+            className={`text-color-text-muted leading-[1.7] ${compact ? 'line-clamp-2 text-[11px]' : 'text-xs sm:text-sm'}`}
           >
             {over}
           </span>
