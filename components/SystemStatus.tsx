@@ -37,7 +37,7 @@ const STATUS_CONFIG: Record<StatusValue, { label: string; shortLabel: string; co
 };
 
 export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemStatusProps = {}) {
-  const [status, setStatus]   = useState<StatusValue>('operational');
+  const [status, setStatus] = useState<StatusValue>('operational');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -57,16 +57,15 @@ export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemSt
         // Network failure — remain on operational default.
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Avoid hydration mismatch on status pill (SSR always operational)
   if (!mounted) {
     return (
-      <span
-        className="relative inline-flex items-center gap-1.5 select-none"
-        aria-hidden="true"
-      >
+      <span className="relative inline-flex items-center gap-1.5 select-none" aria-hidden="true">
         <StatusPulseDot color="var(--color-film-teal)" pulseDuration="1.4s" />
       </span>
     );
@@ -79,7 +78,7 @@ export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemSt
       role="status"
       aria-label={cfg.label}
       title={cfg.label}
-      className="relative inline-flex items-center gap-1.5 select-none font-mono text-[10px] tracking-widest uppercase text-color-text-muted"
+      className="text-color-text-muted relative inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase select-none"
     >
       <StatusPulseDot color={cfg.color} pulseDuration="1.4s" />
 

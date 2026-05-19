@@ -12,7 +12,11 @@ const INCLUDED_DIRECTORIES = ['app', 'components', 'constants', 'hooks', 'lib'];
 // Test directories (e2e, tests) use TypeScript/Playwright — not Tailwind — so the
 // inline-style and arbitrary-value checks produce false positives there.
 const DESIGN_SYSTEM_DIRECTORIES = new Set<string>([
-  'app', 'components', 'constants', 'hooks', 'lib',
+  'app',
+  'components',
+  'constants',
+  'hooks',
+  'lib',
 ]);
 
 const IGNORED_DIRECTORIES = new Set<string>([
@@ -60,7 +64,9 @@ function scanFile(filePath: string): string[] {
   // Plain .ts files (utilities, hooks) may legitimately reference these strings in types.
   if (
     path.extname(filePath) === '.tsx' &&
-    (content.includes('initial={{') || content.includes('animate={{') || content.includes('exit={{'))
+    (content.includes('initial={{') ||
+      content.includes('animate={{') ||
+      content.includes('exit={{'))
   ) {
     issues.push('Inline motion detected');
   }
@@ -101,9 +107,11 @@ function collectCandidateFiles(): string[] {
     return providedFiles;
   }
 
-  return INCLUDED_DIRECTORIES
-    .map((directory: string): string => path.join(ROOT, directory))
-    .filter((directory: string): boolean => fs.existsSync(directory) && fs.statSync(directory).isDirectory())
+  return INCLUDED_DIRECTORIES.map((directory: string): string => path.join(ROOT, directory))
+    .filter(
+      (directory: string): boolean =>
+        fs.existsSync(directory) && fs.statSync(directory).isDirectory()
+    )
     .flatMap((directory: string): string[] => walk(directory));
 }
 
