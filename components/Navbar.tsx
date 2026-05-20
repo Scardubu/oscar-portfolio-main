@@ -271,7 +271,7 @@ export default function Navbar() {
                 Oscar
               </m.span>
               <span className="nav-tagline hidden text-white/50 sm:block">
-                Staff+ Engineer · Lagos → Global
+                Staff+ Architect · Lagos → Global
               </span>
             </div>
           </Link>
