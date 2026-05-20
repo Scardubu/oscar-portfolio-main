@@ -64,7 +64,7 @@ export const PROFILE = {
 export const HERO = {
   name:         'Oscar Ndugbu',
   title:        'Staff+ Full-Stack · Infra · ML',
-  kicker:       'Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global',
+  kicker:       'Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech',
   h1:           'The system has to work at 2am.',
   subHeadline:  "That's not a slogan. It's a design constraint.",
   body:         'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
