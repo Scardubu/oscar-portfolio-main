@@ -261,16 +261,7 @@ export default function Navbar() {
             className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
             aria-label="Oscar Ndugbu — Homepage"
           >
-            <m.span
-              className="nav-wordmark-luminary sm:hidden"
-              whileHover={reducedMotion ? undefined : { y: -1 }}
-              whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            >
-              Oscar
-            </m.span>
-
-            <div className="hidden sm:flex sm:flex-col sm:gap-0.5">
+            <div className="flex flex-col gap-0.5">
               <m.span
                 className="nav-wordmark-luminary"
                 whileHover={reducedMotion ? undefined : { y: -1 }}
@@ -279,7 +270,9 @@ export default function Navbar() {
               >
                 Oscar
               </m.span>
-              <span className="nav-tagline text-white/50">Staff+ Engineer · Lagos → Global</span>
+              <span className="nav-tagline hidden text-white/50 sm:block">
+                Staff+ Engineer · Lagos → Global
+              </span>
             </div>
           </Link>
 
