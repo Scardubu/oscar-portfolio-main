@@ -435,16 +435,16 @@ export function HeroSection() {
               <span className="inline sm:hidden">
                 <span className="whitespace-nowrap">Full-Stack</span>
                 {' · '}
-                <span className="whitespace-nowrap">React Native</span>
+                <span className="whitespace-nowrap">Java</span>
                 {' · '}
                 <span className="whitespace-nowrap">Next.js 15</span>
                 <br />
-                <span className="whitespace-nowrap">AI Systems</span>
+                <span className="whitespace-nowrap">React Native</span>
                 {' · '}
-                <span className="whitespace-nowrap">Lagos → Global</span>
+                <span className="whitespace-nowrap">AI Systems · Fintech</span>
               </span>
               <span className="hidden sm:inline">
-                Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global
+                Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech
               </span>
             </m.p>
 
