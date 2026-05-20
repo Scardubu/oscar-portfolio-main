@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { Footer } from '@/components/Footer';
-import Navbar from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { getWritingPost, getWritingPosts } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
@@ -95,7 +93,6 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
 
   return (
     <>
-      <Navbar />
       <ReadingProgress />
       <main id="main-content" tabIndex={-1}>
         <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
@@ -206,7 +203,6 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

@@ -9,8 +9,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { Footer } from '@/components/Footer';
-import Navbar from '@/components/Navbar';
 import { getWritingPosts } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
@@ -34,7 +32,6 @@ export default async function WritingPage() {
 
   return (
     <>
-      <Navbar />
       <main id="main-content" tabIndex={-1}>
         <section className="pt-[calc(var(--nav-height)+var(--space-12))] pb-[var(--section-py)]">
           <div className="container">
@@ -152,7 +149,6 @@ export default async function WritingPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

@@ -32,7 +32,8 @@ const ProjectsSection = dynamic(
 );
 
 const TestimonialsSection = dynamic(
-  () => import('@/components/TestimonialsSection').then((m) => ({ default: m.TestimonialsSection })),
+  () =>
+    import('@/components/TestimonialsSection').then((m) => ({ default: m.TestimonialsSection })),
   { ssr: true }
 );
 
@@ -60,6 +61,33 @@ const ContactSection = dynamic(
   () => import('@/components/ContactSection').then((m) => ({ default: m.ContactSection })),
   { ssr: true }
 );
+
+function ConvictionRecap() {
+  const PROOF_ITEMS = [
+    '3 live production systems',
+    'Federal-scale delivery · 40M students',
+    '99.9%+ sustained uptime',
+    'NRS · NDPC compliant',
+    'Lagos → Global',
+  ] as const;
+
+  return (
+    <div id="section-recap" aria-label="Portfolio conviction summary">
+      <div className="container">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-y border-white/8 py-6">
+          {PROOF_ITEMS.map((item) => (
+            <span
+              key={item}
+              className="font-mono text-[11px] tracking-widest text-white/35 uppercase"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function SectionBlock({
   id,
@@ -119,6 +147,9 @@ export default async function Home() {
             <WritingSection posts={posts} />
           </SectionBlock>
         )}
+
+        {/* Pre-contact conviction recap — scannable proof summary before the form */}
+        <ConvictionRecap />
 
         {/* 06 — Contact: final conversion endpoint */}
         <SectionBlock id="section-contact" label="Contact" height={280}>

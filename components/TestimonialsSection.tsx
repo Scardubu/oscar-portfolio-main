@@ -3,8 +3,10 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { m, useInView, useReducedMotion } from 'framer-motion';
+import Link from 'next/link';
 import { useRef } from 'react';
 
+import { anchorUrl } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 // ── Proof card data — sourced from lib/projects.ts verified outcomes ──────────
@@ -167,6 +169,15 @@ export function TestimonialsSection() {
               </m.article>
             ))}
           </m.div>
+
+          <m.p
+            variants={itemVariant}
+            className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          >
+            <Link href={anchorUrl('open-source')} className="transition-opacity hover:opacity-80">
+              What got open-sourced from these production systems →
+            </Link>
+          </m.p>
         </m.div>
       </div>
     </section>

@@ -265,7 +265,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   href={anchorUrl('section-contact')}
                   className="transition-opacity hover:opacity-80"
                 >
-                  The system is ready. Bring your constraint.
+                  3 systems. 4 certifications. Federal scale. Bring your constraint →
                 </Link>
               </m.p>
             </>

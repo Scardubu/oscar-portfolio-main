@@ -7,8 +7,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ArchDecision } from '@/components/ArchDecision';
-import { Footer } from '@/components/Footer';
-import Navbar from '@/components/Navbar';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { anchorUrl } from '@/lib/config';
 import { getWorkCase, getWorkCases } from '@/lib/content';
@@ -209,7 +207,6 @@ export default async function WorkPage({ params }: WorkPageProps) {
 
   return (
     <>
-      <Navbar />
       <ReadingProgress />
       <main id="main-content" tabIndex={-1}>
         <section className="relative overflow-hidden pt-[calc(var(--nav-height)+var(--space-12))]">
@@ -295,7 +292,6 @@ export default async function WorkPage({ params }: WorkPageProps) {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

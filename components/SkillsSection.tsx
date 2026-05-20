@@ -2,23 +2,26 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 //
-// Skills section v30 — L1 / L2 / L3 progressive disclosure architecture.
+// Skills section v31 — L1 / L2 / L3 progressive disclosure architecture.
 //
-// L1  Core trust layer (immediate): header + outcome metrics + 12 canonical skills.
-//     System 1 readers reach conviction in <5 s before encountering the full explorer.
+// L1  Core trust layer (immediate): header + outcome metrics + viewport-capped
+//     canonical skills (mobile: 6, tablet: 8, desktop: 10). System 1 readers
+//     reach conviction in <5 s before any full-explorer content mounts.
 // L2  Technical lineage (immediate): system × skill provenance strip showing
 //     exactly which tool powers which live system.
-// L3  Full explorer (always rendered, clearly separated): SkillsMap with
-//     pillar tabs. Depth available on demand; never forced before L1/L2 land.
+// L3  Full explorer (gated — user-initiated): SkillsMap with pillar tabs.
+//     Depth available on demand; never auto-rendered before L1/L2 land.
+//     The SkillsMap component is only mounted after the user explicitly opens
+//     the explorer, eliminating the DATABASE_DUMP_EFFECT on first paint.
 //
 // Canonical sources:
 //   getCoreProductionSkills()   →  lib/data/skills.ts (L1 skill set)
 //   SYSTEM_LINEAGE              →  lib/data/skills.ts (L2 provenance)
 //   SkillsMap                   →  components/skills/SkillsMap.tsx (L3)
 
-import { m, useInView, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { SkillsMap } from '@/components/skills/SkillsMap';
 import { anchorUrl } from '@/lib/config';
@@ -79,6 +82,18 @@ const TRUST_METRICS = [
     borderColor: 'oklch(75% 0.16 300 / 0.22)',
   },
 ] as const;
+
+const TOTAL_SKILL_COUNT = 62;
+const MOBILE_CORE_COUNT = 6;
+const TABLET_CORE_COUNT = 8;
+const DESKTOP_CORE_COUNT = 10;
+
+function getInitialCoreSkillCount() {
+  if (typeof window === 'undefined') return MOBILE_CORE_COUNT;
+  if (window.innerWidth >= 1024) return DESKTOP_CORE_COUNT;
+  if (window.innerWidth >= 768) return TABLET_CORE_COUNT;
+  return MOBILE_CORE_COUNT;
+}
 
 // ── L1 Core Skill Card ────────────────────────────────────────────────────────
 function CoreSkillCard({
@@ -198,9 +213,23 @@ export function SkillsSection() {
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const cardsInView = useInView(cardsRef, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion() ?? false;
+  const [coreVisibleCount, setCoreVisibleCount] = useState(MOBILE_CORE_COUNT);
+  const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const child = reducedMotion ? noMotion : fadeRise;
   const container = staggerContainer(0.07, 0.05);
   const coreSkills = getCoreProductionSkills();
+  const visibleCoreSkills = coreSkills.slice(0, coreVisibleCount);
+  const hiddenCoreSkillCount = coreSkills.length - visibleCoreSkills.length;
+
+  useEffect(() => {
+    const updateSkillDensity = () => {
+      setCoreVisibleCount(getInitialCoreSkillCount());
+    };
+
+    updateSkillDensity();
+    window.addEventListener('resize', updateSkillDensity);
+    return () => window.removeEventListener('resize', updateSkillDensity);
+  }, []);
 
   return (
     <section
@@ -275,6 +304,10 @@ export function SkillsSection() {
             <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
               Core production stack
             </p>
+            <p className="text-color-text-muted max-w-[60ch] text-xs leading-6 sm:text-sm">
+              Default view is intentionally curated for fast trust. Open the full explorer only when
+              you want deep implementation coverage across all {TOTAL_SKILL_COUNT} tools.
+            </p>
           </m.div>
 
           <m.div
@@ -284,7 +317,7 @@ export function SkillsSection() {
             aria-label="Core production skills — top 12"
             role="list"
           >
-            {coreSkills.map((skill, idx) => (
+            {visibleCoreSkills.map((skill, idx) => (
               <div key={skill.id} role="listitem">
                 <CoreSkillCard
                   skill={skill}
@@ -295,6 +328,15 @@ export function SkillsSection() {
               </div>
             ))}
           </m.div>
+
+          {hiddenCoreSkillCount > 0 ? (
+            <m.p
+              variants={child}
+              className="text-color-text-muted mb-10 font-mono text-[11px] tracking-wider"
+            >
+              +{hiddenCoreSkillCount} more in the full explorer below.
+            </m.p>
+          ) : null}
 
           {/* ── L2: System lineage strip — always visible ─────────────── */}
           <m.div variants={child} className="mb-12">
@@ -314,10 +356,53 @@ export function SkillsSection() {
 
         {/* ── L3: Full interactive SkillsMap — tabbed by pillar ─────────── */}
         <div className="border-color-border-subtle border-t pt-10">
-          <p className="text-color-text-muted mb-6 font-mono text-[10px] tracking-widest uppercase">
-            Full explorer · 62 tools · 8 pillars
-          </p>
-          <SkillsMap />
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-color-text-muted font-mono text-[10px] tracking-widest uppercase">
+                Full explorer · {TOTAL_SKILL_COUNT} tools · 8 pillars
+              </p>
+              <p className="text-color-text-muted mt-2 max-w-[60ch] text-xs leading-6 sm:text-sm">
+                Expanded layer for CTO and engineer-level scrutiny. Optional by design to preserve
+                reading momentum for recruiters and founders.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsExplorerOpen((v) => !v)}
+              aria-expanded={isExplorerOpen}
+              aria-controls="skills-explorer-panel"
+              aria-label={
+                isExplorerOpen
+                  ? 'Collapse full skills explorer'
+                  : `Open full engineering stack — ${TOTAL_SKILL_COUNT} tools across 8 pillars`
+              }
+              className="cta-secondary min-h-[48px] shrink-0 justify-center text-xs sm:text-sm"
+            >
+              {isExplorerOpen
+                ? 'Hide full explorer'
+                : `Explore full engineering stack (${TOTAL_SKILL_COUNT})`}
+            </button>
+          </div>
+
+          <AnimatePresence initial={false}>
+            {isExplorerOpen && (
+              <m.div
+                id="skills-explorer-panel"
+                initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                transition={
+                  reducedMotion
+                    ? { duration: 0.01 }
+                    : { type: 'spring', stiffness: 300, damping: 28 }
+                }
+                className="pb-2"
+              >
+                <SkillsMap />
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Flow hook — V1.0 Change 6c: §Flow Mechanics §Skills + §Engagement Protocol */}

@@ -515,8 +515,11 @@ export function ProjectsSection() {
             variants={child}
             className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
           >
-            <Link href={anchorUrl('open-source')} className="transition-opacity hover:opacity-80">
-              Packages extracted from this work →
+            <Link
+              href={anchorUrl('section-testimonials')}
+              className="transition-opacity hover:opacity-80"
+            >
+              How these systems perform in production →
             </Link>
           </m.p>
         </m.div>
