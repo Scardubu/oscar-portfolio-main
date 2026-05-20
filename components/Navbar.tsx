@@ -19,7 +19,7 @@ type SectionId =
 
 type NavItem = {
   label: string;
-  href: `#${SectionId}`;
+  href: string;
   id: SectionId;
 };
 
@@ -34,13 +34,13 @@ const SECTION_IDS = [
 ] as const satisfies readonly SectionId[];
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Projects', href: '#section-projects', id: 'section-projects' },
-  { label: 'Record', href: '#section-testimonials', id: 'section-testimonials' },
-  { label: 'Open Source', href: '#open-source', id: 'open-source' },
-  { label: 'Skills', href: '#skills', id: 'skills' },
-  { label: 'About', href: '#section-about', id: 'section-about' },
-  { label: 'Writing', href: '#section-writing', id: 'section-writing' },
-  { label: 'Contact', href: '#section-contact', id: 'section-contact' },
+  { label: 'Projects', href: anchorUrl('section-projects'), id: 'section-projects' },
+  { label: 'Record', href: anchorUrl('section-testimonials'), id: 'section-testimonials' },
+  { label: 'Open Source', href: anchorUrl('open-source'), id: 'open-source' },
+  { label: 'Skills', href: anchorUrl('skills'), id: 'skills' },
+  { label: 'About', href: anchorUrl('section-about'), id: 'section-about' },
+  { label: 'Writing', href: anchorUrl('section-writing'), id: 'section-writing' },
+  { label: 'Contact', href: anchorUrl('section-contact'), id: 'section-contact' },
 ];
 
 const navbarVariants = {
@@ -205,30 +205,20 @@ export default function Navbar() {
 
   const closeMenu = () => setMobileOpen(false);
 
-  const navigateToSection = (sectionId: SectionId) => {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-
-    const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0;
-    const targetTop = section.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
-
-    window.history.replaceState(null, '', anchorUrl(sectionId));
-    window.scrollTo({
-      top: Math.max(targetTop, 0),
-      behavior: reducedMotion ? 'auto' : 'smooth',
-    });
-
-    activeSectionRef.current = sectionId;
-    setActiveSection(sectionId);
-  };
-
   const handleNavClick = (
     event: MouseEvent<HTMLAnchorElement>,
     sectionId: SectionId,
     onAfterNavigate?: () => void
   ) => {
-    event.preventDefault();
-    navigateToSection(sectionId);
+    if (reducedMotion) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        event.preventDefault();
+        window.history.replaceState(null, '', anchorUrl(sectionId));
+        section.scrollIntoView({ block: 'start', behavior: 'auto' });
+      }
+    }
+
     onAfterNavigate?.();
   };
 

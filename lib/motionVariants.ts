@@ -32,6 +32,16 @@ export const springs = {
  */
 export const springConfig: Transition = springs.smooth;
 
+export const hoverLift = (y = -3) => ({
+  y,
+  transition: springs.layout,
+});
+
+export const hoverNudgeX = (x = 2) => ({
+  x,
+  transition: springs.layout,
+});
+
 /* ═══════════ VIEWPORT CONFIG ════════════════════════════════════════════ */
 
 // V1: -80px — reveals start when 80px of section is visible.

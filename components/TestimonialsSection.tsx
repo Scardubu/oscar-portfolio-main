@@ -7,7 +7,14 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
-import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import {
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    hoverLift,
+    noMotion,
+    staggerContainer,
+} from '@/lib/motionVariants';
 
 // ── Proof card data — sourced from lib/projects.ts verified outcomes ──────────
 // Every metric here is traceable to a project slug and its outcomes[] or description.
@@ -120,7 +127,7 @@ export function TestimonialsSection() {
                 whileHover={
                   reducedMotion
                     ? undefined
-                    : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+                    : hoverLift(-2)
                 }
               >
                 {/* Type label */}

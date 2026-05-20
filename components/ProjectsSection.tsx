@@ -10,12 +10,14 @@ import { useMemo, useRef, useState } from 'react';
 import { ArchDecision } from '@/components/ArchDecision';
 import { anchorUrl } from '@/lib/config';
 import {
-  accordionReveal,
-  cardReveal,
-  clipReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
+    accordionReveal,
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    hoverLift,
+    hoverNudgeX,
+    noMotion,
+    staggerContainer,
 } from '@/lib/motionVariants';
 import { PROJECTS, type Project } from '@/lib/projects';
 
@@ -220,7 +222,7 @@ function SecondaryFeaturedCard({
       whileHover={
         reducedMotion
           ? undefined
-          : { y: -3, transition: { type: 'spring', stiffness: 360, damping: 28 } }
+          : hoverLift(-3)
       }
     >
       <div className="flex-1 px-4 pt-5 sm:px-6 sm:pt-6">
@@ -345,7 +347,7 @@ function ProjectCard({
       whileHover={
         reducedMotion
           ? undefined
-          : { y: -4, transition: { type: 'spring', stiffness: 360, damping: 28 } }
+          : hoverLift(-4)
       }
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -404,8 +406,7 @@ function ProjectCard({
             Read case study
             <m.span
               aria-hidden="true"
-              whileHover={reducedMotion ? undefined : { x: 2 }}
-              transition={{ type: 'spring', stiffness: 440, damping: 28 }}
+              whileHover={reducedMotion ? undefined : hoverNudgeX(2)}
               className="inline-block"
             >
               →
@@ -485,7 +486,7 @@ export function ProjectsSection() {
 
           {/* Secondary featured — 2-col on md+ */}
           {secondaryFeatured.length > 0 && (
-            <div className="mb-5 grid gap-4 md:grid-cols-2">
+            <div className="secondary-featured-grid mb-5 grid gap-4 md:grid-cols-2">
               {secondaryFeatured.map((project) => (
                 <SecondaryFeaturedCard
                   key={project.slug}
@@ -498,7 +499,13 @@ export function ProjectsSection() {
 
           {/* Non-featured grid */}
           {gridProjects.length > 0 && (
-            <div className={gridProjects.length === 1 ? 'grid gap-4' : 'grid gap-4 sm:grid-cols-2'}>
+            <div
+              className={
+                gridProjects.length === 1
+                  ? 'projects-grid grid gap-4'
+                  : 'projects-grid grid gap-4 sm:grid-cols-2'
+              }
+            >
               {gridProjects.map((project, i) => (
                 <ProjectCard
                   key={project.slug}

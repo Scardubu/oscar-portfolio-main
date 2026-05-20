@@ -7,18 +7,19 @@ import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, type MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
-  HERO_SCROLL_CONFIG,
-  cardReveal,
-  fadeRise,
-  noMotion,
-  staggerContainer,
-  wordReveal,
-  wordRevealContainer,
+    HERO_SCROLL_CONFIG,
+    cardReveal,
+    fadeRise,
+    hoverLift,
+    noMotion,
+    staggerContainer,
+    wordReveal,
+    wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
@@ -194,7 +195,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="mobile-carousel -mx-[clamp(1rem,5vw,3rem)] snap-x snap-mandatory scroll-smooth [padding-inline:clamp(1rem,5vw,3rem)]"
+          className="mobile-carousel snap-x snap-mandatory scroll-smooth"
           role="region"
           aria-roledescription="carousel"
           aria-describedby="hero-proof-help hero-proof-status"
@@ -213,7 +214,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               whileHover={
                 reducedMotion
                   ? undefined
-                  : { y: -3, transition: { type: 'spring', stiffness: 400, damping: 28 } }
+                  : hoverLift(-3)
               }
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
@@ -355,23 +356,36 @@ export function HeroSection() {
     return () => observer.disconnect();
   }, []);
 
+  const handleAnchorJump = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      event.preventDefault();
+      window.history.replaceState(null, '', anchorUrl(sectionId));
+      section.scrollIntoView({
+        block: 'start',
+        behavior: reducedMotion ? 'auto' : 'smooth',
+      });
+    },
+    [reducedMotion]
+  );
+
   return (
     <m.section
       id="hero"
       ref={heroRef}
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100svh] flex-col justify-start overflow-hidden sm:justify-center"
+      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-hidden pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center"
       // eslint-disable-next-line no-restricted-syntax
       style={{
         opacity: heroOpacity,
-        paddingTop: 'clamp(4rem, 6vw, 6.5rem)',
-        paddingBottom: 'clamp(2rem, 5vw, 7rem)',
       }}
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
-        <div className="grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[var(--hero-left-width)_var(--hero-right-width)]">
+        <div className="hero-grid-shell grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[minmax(0,var(--hero-left-width))_minmax(0,var(--hero-right-width))]">
           {/* ── Left Column: Conviction Content ── */}
           <m.div
             // eslint-disable-next-line no-restricted-syntax
@@ -400,7 +414,7 @@ export function HeroSection() {
             {/* Mobile Headshot */}
             <m.div
               variants={child}
-              className="flex justify-center py-8 sm:py-12 lg:hidden"
+              className="flex justify-center py-6 sm:py-10 lg:hidden"
               aria-hidden="true"
             >
               <div
@@ -451,7 +465,7 @@ export function HeroSection() {
             {/* Headline */}
             <h1
               id="hero-heading"
-              className="w-full [max-width:min(100%,22rem)] text-balance"
+              className="w-full max-w-[var(--hero-headline-max)] text-balance"
               aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
               <m.span
@@ -467,7 +481,8 @@ export function HeroSection() {
                     className="inline-block overflow-hidden"
                     // eslint-disable-next-line no-restricted-syntax
                     style={{
-                      marginRight: i < HEADLINE_WORDS.length - 1 ? '0.28em' : '0',
+                      marginRight:
+                        i < HEADLINE_WORDS.length - 1 ? 'var(--hero-word-gap,0.28em)' : '0',
                       lineHeight: 'var(--leading-tight)',
                       verticalAlign: 'bottom',
                     }}
@@ -490,7 +505,7 @@ export function HeroSection() {
             {/* Body */}
             <m.p
               variants={child}
-              className="hero-body-text w-full [max-width:min(100%,56ch)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
+              className="hero-body-text w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
             >
               Production systems that stay alive when it matters most — compliant, fast, and
               relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
@@ -538,6 +553,7 @@ export function HeroSection() {
             <m.div variants={child} className="cta-hero-group">
               <Link
                 href={anchorUrl('section-contact')}
+                onClick={(event) => handleAnchorJump(event, 'section-contact')}
                 className="cta-primary cta-primary--lg tactile-press"
                 aria-label="Tell me about your constraints"
               >
@@ -549,6 +565,7 @@ export function HeroSection() {
               </Link>
               <Link
                 href={anchorUrl('section-projects')}
+                onClick={(event) => handleAnchorJump(event, 'section-projects')}
                 className="cta-secondary tactile-press"
                 aria-label="See the work"
               >
@@ -588,6 +605,7 @@ export function HeroSection() {
             <m.div variants={child} className="mt-2">
               <Link
                 href={anchorUrl('section-writing')}
+                onClick={(event) => handleAnchorJump(event, 'section-writing')}
                 className="text-color-text-muted font-mono text-[12px] opacity-45 transition-opacity hover:opacity-70"
                 aria-label="Read how the 2am constraint became the design system"
               >
@@ -623,11 +641,11 @@ export function HeroSection() {
           <m.div
             // eslint-disable-next-line no-restricted-syntax
             style={{ y: visualY }}
-            className="hidden lg:flex lg:flex-col lg:items-end lg:gap-6"
+            className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
           >
             <div className="flex justify-end">
               <m.div
-                className="hero-headshot-ring relative h-40 w-40 overflow-hidden rounded-full xl:h-52 xl:w-52"
+                className="hero-headshot-ring hero-desktop-headshot relative h-36 w-36 overflow-hidden rounded-full xl:h-48 xl:w-48 2xl:h-56 2xl:w-56"
                 // eslint-disable-next-line no-restricted-syntax
                 style={{
                   border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
@@ -649,7 +667,7 @@ export function HeroSection() {
                   src="/headshot.webp"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 1280px) 208px, 160px"
+                  sizes="(min-width: 1536px) 224px, (min-width: 1280px) 192px, 144px"
                   className="object-cover"
                   priority
                 />

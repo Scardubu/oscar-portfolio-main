@@ -82,9 +82,11 @@ function SystemStatusRow({
   healthy: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-[oklch(100%_0_0_/_0.04)] py-2.5 last:border-b-0">
-      <span className="font-mono text-[11px] text-[oklch(93%_0.006_264_/_0.48)]">{name}</span>
-      <div className="flex items-center gap-3">
+    <div className="hero-status-row flex items-center justify-between gap-4 border-b border-[oklch(100%_0_0_/_0.04)] py-2.5 last:border-b-0">
+      <span className="hero-status-name font-mono text-[11px] text-[oklch(93%_0.006_264_/_0.48)]">
+        {name}
+      </span>
+      <div className="hero-status-meta flex items-center gap-3">
         <span
           className="label-mono"
           // eslint-disable-next-line no-restricted-syntax
@@ -93,7 +95,7 @@ function SystemStatusRow({
           {healthy ? 'HEALTHY' : 'DEGRADED'}
         </span>
         <span
-          className="font-mono text-[12px] font-medium tabular-nums"
+          className="hero-status-uptime font-mono text-[12px] font-medium tabular-nums"
           // eslint-disable-next-line no-restricted-syntax
           style={{ color: healthy ? 'var(--color-success)' : 'var(--color-danger)' }}
         >
@@ -122,12 +124,12 @@ function LatencyBar({
     ms < 60 ? 'var(--color-success)' : ms < 120 ? 'var(--color-cyan)' : 'var(--color-accent)';
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="w-14 flex-shrink-0 font-mono text-[10px] text-[oklch(93%_0.006_264_/_0.38)]">
+    <div className="hero-latency-row flex items-center gap-3">
+      <span className="hero-latency-label w-14 flex-shrink-0 font-mono text-[10px] text-[oklch(93%_0.006_264_/_0.38)]">
         {label}
       </span>
       <div
-        className="h-[3px] flex-1 overflow-hidden rounded-full bg-[oklch(100%_0_0_/_0.06)]"
+        className="hero-latency-track h-[3px] flex-1 overflow-hidden rounded-full bg-[oklch(100%_0_0_/_0.06)]"
         role="meter"
         aria-valuenow={ms}
         aria-valuemax={maxMs}
@@ -155,7 +157,7 @@ function LatencyBar({
           }}
         />
       </div>
-      <span className="w-[48px] flex-shrink-0 text-right font-mono text-[10px] text-[oklch(93%_0.006_264_/_0.42)] tabular-nums">
+      <span className="hero-latency-value w-[48px] flex-shrink-0 text-right font-mono text-[10px] text-[oklch(93%_0.006_264_/_0.42)] tabular-nums">
         {ms}ms
       </span>
     </div>
@@ -168,7 +170,7 @@ function LatencyBar({
 function SparklineStrip({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <div
-      className="mt-4 mb-1 flex h-5 items-end gap-1"
+      className="hero-sparkline-strip mt-4 mb-1 flex h-5 items-end gap-1"
       aria-label="7-day latency trend: stable, no spikes"
       role="img"
     >
@@ -211,7 +213,7 @@ export function HeroVisual() {
   return (
     <div
       ref={ref}
-      className="relative hidden flex-col gap-3 lg:flex"
+      className="hero-visual-dashboard [container-type:inline-size] relative hidden flex-col gap-3 lg:flex"
       aria-label="Live production metrics dashboard"
     >
       {/* ── Panel 1: System health ─────────────────────────────────────── */}
@@ -219,12 +221,12 @@ export function HeroVisual() {
         variants={cardReveal(20)}
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
-        className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
+        className="hero-visual-panel glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       >
         {/* Panel header */}
-        <div className="flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
-          <span className="label-mono">System Status · 90-day Prometheus</span>
-          <div className="flex items-center gap-3">
+        <div className="hero-panel-head flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
+          <span className="hero-panel-title label-mono">System Status · 90-day Prometheus</span>
+          <div className="hero-panel-meta flex items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="dot-live" aria-hidden="true" />
               <span className="label-mono text-color-success">All nominal</span>
@@ -249,10 +251,10 @@ export function HeroVisual() {
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         transition={{ delay: 0.12 }}
-        className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
+        className="hero-visual-panel glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       >
-        <div className="flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
-          <span className="label-mono">API Latency · p99 · rolling 7d</span>
+        <div className="hero-panel-head flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
+          <span className="hero-panel-title label-mono">API Latency · p99 · rolling 7d</span>
           <span className="label-mono text-[var(--color-accent)]">target &lt;150ms</span>
         </div>
 
@@ -283,10 +285,12 @@ export function HeroVisual() {
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         transition={{ delay: 0.22 }}
-        className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
+        className="hero-visual-panel glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       >
-        <div className="flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
-          <span className="label-mono">Architecture · SwarmXQ · Model Dispatch</span>
+        <div className="hero-panel-head flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
+          <span className="hero-panel-title label-mono">
+            Architecture · SwarmXQ · Model Dispatch
+          </span>
         </div>
 
         <div className="flex flex-col gap-3 px-4 py-4">
@@ -328,10 +332,10 @@ export function HeroVisual() {
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         transition={{ delay: 0.32 }}
-        className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
+        className="hero-visual-panel glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       >
-        <div className="flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
-          <span className="label-mono">Deploy feed</span>
+        <div className="hero-panel-head flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
+          <span className="hero-panel-title label-mono">Deploy feed</span>
           <span className="label-mono text-color-success">● 0 incidents</span>
         </div>
 
@@ -345,7 +349,7 @@ export function HeroVisual() {
                 {deploy.time}
               </span>
               <span
-                className="commit-message flex-1 truncate font-mono text-[10px] leading-5"
+                className="hero-deploy-msg commit-message flex-1 truncate font-mono text-[10px] leading-5"
                 // eslint-disable-next-line no-restricted-syntax
                 style={{ color: deploy.ok ? 'oklch(93% 0.006 264 / 0.52)' : 'var(--color-danger)' }}
               >

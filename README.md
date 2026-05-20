@@ -27,6 +27,13 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 - **Testing:** Playwright E2E (Chromium smoke suite)
 - **Deployment:** Vercel (main branch auto-deploys)
 
+## Responsive architecture
+
+- Hero layout is token-driven from `app/globals.css` using dedicated custom properties for column ratios, vertical rhythm, and headline measure.
+- The desktop hero dashboard now uses container-query-aware panel hooks so status, latency, and deploy panels reflow gracefully when the right rail gets tight.
+- Small-phone handling is explicit rather than incidental: 320px-class widths get narrower container padding, tighter hero type, safer carousel bleed, and reduced crowding in metrics.
+- Motion remains spring-based, but major proof surfaces now share reusable hover presets from `lib/motionVariants.ts` for more consistent interaction feel.
+
 ## Testing strategy
 
 - `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey, API health checks, and mobile overflow regressions.
@@ -148,6 +155,9 @@ Each domain has one canonical source. Do not duplicate across files.
 - The live activity feed is owned by `app/api/activity/route.ts`; it is no longer mirrored in `lib/portfolio-data.ts`.
 - Footer live status is driven by the `<SystemStatus labelMode="full" />` component — no hardcoded copy.
 - Skills bar fill animation is capped at 280ms (`--dur-slow`) to comply with the ≤300ms motion rule.
+- Recommended manual viewport QA targets after hero or layout changes: 320px, 360px, 390px, 768px, 1024px, 1280px, and 1536px.
+- For hero validation, verify four things together: no horizontal overflow, stable headline wrapping, proof carousel snap behavior, and right-rail dashboard density on large screens.
+- `pnpm build` is the required integration check for responsive changes because it catches both type/lint issues and App Router rendering regressions in one pass.
 
 ## Contact
 

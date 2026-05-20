@@ -9,6 +9,8 @@ import { m, useReducedMotion } from 'framer-motion';
 import { Activity, FileText, GitCommit, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { springs } from '@/lib/motionVariants';
+
 interface ActivityItem {
   id: string;
   type: 'deployment' | 'blog' | 'commit' | 'metric';
@@ -58,8 +60,10 @@ export function LiveBuildFeed() {
         if (cancelled) return;
 
         const combined: ActivityItem[] = [];
+        let successfulSources = 0;
 
         if (githubRes.status === 'fulfilled' && githubRes.value.ok) {
+          successfulSources += 1;
           type GHEvent = { id: string; type: string; repo: { name: string }; created_at: string };
           const events = (await githubRes.value.json()) as GHEvent[];
           events
@@ -78,6 +82,7 @@ export function LiveBuildFeed() {
         }
 
         if (blogRes.status === 'fulfilled' && blogRes.value.ok) {
+          successfulSources += 1;
           type BlogPost = { slug: string; title: string; date: string };
           const posts = (await blogRes.value.json()) as BlogPost[];
           posts.slice(0, 2).forEach((p) =>
@@ -93,6 +98,7 @@ export function LiveBuildFeed() {
         }
 
         if (metricsRes.status === 'fulfilled' && metricsRes.value.ok) {
+          successfulSources += 1;
           const data = (await metricsRes.value.json()) as { todayPredictions?: number };
           if (data?.todayPredictions) {
             combined.push({
@@ -107,6 +113,12 @@ export function LiveBuildFeed() {
         }
 
         if (!cancelled) {
+          if (successfulSources === 0) {
+            setActivities([]);
+            setFeedState('error');
+            return;
+          }
+
           setActivities(
             combined
               .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -168,7 +180,9 @@ export function LiveBuildFeed() {
         )}
 
         {feedState === 'done' && activities.length === 0 && (
-          <p className="text-color-text-muted px-4 py-4 text-sm">No recent activity.</p>
+          <p className="text-color-text-muted px-4 py-4 text-sm">
+            No recent public activity yet. GitHub and content feeds are online.
+          </p>
         )}
 
         {feedState === 'done' &&
@@ -179,7 +193,7 @@ export function LiveBuildFeed() {
                 key={item.id}
                 initial={reducedMotion ? false : { opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                transition={reducedMotion ? { duration: 0 } : springs.layout}
                 className="text-color-text-secondary flex min-h-[52px] items-start gap-3 px-4 py-3"
               >
                 <Icon

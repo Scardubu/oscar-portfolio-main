@@ -7,7 +7,14 @@ import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
 import { anchorUrl } from '@/lib/config';
-import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import {
+    cardReveal,
+    clipReveal,
+    fadeRise,
+    hoverLift,
+    noMotion,
+    staggerContainer,
+} from '@/lib/motionVariants';
 
 const OSS_PROJECTS = [
   {
@@ -185,7 +192,7 @@ export function OpenSourceSection() {
                 whileHover={
                   reducedMotion
                     ? undefined
-                    : { y: -3, transition: { type: 'spring', stiffness: 400, damping: 30 } }
+                    : hoverLift(-3)
                 }
                 className="glass-medium flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
               >
