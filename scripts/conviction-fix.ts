@@ -24,4 +24,4 @@ const updated = fix(content);
 
 fs.writeFileSync(file, updated);
 
-console.log(`✅ Fixed: ${file}`);
+process.stdout.write(`✅ Fixed: ${file}\n`);

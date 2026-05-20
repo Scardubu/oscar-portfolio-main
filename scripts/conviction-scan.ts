@@ -126,10 +126,10 @@ for (const file of files) {
   }
 
   hasIssues = true;
-  console.log(`\n❌ ${path.relative(ROOT, file)}`);
+  process.stderr.write(`\n❌ ${path.relative(ROOT, file)}\n`);
 
   for (const issue of issues) {
-    console.log(`  - ${issue}`);
+    process.stderr.write(`  - ${issue}\n`);
   }
 }
 
@@ -137,4 +137,4 @@ if (hasIssues) {
   process.exit(1);
 }
 
-console.log(`✅ No conviction violations in ${files.length} file${files.length === 1 ? '' : 's'}`);
+process.stdout.write(`✅ No conviction violations in ${files.length} file${files.length === 1 ? '' : 's'}\n`);

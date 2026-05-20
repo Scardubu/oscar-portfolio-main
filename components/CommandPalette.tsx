@@ -48,6 +48,10 @@ export function CommandPalette() {
   const [statusSnapshot, setStatusSnapshot] = useState<LiveStatusSnapshot | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Stores the element that had focus before the palette opened so we can
+  // restore it on close — critical for keyboard and screen-reader UX.
+  const triggerRef = useRef<HTMLElement | null>(null);
   const openRef = useRef(open);
   const activeIndexRef = useRef(activeIndex);
   const filteredRef = useRef<CommandItem[]>([]);
@@ -276,6 +280,20 @@ export function CommandPalette() {
     cmd.action();
   }, []);
 
+  // Save trigger element on open; restore focus on close (after exit animation).
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement as HTMLElement;
+      return;
+    }
+    const saved = triggerRef.current;
+    const t = setTimeout(() => {
+      saved?.focus({ preventScroll: true });
+      triggerRef.current = null;
+    }, 150);
+    return () => clearTimeout(t);
+  }, [open]);
+
   // Keyboard navigation
   useEffect(() => {
     const toggle = () => setOpen((v) => !v);
@@ -291,6 +309,37 @@ export function CommandPalette() {
       if (e.key === 'Escape') {
         e.preventDefault();
         close();
+        return;
+      }
+      // Focus trap — cycle Tab / Shift+Tab within the dialog panel.
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusable = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(
+            'a[href]:not([disabled]),button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(
+          (el) =>
+            !el.hasAttribute('hidden') &&
+            getComputedStyle(el).display !== 'none' &&
+            getComputedStyle(el).visibility !== 'hidden'
+        );
+        if (focusable.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first || !panelRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !panelRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
         return;
       }
       if (e.key === 'ArrowDown') {
@@ -367,6 +416,7 @@ export function CommandPalette() {
             {/* FIX v22 [ARIA-1]: role="dialog" lives here — the panel is the dialog.
                 The outer overlay div above is the dismissible backdrop (aria-hidden). */}
             <m.div
+              ref={panelRef}
               className={[
                 'glass-full absolute overflow-hidden',
                 isMobile

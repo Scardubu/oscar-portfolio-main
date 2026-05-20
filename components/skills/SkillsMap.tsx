@@ -197,8 +197,7 @@ export function SkillsMap(): React.ReactElement {
       <p
         aria-live="polite"
         aria-atomic="true"
-        className="font-mono text-[11px] tracking-widest uppercase"
-        style={{ color: 'var(--color-text-muted)' }}
+        className="font-mono text-[11px] tracking-widest uppercase text-color-text-muted"
       >
         {liveLabel}
       </p>
