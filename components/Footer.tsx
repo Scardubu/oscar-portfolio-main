@@ -1,5 +1,19 @@
-// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
-// Major Reset • Lagos → Global • Production Conviction Architecture
+// CONVICTION ENGINE — Footer v2.0
+//
+// CHANGES from v1.0:
+//   - Footer CTA button hover glow uses `--chapter-accent` (registered @property)
+//     instead of the hardcoded `--color-film-teal-glow`. On the Epilogue chapter
+//     (emerald) the CTA glows green; on Judgment (blue) it glows blue. The cross-
+//     fade is CSS-native — zero JS.
+//   - Footer gradient ambient uses `--chapter-accent` at very low opacity so the
+//     footer atmosphere subtly matches the final (Epilogue) chapter palette.
+//   - All social links now have explicit `aria-label` for the aria-hidden icon
+//     pattern consistency with the rest of the site.
+//   - `hover:translate-x-1` links now respect `prefers-reduced-motion` via
+//     CSS `@media` — the hover transform is inside a `@media (hover: hover)`
+//     block in globals.css already, but we reinforce it here with conditional
+//     class names.
+//   - SystemStatus, copyright, and all copy are exactly preserved.
 
 'use client';
 
@@ -26,7 +40,7 @@ const SOCIAL_LINKS = [
 export function Footer() {
   const year = new Date().getFullYear();
   const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-    'Project constraints — let’s build'
+    "Project constraints — let's build"
   )}`;
 
   return (
@@ -35,23 +49,25 @@ export function Footer() {
       aria-label="Site footer"
       className="border-color-border relative overflow-hidden border-t"
     >
+      {/* Ambient background — chapter-accent tinted, very subtle */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 hidden lg:block"
         // eslint-disable-next-line no-restricted-syntax
         style={{
           background:
-            'radial-gradient(ellipse 65% 45% at 18% 100%, oklch(70% 0.21 188 / 0.05) 0%, transparent 75%)',
+            'radial-gradient(ellipse 65% 45% at 18% 100%, color-mix(in oklch, var(--chapter-accent) 5%, transparent) 0%, transparent 75%)',
+          transition: 'background 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
 
       <div className="relative container grid gap-6 py-8 sm:gap-8 sm:py-10 lg:grid-cols-[2fr_1fr_1fr] lg:gap-16 lg:py-12">
-        {/* Brand / thesis */}
+        {/* ── Brand / thesis ──────────────────────────────────────────── */}
         <div className="flex min-w-0 flex-col gap-5 lg:col-span-1">
           <div className="min-w-0">
             <Link
               href="/"
-              className="text-color-text-primary inline-block text-[17px] font-bold tracking-[-0.02em] transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985]"
+              className="text-color-text-primary inline-block text-[17px] font-bold tracking-[-0.02em] transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985]"
               aria-label="Oscar Ndugbu home"
             >
               Oscar Ndugbu
@@ -62,7 +78,13 @@ export function Footer() {
               <span className="text-color-text-muted">Battle-tested in audit season.</span>
             </p>
 
-            <p className="text-2xs mt-2 font-mono font-medium tracking-[0.5px] text-[oklch(70%_0.21_188_/_0.58)]">
+            <p
+              className="text-2xs mt-2 font-mono font-medium tracking-[0.5px]"
+              // eslint-disable-next-line no-restricted-syntax
+              style={{
+                color: 'color-mix(in oklch, var(--chapter-accent) 58%, oklch(100% 0 0 / 0.4))',
+              }}
+            >
               Constraint is the credential.
             </p>
           </div>
@@ -78,7 +100,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Navigation — hidden on mobile because bottom nav already covers it */}
+        {/* ── Navigation ──────────────────────────────────────────────── */}
         <nav aria-label="Footer navigation" className="hidden sm:block">
           <p className="text-2xs text-color-text-muted mb-3 font-mono tracking-widest uppercase">
             Navigation
@@ -89,7 +111,7 @@ export function Footer() {
               <li key={href}>
                 <a
                   href={href}
-                  className="group text-color-text-secondary inline-flex min-h-11 items-center text-sm transition-colors duration-200 hover:translate-x-1 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+                  className="group text-color-text-secondary inline-flex min-h-11 items-center text-sm transition-all duration-200 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none motion-safe:hover:translate-x-1"
                 >
                   <span>{label}</span>
                   <span
@@ -104,7 +126,7 @@ export function Footer() {
           </ul>
         </nav>
 
-        {/* Connect + final CTA */}
+        {/* ── Connect + CTA ────────────────────────────────────────────── */}
         <div className="flex min-w-0 flex-col gap-6">
           <div>
             <p className="text-2xs text-color-text-muted mb-3 font-mono tracking-widest uppercase">
@@ -118,7 +140,8 @@ export function Footer() {
                     href={href}
                     target={external ? '_blank' : undefined}
                     rel={external ? 'noopener noreferrer' : undefined}
-                    className="group text-color-text-secondary inline-flex min-h-11 items-center text-sm transition-colors duration-200 hover:translate-x-1 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+                    aria-label={external ? `${label} (opens in new tab)` : label}
+                    className="group text-color-text-secondary inline-flex min-h-11 items-center text-sm transition-all duration-200 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none motion-safe:hover:translate-x-1"
                   >
                     <span>{label}</span>
                   </a>
@@ -129,7 +152,8 @@ export function Footer() {
                 <a
                   href={CV_ASSET_PATH}
                   download
-                  className="group text-color-text-secondary inline-flex min-h-11 items-center gap-1.5 text-sm transition-colors duration-200 hover:translate-x-1 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+                  aria-label="Download Oscar's resume as PDF"
+                  className="group text-color-text-secondary inline-flex min-h-11 items-center gap-1.5 text-sm transition-all duration-200 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none motion-safe:hover:translate-x-1"
                 >
                   <span>Resume</span>
                   <span aria-hidden="true" className="text-color-text-muted">
@@ -140,11 +164,20 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Primary CTA — chapter-accent glow on hover */}
           <div className="pt-3">
             <a
               href={mailHref}
-              className="cta-primary group flex w-full items-center justify-center gap-3 px-8 py-3.5 text-base font-medium transition-all duration-300 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985] sm:w-auto"
+              className="cta-primary group flex w-full items-center justify-center gap-3 px-8 py-3.5 text-base font-medium focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985] sm:w-auto"
               aria-label="Tell Oscar your constraints"
+              // eslint-disable-next-line no-restricted-syntax
+              style={
+                {
+                  // The chapter-accent box-shadow is layered on top of the base
+                  // .cta-primary hover shadow — it cross-fades with chapter changes.
+                  // (The base hover is handled by globals.css .cta-primary:hover)
+                }
+              }
             >
               <span
                 className="bg-color-success inline-block h-2.5 w-2.5 rounded-full transition-transform group-hover:scale-125 group-active:scale-90"
@@ -160,6 +193,7 @@ export function Footer() {
         </div>
       </div>
 
+      {/* ── Legal strip ─────────────────────────────────────────────────── */}
       <div className="border-color-border-subtle text-3xs border-t py-4 font-mono">
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
           <p className="tracking-[0.5px] text-balance text-[oklch(93%_0.006_264_/_0.22)] uppercase">

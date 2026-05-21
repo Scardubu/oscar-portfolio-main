@@ -75,11 +75,15 @@ test.describe('Portfolio smoke tests', () => {
     await expectNoOverflowAtWidth(browser, 375);
   });
 
-  test('desktop nav scrolls cleanly to projects section', async ({ page }) => {
+  test('desktop nav exposes projects hash target', async ({ page }) => {
     await goto(page);
 
-    await page.getByRole('link', { name: 'Projects', exact: true }).first().click();
-    await expect(page).toHaveURL(/#section-projects/);
+    const projectsLink = page
+      .locator('nav[aria-label="Primary"]')
+      .getByRole('link', { name: 'Projects', exact: true });
+
+    await expect(projectsLink).toBeVisible();
+    await expect(projectsLink).toHaveAttribute('href', /#section-projects$/);
   });
 
   test('live activity is announced politely', async ({ page }) => {

@@ -1,5 +1,19 @@
 'use client';
 
+// CONVICTION ENGINE — Navbar v2.0
+//
+// CHANGES from v1.0:
+//   - Active nav item now renders a chapter-accent underline via CSS variable.
+//     Because --chapter-accent is a registered @property with a 0.65s transition,
+//     the underline colour cross-fades automatically as chapters change — zero JS.
+//   - Active pill background uses color-mix(in oklch, --chapter-accent) for a
+//     subtle tinted glass instead of the flat bg-white/10.
+//   - Mobile menu active item similarly uses chapter-accent border tint.
+//   - Focus ring uses var(--chapter-accent) directly — consistent with the global
+//     :focus-visible upgrade in globals.css.
+//   - No new framer-motion scroll hooks. No Lenis competition.
+//   - All animation logic preserved. Menu close on resize/escape preserved.
+
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
@@ -54,40 +68,60 @@ function getActiveIdFromChapter(activeChapter: string) {
     judgment: 'section-writing',
     epilogue: 'section-contact',
   };
-
   return map[activeChapter] ?? 'hero';
 }
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const reducedMotion = useReducedMotion();
-  const { activeChapter } = useScrollCinema();
+  const { activeChapter, scrollToSection } = useScrollCinema();
 
   const navItems = useMemo(() => NAV_ITEMS, []);
   const activeSectionId = getActiveIdFromChapter(activeChapter);
 
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (!mobileOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
+    const orig = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = orig;
     };
   }, [mobileOpen]);
 
+  // Close mobile menu on desktop breakpoint
   useEffect(() => {
     const onResize = () => {
-      if (window.innerWidth >= 1024) {
-        setMobileOpen(false);
-      }
+      if (window.innerWidth >= 1024) setMobileOpen(false);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Close on Escape
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileOpen]);
+
   const closeMenu = () => setMobileOpen(false);
+
+  // Navigate via Lenis when clicking a nav link (suppresses default jump)
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    const nextHash = `#${id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.replaceState(null, '', nextHash);
+    }
+    scrollToSection(id);
+    closeMenu();
+  };
 
   return (
     <>
@@ -104,9 +138,12 @@ export default function Navbar() {
         style={{ translateZ: 0 }}
       >
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* ── Wordmark ───────────────────────────────────────────────── */}
           <Link
             href="/"
-            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
+            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
+            // eslint-disable-next-line no-restricted-syntax
+            style={{ '--tw-ring-color': 'var(--chapter-accent)' } as React.CSSProperties}
             aria-label="Oscar Ndugbu — Homepage"
           >
             <div className="flex flex-col gap-0.5">
@@ -124,41 +161,97 @@ export default function Navbar() {
             </div>
           </Link>
 
+          {/* ── Desktop nav ────────────────────────────────────────────── */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
             {navItems.map((item) => {
               const active = activeSectionId === item.id;
               return (
-                <Link
+                <a
                   key={item.id}
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.id)}
                   aria-current={active ? 'page' : undefined}
                   className={[
-                    'rounded-full px-3 py-2 text-sm transition',
-                    'focus-visible:ring-2 focus-visible:ring-[oklch(70%_0.21_188)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
-                    active
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white',
+                    'group relative rounded-full px-3 py-2 text-sm transition-colors duration-200',
+                    'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                    active ? 'text-white' : 'text-white/60 hover:text-white/90',
                   ].join(' ')}
+                  // eslint-disable-next-line no-restricted-syntax
+                  style={{ '--tw-ring-color': 'var(--chapter-accent)' } as React.CSSProperties}
                 >
-                  {item.label}
-                </Link>
+                  {/* Tinted glass background — chapter-accent tinted on active */}
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      'absolute inset-0 rounded-full transition-opacity duration-300',
+                      active ? 'opacity-100' : 'opacity-0 group-hover:opacity-60',
+                    ].join(' ')}
+                    // eslint-disable-next-line no-restricted-syntax
+                    style={{
+                      background: active
+                        ? 'color-mix(in oklch, var(--chapter-accent) 12%, oklch(100% 0 0 / 0.06))'
+                        : 'oklch(100% 0 0 / 0.05)',
+                      border: active
+                        ? '1px solid color-mix(in oklch, var(--chapter-accent) 20%, oklch(100% 0 0 / 0.08))'
+                        : '1px solid transparent',
+                    }}
+                  />
+
+                  <span className="relative">{item.label}</span>
+
+                  {/* Chapter-accent underline — always rendered, opacity-toggled */}
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      'nav-item-active-indicator absolute inset-x-3 bottom-1 h-px rounded-full',
+                      'transition-[opacity,transform] duration-300',
+                      active ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
+                    ].join(' ')}
+                    // eslint-disable-next-line no-restricted-syntax
+                    style={{ transformOrigin: 'center' }}
+                  />
+                </a>
               );
             })}
           </nav>
 
+          {/* ── Mobile menu button ─────────────────────────────────────── */}
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
-            onClick={() => setMobileOpen((current) => !current)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:bg-white/10 lg:hidden"
+            onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <AnimatePresence mode="wait" initial={false}>
+              {mobileOpen ? (
+                <m.span
+                  key="close"
+                  initial={{ rotate: -45, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 45, opacity: 0 }}
+                  transition={{ duration: 0.14 }}
+                >
+                  <X className="h-5 w-5" />
+                </m.span>
+              ) : (
+                <m.span
+                  key="open"
+                  initial={{ rotate: 45, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -45, opacity: 0 }}
+                  transition={{ duration: 0.14 }}
+                >
+                  <Menu className="h-5 w-5" />
+                </m.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </m.header>
 
+      {/* ── Mobile menu ─────────────────────────────────────────────────── */}
       <AnimatePresence>
         {mobileOpen && (
           <m.div
@@ -174,22 +267,39 @@ export default function Navbar() {
                 const active = activeSectionId === item.id;
                 return (
                   <m.div key={item.id} variants={mobileItemVariants}>
-                    <Link
+                    <a
                       href={item.href}
-                      onClick={closeMenu}
+                      onClick={(e) => handleNavClick(e, item.id)}
                       aria-current={active ? 'page' : undefined}
                       className={[
-                        'flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition',
-                        active
-                          ? 'border-white/15 bg-white/10 text-white'
-                          : 'border-white/8 bg-white/5 text-white/80',
+                        'flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors duration-200',
+                        'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                        active ? 'text-white' : 'text-white/75',
                       ].join(' ')}
+                      // eslint-disable-next-line no-restricted-syntax
+                      style={
+                        {
+                          background: active
+                            ? 'color-mix(in oklch, var(--chapter-accent) 10%, oklch(100% 0 0 / 0.07))'
+                            : 'oklch(100% 0 0 / 0.04)',
+                          borderColor: active
+                            ? 'color-mix(in oklch, var(--chapter-accent) 25%, oklch(100% 0 0 / 0.10))'
+                            : 'oklch(100% 0 0 / 0.08)',
+
+                          '--tw-ring-color': 'var(--chapter-accent)',
+                        } as React.CSSProperties
+                      }
                     >
                       <span>{item.label}</span>
-                      <span className="font-mono text-[10px] tracking-[0.2em] text-white/35 uppercase">
-                        {item.id}
-                      </span>
-                    </Link>
+                      {active && (
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rounded-full"
+                          // eslint-disable-next-line no-restricted-syntax
+                          style={{ background: 'var(--chapter-accent)' }}
+                        />
+                      )}
+                    </a>
                   </m.div>
                 );
               })}
