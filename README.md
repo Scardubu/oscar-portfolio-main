@@ -124,13 +124,13 @@ Seven files were patched to fix critical bugs and add polish enhancements. The p
 
 ### Integration quick wins — UX polish v1.2
 
-| File               | Quick win                                                                                                  | Benefit                                           |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `HeroSection.tsx`  | Added tab-panel relationships (`aria-controls`, `aria-labelledby`, active `tabIndex`) to proof carousel | Better keyboard and screen-reader navigation      |
-| `globals.css`      | Refined proof-dot touch targets to 24x24 with visual 6px center indicator                                | WCAG-friendly tap areas on mobile                 |
-| `globals.css`      | Added ultra-narrow hero safeguards (`max-width: 389px`) for availability metadata and stat wrapping      | Cleaner 320-390px rendering with no clipping      |
-| `globals.css`      | Added `min-width: 1920px` hero scale and spacing tuning                                                   | Better composition on ultrawide desktop displays  |
-| `Footer.tsx`       | Removed no-op inline style object from primary CTA                                                        | Cleaner code and reduced maintenance overhead      |
+| File              | Quick win                                                                                               | Benefit                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `HeroSection.tsx` | Added tab-panel relationships (`aria-controls`, `aria-labelledby`, active `tabIndex`) to proof carousel | Better keyboard and screen-reader navigation     |
+| `globals.css`     | Refined proof-dot touch targets to 24x24 with visual 6px center indicator                               | WCAG-friendly tap areas on mobile                |
+| `globals.css`     | Added ultra-narrow hero safeguards (`max-width: 389px`) for availability metadata and stat wrapping     | Cleaner 320-390px rendering with no clipping     |
+| `globals.css`     | Added `min-width: 1920px` hero scale and spacing tuning                                                 | Better composition on ultrawide desktop displays |
+| `Footer.tsx`      | Removed no-op inline style object from primary CTA                                                      | Cleaner code and reduced maintenance overhead    |
 
 Validation pass after v1.2 polish:
 - `pnpm run type-check` ✅
@@ -139,16 +139,29 @@ Validation pass after v1.2 polish:
 
 ### Stability fixes — runtime guard v1.3
 
-| File                   | Fix                                                                                     | Impact                                             |
-| ---------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `lib/motionVariants.ts`| Corrected `AnimatePresence` mode from invalid `popout` to valid `popLayout`            | Prevents client runtime crashes in motion paths    |
-| `tests/setup.ts`       | Added `scrollMargin` to `MockIntersectionObserver` and removed unresolved side-effect import | Clears editor diagnostics and keeps test setup aligned with current DOM typings |
+| File                    | Fix                                                                                          | Impact                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `lib/motionVariants.ts` | Corrected `AnimatePresence` mode from invalid `popout` to valid `popLayout`                  | Prevents client runtime crashes in motion paths                                 |
+| `tests/setup.ts`        | Added `scrollMargin` to `MockIntersectionObserver` and removed unresolved side-effect import | Clears editor diagnostics and keeps test setup aligned with current DOM typings |
 
 Validation pass after v1.3 stability fix:
 - `pnpm run type-check` ✅
 - `pnpm run lint` ✅
 - `pnpm run build` ✅
 - Browser runtime probe on `/` reported `NO_CLIENT_ERRORS_DETECTED` ✅
+
+### Production hardening — local font resilience + responsive audit v1.4
+
+| File              | Change                                                                                 | Impact                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `app/layout.tsx`  | Migrated to local-only CSS font variable strategy for root typography token assignment | Eliminates build/runtime fragility from remote Google Fonts fetch timeouts |
+| `app/globals.css` | Kept targeted small-screen and ultrawide guards from the surgical responsive audit     | Preserves stable hero/navigation composition across edge viewport classes  |
+
+Validation pass after v1.4 hardening:
+- `pnpm run type-check` ✅
+- `pnpm run lint` ✅
+- Responsive sweep at `320, 375, 390, 430, 768, 1024, 1280, 1920` ✅
+- Sweep checks: horizontal overflow, hero/nav edge bounds, proof-dot wrapping ✅
 
 ---
 

@@ -26,7 +26,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
-import { DM_Sans, JetBrains_Mono, Playfair_Display, Syne } from 'next/font/google';
+import type { CSSProperties } from 'react';
 
 import { Providers } from '@/app/providers';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -40,44 +40,16 @@ import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
 import './globals.css';
 
-// ── Display: Syne — conviction, authority, geometric density ─────────────────
-const syne = Syne({
-  subsets: ['latin'],
-  variable: '--font-syne',
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-});
+// Local-first font strategy to avoid build-time network dependency on
+// Google Fonts while preserving brand-consistent fallbacks.
 
-// ── Body: DM Sans — Stripe-grade clarity, neutral legibility ─────────────────
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-// ── Mono: JetBrains Mono — engineering credibility, high-density metrics ─────
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-// ── Didone: Playfair Display — A24 cinematic authority, hero sub-lines ────────
-// Why Playfair over Georgia:
-//   Georgia → transitional serif, moderate thick/thin contrast (~2:1)
-//   Playfair → true Didone, extreme thick/thin contrast (~8:1), hairline serifs
-// The italic variant is what appears in `.text-didone-sub` — at 1.875rem+
-// the hairline strokes of Playfair italic create cinematic tension that
-// Georgia italic simply cannot.
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-didone',
-  display: 'swap',
-  style: ['normal', 'italic'],
-  weight: ['400', '500', '700'],
-});
+const localFontVariables: CSSProperties = {
+  '--font-syne': '"Avenir Next", "Segoe UI", "Inter", system-ui, sans-serif',
+  '--font-dm-sans': '"Inter", "Avenir Next", "Segoe UI", system-ui, sans-serif',
+  '--font-jetbrains-mono':
+    '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace',
+  '--font-didone': '"Playfair Display", "Iowan Old Style", "Times New Roman", serif',
+} as CSSProperties;
 
 export const metadata: Metadata = {
   title: {
@@ -207,7 +179,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${jetBrainsMono.variable} ${playfairDisplay.variable}`}
+      // eslint-disable-next-line no-restricted-syntax
+      style={localFontVariables}
       suppressHydrationWarning
     >
       <head>
