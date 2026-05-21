@@ -1,6 +1,20 @@
 /**
- * CONVICTION ENGINE V1.0 — MOTION VOCABULARY
+ * CONVICTION ENGINE V1.1 — MOTION VOCABULARY
  * THE SINGLE SOURCE OF MOTION TRUTH.
+ *
+ * CHANGELOG v1.1 → v1.0:
+ *   - Preserved every v1.0 export name, value, and semantic — zero breaking changes.
+ *   - Added section: MAGNETIC BUTTON VARIANTS — works with `useMagnetic` hook.
+ *   - Added section: SPOTLIGHT REVEAL — focused, high-contrast section entry.
+ *   - Added section: DRAG INTERACTION — for draggable proof cards.
+ *   - Added section: SHARED LAYOUT CONFIG — AnimateSharedLayout transition presets.
+ *   - Added section: CHAPTER TRANSITION — framer-motion variants for chapter-aware
+ *     elements that live outside ChapterFrame (e.g. the chapter progress rail dots).
+ *   - Added section: NOTIFICATION / TOAST — entrance + exit for toast system.
+ *   - Added section: PROGRESS BAR — scaleX fill with configurable easing.
+ *   - Added `presenceConfig` helper — wraps AnimatePresence mode/initial options.
+ *   - Expanded spring vocabulary: added `orbital` and `bouncy` presets.
+ *   - `HERO_SCROLL_CONFIG` range values now typed as const tuples (unchanged values).
  *
  * MERGE NOTES:
  *   - Absorbed the v15.0 lib/motion.ts exports into this canonical module.
@@ -8,8 +22,14 @@
  *   - mobileReducedVariant only reduces timing values on mobile; it never mutates transforms.
  *   - viewportOnceDefault remains a backward-compat alias for viewportOnce.
  *
+ * ARCHITECTURE CONSTRAINT:
+ *   Do NOT add `useScroll` or `useTransform` framer-motion hooks in any component
+ *   mounted on the homepage — they create page-level scroll subscribers that
+ *   compete with Lenis. GSAP ScrollTrigger / useScrollCinema are the scroll
+ *   primitives for the homepage cinematic system.
+ *
  * KEEP: all spring vocabulary names, HERO_SCROLL_CONFIG, noMotion,
- * viewportOnce, viewportRelaxed, and every exported variant name.
+ * viewportOnce, viewportRelaxed, and every exported variant name from v1.0.
  */
 
 import type { Transition, Variant, Variants } from 'framer-motion';
@@ -24,6 +44,11 @@ export const springs = {
   layout: { type: 'spring', stiffness: 300, damping: 28, mass: 0.8 } as Transition,
   hoverRise: { type: 'spring', stiffness: 500, damping: 32, mass: 0.6 } as Transition,
   decisive: { type: 'spring', stiffness: 600, damping: 35, mass: 0.5 } as Transition,
+
+  // v1.1 additions
+  orbital: { type: 'spring', stiffness: 120, damping: 14, mass: 1.2 } as Transition, // slow, looping feel
+  bouncy: { type: 'spring', stiffness: 560, damping: 22, mass: 0.7 } as Transition, // elastic snap for icons
+  magnetic: { type: 'spring', stiffness: 500, damping: 32, mass: 0.5 } as Transition, // matches useMagnetic spring
 } as const;
 
 /**
@@ -32,22 +57,14 @@ export const springs = {
  */
 export const springConfig: Transition = springs.smooth;
 
-export const hoverLift = (y = -3) => ({
-  y,
-  transition: springs.layout,
-});
-
-export const hoverNudgeX = (x = 2) => ({
-  x,
-  transition: springs.layout,
-});
+export const hoverLift = (y = -3) => ({ y, transition: springs.layout });
+export const hoverNudgeX = (x = 2) => ({ x, transition: springs.layout });
 
 /* ═══════════ VIEWPORT CONFIG ════════════════════════════════════════════ */
 
-// V1: -80px — reveals start when 80px of section is visible.
-// Gives spring animations more runway before the element reaches center.
 export const viewportOnce = { once: true, margin: '-80px' } as const;
 export const viewportRelaxed = { once: true, margin: '-40px' } as const;
+export const viewportTight = { once: true, margin: '-120px' } as const;
 /** Backward-compat alias — prefer viewportOnce in new code */
 export const viewportOnceDefault = viewportOnce;
 
@@ -72,7 +89,6 @@ function reduceTransitionObject(transition: Record<string, unknown>): Record<str
       next[key] = Math.max(0, value / 2);
       continue;
     }
-
     if (isPlainObject(value)) {
       next[key] = reduceTransitionObject(value);
     }
@@ -89,8 +105,6 @@ function reduceTransitionObject(transition: Record<string, unknown>): Record<str
  *   const variants = mobileReducedVariant(cardReveal(), isMobile);
  *
  * Does NOT remove scale or translate transforms — only timing reduction.
- * Spring transitions remain effectively spring-driven; timing-based values
- * inside transition objects are reduced when present.
  */
 export function mobileReducedVariant<T extends Variants>(variants: T, isMobile: boolean): T {
   if (!isMobile) return variants;
@@ -123,17 +137,12 @@ export function mobileReducedVariant<T extends Variants>(variants: T, isMobile: 
 
 /**
  * staggerContainer
- * @param stagger  delay between children (default 0.065s — tightened for snappier reveals)
+ * @param stagger  delay between children (default 0.065s)
  * @param delay    initial delay before first child (default 0.04s)
  */
 export const staggerContainer = (stagger = 0.065, delay = 0.04): Variants => ({
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: stagger,
-      delayChildren: delay,
-    },
-  },
+  visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
 });
 
 /** Slower stagger for editorial content (articles, timelines) */
@@ -152,49 +161,24 @@ export const stagger: Variants = {
 
 /* ═══════════ PRIMITIVE REVEALS ══════════════════════════════════════════ */
 
-/**
- * fadeRise — body text, secondary elements, proof cards.
- * V1: y 14 → 12. Shorter travel = less perceived jank.
- */
+/** fadeRise — body text, secondary elements, proof cards */
 export const fadeRise: Variants = {
   hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: springs.smooth,
-  },
-  exit: {
-    opacity: 0,
-    y: -8,
-    transition: { duration: 0.15 },
-  },
+  visible: { opacity: 1, y: 0, transition: springs.smooth },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.15 } },
 };
 
-/**
- * fadeRiseSmooth — gentle spring for narrative body text / paragraph copy.
- * Calmer and more editorial than fadeRise.
- */
+/** fadeRiseSmooth — gentle spring for narrative body text */
 export const fadeRiseSmooth: Variants = {
   hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: springs.gentle,
-  },
+  visible: { opacity: 1, y: 0, transition: springs.gentle },
   exit: { opacity: 0, y: -6, transition: { duration: 0.15 } },
 };
 
-/**
- * fadeRiseGentle — for large elements where smooth feels too snappy.
- * Use for hero sub-lines, Didone pull-quotes.
- */
+/** fadeRiseGentle — for large elements like hero sub-lines */
 export const fadeRiseGentle: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: springs.gentle,
-  },
+  visible: { opacity: 1, y: 0, transition: springs.gentle },
 };
 
 /** fadeIn — opacity-only, no position transform */
@@ -207,42 +191,24 @@ export const fadeIn: Variants = {
 /** fadeUp — body text with subtle upward travel and blur settle */
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 14, filter: 'blur(3px)' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: springs.smooth,
-  },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: springs.smooth },
   exit: { opacity: 0, y: -8, filter: 'blur(2px)', transition: { duration: 0.15 } },
 };
 
-/**
- * dramaticReveal — for full-width section headings.
- * Lower stiffness makes it feel like a large object settling.
- * NO scale — prevents layout reflow on wide headings.
- */
+/** dramaticReveal — for full-width section headings */
 export const dramaticReveal = (yOffset = 36): Variants => ({
   hidden: { opacity: 0, y: yOffset },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 160,
-      damping: 20,
-      mass: 1.2,
-    },
+    transition: { type: 'spring', stiffness: 160, damping: 20, mass: 1.2 },
   },
 });
 
-/** sectionEntrance — full-section reveals without scale (prevents layout thrashing) */
+/** sectionEntrance — full-section reveals without scale */
 export const sectionEntrance = (yOffset = 20): Variants => ({
   hidden: { opacity: 0, y: yOffset },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: springs.gentle,
-  },
+  visible: { opacity: 1, y: 0, transition: springs.gentle },
 });
 
 /** scaleIn — opacity + subtle scale for dialogs and popovers */
@@ -254,19 +220,10 @@ export const scaleIn: Variants = {
 
 /* ═══════════ DIRECTIONAL REVEALS ════════════════════════════════════════ */
 
-/** reveal — generic vertical fade-rise */
 export const reveal: Variants = {
   hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 25 },
-  },
-  exit: {
-    opacity: 0,
-    y: 8,
-    transition: { type: 'spring', stiffness: 180, damping: 20 },
-  },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } },
+  exit: { opacity: 0, y: 8, transition: { type: 'spring', stiffness: 180, damping: 20 } },
 };
 
 export const revealLeft: Variants = {
@@ -288,7 +245,7 @@ export const listItem: Variants = {
   exit: { opacity: 0, y: 6, transition: { duration: 0.1 } },
 };
 
-/** liquidCard — glass card entrance (same physics as cardReveal + scale) */
+/** liquidCard — glass card entrance */
 export const liquidCard: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
   visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
@@ -299,107 +256,66 @@ export const liquidCard: Variants = {
 
 /**
  * wordReveal — for headline word-by-word cinematic reveals.
- *
- * Wrap each word in an overflow-hidden clipping container.
- * Apply this variant to the inner span (the one that translates).
+ * Wrap each word in `overflow-hidden`. Apply this variant to the inner span.
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
-  visible: {
-    y: '0%',
-    transition: {
-      type: 'spring',
-      stiffness: 190,
-      damping: 22,
-      mass: 1.05,
-    },
-  },
+  visible: { y: '0%', transition: { type: 'spring', stiffness: 190, damping: 22, mass: 1.05 } },
 };
 
-/** Parent container: stagger each word's reveal */
 export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => ({
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: stagger,
-      delayChildren: delay,
-    },
-  },
+  visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
 });
 
 /**
- * letterReveal — per-character reveal for short, high-conviction words.
- * Faster spring than wordReveal — characters are smaller, need snappier feel.
+ * letterReveal — per-character reveal for short, high-conviction labels.
  */
 export const letterReveal: Variants = {
   hidden: { y: '100%', opacity: 0 },
   visible: {
     y: '0%',
     opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 280,
-      damping: 24,
-      mass: 0.8,
-    },
+    transition: { type: 'spring', stiffness: 280, damping: 24, mass: 0.8 },
   },
 };
 
 export const letterRevealContainer = (stagger = 0.04, delay = 0.05): Variants => ({
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: stagger,
-      delayChildren: delay,
-    },
-  },
+  visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
 });
 
 /* ═══════════ CLIP REVEAL ════════════════════════════════════════════════ */
 
 /**
  * clipReveal — left-to-right clip wipe for section headings.
- * V1: stiffness 55 → 90, damping 18 → 22.
- * Completes in ~0.5s vs ~1.4s — reliable at any scroll speed.
  */
 export const clipReveal: Variants = {
   hidden: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
   visible: {
     clipPath: 'inset(0 0% 0 0)',
     opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 90,
-      damping: 22,
-      mass: 1.1,
-    },
+    transition: { type: 'spring', stiffness: 90, damping: 22, mass: 1.1 },
   },
 };
 
 /* ═══════════ CARD REVEAL ════════════════════════════════════════════════ */
 
-/**
- * cardReveal — for featured/hero cards only (singular, high-importance).
- * Includes scale — do NOT use for grids of 4+ items (compositor pressure).
- */
+/** cardReveal — for featured/hero cards (singular, high-importance). Includes scale. */
 export const cardReveal = (yOffset = 28): Variants => ({
   hidden: { opacity: 0, y: yOffset, scale: 0.972 },
   visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
   exit: { opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.14 } },
 });
 
-/**
- * gridItemReveal — for grid items (4+ cards simultaneously).
- * V1 NEW: no scale — prevents N compositor layers on grid entrance.
- * Same spring timing as cardReveal for consistent feel.
- */
+/** gridItemReveal — for grid items (4+ cards). No scale — prevents compositor pressure. */
 export const gridItemReveal = (yOffset = 20): Variants => ({
   hidden: { opacity: 0, y: yOffset },
   visible: { opacity: 1, y: 0, transition: springs.smooth },
   exit: { opacity: 0, y: -8, transition: { duration: 0.13 } },
 });
 
-/** glassCardReveal — like cardReveal with a backdrop-filter blur settle */
+/** glassCardReveal — cardReveal with backdrop-filter settle */
 export const glassCardReveal = (yOffset = 28): Variants => ({
   hidden: { opacity: 0, y: yOffset, scale: 0.972 },
   visible: { opacity: 1, y: 0, scale: 1, transition: springs.smooth },
@@ -431,7 +347,6 @@ export const interactive = {
 
 /* ═══════════ HERO SEQUENCE ═════════════════════════════════════════════ */
 
-// Hero retains 0.055 stagger — tighter for first-impression timing.
 export const heroContainer: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.055, delayChildren: 0.05 } },
@@ -492,6 +407,8 @@ export const filterTransition: Variants = {
 
 /* ═══════════ HERO PARALLAX ═════════════════════════════════════════════ */
 
+// CONSTRAINT: do NOT use framer-motion useScroll/useTransform on the homepage.
+// These values are used by non-homepage pages (blog article heroes, etc.).
 export const HERO_SCROLL_CONFIG = {
   offset: ['start start', 'end start'] as ['start start', 'end start'],
   textRange: [0, 1] as [number, number],
@@ -516,3 +433,173 @@ export const pageTransition: Variants = {
   visible: { opacity: 1, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } },
   exit: { opacity: 0, transition: { duration: 0.15 } },
 };
+
+/* ═══════════ MAGNETIC BUTTON (v1.1) ════════════════════════════════════
+ * Use with the `useMagnetic` hook. Apply `style={{ x, y }}` from the hook
+ * to the `m.` wrapper and these variants for the tap / hover states.
+ *
+ * Usage:
+ *   const { ref, x, y } = useMagnetic({ strength: 0.3 });
+ *   <m.button
+ *     ref={ref}
+ *     style={{ x, y }}
+ *     variants={magneticButton}
+ *     whileHover="hover"
+ *     whileTap="tap"
+ *   />
+ */
+export const magneticButton: Variants = {
+  rest: { scale: 1 },
+  hover: { scale: 1.04, transition: springs.magnetic },
+  tap: { scale: 0.96, transition: { ...springs.decisive, duration: 0.08 } },
+};
+
+/**
+ * magneticIcon — tighter scale range for icon-only magnetic targets
+ * (nav icons, social links, GitHub stars button).
+ */
+export const magneticIcon: Variants = {
+  rest: { scale: 1, rotate: 0 },
+  hover: { scale: 1.12, rotate: 3, transition: springs.magnetic },
+  tap: { scale: 0.9, rotate: -3, transition: springs.decisive },
+};
+
+/* ═══════════ SPOTLIGHT REVEAL (v1.1) ═══════════════════════════════════
+ * For elements that should feel like they emerge from a spotlight:
+ * a radial clip-path that expands outward from the element center.
+ *
+ * Use on `<m.div>` with `whileInView="visible"` and viewport={viewportOnce}.
+ * Pair with GSAP inside ChapterFrame — this is for standalone non-cinematic
+ * components (blog pages, modal interiors, command palette results).
+ */
+export const spotlightReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    clipPath: 'circle(0% at 50% 50%)',
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    clipPath: 'circle(100% at 50% 50%)',
+    scale: 1,
+    transition: {
+      clipPath: { type: 'spring', stiffness: 80, damping: 20, mass: 1.2 },
+      opacity: { duration: 0.2 },
+      scale: springs.gentle,
+    },
+  },
+  exit: {
+    opacity: 0,
+    clipPath: 'circle(0% at 50% 50%)',
+    scale: 0.98,
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+/* ═══════════ DRAG INTERACTION (v1.1) ═══════════════════════════════════
+ * For draggable proof cards or horizontal carousels.
+ * Apply `whileDrag="dragging"` to the draggable `m.` element.
+ */
+export const draggableCard: Variants = {
+  rest: { scale: 1, boxShadow: '0 4px 24px rgba(0,0,0,0.40)', cursor: 'grab' },
+  dragging: {
+    scale: 1.04,
+    boxShadow: '0 24px 64px rgba(0,0,0,0.72)',
+    cursor: 'grabbing',
+    zIndex: 10,
+  },
+};
+
+/**
+ * dragConstraints — sensible horizontal drag bounds.
+ * Pass the container ref as `left` and `right` constraints in the component.
+ */
+export const dragTransition = {
+  power: 0.3,
+  timeConstant: 200,
+  modifyTarget: (target: number) => Math.round(target),
+} as const;
+
+/* ═══════════ SHARED LAYOUT TRANSITION (v1.1) ═══════════════════════════
+ * Used with `layoutId` for AnimatePresence shared element transitions.
+ * Consistent spring physics for expanding cards, active filter pills, etc.
+ */
+export const sharedLayoutTransition = {
+  layout: {
+    type: 'spring',
+    stiffness: 300,
+    damping: 30,
+    mass: 0.8,
+  },
+} as const;
+
+/**
+ * activeTabIndicator — for `layoutId="active-tab"` underline / pill.
+ * Wraps the indicator in consistent layout-spring physics.
+ */
+export const activeTabIndicator = {
+  layoutId: 'active-tab',
+  transition: sharedLayoutTransition.layout,
+} as const;
+
+/* ═══════════ CHAPTER TRANSITION (v1.1) ═════════════════════════════════
+ * For UI elements that live outside ChapterFrame but should visually
+ * respond to chapter changes (e.g. scroll-progress rail dots, nav accent).
+ *
+ * Usage: AnimatePresence key={activeChapter} + these variants.
+ */
+export const chapterBadge: Variants = {
+  hidden: { opacity: 0, scale: 0.85, y: 4 },
+  visible: { opacity: 1, scale: 1, y: 0, transition: springs.snappy },
+  exit: { opacity: 0, scale: 0.9, y: -4, transition: { duration: 0.1 } },
+};
+
+export const chapterLabel: Variants = {
+  hidden: { opacity: 0, x: -6 },
+  visible: { opacity: 1, x: 0, transition: springs.smooth },
+  exit: { opacity: 0, x: 6, transition: { duration: 0.1 } },
+};
+
+/* ═══════════ NOTIFICATION / TOAST (v1.1) ═══════════════════════════════ */
+
+export const toastEntrance: Variants = {
+  hidden: { opacity: 0, y: 20, scale: 0.94 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: springs.snappy },
+  exit: { opacity: 0, y: 8, scale: 0.96, transition: { duration: 0.15, ease: 'easeIn' } },
+};
+
+export const toastContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.04 } },
+  exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+};
+
+/* ═══════════ PROGRESS BAR (v1.1) ═══════════════════════════════════════ */
+
+/**
+ * progressFill — for skill bars, metric bars.
+ * Set `--progress` CSS variable on the element and use scaleX from 0 → var(--progress).
+ * Or pass a custom `widthTarget` to the visible variant at the call site.
+ */
+export const progressFill = (widthTarget: string | number = '100%'): Variants => ({
+  hidden: { scaleX: 0, opacity: 0.6, originX: 0 },
+  visible: {
+    scaleX: typeof widthTarget === 'string' ? 1 : widthTarget,
+    opacity: 1,
+    originX: 0,
+    transition: { type: 'spring', stiffness: 90, damping: 20, mass: 0.9 },
+  },
+});
+
+/* ═══════════ PRESENCE HELPER (v1.1) ════════════════════════════════════
+ * Centralised AnimatePresence config objects so mode and initial
+ * are consistent across the component tree.
+ */
+export const presenceConfig = {
+  /** Standard: wait for exit before entering (modals, page transitions) */
+  wait: { mode: 'wait' as const, initial: false },
+  /** Popover: simultaneous enter + exit (tooltips, menus) */
+  sync: { mode: 'sync' as const, initial: false },
+  /** Popout: new item enters first (recommended for toasts) */
+  popout: { mode: 'popout' as const, initial: false },
+} as const;

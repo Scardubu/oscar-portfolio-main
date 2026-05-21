@@ -12,156 +12,428 @@ Staff+ Full-Stack / Infra / AI portfolio. Production systems that stay alive whe
 
 A proof system, not a brag sheet. Four production case studies, four open-source packages, 62 verified skills, and writing that explains the decisions behind the work.
 
-## Documentation and governance
-
-- **Primary operating standard:** `CONVICTION_ENGINE_V1_0.md`
-- **Release correction history:** `docs/deployment-history/CORRECTIONS.md`
-- **Legacy guidance:** archived inside the `## ARCHIVE — v32.0` section of `CONVICTION_ENGINE_V1_0.md` (historical context only)
+---
 
 ## Tech stack
 
-- **Framework:** Next.js 15 (App Router, Partial Prerendering, Streaming)
-- **UI:** React 19, Tailwind CSS v4, Framer Motion 11 (LazyMotion + domAnimations)
-- **Language:** TypeScript strict across all layers
-- **Content:** MDX — case studies and writing posts
-- **Testing:** Playwright E2E (Chromium smoke suite)
-- **Deployment:** Vercel (main branch auto-deploys)
+| Layer      | Technology                                                         |
+| ---------- | ------------------------------------------------------------------ |
+| Framework  | Next.js 15 — App Router, Partial Prerendering, Streaming           |
+| UI         | React 19, Tailwind CSS v4, Framer Motion 11                        |
+| Language   | TypeScript strict across all layers                                |
+| Scroll     | Lenis smooth scroll + GSAP ScrollTrigger (Cinematic Scroll System) |
+| WebGL      | Three.js — atmospheric brush field (ThreeBrushField)               |
+| Content    | MDX — case studies and writing posts                               |
+| Testing    | Playwright E2E (smoke + full journey suites)                       |
+| CI         | Lighthouse CI, husky pre-commit (lint + type-check + smoke)        |
+| Deployment | Vercel — main branch auto-deploys                                  |
 
-## Responsive architecture
+---
 
-- Hero layout is token-driven from `app/globals.css` using dedicated custom properties for column ratios, vertical rhythm, and headline measure.
-- The desktop hero dashboard now uses container-query-aware panel hooks so status, latency, and deploy panels reflow gracefully when the right rail gets tight.
-- Small-phone handling is explicit rather than incidental: 320px-class widths get narrower container padding, tighter hero type, safer carousel bleed, and reduced crowding in metrics.
-- Motion remains spring-based, but major proof surfaces now share reusable hover presets from `lib/motionVariants.ts` for more consistent interaction feel.
+## Cinematic Scroll System
 
-## Testing strategy
+The homepage uses an 8-chapter cinematic scroll architecture. Understanding it is required before touching any section component, the scroll provider, or the WebGL canvas.
 
-- `e2e/smoke.spec.ts` is the fast smoke suite for the core home-page journey, API health checks, and mobile overflow regressions.
-- `tests/portfolio.spec.ts` is the broader V1.0 contract suite for copy, flow hooks, accessibility, and trust-signal regressions.
-- `tests/e2e/smoke.spec.ts` and `tests/e2e/user-journey.spec.ts` cover the V1.0 recruiter journey and section-level rendering.
-- `pnpm lint` covers `app`, `components`, `hooks`, `lib`, `constants`, `scripts`, `e2e`, and `tests` so runtime code and active test paths stay aligned.
+### Architecture overview
 
-### Playwright strict-mode and Suspense skeletons
-
-Sections use Next.js `<Suspense>` deferred loading. The skeleton fallback renders with `aria-busy="true"` and the real section shares the same `id`. When writing Playwright locators for sections, always scope to the loaded state to avoid strict-mode violations:
-
-```typescript
-// ✅ Correct — targets the real section only
-page.locator('section#section-writing[aria-labelledby="writing-heading"]')
-
-// ❌ Incorrect — resolves to 2 elements (skeleton + real) during Suspense
-page.locator('#section-writing')
+```
+ScrollCinemaProvider          — Lenis instance, activeChapter state, scrollProgressRef
+  └── GSAP ticker             — single RAF loop shared by Lenis + ScrollTrigger
+       └── ScrollTrigger      — per-section reveal timelines (via useChapterTimeline)
+  └── ThreeBrushField         — Three.js WebGL atmospheric shader
+       ├── Renderer RAF       — reads scrollProgressRef, updates uniforms
+       └── Palette effect     — imperative uniform mutation on activeChapter change
+  └── ScrollProgress          — chapter-aware vertical rail (reads context)
+  └── Navbar                  — useScrollCinema context for active dot
 ```
 
-**Current status:** 82 passed · 2 skipped (command palette — intentional) · 0 failed.
+### The 8 chapters
+
+| Index | Chapter ID    | Section              | Accent           |
+| ----- | ------------- | -------------------- | ---------------- |
+| 0     | `prologue`    | hero                 | `#67e8f9` teal   |
+| 1     | `proof`       | section-projects     | `#5eead4` mint   |
+| 2     | `credibility` | section-testimonials | `#fbbf24` amber  |
+| 3     | `craft`       | open-source          | `#38bdf8` sky    |
+| 4     | `range`       | skills               | `#c084fc` violet |
+| 5     | `human`       | section-about        | `#fde68a` gold   |
+| 6     | `judgment`    | section-writing      | `#93c5fd` blue   |
+| 7     | `epilogue`    | section-contact      | `#34d399` green  |
+
+Chapter configuration is canonical in `lib/cinematic/chapters.ts`. Do not modify it.
+
+### Animation ownership — critical constraint
+
+**GSAP ScrollTrigger** owns all section-level scroll reveals.
+**Framer Motion** owns the hero section, micro-interactions (hover, accordion, mobile menu), and carousels.
+They do not overlap. Mixing them inside the same element causes competing animation ownership.
+
+```
+✅ DO:     whileHover, whileTap, AnimatePresence inside any component
+✅ DO:     data-cinematic="title|eyebrow|panel|card|media|cta" on elements inside ChapterFrame
+✅ DO:     setActiveChapter() inside ScrollTrigger onEnter/onEnterBack callbacks
+
+❌ DO NOT: whileInView, initial="hidden", animate="visible" inside ChapterFrame sections
+❌ DO NOT: framer-motion useScroll/useTransform on any homepage-mounted component
+❌ DO NOT: add activeChapter to the ThreeBrushField main effect dependency array
+```
+
+### Adding a new section
+
+1. Add a chapter config to `lib/cinematic/chapters.ts`.
+2. Wrap the section in `<ChapterFrame chapter={chapter}>`.
+3. Add `data-cinematic="[target]"` attributes to animatable elements.
+4. `useChapterTimeline` runs automatically from `ChapterFrame`.
+5. Do not add `whileInView` or scroll animations — GSAP handles everything inside `ChapterFrame`.
+
+### ThreeBrushField performance budget
+
+Three RAF loops share one frame budget:
+- Lenis: smooth scroll interpolation
+- GSAP ticker: ScrollTrigger calculations
+- ThreeBrushField: WebGL render
+
+Lenis feeds into GSAP ticker via `gsap.ticker.add(raf)`. `ScrollTrigger.update()` is intentionally NOT called manually — GSAP drives it from the ticker. On mobile, `mix-blend-mode: screen` is disabled (costs a GPU compositor pass per frame on low-power devices).
+
+---
+
+## Patch changelog — Cinematic Scroll v1.1
+
+Seven files were patched to fix critical bugs and add polish enhancements. The patch is available in `oscar-portfolio-cinematic-patch.zip`.
+
+### Bug fixes (scroll behaviour was broken)
+
+| File                       | Bug                                 | Impact                                             |
+| -------------------------- | ----------------------------------- | -------------------------------------------------- |
+| `ScrollCinemaProvider.tsx` | `immediate: true` in `scrollTo()`   | Every navbar click teleported instead of gliding   |
+| `ThreeBrushField.tsx`      | `activeChapter` in main effect deps | Canvas flashed black on every chapter change       |
+| `HeroSection.tsx`          | No ScrollTrigger for hero section   | Prologue chapter never re-activated on scroll-back |
+
+### Enhancements (visual quality + performance)
+
+| File                       | Enhancement                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| `ChapterFrame.tsx`         | `noBorderTop` prop to remove hero/projects visual seam                                     |
+| `ProjectsSection.tsx`      | Passes `noBorderTop` — brush field flows continuously into first section                   |
+| `globals.css`              | `@property` declarations + `html[data-active-chapter]` CSS cross-fades over 0.65s expo-out |
+| `globals.css`              | Scrollbar thumb uses `color-mix(--chapter-accent)` instead of hardcoded teal               |
+| `ThreeBrushField.tsx`      | `sm:[mix-blend-mode:screen]` — blend mode disabled on mobile                               |
+| `ScrollCinemaProvider.tsx` | Removed `ScrollTrigger.update()` from Lenis callback (was double-processing)               |
+| `ScrollCinemaProvider.tsx` | Added `aria-live="polite"` region for screen reader chapter announcements                  |
+| `useChapterTimeline.ts`    | `typeof window === 'undefined'` guard (SSR/RSC analysis safety)                            |
+
+---
 
 ## Local setup
 
-**Requirements:** Node.js ≥ 20, pnpm ≥ 9
+**Requirements:** Node.js ≥ 20.0.0 < 24.0.0, pnpm ≥ 9.0.0
 
 ```bash
+# Clone and install
+git clone https://github.com/Scardubu/oscar-portfolio.git
+cd oscar-portfolio
 pnpm install
+
+# Start development server
 pnpm dev
+# → http://localhost:3000
+
+# If Playwright browsers are not installed
+pnpm exec playwright install chromium
 ```
 
-App starts at `http://localhost:3000`.
+---
 
 ## Scripts
 
 ```bash
-pnpm dev          # local dev server
-pnpm build        # production build
-pnpm start        # run built app
-pnpm lint         # ESLint checks
-pnpm lint:fix     # auto-fix lint issues
-pnpm type-check   # strict TypeScript checks
-pnpm test:smoke   # production build + Chromium smoke subset used by pre-commit
-pnpm test:e2e     # Playwright smoke suite (Chromium)
-pnpm test:all     # full Playwright matrix
-pnpm audit:copy   # content compliance checks
-pnpm lhci         # Lighthouse CI
+pnpm dev            # development server (localhost:3000)
+pnpm build          # production build — required integration check
+pnpm start          # serve the production build locally
+pnpm type-check     # strict TypeScript, zero tolerance
+pnpm lint           # ESLint across all source paths
+pnpm lint:fix       # auto-fix lint issues
+pnpm test:smoke     # build + Playwright smoke suite (fast, Chromium only)
+pnpm test:e2e       # full Playwright suite (Chromium)
+pnpm test:mobile    # Playwright mobile (Chrome + Safari)
+pnpm test:all       # complete matrix across all configured projects
+pnpm audit:copy     # content compliance verification (NRS, metric sources)
+pnpm lhci           # Lighthouse CI audit
+pnpm analyze        # bundle analyser (set ANALYZE=true)
 ```
+
+---
 
 ## Project structure
 
 ```
-app/           → routes, metadata, API endpoints, Suspense orchestration
-components/    → section components and shared UI primitives
-content/
-  writing/     → MDX technical posts (6 articles)
-  work/        → MDX case studies (TaxBridge, SabiScore, SwarmXQ, UBEC, Hashablanca)
-lib/
-  config.ts    → CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl(), canonicalSectionUrl()
-  portfolio-data.ts → PROFILE, HERO, CONVICTION_STATS, LIVE_METRICS
-  projects.ts  → PROJECTS — canonical source for all project data
-  data/
-    skills.ts  → SKILLS (62 skills, 8 pillars)
-    blog-articles.ts → article metadata
-e2e/           → Playwright smoke tests
-public/
-  cv/oscar-ndugbu-resume.pdf  → resume download
+oscar-portfolio/
+│
+├── app/
+│   ├── globals.css              ← design tokens, cinematic chapter CSS, scrollbar
+│   ├── layout.tsx               ← fonts, metadata, JSON-LD, layer stack
+│   ├── page.tsx                 ← homepage (Suspense-deferred sections)
+│   ├── providers.tsx            ← ThemeProvider → MotionProvider → ScrollCinemaProvider
+│   ├── api/
+│   │   ├── activity/route.ts    ← GitHub activity proxy (LiveActivityBar)
+│   │   ├── contact/route.ts     ← contact form (Resend)
+│   │   └── og/route.ts          ← Open Graph image generation
+│   └── work/[slug]/             ← case study MDX routes
+│       └── writing/             ← writing MDX routes
+│
+├── components/
+│   ├── cinematic/
+│   │   ├── ScrollCinemaProvider.tsx ← Lenis + GSAP ticker + activeChapter context
+│   │   ├── ThreeBrushField.tsx      ← WebGL atmospheric shader
+│   │   └── ChapterFrame.tsx         ← section wrapper (calls useChapterTimeline)
+│   ├── HeroSection.tsx          ← framer-motion hero (owns prologue ScrollTrigger)
+│   ├── ProjectsSection.tsx      ← proof chapter (ChapterFrame + noBorderTop)
+│   ├── TestimonialsSection.tsx  ← credibility chapter
+│   ├── OpenSourceSection.tsx    ← craft chapter
+│   ├── SkillsSection.tsx        ← range chapter
+│   ├── AboutSection.tsx         ← human chapter
+│   ├── WritingSection.tsx       ← judgment chapter
+│   ├── ContactSection.tsx       ← epilogue chapter
+│   ├── Navbar.tsx               ← useScrollCinema active dot
+│   ├── ScrollProgress.tsx       ← chapter-aware vertical rail
+│   └── ...
+│
+├── hooks/
+│   ├── useChapterTimeline.ts    ← GSAP ScrollTrigger per-section reveals
+│   ├── useMagnetic.ts           ← spring motion values for magnetic buttons
+│   ├── useSpotlight.ts          ← rAF-throttled cursor spotlight
+│   ├── useReducedMotion.ts      ← prefers-reduced-motion + motion tier
+│   └── ...
+│
+├── lib/
+│   ├── cinematic/
+│   │   └── chapters.ts          ← 8-chapter registry (canonical — do not modify)
+│   ├── motionVariants.ts        ← complete framer-motion vocabulary
+│   ├── portfolio-data.ts        ← PROFILE, HERO, CONVICTION_STATS (canonical)
+│   ├── projects.ts              ← PROJECTS (canonical)
+│   ├── data/
+│   │   ├── skills.ts            ← 62 skills, 8 pillars (canonical)
+│   │   └── blog-articles.ts     ← article metadata
+│   └── config.ts                ← CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl()
+│
+├── content/
+│   ├── writing/*.mdx            ← 6 technical posts
+│   └── work/*.mdx               ← case studies (TaxBridge, SabiScore, SwarmXQ...)
+│
+├── public/
+│   ├── cv/oscar-ndugbu-resume.pdf
+│   ├── headshot.webp
+│   └── images/
+│
+└── tests/ + e2e/                ← Playwright suites
 ```
 
-## Site sections
+---
 
-| #    | Section           | ID                     | What it proves                                             |
-| ---- | ----------------- | ---------------------- | ---------------------------------------------------------- |
-| 00   | Hero              | —                      | Positioning, conviction stats, proof carousel              |
-| 01   | Projects          | `section-projects`     | 4 case studies with arch decisions                         |
-| 01.5 | Production record | `section-testimonials` | Verified system outcomes (not unverified quotes)           |
-| 02   | Open Source       | `open-source`          | 4 production packages                                      |
-| 03   | Skills            | `skills`               | L1 trust layer + L2 lineage strip + full 62-skill explorer |
-| 04   | About             | `section-about`        | Operating context and credibility                          |
-| 05   | Writing           | `section-writing`      | 6 technical posts                                          |
-| 06   | Contact           | `section-contact`      | 3 engagement types + contact form                          |
+## Data layer — single source of truth
 
-## Data layer
+Each domain has exactly one canonical source. Never duplicate across files.
 
-Each domain has one canonical source. Do not duplicate across files.
+| Domain                       | Canonical source                                     |
+| ---------------------------- | ---------------------------------------------------- |
+| Projects                     | `lib/projects.ts`                                    |
+| Skills (62 skills)           | `lib/data/skills.ts`                                 |
+| Hero copy + CONVICTION_STATS | `lib/portfolio-data.ts`                              |
+| Production proof cards       | `components/TestimonialsSection.tsx` → `PROOF_CARDS` |
+| Chapter config               | `lib/cinematic/chapters.ts`                          |
+| Motion vocabulary            | `lib/motionVariants.ts`                              |
+| Writing posts                | `content/writing/*.mdx` via `lib/content.ts`         |
+| Config / URLs                | `lib/config.ts`                                      |
 
-| Domain                 | Canonical source                                     |
-| ---------------------- | ---------------------------------------------------- |
-| Projects               | `lib/projects.ts`                                    |
-| Skills                 | `lib/data/skills.ts`                                 |
-| Hero / Profile         | `lib/portfolio-data.ts`                              |
-| Production proof cards | `components/TestimonialsSection.tsx` → `PROOF_CARDS` |
-| Writing posts          | `content/writing/*.mdx` via `lib/content.ts`         |
-| Config / URLs          | `lib/config.ts`                                      |
+`lib/data.ts` is a **deprecated orphan** — not imported by anything. Do not import from it.
 
-`lib/data.ts` is a deprecated orphan from pre-v24. It is not imported by anything. Do not import from it. See the deprecation header in that file for canonical alternatives.
+---
 
-## Deployment (Vercel)
+## Testing strategy
 
-1. Push to `main` → Vercel auto-builds with `pnpm build`
-2. Verify production routes: `/`, `/work/[slug]`, `/writing`, `/api/og`
-3. Confirm resume download: `/cv/oscar-ndugbu-resume.pdf`
-4. Confirm Skills section at `/#skills` renders the L1 trust layer, L2 lineage strip, and all 8 explorer pillars
+### Playwright strict-mode + Suspense
 
-## Quality gates
+Sections use Next.js `<Suspense>` deferred loading. Skeletons render with `aria-busy="true"` and share the same section `id` as the real section.
 
-- Build passes: `pnpm build`
-- Type checks pass: `pnpm type-check`
-- Pre-commit smoke passes: `pnpm test:smoke`
-- Lint passes: `pnpm lint`
-- Smoke tests pass: `pnpm test:e2e`
-- Full Playwright suite passes: `pnpm test:all`
-- Metadata and OG routes resolve correctly
+```typescript
+// ✅ Target the loaded section only
+page.locator('section#section-writing[aria-labelledby="writing-heading"]')
 
-## Validation notes
+// ❌ Resolves to 2 elements during Suspense (skeleton + real)
+page.locator('#section-writing')
+```
 
-- If Playwright browsers are missing locally, install them with `pnpm exec playwright install chromium` before running Chromium smoke coverage.
-- `.husky/pre-commit` runs `lint-staged`, `pnpm run type-check`, and `pnpm run test:smoke`.
-- Root-level Playwright smoke specs under `e2e/` are included in the TypeScript project so `@/` aliases resolve during editor and CI checks.
-- The live activity feed is owned by `app/api/activity/route.ts`; it is no longer mirrored in `lib/portfolio-data.ts`.
-- Footer live status is driven by the `<SystemStatus labelMode="full" />` component — no hardcoded copy.
-- Skills bar fill animation is capped at 280ms (`--dur-slow`) to comply with the ≤300ms motion rule.
-- Recommended manual viewport QA targets after hero or layout changes: 320px, 360px, 390px, 768px, 1024px, 1280px, and 1536px.
-- For hero validation, verify four things together: no horizontal overflow, stable headline wrapping, proof carousel snap behavior, and right-rail dashboard density on large screens.
-- `pnpm build` is the required integration check for responsive changes because it catches both type/lint issues and App Router rendering regressions in one pass.
+### Suite breakdown
+
+| Suite        | Path                             | Speed | Covers                                    |
+| ------------ | -------------------------------- | ----- | ----------------------------------------- |
+| Smoke        | `e2e/smoke.spec.ts`              | ~45s  | Core journey, API health, mobile overflow |
+| V1 contract  | `tests/portfolio.spec.ts`        | ~90s  | Copy, flow hooks, a11y, trust signals     |
+| User journey | `tests/e2e/user-journey.spec.ts` | ~60s  | Full recruiter scroll journey             |
+| Mobile       | `--project=mobile-chrome`        | ~120s | Touch targets, carousel, viewport         |
+
+**Current status:** 82 passed · 2 skipped (command palette — intentional) · 0 failed.
+
+---
+
+## Quality gates — pre-deployment checklist
+
+Run these in order. Every gate must pass before merging or deploying.
+
+```bash
+# 1. Type safety
+pnpm type-check
+
+# 2. Lint
+pnpm lint
+
+# 3. Production build (catches App Router rendering regressions)
+pnpm build
+
+# 4. Playwright smoke (Chromium, built output)
+pnpm test:smoke
+
+# 5. Full suite
+pnpm test:all
+
+# 6. Lighthouse CI (requires build to be running)
+pnpm start &
+pnpm lhci
+```
+
+Lighthouse targets: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 100.
+
+---
+
+## Deployment
+
+### Vercel (recommended)
+
+```bash
+# 1. Connect the GitHub repo to a Vercel project (one-time)
+#    Settings → Framework: Next.js, Root Directory: ./, Build: pnpm build
+
+# 2. Set required environment variables in Vercel dashboard:
+RESEND_API_KEY=re_...           # contact form email delivery
+NEXT_PUBLIC_SITE_URL=https://scardubu.dev
+GITHUB_TOKEN=ghp_...            # optional — raises activity API rate limit
+
+# 3. Push to main → auto-deploy
+git push origin main
+
+# 4. Verify after deploy:
+open https://scardubu.dev                            # homepage
+open https://scardubu.dev/work/taxbridge             # case study
+open https://scardubu.dev/writing                    # writing index
+open https://scardubu.dev/api/og                     # OG image (200 OK)
+curl -I https://scardubu.dev/cv/oscar-ndugbu-resume.pdf  # 200 OK
+```
+
+### Manual / Netlify fallback
+
+```bash
+# Build
+pnpm build
+
+# Serve locally to verify
+pnpm start
+
+# Deploy via Netlify CLI
+netlify deploy --prod --dir=.next
+```
+
+`netlify.toml` is already configured in the repo for Netlify fallback.
+
+### Environment variables
+
+| Variable               | Required | Purpose                                             |
+| ---------------------- | -------- | --------------------------------------------------- |
+| `RESEND_API_KEY`       | Yes      | Contact form email delivery                         |
+| `NEXT_PUBLIC_SITE_URL` | Yes      | Canonical URL for metadata + OG                     |
+| `GITHUB_TOKEN`         | No       | Raises GitHub API rate limit for live activity feed |
+
+---
+
+## Responsive QA viewport targets
+
+After any hero or layout change, verify these breakpoints:
+
+```
+320px   — smallest phone (iPhone SE gen 1)
+360px   — standard Android
+390px   — iPhone 14 Pro
+768px   — iPad portrait
+1024px  — iPad landscape / small laptop
+1280px  — standard laptop
+1536px  — large desktop
+```
+
+For hero validation specifically, confirm four things together:
+1. No horizontal overflow
+2. Stable headline wrapping
+3. Proof carousel snap behavior
+4. Right-rail dashboard density on large screens
+
+---
+
+## Cinematic scroll acceptance criteria
+
+After the v1.1 patch, verify each of the following manually:
+
+**Smooth scroll**
+- Click any navbar link → Lenis glides to section (not instant jump)
+- Click hash link in hero CTAs → same cinematic glide
+
+**Chapter system**
+- Scroll down into Projects → progress rail shows "Proof" active
+- Scroll back up into hero → progress rail returns to "Prologue" active
+- Repeat for every chapter bidirectionally
+
+**WebGL canvas**
+- Scroll slowly from hero into Projects → no black flash on canvas
+- Continue through all 8 chapters → palette shifts smoothly with each
+
+**CSS cross-fade**
+- Observe scrollbar thumb colour while scrolling → it shifts through teal → mint → amber → sky → violet → gold → blue → green
+
+**Border continuity**
+- Inspect hero/projects boundary → no visible horizontal rule line
+
+**Accessibility**
+- Screen reader: chapter changes announce "Now viewing: [chapter label]"
+- Keyboard: Tab through entire page without getting stuck
+
+---
+
+## Section map
+
+| #    | Section      | ID                     | Chapter     | What it proves                                 |
+| ---- | ------------ | ---------------------- | ----------- | ---------------------------------------------- |
+| 00   | Hero         | —                      | prologue    | Positioning, conviction stats, proof carousel  |
+| 01   | Projects     | `section-projects`     | proof       | 4 case studies with arch decisions             |
+| 01.5 | Testimonials | `section-testimonials` | credibility | Verified system outcomes                       |
+| 02   | Open Source  | `open-source`          | craft       | 4 production packages                          |
+| 03   | Skills       | `skills`               | range       | L1 trust + L2 lineage + full 62-skill explorer |
+| 04   | About        | `section-about`        | human       | Operating context and credibility              |
+| 05   | Writing      | `section-writing`      | judgment    | 6 technical posts                              |
+| 06   | Contact      | `section-contact`      | epilogue    | 3 engagement types + contact form              |
+
+---
+
+## Performance notes
+
+- Image formats: AVIF + WebP via Next.js `images.formats` config
+- CSS optimisation: `experimental.optimizeCss: true` via `critters`
+- Font loading: `display: 'swap'` on all Google Fonts (Syne, DM Sans, JetBrains Mono, Playfair Display)
+- LazyMotion + domAnimations — framer-motion tree-shaken to animations-only bundle (~18kB)
+- ThreeBrushField: DPR capped at 1.5× to limit GPU pressure on high-res mobile screens
+- `mix-blend-mode: screen` on the WebGL canvas is disabled at < 640px (saves a GPU compositor pass per frame)
+
+---
 
 ## Contact
 
-**oscar@scardubu.dev** — response within 24 hours.
+**oscar@scardubu.dev** — response within 24 hours, usually faster.
 
 ---
 

@@ -440,6 +440,7 @@ export function ProjectsSection() {
       chapter={chapter}
       ariaLabelledBy="projects-heading"
       className="border-color-border section-deferred overflow-x-clip"
+      noBorderTop
     >
       <m.div>
         {/*

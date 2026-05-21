@@ -20,6 +20,28 @@
   initial-value: 0.6;
 }
 
+/* ── Chapter accent @property registrations ────────────────────────────────
+   Registering these as typed <color> properties enables browser-native CSS
+   interpolation when html[data-active-chapter] changes. Without @property,
+   custom property transitions snap instantly; with it the browser interpolates
+   smoothly via OKLCH. `inherits: true` propagates values to all consumers
+   (section transition gradients, scrollbar thumb, focus rings, etc.).       */
+@property --chapter-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #67e8f9;
+}
+@property --chapter-wash {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0c1320;
+}
+@property --chapter-ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #06070a;
+}
+
 @theme {
   /* ── Font family ──────────────────────────────────────────────────────── */
   --font-display: var(--font-syne), 'Syne', sans-serif;
@@ -109,8 +131,13 @@ html {
   scrollbar-gutter: stable;
 }
 * {
+  /* ENHANCEMENT 8: scrollbar thumb tracks active chapter accent colour.
+     color-mix() blends --chapter-accent at 30% opacity; the registered
+     @property transition above causes the thumb to cross-fade smoothly as
+     chapters change. Browsers that don't support color-mix() fall back to a
+     transparent thumb (scrollable but invisible) — not broken.              */
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 200, 232, 0.3) var(--color-space-black);
+  scrollbar-color: color-mix(in oklch, var(--chapter-accent) 30%, transparent) var(--color-space-black);
 }
 ::-webkit-scrollbar {
   width: 4px;
@@ -120,12 +147,48 @@ html {
   background: var(--color-space-black);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 200, 232, 0.25);
+  background: color-mix(in oklch, var(--chapter-accent) 25%, transparent);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 200, 232, 0.5);
+  background: color-mix(in oklch, var(--chapter-accent) 50%, transparent);
 }
+
+/* ── Chapter accent cross-fade ──────────────────────────────────────────────
+   When documentElement.dataset.activeChapter changes, these three CSS custom
+   properties transition smoothly over 0.65s using an expo-out ease. Any
+   surface that consumes them (section gradients, scrollbar, focus rings) will
+   cross-fade automatically — zero JS required.
+
+   The @property registrations above are required for this to work: browsers
+   cannot interpolate untyped custom properties.
+
+   prefers-reduced-motion: disables the transition entirely for users who
+   need it — the value snaps to the new colour instantly.                     */
+html {
+  --chapter-accent: #67e8f9;
+  --chapter-wash: #0c1320;
+  --chapter-ink: #06070a;
+  transition:
+    --chapter-accent 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    --chapter-wash   0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    --chapter-ink    0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+}
+
+html[data-active-chapter='prologue']    { --chapter-accent: #67e8f9; --chapter-wash: #0c1320; --chapter-ink: #06070a; }
+html[data-active-chapter='proof']       { --chapter-accent: #5eead4; --chapter-wash: #101825; --chapter-ink: #07080b; }
+html[data-active-chapter='credibility'] { --chapter-accent: #fbbf24; --chapter-wash: #161411; --chapter-ink: #090a0d; }
+html[data-active-chapter='craft']       { --chapter-accent: #38bdf8; --chapter-wash: #11192a; --chapter-ink: #07090c; }
+html[data-active-chapter='range']       { --chapter-accent: #c084fc; --chapter-wash: #171120; --chapter-ink: #07080b; }
+html[data-active-chapter='human']       { --chapter-accent: #fde68a; --chapter-wash: #20170f; --chapter-ink: #0a0807; }
+html[data-active-chapter='judgment']    { --chapter-accent: #93c5fd; --chapter-wash: #101624; --chapter-ink: #08090c; }
+html[data-active-chapter='epilogue']    { --chapter-accent: #34d399; --chapter-wash: #07110e; --chapter-ink: #06070a; }
 
 /* ════ :root DESIGN TOKENS — v18 ════ */
 :root {

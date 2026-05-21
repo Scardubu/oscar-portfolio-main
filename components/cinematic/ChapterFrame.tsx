@@ -13,6 +13,11 @@ type ChapterFrameProps = {
   ariaLabelledBy?: string;
   className?: string;
   contentClassName?: string;
+  // ENHANCEMENT 4: opt-out of the default top border.
+  // Used by the first ChapterFrame below the hero (ProjectsSection) so the
+  // atmospheric brush field flows continuously from hero into projects without
+  // a hard horizontal rule cutting across the canvas.
+  noBorderTop?: boolean;
 };
 
 function ChapterTransition({ chapter }: { chapter: ChapterConfig }) {
@@ -42,6 +47,7 @@ export function ChapterFrame({
   ariaLabelledBy,
   className,
   contentClassName,
+  noBorderTop = false,
 }: Readonly<ChapterFrameProps>) {
   const ref = useRef<HTMLElement>(null);
 
@@ -55,7 +61,14 @@ export function ChapterFrame({
       data-chapter-mood={chapter.mood}
       data-chapter-transition={chapter.transition}
       aria-labelledby={ariaLabelledBy}
-      className={clsx('relative border-t py-[var(--section-py)]', className)}
+      className={clsx(
+        'relative py-[var(--section-py)]',
+        // Apply the default top border only when noBorderTop is false.
+        // All sections except ProjectsSection retain this border for the
+        // subtle inter-chapter visual rhythm it provides.
+        !noBorderTop && 'border-t',
+        className
+      )}
       // eslint-disable-next-line no-restricted-syntax
       style={
         {

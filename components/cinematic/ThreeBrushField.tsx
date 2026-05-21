@@ -116,6 +116,19 @@ export function ThreeBrushField() {
     uWash: { value: THREE.Color };
   } | null>(null);
 
+  // FIX BUG 2 (main effect): dependency array is now `[reducedMotion]` only.
+  //
+  // Previously `activeChapter` was included here, causing React to destroy and
+  // recreate the entire WebGL renderer, scene, geometry, material, and RAF loop
+  // on every chapter change — producing a visible black-flash on the canvas.
+  //
+  // The palette update is handled in the separate effect below, which fires on
+  // `activeChapter` changes and imperatively mutates the existing uniforms.
+  // The RAF loop picks them up on the next tick — zero context churn.
+  //
+  // `scrollProgressRef` is a React ref (MutableRefObject). Its `.current` is
+  // read inside the RAF callback; the ref identity never changes and must NOT
+  // appear in any effect's dependency array.
   useEffect(() => {
     if (reducedMotion) return;
 
@@ -193,7 +206,9 @@ export function ThreeBrushField() {
       );
     };
 
-    const setChapterPalette = () => {
+    // Set initial palette from the current chapter at mount time.
+    // Subsequent chapter changes are handled by the palette effect below.
+    const setInitialPalette = () => {
       const chapter = CHAPTERS.find((item) => item.id === activeChapter) ?? CHAPTERS[0];
       uniforms.uAccent.value.set(chapter.colors.accent);
       uniforms.uWash.value.set(chapter.colors.wash);
@@ -216,7 +231,7 @@ export function ThreeBrushField() {
       frameRef.current = window.requestAnimationFrame(render);
     };
 
-    setChapterPalette();
+    setInitialPalette();
     resize();
     startTimeRef.current = performance.now();
     render();
@@ -241,8 +256,12 @@ export function ThreeBrushField() {
       rendererRef.current = null;
       uniformsRef.current = null;
     };
-  }, [activeChapter, reducedMotion, scrollProgressRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reducedMotion]); // activeChapter intentionally excluded — see comment above
 
+  // FIX BUG 2 (palette effect): fires only on chapter change, imperatively
+  // mutates existing uniform values. The renderer and RAF loop continue
+  // uninterrupted — zero WebGL context destruction on chapter transitions.
   useEffect(() => {
     const uniforms = uniformsRef.current;
     if (!uniforms) return;
@@ -258,9 +277,14 @@ export function ThreeBrushField() {
   }
 
   return (
+    // ENHANCEMENT 7: `mix-blend-mode: screen` is applied only on sm+ (≥640px).
+    // On mobile the GPU must composite the canvas against every layer on every
+    // frame; disabling the blend mode there drops it to a free compositor
+    // no-op and eliminates scroll jank on low-power devices. The atmospheric
+    // effect remains visible on mobile — it just doesn't carry the blend cost.
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-[1] overflow-hidden opacity-90 [mix-blend-mode:screen]"
+      className="pointer-events-none fixed inset-0 -z-[1] overflow-hidden opacity-90 sm:[mix-blend-mode:screen]"
     >
       <canvas ref={canvasRef} className="h-full w-full" />
     </div>

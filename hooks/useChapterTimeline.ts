@@ -15,6 +15,12 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
   const { reducedMotion, setActiveChapter } = useScrollCinema();
 
   useLayoutEffect(() => {
+    // ENHANCEMENT 10: Defensive SSR guard. useLayoutEffect already only runs
+    // client-side, but this explicit check prevents Next.js RSC static analysis
+    // from emitting warnings when browser globals like window.matchMedia are
+    // encountered while analysing the client module dependency graph.
+    if (typeof window === 'undefined') return;
+
     const root = rootRef.current;
     if (!root) return;
 

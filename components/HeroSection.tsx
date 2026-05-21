@@ -4,6 +4,8 @@
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -309,7 +311,29 @@ function ConvictionStat({
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const { scrollToSection } = useScrollCinema();
+  const { scrollToSection, setActiveChapter } = useScrollCinema();
+
+  // BUG FIX 3: heroRef + ScrollTrigger that re-activates 'prologue' when the
+  // user scrolls back up into the hero. HeroSection is a bare <m.section> —
+  // not wrapped in ChapterFrame — so useChapterTimeline is never called here.
+  // Without this, activeChapter stays on the last chapter after scrolling down
+  // and the navbar dot / brush field palette remain wrong on scroll-back.
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const el = heroRef.current;
+    if (!el) return;
+
+    const st = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 60%',
+      onEnter: () => setActiveChapter('prologue'),
+      onEnterBack: () => setActiveChapter('prologue'),
+    });
+
+    return () => st.kill();
+  }, [setActiveChapter]);
 
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
@@ -349,6 +373,7 @@ export function HeroSection() {
 
   return (
     <m.section
+      ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
       className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-hidden pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center"

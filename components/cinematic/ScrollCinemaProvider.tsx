@@ -16,6 +16,7 @@ import {
 } from 'react';
 
 import type { ChapterId } from '@/lib/cinematic/chapters';
+import { CHAPTERS } from '@/lib/cinematic/chapters';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -72,7 +73,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
           return;
         }
 
-        lenisRef.current.scrollTo(el, { offset: -88, immediate: true });
+        // FIX BUG 1: removed `immediate: true` — that flag bypasses Lenis's
+        // lerp interpolation and produces an instant jump instead of the
+        // cinematic glide the design requires.
+        lenisRef.current.scrollTo(el, { offset: -88 });
       };
 
       tryScroll(0);
@@ -160,9 +164,12 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     lenisRef.current = lenis;
 
+    // FIX ENHANCEMENT 8: removed the `ScrollTrigger.update()` call from
+    // this handler. GSAP's ticker.add(raf) already drives ScrollTrigger
+    // internally — calling update() here caused double-processing per frame
+    // and introduced subtle animation stutter on pinned sections.
     const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
       scrollProgressRef.current = limit > 0 ? scroll / limit : 0;
-      ScrollTrigger.update();
     };
 
     lenis.on('scroll', onScroll);
@@ -215,5 +222,23 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
   );
 
-  return <ScrollCinemaContext.Provider value={value}>{children}</ScrollCinemaContext.Provider>;
+  // ENHANCEMENT 9: visually hidden aria-live region that announces the active
+  // chapter label to screen readers each time the chapter changes. aria-live
+  // "polite" waits for the current utterance to finish before announcing —
+  // appropriate for ambient scroll navigation context.
+  const chapterLabel = CHAPTERS.find((c) => c.id === activeChapter)?.label ?? '';
+
+  return (
+    <ScrollCinemaContext.Provider value={value}>
+      {children}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {`Now viewing: ${chapterLabel}`}
+      </div>
+    </ScrollCinemaContext.Provider>
+  );
 }
