@@ -399,6 +399,26 @@ export const mobileMenuItems = (stagger = 0.06): Variants => ({
 
 /* ═══════════ FILTER TRANSITIONS ════════════════════════════════════════ */
 
+/**
+ * filterTransition — VARIANTS object for filter-driven list transitions.
+ *
+ * ⚠️  THIS IS A `Variants` OBJECT — NOT A `Transition` CONFIG.
+ *
+ * CORRECT usage (as `variants` prop on `m.` elements):
+ *   <m.div variants={filterTransition} initial="hidden" animate="visible" exit="exit">
+ *
+ * WRONG usage (as `transition` prop — causes runtime TypeError):
+ *   <m.div transition={filterTransition}>   ← CRASHES: "can't access property opacity of undefined"
+ *
+ * When you need a `transition` prop for a filter grid swap, use an inline
+ * Transition config instead:
+ *   transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+ * or use springs.snappy directly:
+ *   transition={springs.snappy}
+ *
+ * The naming is kept for backward-compat with WritingSection (correct consumer).
+ * Do not rename — just read this comment before reaching for it.
+ */
 export const filterTransition: Variants = {
   hidden: { opacity: 0, y: 8 },
   visible: { opacity: 1, y: 0, transition: springs.snappy },
