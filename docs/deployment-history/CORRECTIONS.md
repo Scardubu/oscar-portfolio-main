@@ -2,6 +2,17 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-21 — Cinematic Homepage Integration hardening
+
+- Finalized chapter-wrapper migration for homepage sections (`Projects`, `Open Source`, `Skills`, `About`, `Writing`, `Contact`) and removed JSX structural regressions introduced during wrapper conversion.
+- Canonicalized cinematic provider usage by collapsing legacy `lib/cinematic/ScrollCinemaProvider.tsx` into a compatibility re-export that points at `components/cinematic/ScrollCinemaProvider.tsx`.
+- Completed cinematic semantics pass using `data-cinematic` markers across chapter content blocks (`eyebrow`, `title`, `lede`, `panel`, `card`, `proof`, `cta`, `media`) to align timeline orchestration.
+- Fixed `HeroSection` counter animation effect dependency handling to prevent stale closure behavior when stat values update.
+- Removed redundant ARIA role attributes from native footer lists to reduce accessibility noise while preserving behavior.
+- Replaced deprecated `THREE.Clock` usage in `ThreeBrushField` with `performance.now()` elapsed-time tracking to eliminate build-time deprecation warnings.
+- Retained justified dynamic inline styles with explicit lint suppression comments in cinematic and navigation surfaces where runtime color data cannot be represented as static Tailwind classes.
+- Validation: `pnpm run type-check` passes and `pnpm run build` passes on Next.js 15.5.10.
+
 ## 2026-05-18 — Conviction Engine V1.0 major reset
 
 - Standardized Conviction Engine headers and version identity to `V1.0` across active TS/TSX/CSS/config surfaces.

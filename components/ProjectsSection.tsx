@@ -2,22 +2,23 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
-import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { ArchDecision } from '@/components/ArchDecision';
+import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import {
-    accordionReveal,
-    cardReveal,
-    clipReveal,
-    fadeRise,
-    hoverLift,
-    hoverNudgeX,
-    noMotion,
-    staggerContainer,
+  accordionReveal,
+  cardReveal,
+  clipReveal,
+  fadeRise,
+  hoverLift,
+  hoverNudgeX,
+  noMotion,
 } from '@/lib/motionVariants';
 import { PROJECTS, type Project } from '@/lib/projects';
 
@@ -75,6 +76,7 @@ function FeaturedProjectCard({
     <m.article
       variants={FEATURED_PRIMARY_VARIANT}
       className="glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
+      data-cinematic="proof"
       data-project-id={featured.slug}
     >
       <div className="px-4 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
@@ -218,12 +220,9 @@ function SecondaryFeaturedCard({
     <m.article
       variants={FEATURED_SECONDARY_VARIANT}
       className="glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
+      data-cinematic="card"
       data-project-id={project.slug}
-      whileHover={
-        reducedMotion
-          ? undefined
-          : hoverLift(-3)
-      }
+      whileHover={reducedMotion ? undefined : hoverLift(-3)}
     >
       <div className="flex-1 px-4 pt-5 sm:px-6 sm:pt-6">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -343,12 +342,9 @@ function ProjectCard({
     <m.article
       variants={variant}
       className="glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
+      data-cinematic="card"
       data-project-id={project.slug}
-      whileHover={
-        reducedMotion
-          ? undefined
-          : hoverLift(-4)
-      }
+      whileHover={reducedMotion ? undefined : hoverLift(-4)}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
         <span className="label-mono">{project.type}</span>
@@ -430,11 +426,9 @@ function ProjectCard({
 
 /* ── Section export ───────────────────────────────────────────────────────── */
 export function ProjectsSection() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
+  const chapter = getChapterBySectionId('section-projects');
 
-  const container = useMemo(() => staggerContainer(0.09, 0.05), []);
   const child = reducedMotion ? noMotion : fadeRise;
 
   const primaryFeatured = PROJECTS.find((p) => p.featured) ?? PROJECTS[0];
@@ -442,95 +436,100 @@ export function ProjectsSection() {
   const gridProjects = PROJECTS.filter((p) => !p.featured);
 
   return (
-    <section
-      id="section-projects"
-      ref={ref}
-      aria-labelledby="projects-heading"
-      className="border-color-border section-deferred overflow-x-clip border-t py-[var(--section-py)]"
+    <ChapterFrame
+      chapter={chapter}
+      ariaLabelledBy="projects-heading"
+      className="border-color-border section-deferred overflow-x-clip"
     >
-      <div className="container">
-        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          {/*
+      <m.div>
+        {/*
             v25 CHANGE: Editorial intro — section-intro-editorial (layout.css).
             Mobile: kicker, h2, and description stack vertically (unchanged).
             lg+: kicker+h2 anchor the left column; description sits right with
               editorial alignment — richer desktop composition, not blown-up mobile.
           */}
-          <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-14">
-            {/* Left: kicker + heading */}
-            <div>
-              <div className="section-kicker-row mb-4">
-                <span className="section-number" aria-hidden="true">
-                  01
-                </span>
-                <span className="section-label">Projects</span>
-              </div>
-              <m.h2 variants={reducedMotion ? child : clipReveal} id="projects-heading">
-                Built to survive <br className="hidden lg:block" />
-                real constraints.
-              </m.h2>
+        <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-14">
+          {/* Left: kicker + heading */}
+          <div>
+            <div data-cinematic="eyebrow" className="section-kicker-row mb-4">
+              <span className="section-number" aria-hidden="true">
+                01
+              </span>
+              <span className="section-label">Projects</span>
             </div>
-
-            {/* Right: description — editorial counterweight at lg+ */}
-            <div className="lg:flex lg:flex-col lg:justify-end">
-              <p className="text-color-text-secondary max-w-[56ch] text-sm leading-8 sm:text-base">
-                4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML
-                inference. AI agents that improve themselves between runs. All of it shipped from
-                Lagos. All of it running in production.
-              </p>
-            </div>
-          </m.div>
-
-          {/* Primary featured */}
-          <FeaturedProjectCard featured={primaryFeatured} reducedMotion={reducedMotion ?? false} />
-
-          {/* Secondary featured — 2-col on md+ */}
-          {secondaryFeatured.length > 0 && (
-            <div className="secondary-featured-grid mb-5 grid gap-4 md:grid-cols-2">
-              {secondaryFeatured.map((project) => (
-                <SecondaryFeaturedCard
-                  key={project.slug}
-                  project={project}
-                  reducedMotion={reducedMotion ?? false}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Non-featured grid */}
-          {gridProjects.length > 0 && (
-            <div
-              className={
-                gridProjects.length === 1
-                  ? 'projects-grid grid gap-4'
-                  : 'projects-grid grid gap-4 sm:grid-cols-2'
-              }
+            <m.h2
+              variants={reducedMotion ? child : clipReveal}
+              id="projects-heading"
+              data-cinematic="title"
             >
-              {gridProjects.map((project, i) => (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  variant={i % 2 === 0 ? GRID_VARIANT_A : GRID_VARIANT_B}
-                  reducedMotion={reducedMotion ?? false}
-                />
-              ))}
-            </div>
-          )}
+              Built to survive <br className="hidden lg:block" />
+              real constraints.
+            </m.h2>
+          </div>
 
-          {/* Flow hook — V1.0 Change 6a: §Flow Mechanics §Projects */}
-          <m.p
-            variants={child}
-            className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
-          >
-            <Link
-              href={anchorUrl('section-testimonials')}
-              className="transition-opacity hover:opacity-80"
+          {/* Right: description — editorial counterweight at lg+ */}
+          <div className="lg:flex lg:flex-col lg:justify-end">
+            <p
+              data-cinematic="lede"
+              className="text-color-text-secondary max-w-[56ch] text-sm leading-8 sm:text-base"
             >
-              How these systems perform in production →
-            </Link>
-          </m.p>
+              4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML
+              inference. AI agents that improve themselves between runs. All of it shipped from
+              Lagos. All of it running in production.
+            </p>
+          </div>
         </m.div>
-      </div>
-    </section>
+
+        {/* Primary featured */}
+        <FeaturedProjectCard featured={primaryFeatured} reducedMotion={reducedMotion ?? false} />
+
+        {/* Secondary featured — 2-col on md+ */}
+        {secondaryFeatured.length > 0 && (
+          <div className="secondary-featured-grid mb-5 grid gap-4 md:grid-cols-2">
+            {secondaryFeatured.map((project) => (
+              <SecondaryFeaturedCard
+                key={project.slug}
+                project={project}
+                reducedMotion={reducedMotion ?? false}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Non-featured grid */}
+        {gridProjects.length > 0 && (
+          <div
+            className={
+              gridProjects.length === 1
+                ? 'projects-grid grid gap-4'
+                : 'projects-grid grid gap-4 sm:grid-cols-2'
+            }
+          >
+            {gridProjects.map((project, i) => (
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                variant={i % 2 === 0 ? GRID_VARIANT_A : GRID_VARIANT_B}
+                reducedMotion={reducedMotion ?? false}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Flow hook — V1.0 Change 6a: §Flow Mechanics §Projects */}
+        <m.p
+          variants={child}
+          data-cinematic="cta"
+          className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+        >
+          <Link
+            href={anchorUrl('section-testimonials')}
+            className="transition-opacity hover:opacity-80"
+          >
+            How these systems perform in production →
+          </Link>
+        </m.p>
+      </m.div>
+    </ChapterFrame>
   );
 }

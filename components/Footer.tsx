@@ -84,9 +84,9 @@ export function Footer() {
             Navigation
           </p>
 
-          <ul className="flex flex-col gap-1" role="list">
+          <ul className="flex flex-col gap-1">
             {NAV_LINKS.map(({ label, href }) => (
-              <li key={href} role="listitem">
+              <li key={href}>
                 <a
                   href={href}
                   className="group text-color-text-secondary inline-flex min-h-11 items-center text-sm transition-colors duration-200 hover:translate-x-1 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--color-film-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
@@ -111,9 +111,9 @@ export function Footer() {
               Connect
             </p>
 
-            <ul className="flex flex-col gap-1" role="list">
+            <ul className="flex flex-col gap-1">
               {SOCIAL_LINKS.map(({ label, href, external }) => (
-                <li key={href} role="listitem">
+                <li key={href}>
                   <a
                     href={href}
                     target={external ? '_blank' : undefined}
@@ -125,7 +125,7 @@ export function Footer() {
                 </li>
               ))}
 
-              <li role="listitem">
+              <li>
                 <a
                   href={CV_ASSET_PATH}
                   download

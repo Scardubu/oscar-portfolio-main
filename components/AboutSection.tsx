@@ -2,13 +2,14 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
-import { m, useInView, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
 
+import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
-import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { cardReveal, clipReveal, fadeRise, noMotion } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
 function formatAvailabilityMonthYear(isoDate: string): string {
@@ -75,32 +76,24 @@ const PROVIDER_STYLES: Record<string, { bg: string; color: string; border: strin
 };
 
 export function AboutSection() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
+  const chapter = getChapterBySectionId('section-about');
 
-  const containerVariants = staggerContainer(0.09, 0.05);
   const itemVariants = reducedMotion ? noMotion : fadeRise;
   const headingVariant = reducedMotion ? noMotion : clipReveal;
   const cardVariant = reducedMotion ? noMotion : cardReveal(16);
 
   return (
-    <section
-      id="section-about"
-      ref={ref}
-      aria-labelledby="about-heading"
-      className="border-color-border border-t py-[var(--section-py)]"
-    >
-      <div className="container">
-        <m.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start"
-        >
+    <ChapterFrame chapter={chapter} ariaLabelledBy="about-heading" className="border-color-border">
+      <div>
+        <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start">
           {/* ── LEFT COLUMN — narrative ─────────────────────────────────── */}
           <div>
-            <m.div variants={itemVariants} className="section-kicker-row mb-[var(--space-2)]">
+            <m.div
+              variants={itemVariants}
+              data-cinematic="eyebrow"
+              className="section-kicker-row mb-[var(--space-2)]"
+            >
               <span className="section-number" aria-hidden="true">
                 04
               </span>
@@ -116,6 +109,7 @@ export function AboutSection() {
             <m.h2
               variants={headingVariant}
               id="about-heading"
+              data-cinematic="title"
               className="text-color-text-primary mt-4"
             >
               Federal scale. <br className="hidden sm:block" />
@@ -132,6 +126,7 @@ export function AboutSection() {
                 (Dual Conviction Test · Three-Layer Audience Depth: spec §III) */}
             <m.p
               variants={itemVariants}
+              data-cinematic="lede"
               className="text-color-text-secondary mt-3 max-w-[44ch] text-lg leading-relaxed"
             >
               Built the digital learning infrastructure for 40 million Nigerian students at UBEC
@@ -141,6 +136,7 @@ export function AboutSection() {
             {/* Impact stat strip — outcome numbers before narrative */}
             <m.div
               variants={itemVariants}
+              data-cinematic="proof"
               className="border-color-border-subtle mt-7 flex flex-wrap gap-x-8 gap-y-4 border-t border-b py-5"
               aria-label="Impact stats"
             >
@@ -196,6 +192,7 @@ export function AboutSection() {
             {/* Stack strip */}
             <m.div
               variants={itemVariants}
+              data-cinematic="panel"
               className="mt-7 flex flex-wrap gap-2"
               aria-label="Technology stack"
             >
@@ -222,6 +219,7 @@ export function AboutSection() {
             {/* Constraint Code — non-negotiable engineering standards as active declarations */}
             <m.div
               variants={cardVariant}
+              data-cinematic="panel"
               className="glass-surface border-l-color-film-teal mt-8 rounded-[var(--radius-lg)] border-l-2 p-5 sm:p-6"
             >
               <p className="text-color-film-teal mb-2 font-mono text-[10px] font-semibold tracking-widest uppercase">
@@ -276,6 +274,7 @@ export function AboutSection() {
             {/* Headshot — desktop only; hero handles mobile */}
             <m.div
               variants={itemVariants}
+              data-cinematic="media"
               className="mb-6 hidden flex-col items-center gap-3 lg:flex"
             >
               <m.div
@@ -311,7 +310,7 @@ export function AboutSection() {
             </m.div>
 
             {/* Availability chip — links to contact */}
-            <m.div variants={itemVariants} className="mb-6">
+            <m.div variants={itemVariants} data-cinematic="cta" className="mb-6">
               <a
                 href={anchorUrl('section-contact')}
                 className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
@@ -347,6 +346,7 @@ export function AboutSection() {
                   <m.article
                     key={cert.name}
                     variants={cardVariant}
+                    data-cinematic="card"
                     className="glass-surface border-l-color-film-teal min-h-[56px] rounded-[var(--radius-md)] border-l-2 p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -373,6 +373,7 @@ export function AboutSection() {
             {/* Quick facts grid */}
             <m.div
               variants={itemVariants}
+              data-cinematic="proof"
               className="mt-6 grid grid-cols-3 gap-3"
               aria-label="Quick facts"
             >
@@ -389,11 +390,12 @@ export function AboutSection() {
               ))}
             </m.div>
           </aside>
-        </m.div>
+        </div>
 
         {/* Flow hook — V1.0 Change 6d: §Flow Mechanics §About */}
         <m.p
           variants={itemVariants}
+          data-cinematic="cta"
           className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
         >
           <Link href={anchorUrl('section-writing')} className="transition-opacity hover:opacity-80">
@@ -401,6 +403,6 @@ export function AboutSection() {
           </Link>
         </m.p>
       </div>
-    </section>
+    </ChapterFrame>
   );
 }

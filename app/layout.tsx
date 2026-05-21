@@ -29,13 +29,14 @@ import type { Metadata, Viewport } from 'next';
 import { DM_Sans, JetBrains_Mono, Playfair_Display, Syne } from 'next/font/google';
 
 import { Providers } from '@/app/providers';
-import CursorGlow from '@/components/CursorGlow';
 import { CommandPalette } from '@/components/CommandPalette';
+import CursorGlow from '@/components/CursorGlow';
 import { Footer } from '@/components/Footer';
-import { GradientMesh } from '@/components/GradientMesh';
+
 import { GrainOverlay } from '@/components/GrainOverlay';
 import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
+import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
 import './globals.css';
 
@@ -272,18 +273,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Providers>
           <CursorGlow />
           <GrainOverlay />
-          <GradientMesh />
           <ScrollProgress />
+          <ThreeBrushField />
           <Navbar />
           <CommandPalette />
-          {/*
-            ── Stacking context ────────────────────────────────────────
-            `isolate` creates a new stacking context for z-index.
-            NavBar, Footer, ScrollProgress are siblings (outside this div)
-            so position:fixed elements in those are NOT affected.
-            Content inside this div is correctly isolated from NavBar
-            z-index competition.
-          */}
           <div className="relative isolate z-[2]">{children}</div>
           <Footer />
         </Providers>

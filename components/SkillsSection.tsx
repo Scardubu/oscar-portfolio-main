@@ -19,14 +19,16 @@
 //   SYSTEM_LINEAGE              →  lib/data/skills.ts (L2 provenance)
 //   SkillsMap                   →  components/skills/SkillsMap.tsx (L3)
 
-import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { SkillsMap } from '@/components/skills/SkillsMap';
+import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import { getCoreProductionSkills, SYSTEM_LINEAGE } from '@/lib/data/skills';
-import { clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { clipReveal, fadeRise, noMotion } from '@/lib/motionVariants';
 import type { SkillLevel, SkillNode } from '@/lib/types';
 
 // ── Level display config ──────────────────────────────────────────────────────
@@ -116,6 +118,7 @@ function CoreSkillCard({
 
   return (
     <div
+      data-cinematic="card"
       className="glass-surface flex h-full min-w-0 flex-col gap-2 rounded-[var(--radius-md)] p-3"
       // eslint-disable-next-line no-restricted-syntax
       style={{ borderTop: `2px solid ${lvl.color}30` }}
@@ -184,7 +187,10 @@ function SystemLineageRow({
   skills: SkillNode[];
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+    <div
+      data-cinematic="panel"
+      className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3"
+    >
       <span
         className="shrink-0 font-mono text-[9px] font-semibold tracking-widest uppercase sm:w-[5.5rem] sm:pt-0.5"
         // eslint-disable-next-line no-restricted-syntax
@@ -208,15 +214,11 @@ function SystemLineageRow({
 
 // ── Main section ──────────────────────────────────────────────────────────────
 export function SkillsSection() {
-  const ref = useRef<HTMLElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-  const cardsInView = useInView(cardsRef, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion() ?? false;
+  const chapter = getChapterBySectionId('skills');
   const [coreVisibleCount, setCoreVisibleCount] = useState(MOBILE_CORE_COUNT);
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
   const child = reducedMotion ? noMotion : fadeRise;
-  const container = staggerContainer(0.07, 0.05);
   const coreSkills = getCoreProductionSkills();
   const visibleCoreSkills = coreSkills.slice(0, coreVisibleCount);
   const hiddenCoreSkillCount = coreSkills.length - visibleCoreSkills.length;
@@ -232,126 +234,124 @@ export function SkillsSection() {
   }, []);
 
   return (
-    <section
-      id="skills"
-      ref={ref}
-      aria-labelledby="skills-heading"
-      className="border-color-border border-t py-[var(--section-py)]"
-    >
-      <div className="container">
-        <m.div initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={container}>
-          {/* ── L1: Header ─────────────────────────────────────────────── */}
-          <m.div variants={child} className="mb-10 sm:mb-12">
-            <div className="section-intro-editorial mb-6 sm:mb-8">
-              <div>
-                <div className="section-kicker-row mb-[var(--space-2)]">
-                  <span className="section-number" aria-hidden="true">
-                    03
-                  </span>
-                  <span className="section-label">SKILLS</span>
-                </div>
-
-                <m.h2
-                  variants={reducedMotion ? child : clipReveal}
-                  id="skills-heading"
-                  className="text-color-text-primary mt-3 max-w-[22ch]"
-                >
-                  The stack behind systems that hold.
-                </m.h2>
+    <ChapterFrame chapter={chapter} ariaLabelledBy="skills-heading" className="border-color-border">
+      <div>
+        {/* ── L1: Header ─────────────────────────────────────────────── */}
+        <m.div variants={child} className="mb-10 sm:mb-12">
+          <div className="section-intro-editorial mb-6 sm:mb-8">
+            <div>
+              <div data-cinematic="eyebrow" className="section-kicker-row mb-[var(--space-2)]">
+                <span className="section-number" aria-hidden="true">
+                  03
+                </span>
+                <span className="section-label">SKILLS</span>
               </div>
 
-              <div className="lg:flex lg:flex-col lg:justify-end">
-                <p className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 [overflow-wrap:break-word] sm:text-base lg:mt-0">
-                  62 tools deployed under NRS audit pressure, 99.9%+ uptime targets, and
-                  multi-tenant compliance constraints. Every skill maps to a decision made in
-                  production — not a tutorial, not a certification exercise, not a side project.
+              <m.h2
+                variants={reducedMotion ? child : clipReveal}
+                id="skills-heading"
+                data-cinematic="title"
+                className="text-color-text-primary mt-3 max-w-[22ch]"
+              >
+                The stack behind systems that hold.
+              </m.h2>
+            </div>
+
+            <div className="lg:flex lg:flex-col lg:justify-end">
+              <p
+                data-cinematic="lede"
+                className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 [overflow-wrap:break-word] sm:text-base lg:mt-0"
+              >
+                62 tools deployed under NRS audit pressure, 99.9%+ uptime targets, and multi-tenant
+                compliance constraints. Every skill maps to a decision made in production — not a
+                tutorial, not a certification exercise, not a side project.
+              </p>
+            </div>
+          </div>
+
+          {/* L1: Outcome-first trust metrics */}
+          <div
+            data-cinematic="proof"
+            className="mt-6 grid gap-3 sm:grid-cols-3"
+            aria-label="System outcomes linked to skills"
+          >
+            {TRUST_METRICS.map(({ value, label, sub, color, borderColor }) => (
+              <div
+                key={label}
+                className="border-color-border rounded-[var(--radius-md)] border bg-[oklch(100%_0_0_/_0.02)] p-4"
+                // eslint-disable-next-line no-restricted-syntax
+                style={{
+                  borderTop: `2px solid ${borderColor}`,
+                }}
+              >
+                <p
+                  className="font-mono text-sm font-semibold"
+                  // eslint-disable-next-line no-restricted-syntax
+                  style={{ color }}
+                >
+                  {value}
+                </p>
+                <p className="text-color-text-primary mt-0.5 text-xs font-medium">{label}</p>
+                <p className="text-color-text-muted mt-1 font-mono text-[9px] tracking-wide">
+                  {sub}
                 </p>
               </div>
-            </div>
-
-            {/* L1: Outcome-first trust metrics */}
-            <div
-              className="mt-6 grid gap-3 sm:grid-cols-3"
-              aria-label="System outcomes linked to skills"
-            >
-              {TRUST_METRICS.map(({ value, label, sub, color, borderColor }) => (
-                <div
-                  key={label}
-                  className="border-color-border rounded-[var(--radius-md)] border bg-[oklch(100%_0_0_/_0.02)] p-4"
-                  // eslint-disable-next-line no-restricted-syntax
-                  style={{
-                    borderTop: `2px solid ${borderColor}`,
-                  }}
-                >
-                  <p
-                    className="font-mono text-sm font-semibold"
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{ color }}
-                  >
-                    {value}
-                  </p>
-                  <p className="text-color-text-primary mt-0.5 text-xs font-medium">{label}</p>
-                  <p className="text-color-text-muted mt-1 font-mono text-[9px] tracking-wide">
-                    {sub}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </m.div>
-
-          {/* ── L1: Core skills grid — 12 canonical production skills ─── */}
-          <m.div variants={child} className="mb-3">
-            <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
-              Core production stack
-            </p>
-            <p className="text-color-text-muted max-w-[60ch] text-xs leading-6 sm:text-sm">
-              Default view is intentionally curated for fast trust. Open the full explorer only when
-              you want deep implementation coverage across all {TOTAL_SKILL_COUNT} tools.
-            </p>
-          </m.div>
-
-          <m.div
-            ref={cardsRef}
-            variants={child}
-            className="mb-10 grid grid-cols-2 gap-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
-            aria-label="Core production skills — top 12"
-            role="list"
-          >
-            {visibleCoreSkills.map((skill, idx) => (
-              <div key={skill.id} role="listitem">
-                <CoreSkillCard
-                  skill={skill}
-                  index={idx}
-                  reducedMotion={reducedMotion}
-                  shouldAnimate={cardsInView}
-                />
-              </div>
             ))}
-          </m.div>
+          </div>
+        </m.div>
 
-          {hiddenCoreSkillCount > 0 ? (
-            <m.p
-              variants={child}
-              className="text-color-text-muted mb-10 font-mono text-[11px] tracking-wider"
-            >
-              +{hiddenCoreSkillCount} more in the full explorer below.
-            </m.p>
-          ) : null}
+        {/* ── L1: Core skills grid — 12 canonical production skills ─── */}
+        <m.div variants={child} className="mb-3">
+          <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
+            Core production stack
+          </p>
+          <p className="text-color-text-muted max-w-[60ch] text-xs leading-6 sm:text-sm">
+            Default view is intentionally curated for fast trust. Open the full explorer only when
+            you want deep implementation coverage across all {TOTAL_SKILL_COUNT} tools.
+          </p>
+        </m.div>
 
-          {/* ── L2: System lineage strip — always visible ─────────────── */}
-          <m.div variants={child} className="mb-12">
-            <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
-              Production system × skill lineage
-            </p>
-            <div
-              className="border-color-border space-y-3 rounded-[var(--radius-lg)] border bg-[oklch(100%_0_0_/_0.015)] p-4 sm:p-5"
-              aria-label="Which skills power each live production system"
-            >
-              {SYSTEM_LINEAGE.map(({ system, accent, skills }) => (
-                <SystemLineageRow key={system} system={system} accent={accent} skills={skills} />
-              ))}
+        <m.div
+          variants={child}
+          className="mb-10 grid grid-cols-2 gap-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+          aria-label="Core production skills — top 12"
+          role="list"
+        >
+          {visibleCoreSkills.map((skill, idx) => (
+            <div key={skill.id} role="listitem">
+              <CoreSkillCard
+                skill={skill}
+                index={idx}
+                reducedMotion={reducedMotion}
+                shouldAnimate={true}
+              />
             </div>
-          </m.div>
+          ))}
+        </m.div>
+
+        {hiddenCoreSkillCount > 0 ? (
+          <m.p
+            variants={child}
+            className="text-color-text-muted mb-10 font-mono text-[11px] tracking-wider"
+          >
+            +{hiddenCoreSkillCount} more in the full explorer below.
+          </m.p>
+        ) : null}
+
+        {/* ── L2: System lineage strip — always visible ─────────────── */}
+        <m.div variants={child} className="mb-12">
+          <p className="text-color-text-muted mb-3 font-mono text-[10px] tracking-widest uppercase">
+            Production system × skill lineage
+          </p>
+          <div
+            data-cinematic="panel"
+            className="border-color-border space-y-3 rounded-[var(--radius-lg)] border bg-[oklch(100%_0_0_/_0.015)] p-4 sm:p-5"
+            aria-label="Which skills power each live production system"
+          >
+            {SYSTEM_LINEAGE.map(({ system, accent, skills }) => (
+              <SystemLineageRow key={system} system={system} accent={accent} skills={skills} />
+            ))}
+          </div>
         </m.div>
 
         {/* ── L3: Full interactive SkillsMap — tabbed by pillar ─────────── */}
@@ -370,6 +370,7 @@ export function SkillsSection() {
             <button
               type="button"
               onClick={() => setIsExplorerOpen((v) => !v)}
+              data-cinematic="cta"
               aria-expanded={isExplorerOpen}
               aria-controls="skills-explorer-panel"
               aria-label={
@@ -408,8 +409,7 @@ export function SkillsSection() {
         {/* Flow hook — V1.0 Change 6c: §Flow Mechanics §Skills + §Engagement Protocol */}
         <m.p
           variants={child}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
+          data-cinematic="cta"
           className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
         >
           <Link href={anchorUrl('section-about')} className="transition-opacity hover:opacity-80">
@@ -417,6 +417,6 @@ export function SkillsSection() {
           </Link>
         </m.p>
       </div>
-    </section>
+    </ChapterFrame>
   );
 }

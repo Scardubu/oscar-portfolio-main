@@ -3,23 +3,30 @@
 
 'use client';
 
-import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type KeyboardEvent, type MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
+import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
-    HERO_SCROLL_CONFIG,
-    cardReveal,
-    fadeRise,
-    hoverLift,
-    noMotion,
-    staggerContainer,
-    wordReveal,
-    wordRevealContainer,
+  cardReveal,
+  fadeRise,
+  hoverLift,
+  noMotion,
+  staggerContainer,
+  wordReveal,
+  wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
@@ -211,11 +218,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               }}
               variants={cardVariants}
               className="mobile-carousel-item proof-card snap-center"
-              whileHover={
-                reducedMotion
-                  ? undefined
-                  : hoverLift(-3)
-              }
+              whileHover={reducedMotion ? undefined : hoverLift(-3)}
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
               <p className="label-mono text-color-film-teal">{col.label}</p>
@@ -259,9 +262,9 @@ function ConvictionStat({
 }) {
   const [displayed, setDisplayed] = useState(value);
   const frameRef = useRef<number | null>(null);
-  const numericMatch = value.match(/^(\d+(?:\.\d+)?)(.*)/);
 
   useEffect(() => {
+    const numericMatch = value.match(/^(\d+(?:\.\d+)?)(.*)/);
     if (reducedMotion || !shouldAnimate || !numericMatch) {
       setDisplayed(value);
       return;
@@ -294,8 +297,7 @@ function ConvictionStat({
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldAnimate, reducedMotion]);
+  }, [value, shouldAnimate, reducedMotion]);
 
   return (
     <div className="conviction-stat" data-stat={stat} role="listitem">
@@ -307,30 +309,7 @@ function ConvictionStat({
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: HERO_SCROLL_CONFIG.offset,
-  });
-
-  const textY = useTransform(
-    scrollYProgress,
-    HERO_SCROLL_CONFIG.textRange,
-    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.textOutput
-  );
-
-  const visualY = useTransform(
-    scrollYProgress,
-    HERO_SCROLL_CONFIG.visualRange,
-    reducedMotion ? ['0%', '0%'] : HERO_SCROLL_CONFIG.visualOutput
-  );
-
-  const heroOpacity = useTransform(
-    scrollYProgress,
-    HERO_SCROLL_CONFIG.opacityRange,
-    reducedMotion ? [1, 1] : HERO_SCROLL_CONFIG.opacityOutput
-  );
+  const { scrollToSection } = useScrollCinema();
 
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
@@ -363,24 +342,16 @@ export function HeroSection() {
 
       event.preventDefault();
       window.history.replaceState(null, '', anchorUrl(sectionId));
-      section.scrollIntoView({
-        block: 'start',
-        behavior: reducedMotion ? 'auto' : 'smooth',
-      });
+      scrollToSection(sectionId);
     },
-    [reducedMotion]
+    [scrollToSection]
   );
 
   return (
     <m.section
       id="hero"
-      ref={heroRef}
       aria-labelledby="hero-heading"
       className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-hidden pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center"
-      // eslint-disable-next-line no-restricted-syntax
-      style={{
-        opacity: heroOpacity,
-      }}
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
@@ -388,15 +359,13 @@ export function HeroSection() {
         <div className="hero-grid-shell grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[minmax(0,var(--hero-left-width))_minmax(0,var(--hero-right-width))]">
           {/* ── Left Column: Conviction Content ── */}
           <m.div
-            // eslint-disable-next-line no-restricted-syntax
-            style={{ y: textY }}
             variants={heroContainer}
             initial="hidden"
             animate="visible"
             className="hero-grid-child"
           >
             {/* Availability Pill — dark pattern ban: no fake slot counts or artificial deadlines */}
-            <m.div variants={child}>
+            <m.div variants={child} data-cinematic="panel">
               <div
                 className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
                 aria-label="Currently available for Staff+ roles"
@@ -444,6 +413,7 @@ export function HeroSection() {
             {/* Kicker */}
             <m.p
               variants={child}
+              data-cinematic="eyebrow"
               className="hero-kicker text-color-film-teal font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase"
             >
               <span className="inline sm:hidden">
@@ -465,6 +435,7 @@ export function HeroSection() {
             {/* Headline */}
             <h1
               id="hero-heading"
+              data-cinematic="title"
               className="w-full max-w-[var(--hero-headline-max)] text-balance"
               aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
@@ -505,6 +476,7 @@ export function HeroSection() {
             {/* Body */}
             <m.p
               variants={child}
+              data-cinematic="lede"
               className="hero-body-text w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
             >
               Production systems that stay alive when it matters most — compliant, fast, and
@@ -512,7 +484,12 @@ export function HeroSection() {
             </m.p>
 
             {/* Stats Strip — V1.0 Change 7: count-up on viewport intersection */}
-            <m.div variants={child} aria-label="Performance metrics" ref={statsRef}>
+            <m.div
+              variants={child}
+              data-cinematic="proof"
+              aria-label="Performance metrics"
+              ref={statsRef}
+            >
               <div className="conviction-stat-strip" role="list">
                 {CONVICTION_STATS.map(({ value, label, stat }) => (
                   <ConvictionStat
@@ -528,7 +505,11 @@ export function HeroSection() {
             </m.div>
 
             {/* Proof Callout — v27.1: rhythm fix — each system on its own line via block spans for better readability at sm viewport */}
-            <m.div variants={child} className="hero-proof-callout hidden overflow-hidden sm:block">
+            <m.div
+              variants={child}
+              data-cinematic="panel"
+              className="hero-proof-callout hidden overflow-hidden sm:block"
+            >
               <p className="hero-body-text text-sm leading-7 font-medium text-[oklch(94%_0.007_80_/_0.70)]">
                 <span className="block">
                   TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.
@@ -545,12 +526,12 @@ export function HeroSection() {
               </p>
             </m.div>
 
-            <m.div variants={child} className="live-bar-wrapper-hero">
+            <m.div variants={child} data-cinematic="panel" className="live-bar-wrapper-hero">
               <LiveActivityBar />
             </m.div>
 
             {/* CTAs */}
-            <m.div variants={child} className="cta-hero-group">
+            <m.div variants={child} data-cinematic="cta" className="cta-hero-group">
               <Link
                 href={anchorUrl('section-contact')}
                 onClick={(event) => handleAnchorJump(event, 'section-contact')}
@@ -639,8 +620,7 @@ export function HeroSection() {
 
           {/* ── Right Column: Desktop Visuals ── */}
           <m.div
-            // eslint-disable-next-line no-restricted-syntax
-            style={{ y: visualY }}
+            data-cinematic="media"
             className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
           >
             <div className="flex justify-end">

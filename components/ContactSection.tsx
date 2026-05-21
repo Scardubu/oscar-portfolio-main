@@ -2,10 +2,12 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 'use client';
 
-import { m, useInView, useReducedMotion } from 'framer-motion';
-import { type ChangeEvent, type FormEvent, useMemo, useRef, useState } from 'react';
+import { m, useReducedMotion } from 'framer-motion';
+import { type ChangeEvent, type FormEvent, useMemo, useState } from 'react';
 
+import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { CopyEmail } from '@/components/CopyEmail';
+import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 import React from 'react';
@@ -146,6 +148,7 @@ function ContactForm() {
   if (state === 'success') {
     return (
       <div
+        data-cinematic="panel"
         className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border border-[oklch(65%_0.18_155_/_0.4)] bg-[oklch(65%_0.18_155_/_0.06)] p-8 text-center sm:p-10"
         role="status"
         aria-live="polite"
@@ -186,6 +189,7 @@ function ContactForm() {
 
   return (
     <form
+      data-cinematic="panel"
       onSubmit={(e) => void handleSubmit(e)}
       className="border-color-border rounded-[var(--radius-xl)] border bg-[oklch(100%_0_0_/_0.02)] p-5 sm:p-7"
       noValidate
@@ -388,9 +392,8 @@ function ContactForm() {
 
 /* ── Main ContactSection ─────────────────────────────────────────────────── */
 export function ContactSection() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reducedMotion = useReducedMotion();
+  const chapter = getChapterBySectionId('section-contact');
 
   const container = useMemo(() => staggerContainer(0.07, 0.05), []);
   const child = reducedMotion ? noMotion : fadeRise;
@@ -402,141 +405,151 @@ export function ContactSection() {
   );
 
   return (
-    <section
-      id="section-contact"
-      ref={ref}
-      aria-labelledby="contact-heading"
-      className="border-color-border border-t py-[var(--section-py)]"
+    <ChapterFrame
+      chapter={chapter}
+      ariaLabelledBy="contact-heading"
+      className="border-color-border"
     >
-      <div className="container">
-        <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          <m.div variants={child} className="section-kicker-row">
-            <span className="section-number" aria-hidden="true">
-              06
-            </span>
-            <span className="section-label">Contact</span>
-          </m.div>
+      <m.div>
+        <m.div variants={child} data-cinematic="eyebrow" className="section-kicker-row">
+          <span className="section-number" aria-hidden="true">
+            06
+          </span>
+          <span className="section-label">Contact</span>
+        </m.div>
 
-          {/*
+        {/*
             v20 CHANGE: Editorial intro — section-intro-editorial (layout.css).
             Mobile: kicker, h2, and description stack vertically (unchanged).
             lg+: kicker+h2 anchor the left column; description sits right with
               editorial alignment — consistent with Projects, OSS, Writing, Skills.
             Trust badges remain full-width below the editorial pair on all viewports.
           */}
-          <div className="section-intro-editorial mb-6 sm:mb-8">
-            {/* Left: heading */}
-            <m.h2 variants={headingVariant} id="contact-heading" className="mt-4 lg:mt-0">
-              The system is ready. Are you?
-            </m.h2>
+        <div className="section-intro-editorial mb-6 sm:mb-8">
+          {/* Left: heading */}
+          <m.h2
+            variants={headingVariant}
+            id="contact-heading"
+            data-cinematic="title"
+            className="mt-4 lg:mt-0"
+          >
+            The system is ready. Are you?
+          </m.h2>
 
-            {/* Right: description — editorial counterweight at lg+ */}
-            <div className="lg:flex lg:flex-col lg:justify-end">
-              <m.p
-                variants={child}
-                className="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
-              >
-                Hiring for Staff+, building from scratch, or containing a production incident — send
-                the constraint. I respond within 24 hours, usually faster.
-              </m.p>
-            </div>
+          {/* Right: description — editorial counterweight at lg+ */}
+          <div className="lg:flex lg:flex-col lg:justify-end">
+            <m.p
+              variants={child}
+              data-cinematic="lede"
+              className="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
+            >
+              Hiring for Staff+, building from scratch, or containing a production incident — send
+              the constraint. I respond within 24 hours, usually faster.
+            </m.p>
           </div>
+        </div>
 
-          <m.div variants={child} className="mb-8 flex flex-wrap gap-2" aria-label="Trust signals">
-            {TRUST_BADGES.map((badge) => (
-              <span
-                key={badge}
-                className="text-2xs text-color-text-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-glass)] bg-[oklch(100%_0_0_/_0.03)] px-3 py-1 font-mono tracking-widest uppercase"
+        <m.div
+          variants={child}
+          data-cinematic="proof"
+          className="mb-8 flex flex-wrap gap-2"
+          aria-label="Trust signals"
+        >
+          {TRUST_BADGES.map((badge) => (
+            <span
+              key={badge}
+              className="text-2xs text-color-text-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-glass)] bg-[oklch(100%_0_0_/_0.03)] px-3 py-1 font-mono tracking-widest uppercase"
+            >
+              {badge}
+            </span>
+          ))}
+        </m.div>
+
+        {/* Two-column: Form left, Cards right */}
+        <m.div variants={container} className="grid gap-6 lg:grid-cols-2">
+          <m.div variants={child}>
+            <ContactForm />
+          </m.div>
+
+          <m.div variants={child} className="flex flex-col gap-4">
+            {CONTACT_CARDS.map((card_item, i) => (
+              <m.div
+                key={card_item.id}
+                variants={cardVariant(i)}
+                data-cinematic="card"
+                className="glass-medium relative overflow-hidden rounded-[var(--radius-xl)] p-5"
+                // eslint-disable-next-line no-restricted-syntax
+                style={{ borderLeft: `3px solid ${card_item.accentColor}` }}
+                whileHover={
+                  reducedMotion
+                    ? undefined
+                    : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
+                }
               >
-                {badge}
-              </span>
+                <p
+                  className="label-mono mb-2"
+                  // eslint-disable-next-line no-restricted-syntax
+                  style={{ color: card_item.accentColor }}
+                >
+                  {card_item.title}
+                </p>
+                <p className="text-color-text-primary font-display mb-2 text-sm leading-snug font-semibold">
+                  {card_item.headline}
+                </p>
+                <p className="text-color-text-secondary text-xs leading-6">{card_item.body}</p>
+                <p className="border-color-border-subtle text-color-text-muted mt-2 border-t pt-2 text-[11px] leading-5 italic">
+                  {card_item.objection}
+                </p>
+              </m.div>
             ))}
           </m.div>
-
-          {/* Two-column: Form left, Cards right */}
-          <m.div variants={container} className="grid gap-6 lg:grid-cols-2">
-            <m.div variants={child}>
-              <ContactForm />
-            </m.div>
-
-            <m.div variants={child} className="flex flex-col gap-4">
-              {CONTACT_CARDS.map((card_item, i) => (
-                <m.div
-                  key={card_item.id}
-                  variants={cardVariant(i)}
-                  className="glass-medium relative overflow-hidden rounded-[var(--radius-xl)] p-5"
-                  // eslint-disable-next-line no-restricted-syntax
-                  style={{ borderLeft: `3px solid ${card_item.accentColor}` }}
-                  whileHover={
-                    reducedMotion
-                      ? undefined
-                      : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
-                  }
-                >
-                  <p
-                    className="label-mono mb-2"
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{ color: card_item.accentColor }}
-                  >
-                    {card_item.title}
-                  </p>
-                  <p className="text-color-text-primary font-display mb-2 text-sm leading-snug font-semibold">
-                    {card_item.headline}
-                  </p>
-                  <p className="text-color-text-secondary text-xs leading-6">{card_item.body}</p>
-                  <p className="border-color-border-subtle text-color-text-muted mt-2 border-t pt-2 text-[11px] leading-5 italic">
-                    {card_item.objection}
-                  </p>
-                </m.div>
-              ))}
-            </m.div>
-          </m.div>
-
-          {/* Social links */}
-          <m.div
-            variants={child}
-            className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <a
-                href="https://github.com/Scardubu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
-                aria-label="GitHub profile"
-              >
-                <GitHubIcon />
-                <span className="hidden sm:inline">GitHub</span>
-              </a>
-              <a
-                href="https://linkedin.com/in/oscardubu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
-                aria-label="LinkedIn profile"
-              >
-                <LinkedInIcon />
-                <span className="hidden sm:inline">LinkedIn</span>
-              </a>
-              <CopyEmail email={CONTACT_EMAIL} />
-              <a
-                href={CV_ASSET_PATH}
-                download
-                className="text-color-text-muted hidden min-h-11 items-center gap-1.5 text-sm transition-colors hover:text-white sm:inline-flex"
-                aria-label="Download Oscar's resume PDF"
-              >
-                Resume <span aria-hidden="true">↓</span>
-              </a>
-            </div>
-
-            <p className="hidden max-w-[36ch] text-right font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.28)] uppercase md:block">
-              Systems that work at 2am.
-              <br />
-              That&apos;s the standard.
-            </p>
-          </m.div>
         </m.div>
-      </div>
-    </section>
+
+        {/* Social links */}
+        <m.div
+          variants={child}
+          data-cinematic="cta"
+          className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/Scardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
+              aria-label="GitHub profile"
+            >
+              <GitHubIcon />
+              <span className="hidden sm:inline">GitHub</span>
+            </a>
+            <a
+              href="https://linkedin.com/in/oscardubu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-color-text-muted inline-flex min-h-11 min-w-11 items-center gap-2 text-sm transition-colors"
+              aria-label="LinkedIn profile"
+            >
+              <LinkedInIcon />
+              <span className="hidden sm:inline">LinkedIn</span>
+            </a>
+            <CopyEmail email={CONTACT_EMAIL} />
+            <a
+              href={CV_ASSET_PATH}
+              download
+              className="text-color-text-muted hidden min-h-11 items-center gap-1.5 text-sm transition-colors hover:text-white sm:inline-flex"
+              aria-label="Download Oscar's resume PDF"
+            >
+              Resume <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+
+          <p className="hidden max-w-[36ch] text-right font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.28)] uppercase md:block">
+            Systems that work at 2am.
+            <br />
+            That&apos;s the standard.
+          </p>
+        </m.div>
+      </m.div>
+    </ChapterFrame>
   );
 }
