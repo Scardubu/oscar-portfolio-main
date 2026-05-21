@@ -170,14 +170,6 @@ export function Footer() {
               href={mailHref}
               className="cta-primary group flex w-full items-center justify-center gap-3 px-8 py-3.5 text-base font-medium focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985] sm:w-auto"
               aria-label="Tell Oscar your constraints"
-              // eslint-disable-next-line no-restricted-syntax
-              style={
-                {
-                  // The chapter-accent box-shadow is layered on top of the base
-                  // .cta-primary hover shadow — it cross-fades with chapter changes.
-                  // (The base hover is handled by globals.css .cta-primary:hover)
-                }
-              }
             >
               <span
                 className="bg-color-success inline-block h-2.5 w-2.5 rounded-full transition-transform group-hover:scale-125 group-active:scale-90"

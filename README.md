@@ -122,6 +122,21 @@ Seven files were patched to fix critical bugs and add polish enhancements. The p
 | `ScrollCinemaProvider.tsx` | Added `aria-live="polite"` region for screen reader chapter announcements                  |
 | `useChapterTimeline.ts`    | `typeof window === 'undefined'` guard (SSR/RSC analysis safety)                            |
 
+### Integration quick wins — UX polish v1.2
+
+| File               | Quick win                                                                                                  | Benefit                                           |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `HeroSection.tsx`  | Added tab-panel relationships (`aria-controls`, `aria-labelledby`, active `tabIndex`) to proof carousel | Better keyboard and screen-reader navigation      |
+| `globals.css`      | Refined proof-dot touch targets to 24x24 with visual 6px center indicator                                | WCAG-friendly tap areas on mobile                 |
+| `globals.css`      | Added ultra-narrow hero safeguards (`max-width: 389px`) for availability metadata and stat wrapping      | Cleaner 320-390px rendering with no clipping      |
+| `globals.css`      | Added `min-width: 1920px` hero scale and spacing tuning                                                   | Better composition on ultrawide desktop displays  |
+| `Footer.tsx`       | Removed no-op inline style object from primary CTA                                                        | Cleaner code and reduced maintenance overhead      |
+
+Validation pass after v1.2 polish:
+- `pnpm run type-check` ✅
+- `pnpm run lint` ✅
+- `pnpm run build` ✅
+
 ---
 
 ## Local setup

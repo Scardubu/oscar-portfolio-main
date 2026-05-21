@@ -10,25 +10,25 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  type KeyboardEvent,
-  type MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
-  cardReveal,
-  fadeRise,
-  hoverLift,
-  noMotion,
-  staggerContainer,
-  wordReveal,
-  wordRevealContainer,
+    cardReveal,
+    fadeRise,
+    hoverLift,
+    noMotion,
+    staggerContainer,
+    wordReveal,
+    wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
 
@@ -215,9 +215,13 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
           {PROOF_COLUMNS.map((col, index) => (
             <m.article
               key={col.label}
+              id={`hero-proof-card-${index}`}
               ref={(node) => {
                 cardRefs.current[index] = node;
               }}
+              role="tabpanel"
+              aria-labelledby={`hero-proof-tab-${index}`}
+              aria-hidden={index !== activeIndex}
               variants={cardVariants}
               className="mobile-carousel-item proof-card snap-center"
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
@@ -236,9 +240,28 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         />
       </div>
 
-      <div className="carousel-dots sm:hidden" aria-hidden="true">
-        {PROOF_COLUMNS.map((_, i) => (
-          <span key={i} className={`carousel-dot${i === activeIndex ? 'active' : ''}`} />
+      {/* RESPONSIVE FIX: dots upgraded from aria-hidden spans to interactive
+          buttons. Each button is a valid WCAG 2.5.5 touch target (min 44px via
+          padding). The class name bug (`carousel-dotactive` → `carousel-dot active`)
+          is fixed by the space before 'active'. */}
+      <div
+        className="carousel-dots sm:hidden"
+        role="tablist"
+        aria-label="Proof pillar navigation"
+      >
+        {PROOF_COLUMNS.map((col, i) => (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            id={`hero-proof-tab-${i}`}
+            aria-selected={i === activeIndex}
+            aria-controls={`hero-proof-card-${i}`}
+            tabIndex={i === activeIndex ? 0 : -1}
+            aria-label={`Go to ${col.label}`}
+            onClick={() => scrollToIndex(i)}
+            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+          />
         ))}
       </div>
     </>
@@ -392,13 +415,13 @@ export function HeroSection() {
             {/* Availability Pill — dark pattern ban: no fake slot counts or artificial deadlines */}
             <m.div variants={child} data-cinematic="panel">
               <div
-                className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                className="hero-availability-pill inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
                 aria-label="Currently available for Staff+ roles"
               >
                 <span className="dot-live" aria-hidden="true" />
-                <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
+                <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
-                  <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
+                  <span className="hero-availability-updated ml-2 text-[9px] tracking-normal normal-case opacity-50">
                     · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
