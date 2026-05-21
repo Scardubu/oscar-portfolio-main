@@ -4,34 +4,38 @@
 // FIX — TypeError: can't access property "opacity" of undefined
 //
 // ROOT CAUSE:
-//   `filterTransition` is exported from lib/motionVariants.ts as a `Variants` object:
-//     { hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, ... }, exit: { ... } }
+//   A `Variants` object was previously being passed into the `transition` prop.
+//   Framer Motion expects `transition` to be a plain Transition config, not a
+//   variants object with `hidden` / `visible` / `exit` keys.
 //
-//   It was being passed to the `transition` prop of `m.div`:
+//   The unsafe pattern looked like this:
 //     transition={filterTransition as Parameters<typeof m.div>[0]['transition']}
 //
-//   The `transition` prop expects a Transition config (e.g. { type, duration, stiffness }).
-//   When framer-motion's internal resolver processes the animated properties (opacity, y),
-//   it reads `transition.opacity` and `transition.y` — both `undefined` on a Variants object,
-//   whose keys are `hidden`, `visible`, `exit`. Accessing `.opacity` on `undefined` throws:
-//     TypeError: can't access property "opacity" of undefined
+//   That cast satisfied TypeScript but still failed at runtime because Framer
+//   Motion later tried to resolve `transition.opacity` and `transition.y`.
+//   Those keys do not exist on a Transition object, producing the repeated
+//   console error:
 //
-//   The TypeScript cast `as Parameters<typeof m.div>[0]['transition']` silenced the
-//   compiler but did not fix the runtime type mismatch. This error fires once per
-//   animated property per render cycle — producing 40–66 identical console errors
-//   (matching the 62-skill grid mounting + filter-tab re-mount cycles).
+//     Uncaught TypeError: can't access property "opacity" of undefined
 //
 // FIX:
-//   Removed the `filterTransition` import entirely.
-//   Replaced the misused Variants object with a correct Transition config inline:
-//     { type: 'spring', stiffness: 300, damping: 28 }
-//   This matches the physics used elsewhere in the motion vocabulary for filter
-//   transitions (snappy spring, no mass override needed for a simple opacity+y).
+//   Keep `filterTransition` for variant-driven animation only.
+//   Use a plain Transition config for the grid container swap.
+//
+//   This file now uses a dedicated `SKILL_GRID_TRANSITION` constant with the
+//   correct Framer Motion shape, eliminating the crash while preserving the
+//   entrance / exit behavior.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
 import type { SkillNode, SkillPillar } from '@/lib/types';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
+
+const SKILL_GRID_TRANSITION = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 28,
+} as const;
 
 const LEVEL_CONFIG = {
   expert: {
@@ -91,7 +95,6 @@ function SkillCard({
       className="border-border-subtle bg-surface-raised hover:border-border h-full rounded-lg border p-2.5 transition-colors duration-200 sm:p-3"
       aria-label={cardLabel}
     >
-      {/* Pillar: hidden on mobile */}
       <p className="mb-2 hidden truncate font-mono text-[10px] tracking-widest text-white/40 uppercase sm:block">
         {skill.pillar}
       </p>
@@ -109,7 +112,6 @@ function SkillCard({
         </span>
       </div>
 
-      {/* Proficiency bar */}
       <div
         className="mb-2 h-[3px] w-full overflow-hidden rounded-full bg-[oklch(100%_0_0_/_0.08)]"
         role="meter"
@@ -138,10 +140,6 @@ function SkillCard({
         />
       </div>
 
-      {/* Context tags:
-          - Expert: show on mobile (trust signal) — 1 system tag max
-          - Proficient: show on sm+ only
-          - Foundational: sm+ only */}
       {systemTags.length > 0 && (
         <div className={`mt-1 flex flex-wrap gap-1 ${isExpert ? '' : 'hidden sm:flex'}`}>
           {systemTags.slice(0, isExpert ? 1 : 3).map((tag) => (
@@ -182,15 +180,6 @@ export function SkillsMap(): React.ReactElement {
 
   return (
     <div className="space-y-5">
-      {/*
-        Filter tab row.
-        v22 FIX (Responsive Failure — Nielsen: Zero Hidden Content):
-          Mobile (<640px): flex-wrap so all 6 category tabs are visible without
-          horizontal scroll. "Data & Storage" and "DevOps & SRE" were invisible
-          to mobile users under the previous overflow-x-auto + no-scrollbar pattern.
-          sm+ (≥640px): flex-nowrap + overflow-x-auto activates only if tab widths
-          exceed viewport. Matches the WritingSection v22.1 pattern.
-      */}
       <div
         className="flex flex-wrap gap-2 [scrollbar-width:none] sm:flex-nowrap sm:overflow-x-auto sm:pb-1"
         role="group"
@@ -219,7 +208,6 @@ export function SkillsMap(): React.ReactElement {
         })}
       </div>
 
-      {/* Live count */}
       <p
         aria-live="polite"
         aria-atomic="true"
@@ -228,7 +216,6 @@ export function SkillsMap(): React.ReactElement {
         {liveLabel}
       </p>
 
-      {/* Skill grid */}
       <AnimatePresence mode="wait">
         <m.div
           key={active}
@@ -237,14 +224,7 @@ export function SkillsMap(): React.ReactElement {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
-          transition={
-            prefersReduced
-              ? { duration: 0 }
-              : // FIX: was `filterTransition` (a Variants object — wrong type for `transition` prop).
-                // Framer-motion tried to read transition.opacity → undefined → crash.
-                // Correct fix: use a plain Transition config object.
-                { type: 'spring', stiffness: 300, damping: 28 }
-          }
+          transition={prefersReduced ? { duration: 0 } : SKILL_GRID_TRANSITION}
         >
           <ul className="grid list-none grid-cols-1 gap-2 p-0 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filtered.map((skill, i) => (
