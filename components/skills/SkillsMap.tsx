@@ -1,8 +1,34 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
+//
+// FIX — TypeError: can't access property "opacity" of undefined
+//
+// ROOT CAUSE:
+//   `filterTransition` is exported from lib/motionVariants.ts as a `Variants` object:
+//     { hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, ... }, exit: { ... } }
+//
+//   It was being passed to the `transition` prop of `m.div`:
+//     transition={filterTransition as Parameters<typeof m.div>[0]['transition']}
+//
+//   The `transition` prop expects a Transition config (e.g. { type, duration, stiffness }).
+//   When framer-motion's internal resolver processes the animated properties (opacity, y),
+//   it reads `transition.opacity` and `transition.y` — both `undefined` on a Variants object,
+//   whose keys are `hidden`, `visible`, `exit`. Accessing `.opacity` on `undefined` throws:
+//     TypeError: can't access property "opacity" of undefined
+//
+//   The TypeScript cast `as Parameters<typeof m.div>[0]['transition']` silenced the
+//   compiler but did not fix the runtime type mismatch. This error fires once per
+//   animated property per render cycle — producing 40–66 identical console errors
+//   (matching the 62-skill grid mounting + filter-tab re-mount cycles).
+//
+// FIX:
+//   Removed the `filterTransition` import entirely.
+//   Replaced the misused Variants object with a correct Transition config inline:
+//     { type: 'spring', stiffness: 300, damping: 28 }
+//   This matches the physics used elsewhere in the motion vocabulary for filter
+//   transitions (snappy spring, no mass override needed for a simple opacity+y).
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
-import { filterTransition } from '@/lib/motionVariants';
 import type { SkillNode, SkillPillar } from '@/lib/types';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
@@ -214,7 +240,10 @@ export function SkillsMap(): React.ReactElement {
           transition={
             prefersReduced
               ? { duration: 0 }
-              : (filterTransition as Parameters<typeof m.div>[0]['transition'])
+              : // FIX: was `filterTransition` (a Variants object — wrong type for `transition` prop).
+                // Framer-motion tried to read transition.opacity → undefined → crash.
+                // Correct fix: use a plain Transition config object.
+                { type: 'spring', stiffness: 300, damping: 28 }
           }
         >
           <ul className="grid list-none grid-cols-1 gap-2 p-0 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
