@@ -600,6 +600,6 @@ export const presenceConfig = {
   wait: { mode: 'wait' as const, initial: false },
   /** Popover: simultaneous enter + exit (tooltips, menus) */
   sync: { mode: 'sync' as const, initial: false },
-  /** Popout: new item enters first (recommended for toasts) */
-  popout: { mode: 'popout' as const, initial: false },
+  /** Pop layout: preserves layout-aware exits for list/toast transitions */
+  popout: { mode: 'popLayout' as const, initial: false },
 } as const;

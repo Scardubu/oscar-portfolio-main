@@ -137,6 +137,19 @@ Validation pass after v1.2 polish:
 - `pnpm run lint` ✅
 - `pnpm run build` ✅
 
+### Stability fixes — runtime guard v1.3
+
+| File                   | Fix                                                                                     | Impact                                             |
+| ---------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `lib/motionVariants.ts`| Corrected `AnimatePresence` mode from invalid `popout` to valid `popLayout`            | Prevents client runtime crashes in motion paths    |
+| `tests/setup.ts`       | Added `scrollMargin` to `MockIntersectionObserver` and removed unresolved side-effect import | Clears editor diagnostics and keeps test setup aligned with current DOM typings |
+
+Validation pass after v1.3 stability fix:
+- `pnpm run type-check` ✅
+- `pnpm run lint` ✅
+- `pnpm run build` ✅
+- Browser runtime probe on `/` reported `NO_CLIENT_ERRORS_DETECTED` ✅
+
 ---
 
 ## Local setup
