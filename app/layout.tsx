@@ -218,8 +218,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
 
-        {/*
-          ── SVG Glass Refraction filter ────────────────────────────────
+        {/* ── SVG Glass Refraction filter ────────────────────────────────
           Inline SVG filter used by LiquidGlassRefractionSVG component.
           Zero layout impact — display:none SVG with filter defs only.
         */}
