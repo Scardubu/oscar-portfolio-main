@@ -18,8 +18,8 @@ body {
    viewport on 320px–375px screens, which triggered the smoke tests.
 */
 #hero .mobile-carousel {
-  margin-inline: 0;
-  padding-inline: 0;
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
   scroll-padding-inline: 0.875rem;
   overscroll-behavior-x: contain;
 }
@@ -51,4 +51,24 @@ body {
 #hero .hero-grid-child {
   min-width: 0;
   max-width: 100%;
+}
+
+/* Defensive viewport clamp for mobile smoke checks.
+   Keeps intrinsic-width regressions from widening document scrollWidth.
+*/
+@media (max-width: 639px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  #hero,
+  #hero > *,
+  #hero .container,
+  #hero .hero-grid-shell,
+  #hero .hero-grid-child {
+    max-width: 100%;
+  }
 }

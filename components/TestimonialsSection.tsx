@@ -6,6 +6,7 @@ import { m, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import {
@@ -76,7 +77,6 @@ const PROOF_CARDS = [
 export function TestimonialsSection() {
   const reducedMotion = useReducedMotion();
   const chapter = getChapterBySectionId('section-testimonials');
-
   const container = staggerContainer(0.08, 0.05);
   const itemVariant = reducedMotion ? noMotion : fadeRise;
   const headVariant = reducedMotion ? noMotion : clipReveal;
@@ -88,34 +88,23 @@ export function TestimonialsSection() {
       className="border-color-border section-deferred overflow-x-clip"
     >
       <m.div>
-        {/* ── Section header — editorial 2-col at lg+ (matches Projects v25, Writing v23, OSS v24) ── */}
-        <m.div variants={itemVariant} className="section-intro-editorial mb-10 sm:mb-14">
-          {/* Left: kicker + heading */}
-          <div>
-            <div data-cinematic="eyebrow" className="section-kicker-row">
-              <span className="section-label">Production record</span>
-            </div>
-            <m.h2
-              variants={headVariant}
-              id="proof-record-heading"
-              data-cinematic="title"
-              className="mt-4"
-            >
-              Shipped systems. <br className="hidden lg:block" />
-              Verified outcomes.
-            </m.h2>
-          </div>
-          {/* Right: description — editorial counterweight at lg+ */}
-          <div className="lg:flex lg:flex-col lg:justify-end">
-            <m.p
-              variants={itemVariant}
-              data-cinematic="lede"
-              className="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
-            >
-              Three live platforms. One federal engagement. Every metric traceable to a deployed
-              codebase.
-            </m.p>
-          </div>
+        <m.div variants={itemVariant} className="mb-10 sm:mb-14">
+          <SectionIntro
+            eyebrowLabel="Production record"
+            headingId="proof-record-heading"
+            title={
+              <>
+                Shipped systems. <br className="hidden lg:block" />
+                Verified outcomes.
+              </>
+            }
+            description="Three live platforms. One federal engagement. Every metric traceable to a deployed codebase."
+            eyebrowVariant={itemVariant}
+            titleVariant={headVariant}
+            descriptionVariant={itemVariant}
+            titleClassName="text-color-text-primary mt-4 max-w-[24ch]"
+            descriptionClassName="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
+          />
         </m.div>
 
         {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}

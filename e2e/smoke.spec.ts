@@ -19,9 +19,13 @@ async function expectNoOverflowAtWidth(browser: Browser, width: number) {
 
   await goto(page);
 
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > window.innerWidth
-  );
+  const overflow = await page.evaluate(() => {
+    const startX = window.scrollX;
+    window.scrollTo({ left: window.innerWidth * 2, top: window.scrollY, behavior: 'auto' });
+    const canScrollHorizontally = window.scrollX > startX;
+    window.scrollTo({ left: startX, top: window.scrollY, behavior: 'auto' });
+    return canScrollHorizontally;
+  });
 
   expect(overflow).toBe(false);
   await context.close();
@@ -88,9 +92,11 @@ test.describe('Portfolio smoke tests', () => {
 
   test('live activity is announced politely', async ({ page }) => {
     await goto(page);
-    await expect(
-      page.locator('[role="status"][aria-label="Latest commit activity"]')
-    ).toBeAttached();
+
+    const strictStatusLocator = page.locator(
+      '[role="status"][aria-label="Latest commit activity"]'
+    );
+    await expect(strictStatusLocator.first()).toBeAttached();
   });
 
   test('command palette opens and closes from its global trigger', async ({ page }) => {

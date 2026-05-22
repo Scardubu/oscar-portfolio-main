@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import type { WritingPost } from '@/lib/content';
@@ -44,45 +45,20 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       <m.div>
         {/* ── Section header ────────────────────────────────────────────── */}
         <m.div variants={child} className="mb-8 sm:mb-12">
-          {/*
-              v23 CHANGE: Editorial intro — section-intro-editorial (layout.css).
-              Mobile: kicker, h2, description, and filter chips stack vertically (unchanged).
-              lg+: kicker+h2 anchor the left column; description sits right with
-                editorial alignment — richer desktop composition, not blown-up mobile.
-              Filter chips remain full-width below the editorial pair on all viewports.
-            */}
-          <div className="section-intro-editorial mb-5 sm:mb-6">
-            {/* Left: kicker + heading */}
-            <div>
-              <div data-cinematic="eyebrow" className="section-kicker-row">
-                <span className="section-number" aria-hidden="true">
-                  05
-                </span>
-                <span className="section-label">Writing</span>
-              </div>
-
-              <m.h2
-                variants={reducedMotion ? child : clipReveal}
-                id="writing-heading"
-                data-cinematic="title"
-                className="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]"
-              >
-                Writing that ships decisions.
-              </m.h2>
-            </div>
-
-            {/* Right: description — editorial counterweight at lg+ */}
-            <div className="lg:flex lg:flex-col lg:justify-end">
-              <m.p
-                variants={child}
-                data-cinematic="lede"
-                className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-[1.8] sm:text-base lg:mt-0"
-              >
-                Architecture calls, ML trade-offs, and the production decisions behind them — from
-                Lagos to the world.
-              </m.p>
-            </div>
-          </div>
+          <SectionIntro
+            eyebrowNumber="05"
+            eyebrowLabel="Writing"
+            headingId="writing-heading"
+            title={<>Writing that ships decisions.</>}
+            description={
+              'Architecture calls, ML trade-offs, and the production decisions behind them — from Lagos to the world.'
+            }
+            eyebrowVariant={child}
+            titleVariant={reducedMotion ? child : clipReveal}
+            descriptionVariant={child}
+            titleClassName="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]"
+            descriptionClassName="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-[1.8] sm:text-base lg:mt-0"
+          />
 
           {/*
               v24.0 CHANGE — Filter chips:

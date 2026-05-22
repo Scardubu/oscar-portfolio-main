@@ -163,6 +163,17 @@ Validation pass after v1.4 hardening:
 - Responsive sweep at `320, 375, 390, 430, 768, 1024, 1280, 1920` ✅
 - Sweep checks: horizontal overflow, hero/nav edge bounds, proof-dot wrapping ✅
 
+### Landing page consistency — shared intro + formatter v1.5
+
+| File                                 | Change                                                    | Impact                                                                                                                            |
+| ------------------------------------ | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `components/shared/SectionIntro.tsx` | Added a shared motion-aware editorial intro primitive     | Removes repeated section header markup and keeps Projects, Testimonials, Open Source, Skills, About, Writing, and Contact aligned |
+| `lib/utils.ts`                       | Added `formatMonthYear()`                                 | Reuses the hero/about availability date formatting in one place                                                                   |
+| `components/*Section.tsx`            | Migrated the landing sections to the shared intro pattern | Visual rhythm is now consistent across the full page                                                                              |
+
+Validation pass after v1.5 consistency refactor:
+- `pnpm test:smoke` ✅
+
 ---
 
 ## Local setup
@@ -313,7 +324,7 @@ page.locator('#section-writing')
 | User journey | `tests/e2e/user-journey.spec.ts` | ~60s  | Full recruiter scroll journey             |
 | Mobile       | `--project=mobile-chrome`        | ~120s | Touch targets, carousel, viewport         |
 
-**Current status:** 82 passed · 2 skipped (command palette — intentional) · 0 failed.
+**Current status:** Chromium smoke gate passing; 3 intentional skips remain (command palette, nav-links, user-journey).
 
 ---
 

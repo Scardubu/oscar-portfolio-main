@@ -9,6 +9,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { StaticSectionIntro } from '@/components/shared/StaticSectionIntro';
 import { getWritingPosts } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
@@ -37,21 +38,16 @@ export default async function WritingPage() {
           <div className="container">
             {/* ── Page header ─────────────────────────────────────────────── */}
             <div className="mb-10 sm:mb-14">
-              <div className="section-kicker-row mb-[var(--space-2)]">
-                <span className="section-number" aria-hidden="true">
-                  05
-                </span>
-                <span className="section-label">Writing</span>
-              </div>
-
-              <h1 className="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]">
-                Writing that ships decisions.
-              </h1>
-
-              <p className="text-color-text-secondary mt-4 max-w-[56ch] text-base leading-8">
-                Architecture calls, ML trade-offs, and what actually held in production — from Lagos
-                to the world.
-              </p>
+              <StaticSectionIntro
+                eyebrowNumber="05"
+                eyebrowLabel="Writing"
+                headingId="writing-list-heading"
+                title={<>Writing that ships decisions.</>}
+                description="Architecture calls, ML trade-offs, and what actually held in production — from Lagos to the world."
+                eyebrowClassName="mb-[var(--space-2)]"
+                titleClassName="text-color-text-primary mt-[var(--space-2)] max-w-[22ch]"
+                descriptionClassName="text-color-text-secondary mt-4 max-w-[56ch] text-base leading-8"
+              />
 
               <p className="text-color-text-muted mt-2 font-mono text-xs tracking-widest uppercase">
                 {posts.length} articles

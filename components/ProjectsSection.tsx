@@ -9,6 +9,7 @@ import { useState } from 'react';
 
 import { ArchDecision } from '@/components/ArchDecision';
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import {
@@ -443,42 +444,26 @@ export function ProjectsSection() {
       noBorderTop
     >
       <m.div>
-        {/*
-            v25 CHANGE: Editorial intro — section-intro-editorial (layout.css).
-            Mobile: kicker, h2, and description stack vertically (unchanged).
-            lg+: kicker+h2 anchor the left column; description sits right with
-              editorial alignment — richer desktop composition, not blown-up mobile.
-          */}
-        <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-14">
-          {/* Left: kicker + heading */}
-          <div>
-            <div data-cinematic="eyebrow" className="section-kicker-row mb-4">
-              <span className="section-number" aria-hidden="true">
-                01
-              </span>
-              <span className="section-label">Projects</span>
-            </div>
-            <m.h2
-              variants={reducedMotion ? child : clipReveal}
-              id="projects-heading"
-              data-cinematic="title"
-            >
-              Built to survive <br className="hidden lg:block" />
-              real constraints.
-            </m.h2>
-          </div>
-
-          {/* Right: description — editorial counterweight at lg+ */}
-          <div className="lg:flex lg:flex-col lg:justify-end">
-            <p
-              data-cinematic="lede"
-              className="text-color-text-secondary max-w-[56ch] text-sm leading-8 sm:text-base"
-            >
-              4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML
-              inference. AI agents that improve themselves between runs. All of it shipped from
-              Lagos. All of it running in production.
-            </p>
-          </div>
+        <m.div variants={child} className="mb-10 sm:mb-14">
+          <SectionIntro
+            eyebrowNumber="01"
+            eyebrowLabel="Projects"
+            headingId="projects-heading"
+            title={
+              <>
+                Built to survive <br className="hidden lg:block" />
+                real constraints.
+              </>
+            }
+            description={
+              '4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML inference. AI agents that improve themselves between runs. All of it shipped from Lagos. All of it running in production.'
+            }
+            eyebrowVariant={child}
+            titleVariant={reducedMotion ? child : clipReveal}
+            descriptionVariant={child}
+            titleClassName="text-color-text-primary max-w-[24ch]"
+            descriptionClassName="text-color-text-secondary max-w-[56ch] text-sm leading-8 sm:text-base"
+          />
         </m.div>
 
         {/* Primary featured */}

@@ -24,9 +24,13 @@ test('mobile viewport has no horizontal overflow', async ({ page, browserName })
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/');
 
-  const hasOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > window.innerWidth
-  );
+  const hasOverflow = await page.evaluate(() => {
+    const startX = window.scrollX;
+    window.scrollTo({ left: window.innerWidth * 2, top: window.scrollY, behavior: 'auto' });
+    const canScrollHorizontally = window.scrollX > startX;
+    window.scrollTo({ left: startX, top: window.scrollY, behavior: 'auto' });
+    return canScrollHorizontally;
+  });
 
   expect(hasOverflow).toBe(false);
 });

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, hoverLift, noMotion } from '@/lib/motionVariants';
@@ -131,40 +132,21 @@ export function OpenSourceSection() {
       className="border-color-border section-deferred overflow-x-clip"
     >
       <m.div>
-        {/*
-            v24 PATTERN: Editorial intro — section-intro-editorial (layout.css).
-            Mobile: kicker, h2, description stack vertically (unchanged).
-            lg+: kicker+h2 left column; description right column with editorial weight.
-          */}
-        <m.div variants={child} className="section-intro-editorial mb-10 sm:mb-12">
-          {/* Left: kicker + heading */}
-          <div>
-            <div data-cinematic="eyebrow" className="section-kicker-row mb-4">
-              <span className="section-number" aria-hidden="true">
-                02
-              </span>
-              <span className="section-label">Open Source</span>
-            </div>
-            <m.h2
-              variants={reducedMotion ? child : clipReveal}
-              id="oss-heading"
-              data-cinematic="title"
-              className="text-color-text-primary max-w-[26ch]"
-            >
-              Infrastructure for problems nobody packaged yet.
-            </m.h2>
-          </div>
-
-          {/* Right: description — v25 copy update per CE spec §P3-C */}
-          <div className="lg:flex lg:flex-col lg:justify-end">
-            <p
-              data-cinematic="lede"
-              className="text-color-text-secondary max-w-[52ch] text-base leading-8"
-            >
-              Four production-hardened packages from the fintech trenches — each solving a gap that
-              general-purpose libraries don&apos;t address. Install in minutes.
-            </p>
-          </div>
+        <m.div variants={child} className="mb-10 sm:mb-12">
+          <SectionIntro
+            eyebrowNumber="02"
+            eyebrowLabel="Open Source"
+            headingId="oss-heading"
+            title={<>Infrastructure for problems nobody packaged yet.</>}
+            description={
+              'Four production-hardened packages from the fintech trenches — each solving a gap that general-purpose libraries don’t address. Install in minutes.'
+            }
+            eyebrowVariant={child}
+            titleVariant={reducedMotion ? child : clipReveal}
+            descriptionVariant={child}
+            titleClassName="text-color-text-primary max-w-[26ch]"
+            descriptionClassName="text-color-text-secondary max-w-[52ch] text-base leading-8"
+          />
         </m.div>
 
         {/* Reciprocity frame — V1.0 Change 4: gift framing before proof. Per spec §Reciprocity Engine.

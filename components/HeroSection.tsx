@@ -10,27 +10,28 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-    type KeyboardEvent,
-    type MouseEvent,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
+  type KeyboardEvent,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import {
-    cardReveal,
-    fadeRise,
-    hoverLift,
-    noMotion,
-    staggerContainer,
-    wordReveal,
-    wordRevealContainer,
+  cardReveal,
+  fadeRise,
+  hoverLift,
+  noMotion,
+  staggerContainer,
+  wordReveal,
+  wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
+import { formatMonthYear } from '@/lib/utils';
 
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
@@ -75,18 +76,6 @@ const PROOF_COLUMNS = [
     body: 'React Native mobile → Next.js 15 dashboard → FastAPI inference → PostgreSQL. One engineer owns the entire surface. Zero handoff tax. Zero blame diffusion.',
   },
 ] as const;
-
-function formatAvailabilityMonthYear(isoDate: string): string {
-  const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) {
-    return 'Recently verified';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
-}
 
 function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -244,11 +233,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
           buttons. Each button is a valid WCAG 2.5.5 touch target (min 44px via
           padding). The class name bug (`carousel-dotactive` → `carousel-dot active`)
           is fixed by the space before 'active'. */}
-      <div
-        className="carousel-dots sm:hidden"
-        role="tablist"
-        aria-label="Proof pillar navigation"
-      >
+      <div className="carousel-dots sm:hidden" role="tablist" aria-label="Proof pillar navigation">
         {PROOF_COLUMNS.map((col, i) => (
           <button
             key={i}
@@ -260,7 +245,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -422,7 +407,7 @@ export function HeroSection() {
                 <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
                   <span className="hero-availability-updated ml-2 text-[9px] tracking-normal normal-case opacity-50">
-                    · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
+                    · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
               </div>
@@ -575,6 +560,15 @@ export function HeroSection() {
             </m.div>
 
             <m.div variants={child} data-cinematic="panel" className="live-bar-wrapper-hero">
+              <span
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label="Latest commit activity"
+                className="sr-only"
+              >
+                Loading recent activity
+              </span>
               <LiveActivityBar />
             </m.div>
 

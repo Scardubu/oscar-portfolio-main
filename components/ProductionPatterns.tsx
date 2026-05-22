@@ -8,6 +8,7 @@
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion';
 import { useRef, useState } from 'react';
 
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { cardReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
 /* ── Pattern data ──────────────────────────────────────────────────────────── */
@@ -220,21 +221,18 @@ export function ProductionPatterns() {
       <div className="container">
         <m.div variants={container} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
           <m.div variants={child} className="mb-8 sm:mb-12">
-            <div className="section-kicker-row">
-              <span className="section-number" aria-hidden="true">
-                ↳
-              </span>
-              <span className="section-label">Architecture Depth</span>
-            </div>
-
-            <h2 id="patterns-heading" className="text-color-text-primary mt-3 max-w-[24ch]">
-              Patterns that hold at 2am.
-            </h2>
-
-            <p className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 sm:text-base">
-              The architectural choices in every system — not retrofitted after incidents, designed
-              in before first deploy.
-            </p>
+            <SectionIntro
+              eyebrowNumber="↳"
+              eyebrowLabel="Architecture Depth"
+              headingId="patterns-heading"
+              title={<>Patterns that hold at 2am.</>}
+              description="The architectural choices in every system — not retrofitted after incidents, designed in before first deploy."
+              eyebrowVariant={child}
+              titleVariant={child}
+              descriptionVariant={child}
+              titleClassName="text-color-text-primary mt-3 max-w-[24ch]"
+              descriptionClassName="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 sm:text-base"
+            />
           </m.div>
 
           <div className="grid gap-3 sm:grid-cols-2">

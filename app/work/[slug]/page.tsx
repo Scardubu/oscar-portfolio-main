@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 
 import { ArchDecision } from '@/components/ArchDecision';
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { StaticSectionIntro } from '@/components/shared/StaticSectionIntro';
 import { anchorUrl } from '@/lib/config';
 import { getWorkCase, getWorkCases } from '@/lib/content';
 import { getProject, PROJECTS, type Project } from '@/lib/projects';
@@ -237,11 +238,14 @@ export default async function WorkPage({ params }: WorkPageProps) {
               {/* Main content column */}
               <div className="min-w-0">
                 <header className="mt-[var(--space-8)] mb-[var(--space-10)] max-w-[60ch]">
-                  <span className="label">Case Study</span>
-                  <h1 className="mt-[var(--space-2)]">{title}</h1>
-                  <p className="text-color-text-secondary mt-[var(--space-4)] text-base leading-8 sm:text-lg">
-                    {description}
-                  </p>
+                  <StaticSectionIntro
+                    eyebrowLabel="Case Study"
+                    headingId="work-case-heading"
+                    title={<>{title}</>}
+                    description={description}
+                    titleClassName="text-color-text-primary mt-[var(--space-2)]"
+                    descriptionClassName="text-color-text-secondary mt-[var(--space-4)] text-base leading-8 sm:text-lg"
+                  />
                   {projectMeta && (
                     <div className="mt-[var(--space-4)] flex flex-wrap gap-[var(--space-2)]">
                       <span className="pill pill-cyan">{statusLabel}</span>

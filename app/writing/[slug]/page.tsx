@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { StaticSectionIntro } from '@/components/shared/StaticSectionIntro';
 import { getWritingPost, getWritingPosts } from '@/lib/content';
 import { formatDate } from '@/lib/utils';
 
@@ -116,11 +117,14 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
             <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start">
               <div className="min-w-0">
                 <header className="mt-(--space-8) mb-(--space-10) max-w-[60ch]">
-                  <span className="label">Writing</span>
-                  <h1 className="mt-(--space-2)">{post.frontmatter.title}</h1>
-                  <p className="mt-(--space-4) text-(length:--text-lg)">
-                    {post.frontmatter.summary}
-                  </p>
+                  <StaticSectionIntro
+                    eyebrowLabel="Writing"
+                    headingId="writing-article-heading"
+                    title={<>{post.frontmatter.title}</>}
+                    description={post.frontmatter.summary}
+                    titleClassName="text-color-text-primary mt-(--space-2)"
+                    descriptionClassName="text-color-text-secondary mt-(--space-4) text-(length:--text-lg)"
+                  />
                   <div className="mt-(--space-6) flex flex-wrap gap-(--space-3) text-(--color-text-muted)">
                     <time dateTime={post.frontmatter.date}>
                       {formatDate(post.frontmatter.date)}

@@ -7,16 +7,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
-
-function formatAvailabilityMonthYear(isoDate: string): string {
-  const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) return 'Recently verified';
-  return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
-}
+import { formatMonthYear } from '@/lib/utils';
 
 const CERTS = [
   { name: 'AWS Certified Developer', date: 'Dec 2023', provider: 'AWS' },
@@ -89,49 +85,28 @@ export function AboutSection() {
         <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start">
           {/* ── LEFT COLUMN — narrative ─────────────────────────────────── */}
           <div>
-            <m.div
-              variants={itemVariants}
-              data-cinematic="eyebrow"
-              className="section-kicker-row mb-[var(--space-2)]"
-            >
-              <span className="section-number" aria-hidden="true">
-                04
-              </span>
-              <span className="section-label">ABOUT</span>
+            <m.div variants={itemVariants} className="mb-0">
+              <SectionIntro
+                eyebrowNumber="04"
+                eyebrowLabel="About"
+                headingId="about-heading"
+                title={
+                  <>
+                    Federal scale. <br className="hidden sm:block" />
+                    Production ML. <br className="hidden sm:block" />
+                    Lagos → Global.
+                  </>
+                }
+                description={
+                  'Built the digital learning infrastructure for 40 million Nigerian students at UBEC (Abuja HQ). Then shipped three production systems from Lagos that hold at 2am.'
+                }
+                eyebrowVariant={itemVariants}
+                titleVariant={headingVariant}
+                descriptionVariant={itemVariants}
+                titleClassName="text-color-text-primary mt-4"
+                descriptionClassName="text-color-text-secondary mt-3 max-w-[44ch] text-lg leading-relaxed"
+              />
             </m.div>
-
-            {/* v26 FIX: h2 rewritten for Dual Conviction Test Layer 1.
-                "Federal scale. Production ML. Lagos → Global." surfaces three
-                high-signal facts readable by both technical and non-technical
-                audiences in a single 5-second scan. Previous "Built to ship.
-                Wired to hold." was thesis-forward — correct for engineers,
-                opaque for founders and investors who need outcome before framing. */}
-            <m.h2
-              variants={headingVariant}
-              id="about-heading"
-              data-cinematic="title"
-              className="text-color-text-primary mt-4"
-            >
-              Federal scale. <br className="hidden sm:block" />
-              Production ML. <br className="hidden sm:block" />
-              Lagos → Global.
-            </m.h2>
-
-            {/* v26 FIX: Subheadline now delivers the spec-prescribed Layer 1 outcome
-                sentence — UBEC + 40M students + "systems that hold at 2am."
-                Non-technical evaluators get institutional authority in 5 seconds.
-                Technical evaluators read federal scale + operating environment.
-                The narrative paragraphs below reinforce and expand; they no longer
-                introduce a proof point that should have landed here.
-                (Dual Conviction Test · Three-Layer Audience Depth: spec §III) */}
-            <m.p
-              variants={itemVariants}
-              data-cinematic="lede"
-              className="text-color-text-secondary mt-3 max-w-[44ch] text-lg leading-relaxed"
-            >
-              Built the digital learning infrastructure for 40 million Nigerian students at UBEC
-              (Abuja HQ). Then shipped three production systems from Lagos that hold at 2am.
-            </m.p>
 
             {/* Impact stat strip — outcome numbers before narrative */}
             <m.div
@@ -320,7 +295,7 @@ export function AboutSection() {
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
                   <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
-                    · Updated {formatAvailabilityMonthYear(HERO.availabilityLastUpdated)}
+                    · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
               </a>

@@ -7,7 +7,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   reporter: process.env.CI ? 'github' : 'list',
-  use: { baseURL: 'http://127.0.0.1:3000', trace: 'on-first-retry' },
+  use: { baseURL: 'http://127.0.0.1:3100', trace: 'on-first-retry' },
   // Increase global expect timeout: smooth-scroll assertions need >5 s
   // under parallel local load (two workers + fresh next start).
   expect: { timeout: 10_000 },
@@ -19,9 +19,9 @@ export default defineConfig({
     { name: 'mobile-safari', use: { ...devices['iPhone 13'] } },
   ],
   webServer: {
-    command: 'pnpm start',
-    url: 'http://127.0.0.1:3000',
-    reuseExistingServer: !process.env.CI,
+    command: 'pnpm exec next start -p 3100',
+    url: 'http://127.0.0.1:3100',
+    reuseExistingServer: false,
     timeout: 300_000,
   },
 });

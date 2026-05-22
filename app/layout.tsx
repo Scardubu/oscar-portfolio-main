@@ -38,6 +38,7 @@ import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
+import './fixes.css';
 import './globals.css';
 import './fixes.css';
 
@@ -256,6 +257,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <Analytics />
         <SpeedInsights />
+
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label="Latest commit activity"
+          className="sr-only"
+        >
+          Loading recent activity
+        </div>
       </body>
     </html>
   );

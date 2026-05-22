@@ -1,12 +1,12 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatRelativeTime(dateOrString: Date | string): string {
-  const date = typeof dateOrString === "string" ? new Date(dateOrString) : dateOrString;
+  const date = typeof dateOrString === 'string' ? new Date(dateOrString) : dateOrString;
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60_000);
@@ -30,6 +30,16 @@ export function formatDate(
   }
 
   return date.toLocaleDateString('en-GB', options);
+}
+
+export function formatMonthYear(dateString: string): string {
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Recently verified';
+  }
+
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
 /** Clamp a number between min and max — used by useReadingProgress. */

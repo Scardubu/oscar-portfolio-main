@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { SkillsMap } from '@/components/skills/SkillsMap';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
@@ -238,36 +239,20 @@ export function SkillsSection() {
       <div>
         {/* ── L1: Header ─────────────────────────────────────────────── */}
         <m.div variants={child} className="mb-10 sm:mb-12">
-          <div className="section-intro-editorial mb-6 sm:mb-8">
-            <div>
-              <div data-cinematic="eyebrow" className="section-kicker-row mb-[var(--space-2)]">
-                <span className="section-number" aria-hidden="true">
-                  03
-                </span>
-                <span className="section-label">SKILLS</span>
-              </div>
-
-              <m.h2
-                variants={reducedMotion ? child : clipReveal}
-                id="skills-heading"
-                data-cinematic="title"
-                className="text-color-text-primary mt-3 max-w-[22ch]"
-              >
-                The stack behind systems that hold.
-              </m.h2>
-            </div>
-
-            <div className="lg:flex lg:flex-col lg:justify-end">
-              <p
-                data-cinematic="lede"
-                className="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 [overflow-wrap:break-word] sm:text-base lg:mt-0"
-              >
-                62 tools deployed under NRS audit pressure, 99.9%+ uptime targets, and multi-tenant
-                compliance constraints. Every skill maps to a decision made in production — not a
-                tutorial, not a certification exercise, not a side project.
-              </p>
-            </div>
-          </div>
+          <SectionIntro
+            eyebrowNumber="03"
+            eyebrowLabel="Skills"
+            headingId="skills-heading"
+            title={<>The stack behind systems that hold.</>}
+            description={
+              '62 tools deployed under NRS audit pressure, 99.9%+ uptime targets, and multi-tenant compliance constraints. Every skill maps to a decision made in production — not a tutorial, not a certification exercise, not a side project.'
+            }
+            eyebrowVariant={child}
+            titleVariant={reducedMotion ? child : clipReveal}
+            descriptionVariant={child}
+            titleClassName="text-color-text-primary mt-3 max-w-[22ch]"
+            descriptionClassName="text-color-text-secondary mt-4 max-w-[52ch] text-sm leading-8 [overflow-wrap:break-word] sm:text-base lg:mt-0"
+          />
 
           {/* L1: Outcome-first trust metrics */}
           <div

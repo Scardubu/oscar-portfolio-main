@@ -7,6 +7,7 @@ import { type ChangeEvent, type FormEvent, useMemo, useState } from 'react';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { CopyEmail } from '@/components/CopyEmail';
+import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
@@ -411,43 +412,22 @@ export function ContactSection() {
       className="border-color-border"
     >
       <m.div>
-        <m.div variants={child} data-cinematic="eyebrow" className="section-kicker-row">
-          <span className="section-number" aria-hidden="true">
-            06
-          </span>
-          <span className="section-label">Contact</span>
+        <m.div variants={child} className="mb-6 sm:mb-8">
+          <SectionIntro
+            eyebrowNumber="06"
+            eyebrowLabel="Contact"
+            headingId="contact-heading"
+            title={<>The system is ready. Are you?</>}
+            description={
+              'Hiring for Staff+, building from scratch, or containing a production incident — send the constraint. I respond within 24 hours, usually faster.'
+            }
+            eyebrowVariant={child}
+            titleVariant={headingVariant}
+            descriptionVariant={child}
+            titleClassName="mt-4 lg:mt-0"
+            descriptionClassName="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
+          />
         </m.div>
-
-        {/*
-            v20 CHANGE: Editorial intro — section-intro-editorial (layout.css).
-            Mobile: kicker, h2, and description stack vertically (unchanged).
-            lg+: kicker+h2 anchor the left column; description sits right with
-              editorial alignment — consistent with Projects, OSS, Writing, Skills.
-            Trust badges remain full-width below the editorial pair on all viewports.
-          */}
-        <div className="section-intro-editorial mb-6 sm:mb-8">
-          {/* Left: heading */}
-          <m.h2
-            variants={headingVariant}
-            id="contact-heading"
-            data-cinematic="title"
-            className="mt-4 lg:mt-0"
-          >
-            The system is ready. Are you?
-          </m.h2>
-
-          {/* Right: description — editorial counterweight at lg+ */}
-          <div className="lg:flex lg:flex-col lg:justify-end">
-            <m.p
-              variants={child}
-              data-cinematic="lede"
-              className="text-color-text-secondary mt-4 max-w-[52ch] text-base leading-8 lg:mt-0"
-            >
-              Hiring for Staff+, building from scratch, or containing a production incident — send
-              the constraint. I respond within 24 hours, usually faster.
-            </m.p>
-          </div>
-        </div>
 
         <m.div
           variants={child}
