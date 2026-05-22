@@ -174,6 +174,20 @@ Validation pass after v1.4 hardening:
 Validation pass after v1.5 consistency refactor:
 - `pnpm test:smoke` ✅
 
+### Runtime hygiene + browser data refresh v1.6
+
+| File             | Change                                                                         | Impact                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `app/layout.tsx` | Removed duplicate `fixes.css` import                                           | Prevents redundant stylesheet loading and keeps root layout intent clean                     |
+| `app/layout.tsx` | Preserved pre-seeded `window.__commandPaletteRequested` flag during early boot | Keeps command palette bootstrap reliable across early key interception and test init scripts |
+| `pnpm-lock.yaml` | Refreshed `caniuse-lite` and `baseline-browser-mapping`                        | Removes stale browser dataset warnings from routine builds                                   |
+
+Validation pass after v1.6 maintenance:
+- `pnpm run type-check` ✅
+- `pnpm run lint` ✅
+- `pnpm run build` ✅
+- `pnpm run test:smoke` ✅
+
 ---
 
 ## Local setup
@@ -213,6 +227,16 @@ pnpm audit:copy     # content compliance verification (NRS, metric sources)
 pnpm lhci           # Lighthouse CI audit
 pnpm analyze        # bundle analyser (set ANALYZE=true)
 ```
+
+## Maintenance
+
+Refresh browser compatibility metadata when build output reports stale `caniuse-lite` or Baseline data:
+
+```bash
+npx update-browserslist-db@latest
+```
+
+This updates the lockfile entries used by `browserslist`, `autoprefixer`, and Next.js build tooling without changing your declared application dependencies.
 
 ---
 

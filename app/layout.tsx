@@ -40,7 +40,6 @@ import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
 import './fixes.css';
 import './globals.css';
-import './fixes.css';
 
 // Local-first font strategy to avoid build-time network dependency on
 // Google Fonts while preserving brand-consistent fallbacks.
@@ -195,7 +194,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
-              window.__commandPaletteRequested = false;
+              window.__commandPaletteRequested = window.__commandPaletteRequested ?? false;
               document.addEventListener('keydown', (event) => {
                 if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
                   event.preventDefault();
