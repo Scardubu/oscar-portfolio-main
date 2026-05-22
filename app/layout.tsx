@@ -39,6 +39,7 @@ import { ScrollProgress } from '@/components/ScrollProgress';
 import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
 import './globals.css';
+import './fixes.css';
 
 // Local-first font strategy to avoid build-time network dependency on
 // Google Fonts while preserving brand-consistent fallbacks.
@@ -211,7 +212,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body className="relative">
+      <body className="relative overflow-x-hidden">
         {/* ── Skip navigation — WCAG 2.2 §2.4.1 ──────────────────────── */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
