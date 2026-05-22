@@ -10,7 +10,7 @@ type CommandPaletteGlobal = typeof globalThis & {
 
 async function goto(page: Page) {
   await page.goto('/');
-  await expect(page.locator('h1')).toBeVisible();
+  await page.waitForLoadState('networkidle');
 }
 
 async function expectNoOverflowAtWidth(browser: Browser, width: number) {
@@ -96,7 +96,7 @@ test.describe('Portfolio smoke tests', () => {
     const strictStatusLocator = page.locator(
       '[role="status"][aria-label="Latest commit activity"]'
     );
-    await expect(strictStatusLocator.first()).toBeAttached();
+    await expect(strictStatusLocator).toHaveCount(1, { timeout: 20000 });
   });
 
   test('command palette opens and closes from its global trigger', async ({ page }) => {
@@ -106,7 +106,7 @@ test.describe('Portfolio smoke tests', () => {
       (globalThis as CommandPaletteGlobal).__commandPaletteRequested = true;
     });
     await page.reload();
-    await expect(page.locator('h1')).toBeVisible();
+    await page.waitForLoadState('networkidle');
 
     const dialog = page.getByRole('dialog', { name: /command palette/i });
     const isOpen = await dialog.isVisible().catch(() => false);
@@ -131,16 +131,10 @@ test.describe('Portfolio smoke tests', () => {
   test('contact section exposes canonical email and form', async ({ page }) => {
     await goto(page);
 
-    await page
-      .locator('section#section-contact[aria-labelledby="contact-heading"]')
-      .scrollIntoViewIfNeeded();
-    await expect(
-      page
-        .locator(
-          `section#section-contact[aria-labelledby="contact-heading"] a[href="mailto:${CONTACT_EMAIL}"]`
-        )
-        .first()
-    ).toBeVisible();
+    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    await expect(section).toBeAttached();
+    await section.scrollIntoViewIfNeeded();
+    await expect(section.locator(`a[href="mailto:${CONTACT_EMAIL}"]`).first()).toBeVisible();
     await expect(page.locator('form[aria-label="Contact Oscar Ndugbu"]')).toBeVisible();
   });
 

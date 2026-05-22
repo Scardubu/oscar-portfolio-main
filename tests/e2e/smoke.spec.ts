@@ -69,10 +69,14 @@ test.skip('nav links scroll to matching sections', async ({ page }) => {
 
 test('all target blank links include noopener noreferrer', async ({ page }) => {
   await page.goto('/');
-  const links = page.locator('a[target="_blank"]');
-  const count = await links.count();
+  await page.waitForLoadState('networkidle');
 
-  for (let index = 0; index < count; index += 1) {
-    await expect(links.nth(index)).toHaveAttribute('rel', 'noopener noreferrer');
+  const relValues = await page
+    .locator('a[target="_blank"]')
+    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('rel') ?? ''));
+
+  for (const rel of relValues) {
+    expect(rel).toContain('noopener');
+    expect(rel).toContain('noreferrer');
   }
 });

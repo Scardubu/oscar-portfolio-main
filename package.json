@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "prepare": "husky",
+    "prepare": "node -e \"if (process.env.CI || process.env.VERCEL) process.exit(0); require('child_process').execSync('pnpm exec husky', { stdio: 'inherit' })\"",
     "lint": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"constants/**/*.ts\" \"scripts/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\"",
     "lint:fix": "eslint \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"hooks/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"constants/**/*.ts\" \"scripts/**/*.ts\" \"e2e/**/*.ts\" \"tests/**/*.ts\" \"*.{ts,mjs}\" --fix",
     "lint:staged": "lint-staged",

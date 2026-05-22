@@ -6,6 +6,10 @@ This file is reserved for release corrections and follow-up notes for the portfo
 
 ## 2026-05-22 — Production readiness integration pass
 
+- Vercel install remediation: replaced the unconditional `prepare` script in `package.json` with a CI/Vercel guard so `pnpm install` no longer fails on missing Husky bootstrap binaries during deployment builds.
+- Deployment note: local Git hook setup remains intact via `pnpm exec husky`, but production installs now skip lifecycle hook wiring cleanly.
+- Smoke stability hardening: replaced index-based target-blank link assertions with snapshot-based `evaluateAll` checks in smoke suites and relaxed brittle page-readiness assumptions that intermittently flaked under CI timing.
+
 - Follow-up quick win: moved `ThreeBrushField` mount in `app/layout.tsx` to `next/dynamic` (code-split import with loading fallback) to reduce startup pressure from the heavy Three.js path and improve Lighthouse JS-execution profile on first paint.
 - Accessibility micro-audit pass: verified skip-link target coverage (`#main-content`) across homepage, writing routes, and work detail routes; no anchor-target regressions found.
 - Bundle hotspot audit: confirmed `three` import is isolated to `components/cinematic/ThreeBrushField.tsx`; no additional heavy library leaks discovered in app-level route components.
