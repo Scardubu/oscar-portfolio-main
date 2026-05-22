@@ -26,6 +26,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
+import dynamic from 'next/dynamic';
 import type { CSSProperties } from 'react';
 
 import { Providers } from '@/app/providers';
@@ -36,10 +37,16 @@ import { Footer } from '@/components/Footer';
 import { GrainOverlay } from '@/components/GrainOverlay';
 import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
-import { ThreeBrushField } from '@/components/cinematic/ThreeBrushField';
 
 import './fixes.css';
 import './globals.css';
+
+const ThreeBrushField = dynamic(
+  () => import('@/components/cinematic/ThreeBrushField').then((mod) => mod.ThreeBrushField),
+  {
+    loading: () => null,
+  }
+);
 
 // Local-first font strategy to avoid build-time network dependency on
 // Google Fonts while preserving brand-consistent fallbacks.

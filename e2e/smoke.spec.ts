@@ -166,11 +166,11 @@ test.describe('Portfolio smoke tests', () => {
   test('all target blank links include noopener and noreferrer', async ({ page }) => {
     await goto(page);
 
-    const links = page.locator('a[target="_blank"]');
-    const count = await links.count();
+    const relValues = await page
+      .locator('a[target="_blank"]')
+      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('rel') ?? ''));
 
-    for (let index = 0; index < count; index += 1) {
-      const rel = await links.nth(index).getAttribute('rel');
+    for (const rel of relValues) {
       expect(rel).toContain('noopener');
       expect(rel).toContain('noreferrer');
     }
