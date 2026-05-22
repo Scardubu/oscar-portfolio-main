@@ -28,7 +28,17 @@ function typeLabel(type: string): string {
     CreateEvent: 'Branch created',
     IssuesEvent: 'Issue activity',
   };
+
   return map[type] ?? 'Recent activity';
+}
+
+function ActivitySkeleton() {
+  return (
+    <div className="flex min-h-[24px] items-center gap-2" aria-hidden="true">
+      <div className="bg-color-border h-1.5 w-1.5 animate-pulse rounded-full" />
+      <div className="bg-color-border h-3 w-44 animate-pulse rounded" />
+    </div>
+  );
 }
 
 export function LiveActivityBar() {
@@ -56,51 +66,46 @@ export function LiveActivityBar() {
     return () => ctrl.abort();
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        className="flex min-h-[24px] items-center gap-2"
-        aria-label="Loading recent activity"
-        aria-busy="true"
-      >
-        <div className="bg-color-border h-1.5 w-1.5 animate-pulse rounded-full" />
-        <div className="bg-color-border h-3 w-44 animate-pulse rounded" />
-      </div>
-    );
-  }
-
-  if (!activity) return null;
-
-  const label = activity.message ?? typeLabel(activity.type);
+  const safeActivity = activity ?? FALLBACK;
+  const label = safeActivity.message ?? typeLabel(safeActivity.type);
 
   return (
-    <p
+    <div
       role="status"
       aria-live="polite"
-      aria-atomic="false"
+      aria-atomic="true"
+      aria-busy={loading ? 'true' : 'false'}
       aria-label="Latest commit activity"
-      className="flex min-h-[24px] items-center gap-2 overflow-hidden"
+      className="live-bar-text flex min-h-[24px] items-center gap-2 overflow-hidden"
     >
-      <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
+      {loading ? (
+        <ActivitySkeleton />
+      ) : (
+        <>
+          <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
 
-      {activity.sha && activity.sha !== 'unknown' && (
-        <span className="text-color-text-muted shrink-0 font-mono text-[11px] uppercase">
-          {activity.sha.slice(0, 7)}
-        </span>
+          {safeActivity.sha && safeActivity.sha !== 'unknown' && (
+            <span className="text-color-text-muted shrink-0 font-mono text-[11px] uppercase">
+              {safeActivity.sha.slice(0, 7)}
+            </span>
+          )}
+
+          <span
+            className="text-color-text-secondary min-w-0 flex-1 overflow-hidden text-xs leading-snug text-ellipsis whitespace-nowrap"
+            title={label}
+          >
+            {label}
+          </span>
+
+          <span aria-hidden="true" className="text-color-border">
+            ·
+          </span>
+
+          <span className="text-color-text-muted shrink-0 font-mono text-[11px]">
+            {safeActivity.ago}
+          </span>
+        </>
       )}
-
-      <span
-        className="text-color-text-secondary min-w-0 flex-1 overflow-hidden text-xs leading-snug text-ellipsis whitespace-nowrap"
-        title={label}
-      >
-        {label}
-      </span>
-
-      <span aria-hidden="true" className="text-color-border">
-        ·
-      </span>
-
-      <span className="text-color-text-muted shrink-0 font-mono text-[11px]">{activity.ago}</span>
-    </p>
+    </div>
   );
 }
