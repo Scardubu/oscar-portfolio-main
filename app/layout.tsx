@@ -52,6 +52,8 @@ const localFontVariables: CSSProperties = {
   '--font-didone': '"Playfair Display", "Iowan Old Style", "Times New Roman", serif',
 } as CSSProperties;
 
+const shouldLoadVercelInsights = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
 export const metadata: Metadata = {
   title: {
     default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
@@ -194,7 +196,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
-              window.__commandPaletteRequested = false;
+              window.__commandPaletteRequested = window.__commandPaletteRequested ?? false;
               document.addEventListener('keydown', (event) => {
                 if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
                   event.preventDefault();
@@ -254,18 +256,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
         </Providers>
 
-        <Analytics />
-        <SpeedInsights />
-
-        <div
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-          aria-label="Latest commit activity"
-          className="sr-only"
-        >
-          Loading recent activity
-        </div>
+        {shouldLoadVercelInsights ? <Analytics /> : null}
+        {shouldLoadVercelInsights ? <SpeedInsights /> : null}
       </body>
     </html>
   );

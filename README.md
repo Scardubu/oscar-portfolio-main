@@ -407,6 +407,8 @@ open https://scardubu.dev/api/og                     # OG image (200 OK)
 curl -I https://scardubu.dev/cv/oscar-ndugbu-resume.pdf  # 200 OK
 ```
 
+Note: Vercel Analytics and Speed Insights are mounted only when `NEXT_PUBLIC_VERCEL_ENV=production` to avoid preview-environment script-load noise.
+
 ### Manual / Netlify fallback
 
 ```bash
