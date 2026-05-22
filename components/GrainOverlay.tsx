@@ -1,22 +1,36 @@
 'use client';
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
-// Grain is purely decorative. On mobile (pointer:coarse) use a lighter,
-// faster static SVG grain vs desktop's animated canvas grain.
-// Never blocks render — deferred via requestIdleCallback.
+//
+// v2.1 FIX: Hydration mismatch resolved.
+//
+// Previous version initialised `coarse` as `true` (assume mobile) on the server
+// and then updated it in useEffect after hydration. React 19 treats any
+// SSR → client opacity difference as a hydration error (#419 minified).
+//
+// Fix: Mount with `mounted: false` → render nothing on the server.
+// After hydration fires useEffect, read the real media query and render the
+// correct opacity. The element is purely decorative — the 1-frame delay is
+// invisible to users.
 
 import { useEffect, useState } from 'react';
 
 export function GrainOverlay() {
-  const [coarse, setCoarse] = useState(true); // default: assume mobile
+  const [mounted, setMounted] = useState(false);
+  const [coarse, setCoarse] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(pointer: coarse)');
     setCoarse(mq.matches);
+    setMounted(true);
+
     const handler = (e: MediaQueryListEvent) => setCoarse(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
+
+  // Do not render on server — avoids hydration mismatch in React 19.
+  if (!mounted) return null;
 
   return (
     <div

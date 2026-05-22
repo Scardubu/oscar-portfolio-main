@@ -1,17 +1,31 @@
-# Normalize all text files to LF on checkout (P1-M fix)
+# Force LF line endings for all text files
 * text=auto eol=lf
 
-# Shell scripts must always be LF
+# Explicitly set LF for source files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.mdx text eol=lf
+*.mjs text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
 *.sh text eol=lf
 
-# Binary — no normalization
+# Binary files - never convert
 *.png binary
 *.jpg binary
 *.jpeg binary
-*.webp binary
+*.gif binary
 *.ico binary
-*.pdf binary
-*.ttf binary
-*.woff binary
+*.webp binary
+*.avif binary
 *.woff2 binary
-*.docx binary
+*.woff binary
+*.ttf binary
+*.eot binary
+*.pdf binary

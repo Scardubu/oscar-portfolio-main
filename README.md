@@ -350,6 +350,8 @@ page.locator('#section-writing')
 
 **Current status:** Chromium smoke gate passing; 3 intentional skips remain (command palette, nav-links, user-journey).
 
+**Final verification:** local production build, type-check, lint, and Chromium smoke suite all pass on the current branch. The homepage now has a single canonical live-activity status target, and the mobile overflow checks at 320px and 375px are green.
+
 ---
 
 ## Quality gates — pre-deployment checklist

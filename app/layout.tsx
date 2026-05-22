@@ -194,7 +194,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
-              window.__commandPaletteRequested = window.__commandPaletteRequested ?? false;
+              window.__commandPaletteRequested = false;
               document.addEventListener('keydown', (event) => {
                 if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
                   event.preventDefault();

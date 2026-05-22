@@ -210,7 +210,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               }}
               role="tabpanel"
               aria-labelledby={`hero-proof-tab-${index}`}
-              aria-hidden={index !== activeIndex}
+              aria-hidden={!isDesktop && index !== activeIndex}
               variants={cardVariants}
               className="mobile-carousel-item proof-card snap-center"
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
@@ -560,15 +560,6 @@ export function HeroSection() {
             </m.div>
 
             <m.div variants={child} data-cinematic="panel" className="live-bar-wrapper-hero">
-              <span
-                role="status"
-                aria-live="polite"
-                aria-atomic="true"
-                aria-label="Latest commit activity"
-                className="sr-only"
-              >
-                Loading recent activity
-              </span>
               <LiveActivityBar />
             </m.div>
 

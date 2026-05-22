@@ -47,18 +47,27 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
-          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
-          // [v15 / v14.1 FIX] CSP in report-only — promote to enforced after 2 weeks clean
           {
-            key: 'Content-Security-Policy-Report-Only',
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+          // [v16 FIX] CSP promoted from report-only to enforced.
+          // Additions vs v15:
+          //   font-src    — added *.public.blob.vercel-storage.com (self-hosted fonts on Vercel Blob)
+          //   connect-src — added github-contributions-api.deno.dev, va.vercel-scripts.com, vercel.live
+          //   img-src     — added blob: (canvas/dynamic image blobs)
+          //   frame-src   — added vercel.live (Vercel toolbar)
+          {
+            key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vercel.live",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https://avatars.githubusercontent.com",
-              "connect-src 'self' https://api.github.com https://vitals.vercel-insights.com",
+              "font-src 'self' https://fonts.gstatic.com https://*.public.blob.vercel-storage.com",
+              "img-src 'self' data: blob: https://avatars.githubusercontent.com",
+              "connect-src 'self' https://api.github.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://github-contributions-api.deno.dev https://vercel.live",
+              "frame-src 'self' https://vercel.live",
               "frame-ancestors 'none'",
             ].join('; '),
           },

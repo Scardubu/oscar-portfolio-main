@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 type PortfolioMetricsResponse = {
   uptime: {
@@ -16,7 +16,7 @@ type PortfolioMetricsResponse = {
     avgSessionSeconds: number;
   };
   meta: {
-    source: "portfolio-benchmarks";
+    source: 'portfolio-benchmarks';
     updatedAt: string;
   };
 };
@@ -37,8 +37,8 @@ const PORTFOLIO_METRICS: PortfolioMetricsResponse = {
     avgSessionSeconds: 180,
   },
   meta: {
-    source: "portfolio-benchmarks",
-    updatedAt: "2026-03-29T00:00:00.000Z",
+    source: 'portfolio-benchmarks',
+    updatedAt: '2026-03-29T00:00:00.000Z',
   },
 };
 
@@ -46,7 +46,7 @@ export async function GET() {
   return NextResponse.json(PORTFOLIO_METRICS, {
     status: 200,
     headers: {
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300',
     },
   });
 }
