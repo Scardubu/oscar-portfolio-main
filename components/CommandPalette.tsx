@@ -65,12 +65,12 @@ export function CommandPalette() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
-    fetch('/api/live-metrics')
+    fetch('/api/live-metrics', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: LiveStatusSnapshot | null) => {
-        if (cancelled || !data) return;
+        if (!data) return;
         if (
           data.systemStatus === 'operational' ||
           data.systemStatus === 'degraded' ||
@@ -80,13 +80,13 @@ export function CommandPalette() {
           setStatusAvailable(true);
         }
       })
-      .catch(() => {
-        if (cancelled) return;
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
         setStatusAvailable(false);
       });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 
@@ -330,12 +330,18 @@ export function CommandPalette() {
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
         if (e.shiftKey) {
-          if (document.activeElement === first || !panelRef.current.contains(document.activeElement)) {
+          if (
+            document.activeElement === first ||
+            !panelRef.current.contains(document.activeElement)
+          ) {
             e.preventDefault();
             last.focus();
           }
         } else {
-          if (document.activeElement === last || !panelRef.current.contains(document.activeElement)) {
+          if (
+            document.activeElement === last ||
+            !panelRef.current.contains(document.activeElement)
+          ) {
             e.preventDefault();
             first.focus();
           }

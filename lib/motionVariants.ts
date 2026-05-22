@@ -51,6 +51,80 @@ export const springs = {
   magnetic: { type: 'spring', stiffness: 500, damping: 32, mass: 0.5 } as Transition, // matches useMagnetic spring
 } as const;
 
+const SPRING_STANDARD: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 25,
+};
+
+const SPRING_STANDARD_EXIT: Transition = {
+  type: 'spring',
+  stiffness: 180,
+  damping: 20,
+};
+
+const SPRING_DRAMATIC_REVEAL: Transition = {
+  type: 'spring',
+  stiffness: 160,
+  damping: 20,
+  mass: 1.2,
+};
+
+const SPRING_WORD_REVEAL: Transition = {
+  type: 'spring',
+  stiffness: 190,
+  damping: 22,
+  mass: 1.05,
+};
+
+const SPRING_LETTER_REVEAL: Transition = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 24,
+  mass: 0.8,
+};
+
+const SPRING_CLIP_REVEAL: Transition = {
+  type: 'spring',
+  stiffness: 90,
+  damping: 22,
+  mass: 1.1,
+};
+
+const SPRING_SCALE_X_REVEAL: Transition = {
+  type: 'spring',
+  stiffness: 120,
+  damping: 18,
+  mass: 0.9,
+};
+
+const SPRING_ACCORDION_HEIGHT: Transition = {
+  type: 'spring',
+  stiffness: 260,
+  damping: 26,
+};
+
+const SPRING_SPOTLIGHT_CLIP: Transition = {
+  type: 'spring',
+  stiffness: 80,
+  damping: 20,
+  mass: 1.2,
+};
+
+const SPRING_PROGRESS_FILL: Transition = {
+  type: 'spring',
+  stiffness: 90,
+  damping: 20,
+  mass: 0.9,
+};
+
+const SPRING_SHARED_LAYOUT: Transition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+  mass: 0.8,
+};
+
 /**
  * springConfig — canonical alias for springs.smooth.
  * Used by legacy components. New code should use springs.smooth directly.
@@ -201,7 +275,7 @@ export const dramaticReveal = (yOffset = 36): Variants => ({
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 160, damping: 20, mass: 1.2 },
+    transition: SPRING_DRAMATIC_REVEAL,
   },
 });
 
@@ -222,8 +296,8 @@ export const scaleIn: Variants = {
 
 export const reveal: Variants = {
   hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } },
-  exit: { opacity: 0, y: 8, transition: { type: 'spring', stiffness: 180, damping: 20 } },
+  visible: { opacity: 1, y: 0, transition: SPRING_STANDARD },
+  exit: { opacity: 0, y: 8, transition: SPRING_STANDARD_EXIT },
 };
 
 export const revealLeft: Variants = {
@@ -260,7 +334,7 @@ export const liquidCard: Variants = {
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
-  visible: { y: '0%', transition: { type: 'spring', stiffness: 190, damping: 22, mass: 1.05 } },
+  visible: { y: '0%', transition: SPRING_WORD_REVEAL },
 };
 
 export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => ({
@@ -276,7 +350,7 @@ export const letterReveal: Variants = {
   visible: {
     y: '0%',
     opacity: 1,
-    transition: { type: 'spring', stiffness: 280, damping: 24, mass: 0.8 },
+    transition: SPRING_LETTER_REVEAL,
   },
 };
 
@@ -295,7 +369,7 @@ export const clipReveal: Variants = {
   visible: {
     clipPath: 'inset(0 0% 0 0)',
     opacity: 1,
-    transition: { type: 'spring', stiffness: 90, damping: 22, mass: 1.1 },
+    transition: SPRING_CLIP_REVEAL,
   },
 };
 
@@ -330,7 +404,7 @@ export const scaleXReveal: Variants = {
     scaleX: 1,
     opacity: 1,
     originX: 0,
-    transition: { type: 'spring', stiffness: 120, damping: 18, mass: 0.9 },
+    transition: SPRING_SCALE_X_REVEAL,
   },
 };
 
@@ -365,7 +439,7 @@ export const accordionReveal: Variants = {
     opacity: 1,
     height: 'auto',
     transition: {
-      height: { type: 'spring', stiffness: 260, damping: 26 },
+      height: SPRING_ACCORDION_HEIGHT,
       opacity: { duration: 0.18, delay: 0.06 },
     },
   },
@@ -503,7 +577,7 @@ export const spotlightReveal: Variants = {
     clipPath: 'circle(100% at 50% 50%)',
     scale: 1,
     transition: {
-      clipPath: { type: 'spring', stiffness: 80, damping: 20, mass: 1.2 },
+      clipPath: SPRING_SPOTLIGHT_CLIP,
       opacity: { duration: 0.2 },
       scale: springs.gentle,
     },
@@ -545,12 +619,7 @@ export const dragTransition = {
  * Consistent spring physics for expanding cards, active filter pills, etc.
  */
 export const sharedLayoutTransition = {
-  layout: {
-    type: 'spring',
-    stiffness: 300,
-    damping: 30,
-    mass: 0.8,
-  },
+  layout: SPRING_SHARED_LAYOUT,
 } as const;
 
 /**
@@ -607,7 +676,7 @@ export const progressFill = (widthTarget: string | number = '100%'): Variants =>
     scaleX: typeof widthTarget === 'string' ? 1 : widthTarget,
     opacity: 1,
     originX: 0,
-    transition: { type: 'spring', stiffness: 90, damping: 20, mass: 0.9 },
+    transition: SPRING_PROGRESS_FILL,
   },
 });
 

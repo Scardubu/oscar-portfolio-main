@@ -52,7 +52,11 @@ const localFontVariables: CSSProperties = {
   '--font-didone': '"Playfair Display", "Iowan Old Style", "Times New Roman", serif',
 } as CSSProperties;
 
-const shouldLoadVercelInsights = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
+const isPreviewDeployment = process.env.NEXT_PUBLIC_VERCEL_URL?.includes('vercel.app') ?? false;
+
+const shouldLoadVercelInsights = isVercelProduction && !isPreviewDeployment;
 
 export const metadata: Metadata = {
   title: {

@@ -9,7 +9,13 @@ const withMDX = createMDX({
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
       rehypeSlug,
-      [rehypePrettyCode, { theme: 'github-dark-dimmed', keepBackground: false }],
+      [
+        rehypePrettyCode,
+        {
+          theme: 'github-dark-dimmed',
+          keepBackground: false,
+        },
+      ],
     ],
   },
 });
@@ -17,7 +23,16 @@ const withMDX = createMDX({
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: { formats: ['image/avif', 'image/webp'] },
-  experimental: { optimizeCss: true },
+
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+  },
+
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['framer-motion', 'lucide-react'],
+  },
+
   async redirects() {
     return [
       {
@@ -30,13 +45,10 @@ const nextConfig: NextConfig = {
         destination: '/cv/oscar-ndugbu-resume.pdf',
         permanent: true,
       },
-      {
-        source: '/blog/:path*',
-        destination: '/writing',
-        permanent: true,
-      },
+      { source: '/blog/:path*', destination: '/writing', permanent: true },
     ];
   },
+
   async headers() {
     return [
       {
@@ -52,12 +64,6 @@ const nextConfig: NextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload',
           },
           { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
-          // [v16 FIX] CSP promoted from report-only to enforced.
-          // Additions vs v15:
-          //   font-src    — added *.public.blob.vercel-storage.com (self-hosted fonts on Vercel Blob)
-          //   connect-src — added github-contributions-api.deno.dev, va.vercel-scripts.com, vercel.live
-          //   img-src     — added blob: (canvas/dynamic image blobs)
-          //   frame-src   — added vercel.live (Vercel toolbar)
           {
             key: 'Content-Security-Policy',
             value: [

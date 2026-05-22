@@ -4,6 +4,15 @@ This file is reserved for release corrections and follow-up notes for the portfo
 
 ## 2026-05-21 — Cinematic Homepage Integration hardening
 
+## 2026-05-22 — Production readiness integration pass
+
+- Centralized global Framer Motion policy in `app/providers.tsx` via `MotionConfig` with `reducedMotion="user"` and a shared spring default (`stiffness: 280`, `damping: 26`) to align app-wide interaction feel.
+- Simplified `components/MotionProvider.tsx` to LazyMotion-only responsibility (`domAnimation` feature loading), removing nested MotionConfig overrides and reducing configuration drift.
+- Hardened command palette status fetch lifecycle in `components/CommandPalette.tsx` with `AbortController` cancellation and `AbortError` guard to prevent stale state updates after unmount.
+- Added Next.js production optimization flags in `next.config.ts`: `compiler.removeConsole` (preserving `error`) and `experimental.optimizePackageImports` for `framer-motion` and `lucide-react`.
+- Preserved all existing accessibility and smoke-contract requirements, including live activity status semantics and mobile overflow guardrails.
+- Validation: `pnpm run lint`, `pnpm run type-check`, and `pnpm run build` pass after integration; smoke suite remains green in this environment (16 passed / 3 skipped).
+
 - Finalized chapter-wrapper migration for homepage sections (`Projects`, `Open Source`, `Skills`, `About`, `Writing`, `Contact`) and removed JSX structural regressions introduced during wrapper conversion.
 - Canonicalized cinematic provider usage by collapsing legacy `lib/cinematic/ScrollCinemaProvider.tsx` into a compatibility re-export that points at `components/cinematic/ScrollCinemaProvider.tsx`.
 - Completed cinematic semantics pass using `data-cinematic` markers across chapter content blocks (`eyebrow`, `title`, `lede`, `panel`, `card`, `proof`, `cta`, `media`) to align timeline orchestration.

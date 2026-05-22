@@ -27,15 +27,12 @@
 //   entrance / exit behavior.
 
 import { ALL_PILLARS, SKILLS } from '@/lib/data/skills';
+import { SPRING_SMOOTH } from '@/lib/motion';
 import type { SkillNode, SkillPillar } from '@/lib/types';
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 
-const SKILL_GRID_TRANSITION = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 28,
-} as const;
+const SKILL_GRID_TRANSITION = SPRING_SMOOTH;
 
 const LEVEL_CONFIG = {
   expert: {
@@ -211,12 +208,12 @@ export function SkillsMap(): React.ReactElement {
       <p
         aria-live="polite"
         aria-atomic="true"
-        className="font-mono text-[11px] tracking-widest uppercase text-color-text-muted"
+        className="text-color-text-muted font-mono text-[11px] tracking-widest uppercase"
       >
         {liveLabel}
       </p>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <m.div
           key={active}
           id="skills-grid"
