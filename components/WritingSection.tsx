@@ -42,7 +42,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
       ariaLabelledBy="writing-heading"
       className="border-color-border"
     >
-      <m.div>
+      <div>
         {/* ── Section header ────────────────────────────────────────────── */}
         <m.div variants={child} className="mb-8 sm:mb-12">
           <SectionIntro
@@ -252,7 +252,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             </m.p>
           </>
         ) : null}
-      </m.div>
+      </div>
     </ChapterFrame>
   );
 }

@@ -74,9 +74,14 @@ test.describe('Portfolio smoke tests', () => {
     );
   });
 
-  test('home has no horizontal overflow at 320px and 375px', async ({ browser }) => {
+  test('home has no horizontal overflow at 320px, 360px, 375px, 390px, and 430px', async ({
+    browser,
+  }) => {
     await expectNoOverflowAtWidth(browser, 320);
+    await expectNoOverflowAtWidth(browser, 360);
     await expectNoOverflowAtWidth(browser, 375);
+    await expectNoOverflowAtWidth(browser, 390);
+    await expectNoOverflowAtWidth(browser, 430);
   });
 
   test('desktop nav exposes projects hash target', async ({ page }) => {

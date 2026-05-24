@@ -131,7 +131,7 @@ export function OpenSourceSection() {
       ariaLabelledBy="oss-heading"
       className="border-color-border section-deferred overflow-x-clip"
     >
-      <m.div>
+      <div>
         <m.div variants={child} className="mb-10 sm:mb-12">
           <SectionIntro
             eyebrowNumber="02"
@@ -271,7 +271,7 @@ export function OpenSourceSection() {
             The stack that makes these possible →
           </Link>
         </m.p>
-      </m.div>
+      </div>
     </ChapterFrame>
   );
 }

@@ -411,7 +411,7 @@ export function ContactSection() {
       ariaLabelledBy="contact-heading"
       className="border-color-border"
     >
-      <m.div>
+      <div>
         <m.div variants={child} className="mb-6 sm:mb-8">
           <SectionIntro
             eyebrowNumber="06"
@@ -529,7 +529,7 @@ export function ContactSection() {
             That&apos;s the standard.
           </p>
         </m.div>
-      </m.div>
+      </div>
     </ChapterFrame>
   );
 }

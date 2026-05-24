@@ -30,25 +30,33 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
 
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(root);
+      const select = (selector: string): HTMLElement[] => q(selector) as HTMLElement[];
 
-      const eyebrow = q('[data-cinematic="eyebrow"]');
-      const title = q('[data-cinematic="title"]');
-      const lede = q('[data-cinematic="lede"]');
-      const media = q('[data-cinematic="media"]');
-      const panel = q('[data-cinematic="panel"]');
-      const card = q('[data-cinematic="card"]');
-      const proof = q('[data-cinematic="proof"]');
-      const cta = q('[data-cinematic="cta"]');
+      const eyebrow = select('[data-cinematic="eyebrow"]');
+      const title = select('[data-cinematic="title"]');
+      const lede = select('[data-cinematic="lede"]');
+      const media = select('[data-cinematic="media"]');
+      const panel = select('[data-cinematic="panel"]');
+      const card = select('[data-cinematic="card"]');
+      const proof = select('[data-cinematic="proof"]');
+      const cta = select('[data-cinematic="cta"]');
 
-      gsap.set([eyebrow, title, lede, panel, card, proof, cta], {
-        autoAlpha: 0,
-        y: reducedMotion ? 0 : 18,
-      });
-      gsap.set(media, {
-        autoAlpha: 0,
-        scale: reducedMotion ? 1 : 0.985,
-        y: reducedMotion ? 0 : 20,
-      });
+      const textTargets = [...eyebrow, ...title, ...lede, ...panel, ...card, ...proof, ...cta];
+
+      if (textTargets.length > 0) {
+        gsap.set(textTargets, {
+          autoAlpha: 0,
+          y: reducedMotion ? 0 : 18,
+        });
+      }
+
+      if (media.length > 0) {
+        gsap.set(media, {
+          autoAlpha: 0,
+          scale: reducedMotion ? 1 : 0.985,
+          y: reducedMotion ? 0 : 20,
+        });
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -74,14 +82,31 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
         },
       });
 
-      tl.to(media, { autoAlpha: 1, scale: 1, y: 0, duration: 0.8 }, 0)
-        .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.45 }, 0.04)
-        .to(title, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.08)
-        .to(lede, { autoAlpha: 1, y: 0, duration: 0.5 }, 0.14)
-        .to(panel, { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.45 }, 0.2)
-        .to(card, { autoAlpha: 1, y: 0, stagger: 0.05, duration: 0.45 }, 0.24)
-        .to(proof, { autoAlpha: 1, y: 0, stagger: 0.05, duration: 0.45 }, 0.26)
-        .to(cta, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.34);
+      if (media.length > 0) {
+        tl.to(media, { autoAlpha: 1, scale: 1, y: 0, duration: 0.8 }, 0);
+      }
+
+      if (eyebrow.length > 0) {
+        tl.to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.45 }, 0.04);
+      }
+      if (title.length > 0) {
+        tl.to(title, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.08);
+      }
+      if (lede.length > 0) {
+        tl.to(lede, { autoAlpha: 1, y: 0, duration: 0.5 }, 0.14);
+      }
+      if (panel.length > 0) {
+        tl.to(panel, { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.45 }, 0.2);
+      }
+      if (card.length > 0) {
+        tl.to(card, { autoAlpha: 1, y: 0, stagger: 0.05, duration: 0.45 }, 0.24);
+      }
+      if (proof.length > 0) {
+        tl.to(proof, { autoAlpha: 1, y: 0, stagger: 0.05, duration: 0.45 }, 0.26);
+      }
+      if (cta.length > 0) {
+        tl.to(cta, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.34);
+      }
     }, root);
 
     return () => ctx.revert();

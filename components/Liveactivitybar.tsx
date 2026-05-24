@@ -14,11 +14,18 @@ interface ActivityData {
   message?: string;
 }
 
-const FALLBACK: ActivityData = {
+const FALLBACK_LOADING: ActivityData = {
   ago: 'Recently',
   type: 'PushEvent',
   repo: 'scardubu.dev',
-  message: 'Building in production',
+  message: 'Loading latest activity',
+};
+
+const FALLBACK_UNAVAILABLE: ActivityData = {
+  ago: 'Just now',
+  type: 'StatusEvent',
+  repo: 'scardubu.dev',
+  message: 'Activity feed temporarily unavailable',
 };
 
 function typeLabel(type: string): string {
@@ -57,7 +64,7 @@ export function LiveActivityBar() {
         if (!ctrl.signal.aborted) setActivity(data);
       })
       .catch(() => {
-        if (!ctrl.signal.aborted) setActivity(FALLBACK);
+        if (!ctrl.signal.aborted) setActivity(FALLBACK_UNAVAILABLE);
       })
       .finally(() => {
         if (!ctrl.signal.aborted) setLoading(false);
@@ -66,8 +73,9 @@ export function LiveActivityBar() {
     return () => ctrl.abort();
   }, []);
 
-  const safeActivity = activity ?? FALLBACK;
+  const safeActivity = activity ?? FALLBACK_LOADING;
   const label = safeActivity.message ?? typeLabel(safeActivity.type);
+  const announcement = `${label}. ${safeActivity.ago}.`;
 
   return (
     <div
@@ -78,10 +86,14 @@ export function LiveActivityBar() {
       aria-label="Latest commit activity"
       className="live-bar-text flex min-h-[24px] items-center gap-2 overflow-hidden"
     >
+      <span className="sr-only">{announcement}</span>
+
       {loading ? (
-        <ActivitySkeleton />
+        <div aria-hidden="true">
+          <ActivitySkeleton />
+        </div>
       ) : (
-        <>
+        <div className="flex min-h-[24px] min-w-0 flex-1 items-center gap-2" aria-hidden="true">
           <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
 
           {safeActivity.sha && safeActivity.sha !== 'unknown' && (
@@ -104,7 +116,7 @@ export function LiveActivityBar() {
           <span className="text-color-text-muted shrink-0 font-mono text-[11px]">
             {safeActivity.ago}
           </span>
-        </>
+        </div>
       )}
     </div>
   );

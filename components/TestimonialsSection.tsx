@@ -87,7 +87,7 @@ export function TestimonialsSection() {
       ariaLabelledBy="proof-record-heading"
       className="border-color-border section-deferred overflow-x-clip"
     >
-      <m.div>
+      <div>
         <m.div variants={itemVariant} className="mb-10 sm:mb-14">
           <SectionIntro
             eyebrowLabel="Production record"
@@ -176,7 +176,7 @@ export function TestimonialsSection() {
             What got open-sourced from these production systems →
           </Link>
         </m.p>
-      </m.div>
+      </div>
     </ChapterFrame>
   );
 }
