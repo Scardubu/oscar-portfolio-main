@@ -73,6 +73,7 @@ function getActiveIdFromChapter(activeChapter: string) {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const reducedMotion = useReducedMotion();
   const { activeChapter, scrollToSection } = useScrollCinema();
 
@@ -108,6 +109,14 @@ export default function Navbar() {
     return () => document.removeEventListener('keydown', onKey);
   }, [mobileOpen]);
 
+  // Scroll state: darken nav background once content scrolls under it
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll(); // Initialize from current scroll position on mount
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const closeMenu = () => setMobileOpen(false);
 
   // Navigate via Lenis when clicking a nav link (suppresses default jump)
@@ -130,9 +139,11 @@ export default function Navbar() {
         animate="visible"
         variants={navbarVariants}
         className={[
-          'fixed inset-x-0 top-0 z-50 transform-gpu',
-          'transition-[background-color,border-color,backdrop-filter] duration-300',
-          'border-b border-white/8 bg-black/20 backdrop-blur-xl',
+          'fixed inset-x-0 top-0 z-50 transform-gpu backdrop-blur-xl border-b',
+          'transition-[background-color,border-color,box-shadow] duration-200',
+          scrolled
+            ? 'bg-[oklch(7%_0.01_265/0.92)] border-white/10 shadow-[0_1px_0_oklch(100%_0_0/0.04),0_4px_24px_-4px_oklch(0%_0_0/0.45)]'
+            : 'bg-black/20 border-white/8',
         ].join(' ')}
         // eslint-disable-next-line no-restricted-syntax
         style={{ translateZ: 0 }}

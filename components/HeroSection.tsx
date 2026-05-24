@@ -416,7 +416,7 @@ export function HeroSection() {
             {/* Mobile Headshot */}
             <m.div
               variants={child}
-              className="flex justify-center py-6 sm:py-10 lg:hidden"
+              className="mobile-headshot-wrap flex justify-center py-6 sm:py-8 lg:hidden"
               aria-hidden="true"
             >
               <div

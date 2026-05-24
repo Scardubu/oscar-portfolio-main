@@ -4555,3 +4555,29 @@ section[data-chapter] {
 /* ── hero-headshot-frame: graceful ultrawide scale cap ─────────────────────
    At 1920px+, the .hero-desktop-headshot clamp() cap (14rem = 224px) holds.
    No additional override needed — clamp()'s max value stays at 224px. */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE V1.0 — HERO + NAVBAR POLISH PASS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Proof carousel: lock to 2-col inside hero left column at xl ─────────────
+   The global .mobile-carousel rule becomes repeat(3, 1fr) at 1280px+.
+   The carousel lives inside .hero-grid-child (~628px at 1280px — only 54% of
+   viewport). Three columns of proof cards is too cramped at that width.
+   This scoped rule keeps the hero carousel at 2 columns regardless of viewport. */
+@media (min-width: 1280px) {
+  .hero-grid-child .mobile-carousel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── Tablet (768–1023px): hide mobile headshot via explicit class ─────────────
+   FIX 3 already hides it via [class*='lg:hidden'], but that selector is fragile
+   in Tailwind v4 if class names are escaped at runtime. The .mobile-headshot-wrap
+   class (added to the wrapper div in HeroSection.tsx) provides a reliable target.
+   Belt-and-suspenders with the existing FIX 3 selector — both target the same node. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mobile-headshot-wrap {
+    display: none !important;
+  }
+}
