@@ -433,7 +433,7 @@ export function HeroSection() {
                 }}
               >
                 <Image
-                  src="/images/scar-headshot.jpeg"
+                  src="/headshot.webp"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
                   sizes="(min-width: 640px) 144px, 128px"
@@ -656,9 +656,9 @@ export function HeroSection() {
             data-cinematic="media"
             className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
           >
-            <div className="flex justify-end">
+            <div className="hero-headshot-frame self-center">
               <m.div
-                className="hero-headshot-ring hero-desktop-headshot relative h-36 w-36 overflow-hidden rounded-full xl:h-48 xl:w-48 2xl:h-56 2xl:w-56"
+                className="hero-headshot-ring hero-desktop-headshot relative overflow-hidden rounded-full"
                 // eslint-disable-next-line no-restricted-syntax
                 style={{
                   border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
@@ -680,7 +680,7 @@ export function HeroSection() {
                   src="/headshot.webp"
                   alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
                   fill
-                  sizes="(min-width: 1536px) 224px, (min-width: 1280px) 192px, 144px"
+                  sizes="(min-width: 1536px) 224px, (min-width: 1280px) 200px, (min-width: 1024px) 164px, (min-width: 768px) 160px, 144px"
                   className="object-cover"
                   priority
                 />

@@ -3346,16 +3346,6 @@ section.border-t {
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
-/* ── Optimize will-change for scroll-driven animations ──────────────────────
-   Limit will-change to elements that actually animate during scroll.
-   Over-applying will-change creates unnecessary compositor layers and causes
-   scroll jank. Scope it precisely to the hero parallax targets only.
-*/
-.hero-grid-child,
-.hero-headshot-ring {
-  will-change: auto; /* framer-motion injects will-change:transform directly */
-}
-
 /* ── Reduce content-visibility jank on section reveal ───────────────────────
    content-visibility:auto skips paint for off-screen sections, which is good
    for initial paint but creates a small layout recalc burst on first scroll-into-view.
@@ -4591,3 +4581,100 @@ section[data-chapter] {
 /* ═══════════════════════════════════════════════════════════════════════════
    END RESPONSIVENESS SURGICAL AUDIT V1.1
    ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ==========================================================================
+   HEADSHOT SYSTEM — canonical rules (cascade position ensures these win)
+   Replaces: headshot-ring-pulse v20 / v21 / v24 / v27 keyframe variants.
+   All previous @keyframes definitions remain inert — this block overrides
+   via document-order cascade precedence at equal specificity.
+   ========================================================================== */
+
+/* ── Fluid sizing — desktop headshot (.hero-desktop-headshot) ──────────────
+   clamp(10rem, 14.5vw, 14rem):
+     1024px → 148px  → min clamp kicks in → 160px
+     1104px → 160px  → fluid zone begins
+     1280px → 186px  → fluid scaling
+     1536px → 223px  → max clamp → 224px
+   Tablet (!important overrides in the 768–1023px @media block above stay intact) */
+.hero-desktop-headshot {
+  width: clamp(10rem, 14.5vw, 14rem);
+  height: clamp(10rem, 14.5vw, 14rem);
+}
+
+/* ── Headshot frame — ambient radial glow backdrop ─────────────────────────
+   .hero-headshot-frame wraps .hero-desktop-headshot in the right rail.
+   ::before paints a soft radial gradient that bleeds outward — connects the
+   portrait to the ThreeBrushField ambient without competing with the WebGL
+   canvas. Using transform:translateZ(0) to keep it on its own compositor layer.
+   Disabled at tablet (768–1023px) — 200px column is too narrow for the bleed. */
+.hero-headshot-frame {
+  position: relative;
+  padding: 0.75rem;
+}
+
+.hero-headshot-frame::before {
+  content: '';
+  position: absolute;
+  inset: -1.25rem;
+  background: radial-gradient(
+    ellipse 85% 85% at 50% 48%,
+    oklch(70% 0.21 188 / 0.10) 0%,
+    oklch(70% 0.21 188 / 0.04) 48%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transform: translateZ(0);
+}
+
+.hero-headshot-frame > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-headshot-frame::before {
+    opacity: 0;
+  }
+}
+
+/* ── Canonical headshot ring animation ─────────────────────────────────────
+   Single authoritative @keyframes + animation rule.
+   Mobile (≤1023px): 4s breathe cycle — double concentric ring depth.
+   Desktop (≥1024px): animation none — Framer Motion whileHover owns it.
+   prefers-reduced-motion: animation none always. */
+@keyframes headshot-ring-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px oklch(70% 0.21 188 / 0.13),
+      0 0 0 7px oklch(70% 0.21 188 / 0.05),
+      0 12px 40px oklch(0% 0 0 / 0.58);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px oklch(70% 0.21 188 / 0.24),
+      0 0 0 10px oklch(70% 0.21 188 / 0.09),
+      0 16px 48px oklch(0% 0 0 / 0.65);
+  }
+}
+
+.hero-headshot-ring {
+  animation: headshot-ring-breathe 4s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .hero-headshot-ring {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-ring {
+    animation: none !important;
+  }
+}
+
+/* ── hero-headshot-frame: graceful ultrawide scale cap ─────────────────────
+   At 1920px+, the .hero-desktop-headshot clamp() cap (14rem = 224px) holds.
+   No additional override needed — clamp()'s max value stays at 224px. */
