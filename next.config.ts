@@ -20,6 +20,8 @@ const withMDX = createMDX({
   },
 });
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   images: { formats: ['image/avif', 'image/webp'] },
@@ -68,7 +70,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vercel.live",
+              `script-src 'self'${isDev ? " 'unsafe-eval'" : ''} 'unsafe-inline' https://va.vercel-scripts.com https://vercel.live`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com https://*.public.blob.vercel-storage.com",
               "img-src 'self' data: blob: https://avatars.githubusercontent.com",

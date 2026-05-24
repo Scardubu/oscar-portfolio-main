@@ -17,7 +17,10 @@ async function expectNoOverflowAtWidth(browser: Browser, width: number) {
   const context = await browser.newContext({ viewport: { width, height: 812 } });
   const page = await context.newPage();
 
-  await goto(page);
+  // 'load' is sufficient for CSS layout; 'networkidle' times out because
+  // live activity / GitHub stats APIs hold persistent connections.
+  await page.goto('/');
+  await page.waitForLoadState('load');
 
   const overflow = await page.evaluate(() => {
     const startX = window.scrollX;
@@ -154,12 +157,13 @@ test.describe('Portfolio smoke tests', () => {
   test('writing section renders on the home page', async ({ page }) => {
     await goto(page);
 
-    await expect(
-      page.locator('section#section-writing[aria-labelledby="writing-heading"]')
-    ).toBeVisible();
+    const section = page.locator('section#section-writing[aria-labelledby="writing-heading"]');
+    await expect(section).toBeAttached();
+    // Scroll to trigger the GSAP ScrollTrigger reveal before asserting visibility.
+    await section.scrollIntoViewIfNeeded();
     await expect(
       page.getByRole('heading', { name: /Writing that ships decisions/i })
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 8000 });
   });
 
   test('all target blank links include noopener and noreferrer', async ({ page }) => {
