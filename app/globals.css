@@ -505,7 +505,6 @@ body::after {
 a,
 button,
 [role='button'],
-.bottom-nav-item,
 .cta-primary,
 .cta-secondary,
 .cta-ghost,
@@ -976,198 +975,16 @@ h3,
     0 4px 24px -4px oklch(0% 0 0 / 0.45);
 }
 
-.bottom-nav {
-  display: none;
-}
-@media (max-width: 768px) {
-  .bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 60;
-    height: calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
-    padding-bottom: var(--bottom-nav-safe);
-    align-items: flex-start;
-    padding-top: 8px;
-    background: oklch(7% 0.01 265 / 0.96);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border-top: 1px solid oklch(100% 0 0 / 0.07);
-    box-shadow:
-      0 -1px 0 oklch(100% 0 0 / 0.05),
-      0 -10px 40px -4px oklch(0% 0 0 / 0.65);
-  }
-  .bottom-nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    min-height: 52px;
-    padding: 6px 8px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--color-text-muted);
-    transition: color var(--dur-fast) var(--ease-out);
-    position: relative;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
-  .bottom-nav-item::before {
-    content: '';
-    position: absolute;
-    inset: -6px -4px;
-    border-radius: var(--radius-lg);
-  }
-  .bottom-nav-item.active {
-    color: var(--color-film-teal);
-  }
-  .bottom-nav-item.active::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 2px;
-    border-radius: 0 0 var(--radius-full) var(--radius-full);
-    background: var(--color-film-teal);
-    box-shadow: 0 0 10px var(--color-film-teal-glow);
-  }
-  .bottom-nav-item-icon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: transform var(--dur-fast) var(--ease-spring);
-  }
-  .bottom-nav-item.active .bottom-nav-item-icon {
-    transform: translateY(-1px) scale(1.1);
-  }
-  .bottom-nav-item-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: var(--weight-medium);
-    line-height: 1;
-    white-space: nowrap;
-    transition: opacity var(--dur-fast) var(--ease-out);
-  }
-  .desktop-nav-links {
-    display: none !important;
-  }
-  .desktop-nav-controls {
-    display: none !important;
-  }
-}
-
-/* ════ FLOATING HIRE CTA v18 ════ */
-.floating-hire-cta {
-  display: none;
-}
-@media (max-width: 768px) {
-  .floating-hire-cta {
-    display: flex;
-    position: fixed;
-    bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 14px);
-    right: 1rem;
-    z-index: 55;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5625rem 1rem;
-    background: var(--color-film-teal);
-    color: oklch(8% 0.01 265);
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: var(--weight-bold);
-    border-radius: var(--radius-full);
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    box-shadow:
-      0 4px 20px -2px var(--color-film-teal-glow),
-      0 2px 8px oklch(0% 0 0 / 0.5),
-      0 1px 0 oklch(100% 0 0 / 0.3) inset;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition:
-      transform var(--dur-fast) var(--ease-spring),
-      box-shadow var(--dur-fast) var(--ease-out),
-      opacity var(--dur-slow) var(--ease-out);
-    animation: floatIn 0.28s var(--ease-spring) 2s both;
-    will-change: transform, opacity;
-  }
-  .floating-hire-cta:active {
-    transform: scale(0.94);
-    box-shadow: 0 2px 10px -2px var(--color-film-teal-glow);
-  }
-  .floating-hire-cta[data-hidden='true'] {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(12px) scale(0.88);
-  }
-}
-
-/* Legacy contact-sticky-cta alias */
-.contact-sticky-cta {
-  display: none;
-}
-@media (max-width: 768px) {
-  .contact-sticky-cta {
-    display: flex;
-    position: fixed;
-    bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 14px);
-    right: 1rem;
-    z-index: 55;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.125rem;
-    background: var(--color-film-teal);
-    color: oklch(8% 0.01 265);
-    font-family: var(--font-body);
-    font-size: 0.8125rem;
-    font-weight: var(--weight-bold);
-    border-radius: var(--radius-full);
-    text-decoration: none;
-    box-shadow:
-      0 4px 20px -2px var(--color-film-teal-glow),
-      0 2px 8px oklch(0% 0 0 / 0.5);
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition:
-      transform var(--dur-fast) var(--ease-spring),
-      box-shadow var(--dur-fast) var(--ease-out),
-      opacity var(--dur-slow) var(--ease-out);
-    animation: floatIn 0.28s var(--ease-spring) 1.5s both;
-  }
-  .contact-sticky-cta:active {
-    transform: scale(0.94);
-    box-shadow: 0 2px 10px -2px var(--color-film-teal-glow);
-  }
-  .contact-sticky-cta[data-hidden='true'] {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(12px) scale(0.9);
-  }
-}
-
-@keyframes floatIn {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.88);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+/* ────────────────────────────────────────────────────────────────────────────
+   v1.7 CLEANUP — Removed dead UI surfaces that no component renders:
+     - .bottom-nav, .bottom-nav-item* (no <BottomNav> component on the homepage;
+       Navbar.tsx uses a hamburger-menu pattern instead)
+     - .floating-hire-cta, .contact-sticky-cta + their @keyframes floatIn
+       (no floating CTA component is mounted — the hero "Tell me your constraints"
+       CTA + the CommandPalette FAB cover the mobile conversion surface)
+   These were ~190 lines of compositor-promoted CSS for surfaces that never
+   render. Their print/reduced-motion entries were also pruned below.
+   ──────────────────────────────────────────────────────────────────────────── */
 
 /* ════ RETRO GRID ════ */
 .retro-grid {
@@ -2065,9 +1882,6 @@ h3,
 /* ════ PRINT ════ */
 @media print {
   .glass-nav,
-  .bottom-nav,
-  .floating-hire-cta,
-  .contact-sticky-cta,
   .retro-grid,
   .work-surface-glow {
     display: none !important;
@@ -2904,18 +2718,6 @@ section.border-t + section.border-t {
   color: var(--color-stat-mttd);
 }
 
-/* ── Bottom nav active line — brighter on high-brightness displays ────────
-   Lagos outdoor use: ensure the teal top-line indicator has enough contrast.
-*/
-@media (max-width: 768px) {
-  .bottom-nav-item.active::after {
-    background: var(--color-film-teal);
-    box-shadow:
-      0 0 14px oklch(70% 0.21 188 / 0.55),
-      0 0 4px oklch(70% 0.21 188 / 0.8);
-  }
-}
-
 /* ── Headshot ring — v27 refined pulse with double-ring depth ─────────────
    The v24 ring-pulse used a single shadow. v27 adds a faint outer ring
    for liquid-glass multi-layer depth. Mobile only (desktop = Framer Motion).
@@ -3000,17 +2802,6 @@ section.border-t + section.border-t {
   appearance: none;
 }
 
-/* ── Print: hide bottom nav correctly ─────────────────────────────────── */
-@media print {
-  .bottom-nav,
-  .floating-hire-cta {
-    display: none !important;
-  }
-  body {
-    padding-bottom: 0 !important;
-  }
-}
-
 /* ════ CONVICTION ENGINE V1.0 — CSS PATCH ════
    Overrides and supplements specific selectors.
    Order preserved: last rule wins on equal specificity.
@@ -3090,13 +2881,6 @@ section.border-t + section.border-t {
   border-left: 2px solid oklch(70% 0.21 188 / 0.25);
   padding-left: 0.875rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-
-/* ── v20: Mobile bottom nav — ensure safe area on newer iPhones ─────── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .bottom-nav {
-    padding-bottom: max(env(safe-area-inset-bottom), 8px);
-  }
 }
 
 /* ════ CONVICTION ENGINE V1.0 — CSS PATCH (ContactSection + misc) ════
@@ -3393,27 +3177,10 @@ section.border-t {
     opacity var(--dur-base) var(--ease-out);
 }
 
-/* ── v21: Section skeleton loading — shimmer refinement ─────────────────
-   More legible loading state.
-*/
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-.skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    oklch(100% 0 0 / 0.04) 0%,
-    oklch(100% 0 0 / 0.09) 50%,
-    oklch(100% 0 0 / 0.04) 100%
-  );
-  background-size: 400px 100%;
-  animation: skeleton-shimmer 1.6s ease-in-out infinite;
-}
+/* v1.7 CLEANUP: removed mid-file duplicate of @keyframes skeleton-shimmer +
+   .skeleton-shimmer rule. The canonical pair lives ~700 lines above, near
+   the .skeleton base, and another redundant pair lives further below — both
+   pruned in this pass. */
 
 /* ── v21: Print refinements ──────────────────────────────────────────── */
 @media print {
@@ -4167,30 +3934,9 @@ body {
   );
 }
 
-/* ==========================================================================
-   FIX 4: Stable shimmer animation
-   ========================================================================== */
-
-@keyframes skeleton-sweep {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
-  }
-}
-
-.skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--color-border) 25%,
-    oklch(100% 0 0 / 0.06) 50%,
-    var(--color-border) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-sweep 1.6s ease-in-out infinite;
-}
+/* v1.7 CLEANUP: removed duplicate skeleton-sweep keyframes + .skeleton-shimmer
+   rule. The canonical pair sits in the SKELETON BASE block (~1500 lines above)
+   alongside the .skeleton base class. Cascade order is unchanged. */
 
 /* ==========================================================================
    FIX 5: Reduced-motion accessibility hardening

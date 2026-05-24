@@ -188,6 +188,55 @@ Validation pass after v1.6 maintenance:
 - `pnpm run build` ✅
 - `pnpm run test:smoke` ✅
 
+### Command palette + dead-code prune v1.7
+
+Two real UX bugs and a non-trivial maintenance pass.
+
+#### CommandPalette — Lenis integration + iOS safe area
+
+| File                          | Change                                                                                                                  | Impact                                                                                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `components/CommandPalette.tsx` | Replaced native `element.scrollIntoView({ behavior: 'smooth' })` with `useScrollCinema().scrollToSection()`             | Palette navigation now glides via Lenis with the same `-88px` nav offset and `prefers-reduced-motion` handling as the navbar and hero CTAs (single source of truth) |
+| `components/CommandPalette.tsx` | Mobile FAB `bottom` switched from fixed `1.5rem` to `max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))`     | FAB no longer lands on iOS Safari's home-indicator gesture zone on iPhone X+ devices                                                                          |
+
+#### Code hygiene — removed dead modules
+
+| Removal                                              | Reason                                                                                       |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `components/ThreeBrushField.tsx`                     | Re-export shim; zero importers. Canonical module lives at `components/cinematic/ThreeBrushField.tsx` |
+| `lib/cinematic/ThreeBrushField.tsx`                  | Re-export shim; zero importers                                                               |
+| `lib/cinematic/ScrollCinemaProvider.tsx`             | Re-export shim; zero importers                                                               |
+| `.backup-pre-cinematic-patch/` (7 stale files)       | Pre-patch snapshot left in the working tree. Git history preserves the same content. Removed to stop polluting code search, grep, and editor file pickers |
+
+#### Dead CSS prune — `app/globals.css` slimmed by ~254 lines
+
+| Removal                                              | Reason                                                                                       |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `.bottom-nav`, `.bottom-nav-item*` (block + media + print + safe-area variants) | No `<BottomNav>` component renders. Navbar uses a hamburger pattern. Class list reduced.     |
+| `.floating-hire-cta` (block + active + data-hidden + print variants) | No floating-hire-cta component is mounted. Hero CTA + CommandPalette FAB cover mobile conversion. |
+| `.contact-sticky-cta` (legacy alias + active + data-hidden variants) | Same: zero JSX consumers.                                                                    |
+| `@keyframes floatIn`                                 | Only the deleted CTAs animated with it.                                                      |
+| Two duplicate `.skeleton-shimmer` blocks + duplicate `@keyframes skeleton-sweep` | Three near-identical declarations existed; the canonical pair beside `.skeleton` is retained. |
+| `.bottom-nav-item` removed from the `touch-action: manipulation` selector list | The class no longer exists; selector list shortened.                                          |
+
+#### Maintenance — `tsconfig.typecheck.json`
+
+| File                       | Change                                                                                          | Impact                                                                                                                                  |
+| -------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `tsconfig.typecheck.json`  | Stale per-file include list replaced with `components/**/*` glob (mirrors `tsconfig.json`)      | `pnpm type-check` (used by the husky pre-commit hook) now type-checks `CommandPalette.tsx`, every `components/cinematic/*`, and other newer components that the explicit list missed — the pre-commit gate is no longer a partial gate |
+
+#### Cosmetic — `components/ContactSection.tsx`
+
+| Change                                                                  | Impact                                                                              |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Removed redundant `import React from 'react'` (Next 15 + React 19 JSX transform doesn't need it). Switched `handleBlur` to the named `FocusEvent` import already in scope. | Smaller import footprint, consistent with the rest of the codebase |
+
+Validation pass after v1.7:
+- `pnpm run type-check` ✅ (now covers every component under `components/**`)
+- `pnpm run lint` ✅
+- `pnpm run build` ✅ (no warnings, no bundle regressions)
+- Manual scan: zero remaining references to `.bottom-nav`, `.floating-hire-cta`, `.contact-sticky-cta` in source, content, tests, or `public/`
+
 ---
 
 ## Local setup

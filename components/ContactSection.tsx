@@ -3,7 +3,7 @@
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
-import { type ChangeEvent, type FormEvent, useMemo, useState } from 'react';
+import { type ChangeEvent, type FocusEvent, type FormEvent, useMemo, useState } from 'react';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { CopyEmail } from '@/components/CopyEmail';
@@ -11,7 +11,6 @@ import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
-import React from 'react';
 
 const CONTACT_CARDS = [
   {
@@ -105,7 +104,7 @@ function ContactForm() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
 
   function handleBlur(
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
     const { name, value } = e.target;
     if (!value.trim()) {

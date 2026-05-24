@@ -6,6 +6,7 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 
@@ -59,6 +60,7 @@ export function CommandPalette() {
   const router = useRouter();
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
+  const { scrollToSection } = useScrollCinema();
 
   useEffect(() => {
     setIsMobile(!window.matchMedia('(pointer: fine)').matches);
@@ -103,10 +105,13 @@ export function CommandPalette() {
         close();
         return;
       }
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      // Route through the cinema provider so the navigation glides via Lenis,
+      // respects prefers-reduced-motion, and applies the -88px nav offset
+      // — same code path as the navbar, hero CTAs, and hash links.
+      scrollToSection(id);
       close();
     },
-    [close, pathname, router]
+    [close, pathname, router, scrollToSection]
   );
 
   const commands = useMemo<CommandItem[]>(
@@ -578,7 +583,10 @@ export function CommandPalette() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Open command palette"
-          className="fixed right-4 bottom-6 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none lg:hidden"
+          className="fixed right-4 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none lg:hidden"
+          // Lifts the FAB above iOS Safari's home-indicator gesture zone.
+          // eslint-disable-next-line no-restricted-syntax
+          style={{ bottom: 'max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))' }}
         >
           <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">
             ⌘
