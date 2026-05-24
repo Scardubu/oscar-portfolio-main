@@ -1896,39 +1896,8 @@ h3,
    CONVICTION ENGINE V1.0 — GLOBALS.CSS EXTENSIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ════ HERO HEADSHOT RING — v24 ════
-   Subtle animated glow ring on the headshot.
-   Mobile: gentle pulse on the teal border.
-   Desktop: static — motion belongs to scroll parallax, not decorative pulses.
-   prefers-reduced-motion: glow stays, animation removed.
-*/
-.hero-headshot-ring {
-  animation: headshot-ring-pulse 4s ease-in-out infinite;
-}
-@keyframes headshot-ring-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 4px oklch(70% 0.21 188 / 0.1),
-      0 8px 32px oklch(0% 0 0 / 0.55);
-  }
-  50% {
-    box-shadow:
-      0 0 0 7px oklch(70% 0.21 188 / 0.16),
-      0 8px 40px oklch(0% 0 0 / 0.6);
-  }
-}
-/* Desktop: pulse handled by Framer Motion whileHover — static ring */
-@media (min-width: 1024px) {
-  .hero-headshot-ring {
-    animation: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-ring {
-    animation: none !important;
-  }
-}
+/* HERO HEADSHOT RING — pruned. Canonical rules live at end of file
+   under "HEADSHOT SYSTEM — canonical rules" (headshot-ring-breathe). */
 
 /* ════ FEATURED STACK ROW — v24 ════
    The 6-skill quick-scan grid in SkillsSection.
@@ -2718,30 +2687,7 @@ section.border-t + section.border-t {
   color: var(--color-stat-mttd);
 }
 
-/* ── Headshot ring — v27 refined pulse with double-ring depth ─────────────
-   The v24 ring-pulse used a single shadow. v27 adds a faint outer ring
-   for liquid-glass multi-layer depth. Mobile only (desktop = Framer Motion).
-*/
-@media (max-width: 1023px) {
-  @keyframes headshot-ring-pulse-v27 {
-    0%,
-    100% {
-      box-shadow:
-        0 0 0 3px oklch(70% 0.21 188 / 0.12),
-        0 0 0 6px oklch(70% 0.21 188 / 0.05),
-        0 10px 36px oklch(0% 0 0 / 0.55);
-    }
-    50% {
-      box-shadow:
-        0 0 0 4px oklch(70% 0.21 188 / 0.22),
-        0 0 0 9px oklch(70% 0.21 188 / 0.08),
-        0 12px 40px oklch(0% 0 0 / 0.62);
-    }
-  }
-  .hero-headshot-ring {
-    animation: headshot-ring-pulse-v27 4s ease-in-out infinite;
-  }
-}
+/* Headshot ring v27 — pruned; canonical block at end of file. */
 
 /* ── Proof carousel pill — gap below on very small screens ───────────────
    Carousel dots get clipped on 320px when margin-top is too small.
@@ -2807,38 +2753,7 @@ section.border-t + section.border-t {
    Order preserved: last rule wins on equal specificity.
    ════════════════════════════════════════════ */
 
-/* ── v20: Mobile headshot — larger, more dramatic presence ────────────────
-   h-24/h-28 in JSX; CSS ring pulse updated for the new border radius.
-   The glow rings are additive with the JSX boxShadow.
-*/
-@media (max-width: 1023px) {
-  @keyframes headshot-ring-pulse-v20 {
-    0%,
-    100% {
-      box-shadow:
-        0 0 0 1px oklch(70% 0.21 188 / 0.18),
-        0 0 0 6px oklch(70% 0.21 188 / 0.09),
-        0 0 0 13px oklch(70% 0.21 188 / 0.04),
-        0 14px 44px oklch(0% 0 0 / 0.62);
-    }
-    50% {
-      box-shadow:
-        0 0 0 2px oklch(70% 0.21 188 / 0.28),
-        0 0 0 8px oklch(70% 0.21 188 / 0.14),
-        0 0 0 16px oklch(70% 0.21 188 / 0.06),
-        0 18px 52px oklch(0% 0 0 / 0.7);
-    }
-  }
-  .hero-headshot-ring {
-    animation: headshot-ring-pulse-v20 4s ease-in-out infinite;
-    border-width: 3px !important;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-ring {
-    animation: none !important;
-  }
-}
+/* v20 headshot ring + reduced-motion duplicate — pruned. Canonical at end of file. */
 
 /* ── v20: conviction-stat data-stat color selectors ──────────────────────
    Previously relied on nth-child which breaks if order changes.
@@ -3031,46 +2946,8 @@ section.border-t + section.border-t {
    5. misc: skeleton animation, about section leading
    ════════════════════════════════════════════ */
 
-/* ── v21: Mobile headshot ring — h-28/h-32 glow tuning ───────────────────
-   Matched to new box-shadow values in JSX. Larger radii for larger element.
-*/
-@media (max-width: 1023px) {
-  @keyframes headshot-ring-pulse-v21 {
-    0%,
-    100% {
-      box-shadow:
-        0 0 0 1px oklch(70% 0.21 188 / 0.18),
-        0 0 0 9px oklch(70% 0.21 188 / 0.1),
-        0 0 0 18px oklch(70% 0.21 188 / 0.05),
-        0 16px 52px oklch(0% 0 0 / 0.65);
-    }
-    50% {
-      box-shadow:
-        0 0 0 2px oklch(70% 0.21 188 / 0.28),
-        0 0 0 10px oklch(70% 0.21 188 / 0.14),
-        0 0 0 20px oklch(70% 0.21 188 / 0.06),
-        0 20px 60px oklch(0% 0 0 / 0.72);
-    }
-  }
-  .hero-headshot-ring {
-    animation: headshot-ring-pulse-v21 4s ease-in-out infinite;
-    border-width: 3px !important;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-ring {
-    animation: none !important;
-  }
-}
-
-/* ── v21: Desktop headshot — h-40/h-52 pulse ─────────────────────────────
-   Larger element needs more generous glow rings.
-*/
-@media (min-width: 1024px) {
-  .hero-headshot-ring {
-    animation: none; /* Framer Motion handles desktop hover */
-  }
-}
+/* v21 headshot ring (mobile + desktop + reduced-motion duplicates) — pruned.
+   Canonical rules live at end of file under "HEADSHOT SYSTEM — canonical rules". */
 
 /* ── v21: Mobile hero centering — headshot centered within left col ───────
    The justify-center on the headshot wrapper already handles centering.
