@@ -119,7 +119,7 @@ function HeroPortrait({
           sizes={
             isDesktop
               ? '(min-width: 1536px) 260px, (min-width: 1280px) 228px, (min-width: 1024px) 200px, 188px'
-              : '(max-width: 389px) 42vw, (max-width: 767px) 36vw, 190px'
+              : '(max-width: 389px) 50vw, (max-width: 639px) 44vw, 190px'
           }
           quality={88}
           draggable={false}
@@ -418,7 +418,7 @@ export function HeroSection() {
     damping: 26,
     mass: 0.32,
   });
-  const mobileHeadshotY = useSpring(useTransform(heroProgress, [0, 1], [0, -10]), {
+  const mobileHeadshotY = useSpring(useTransform(heroProgress, [0, 1], [0, -6]), {
     stiffness: 180,
     damping: 25,
     mass: 0.26,
