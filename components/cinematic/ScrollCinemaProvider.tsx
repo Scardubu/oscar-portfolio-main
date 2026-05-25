@@ -56,6 +56,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }
   }, []);
 
+  const syncScrollProgress = useCallback((scrollTop: number, limit: number) => {
+    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, scrollTop / limit)) : 0;
+  }, []);
+
   const syncNativeScrollProgress = useCallback(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
     const doc = document.documentElement;
@@ -64,8 +68,8 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const scrollHeight = Math.max(doc.scrollHeight, body.scrollHeight);
     const viewportHeight = window.innerHeight || doc.clientHeight || 0;
     const limit = Math.max(scrollHeight - viewportHeight, 0);
-    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, scrollTop / limit)) : 0;
-  }, []);
+    syncScrollProgress(scrollTop, limit);
+  }, [syncScrollProgress]);
 
   const getSectionOffset = useCallback(() => {
     if (typeof window === 'undefined') return -88;
@@ -274,7 +278,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
       }
-      syncNativeScrollProgress();
     } catch (error) {
       usingLenis = false;
       lenisRef.current = null;
@@ -287,11 +290,12 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     // internally — calling update() here caused double-processing per frame
     // and introduced subtle animation stutter on pinned sections.
     const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
-      scrollProgressRef.current = limit > 0 ? scroll / limit : 0;
+      syncScrollProgress(scroll, limit);
     };
 
     if (lenis) {
       lenis.on('scroll', onScroll);
+      syncNativeScrollProgress();
     }
 
     const raf = (time: number) => {
@@ -304,7 +308,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       gsap.ticker.lagSmoothing(0);
     }
 
-    const refresh = () => ScrollTrigger.refresh();
+    const refresh = () => {
+      ScrollTrigger.refresh();
+      syncNativeScrollProgress();
+    };
 
     window.addEventListener('resize', refresh, { passive: true });
     window.addEventListener('orientationchange', refresh, { passive: true });
@@ -312,6 +319,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {
         ScrollTrigger.refresh(true);
+        syncNativeScrollProgress();
       }
     };
 
@@ -319,7 +327,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     const fontsReady = document.fonts?.ready;
     if (fontsReady) {
-      void fontsReady.then(() => ScrollTrigger.refresh(true));
+      void fontsReady.then(() => {
+        ScrollTrigger.refresh(true);
+        syncNativeScrollProgress();
+      });
     }
 
     return () => {
@@ -335,9 +346,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
       }
       lenisRef.current = null;
-      if (typeof document !== 'undefined') {
-        document.documentElement.dataset.scrollEngine = 'native';
-      }
       if (usingLenis) {
         gsap.ticker.remove(raf);
       }
