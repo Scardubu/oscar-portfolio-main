@@ -250,11 +250,11 @@ Validation pass after v1.7:
 
 ### Accessibility contrast + smoke stability v1.8
 
-| File                | Change                                                                                      | Impact                                                                                  |
-| ------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| File                | Change                                                                                           | Impact                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `app/globals.css`   | Replaced the hero reassurance line's translucent forced color with `var(--color-text-secondary)` | Clears the last axe WCAG AA contrast violation on the homepage without adding a one-off token |
-| `app/globals.css`   | Kept the reassurance border accent but aligned the copy color with the shared text system   | Better visual cohesion and fewer contrast regressions hiding behind `!important` rules |
-| `e2e/smoke.spec.ts` | Switched homepage/reload waits from `networkidle` to `load` for the command palette path    | Removes a smoke-test flake caused by live activity requests that keep the network busy |
+| `app/globals.css`   | Kept the reassurance border accent but aligned the copy color with the shared text system        | Better visual cohesion and fewer contrast regressions hiding behind `!important` rules        |
+| `e2e/smoke.spec.ts` | Switched homepage/reload waits from `networkidle` to `load` for the command palette path         | Removes a smoke-test flake caused by live activity requests that keep the network busy        |
 
 Validation pass after v1.8:
 - `pnpm exec playwright test e2e/smoke.spec.ts --grep "accessibility" --project=chromium --workers=1` ✅
@@ -262,19 +262,32 @@ Validation pass after v1.8:
 
 ### Hero responsiveness + scroll resilience v1.9
 
-| File                       | Change                                                                                           | Impact                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `ScrollCinemaProvider.tsx` | Added guarded Lenis init/destroy + native-scroll fallback with `data-scroll-engine` state        | Keeps cinematic navigation functional even if Lenis fails or reduced motion is enabled |
-| `HeroSection.tsx`          | Moved hero progress updates to Framer Motion `useAnimationFrame`                                 | Reduces motion drift and keeps the hero rail/headshot parallax stable                  |
-| `HeroSection.tsx`          | Added canonical portrait utility classes and GPU-safe motion wrappers                             | Cleaner headshot rendering and lower transform jank on desktop and mobile              |
-| `globals.css`              | Added terminal override block for container-query portrait ratios and View Timeline enhancement    | Narrow screens get square/near-square crops first, then scale cleanly to 4:5           |
-| `globals.css`              | Disabled native `scroll-behavior: smooth` when `data-scroll-engine='lenis'`                      | Prevents double-smoothing when Lenis is active                                         |
+| File                       | Change                                                                                          | Impact                                                                                 |
+| -------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ScrollCinemaProvider.tsx` | Added guarded Lenis init/destroy + native-scroll fallback with `data-scroll-engine` state       | Keeps cinematic navigation functional even if Lenis fails or reduced motion is enabled |
+| `HeroSection.tsx`          | Moved hero progress updates to Framer Motion `useAnimationFrame`                                | Reduces motion drift and keeps the hero rail/headshot parallax stable                  |
+| `HeroSection.tsx`          | Added canonical portrait utility classes and GPU-safe motion wrappers                           | Cleaner headshot rendering and lower transform jank on desktop and mobile              |
+| `globals.css`              | Added terminal override block for container-query portrait ratios and View Timeline enhancement | Narrow screens get square/near-square crops first, then scale cleanly to 4:5           |
+| `globals.css`              | Disabled native `scroll-behavior: smooth` when `data-scroll-engine='lenis'`                     | Prevents double-smoothing when Lenis is active                                         |
 
 Validation pass after v1.9:
 - `pnpm run type-check` ✅
 - `pnpm run build` ✅
 - `pnpm exec eslint components/cinematic/ScrollCinemaProvider.tsx components/HeroSection.tsx` ✅
 - `pnpm run test:smoke` ✅
+
+### Hero portrait layout correction v2.0
+
+| File                    | Change                                                                                                          | Impact                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `app/globals.css`       | Removed `container-type: inline-size` from `.hero-headshot-container`                                          | CSS spec forces `overflow:clip` when `container-type` is set — removing it restores `overflow:visible` on the portrait frame and makes the `headshot-ring-breathe` glow animation visible at mobile |
+| `app/globals.css`       | Bumped specificity of `object-position` rules to `.hero-headshot-shell .hero-headshot-image--*` (0,2,0)        | Beats the legacy `.hero-headshot-shell img` selector (0,1,1) — portrait now crops at the correct `50% 14%` instead of being forced to `50% 18%` |
+| `components/HeroSection.tsx` | Fixed `carousel-dot` active class: added missing space before `'active'` in template literal           | CSS rule `.carousel-dot.active` now matches correctly; previously generated `carousel-dotactive` (one token) which never matched the stylesheet |
+
+Validation pass after v2.0:
+- `pnpm run type-check` ✅
+- `pnpm run build` ✅ (36.9 kB homepage, 229 kB First Load JS — no regression)
+- `pnpm run test:smoke` ✅ (17 passed, 3 skipped — same baseline)
 
 ---
 

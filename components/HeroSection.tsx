@@ -73,7 +73,7 @@ function HeroPortrait({
           : undefined
       }
       className={[
-        'relative isolate overflow-visible transform-gpu will-change-transform',
+        'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
           ? 'hero-headshot-frame hero-headshot-container hero-headshot-rail self-center'
           : 'mobile-headshot-wrap hero-headshot-container flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',

@@ -4769,11 +4769,13 @@ section[data-chapter] {
   --hero-headshot-mobile-max: 10.75rem;
 }
 
+/* #hero .hero-grid-child is the container for portrait container-queries.
+   NOTE: .hero-headshot-container intentionally has NO container-type — setting
+   container-type: inline-size forces overflow:clip regardless of the
+   overflow:visible declaration, which would clip the .hero-headshot-ring
+   breathe animation's box-shadow. Container queries for portrait sizing
+   inherit from this ancestor instead. */
 #hero .hero-grid-child {
-  container-type: inline-size;
-}
-
-.hero-headshot-container {
   container-type: inline-size;
 }
 
@@ -4816,11 +4818,13 @@ section[data-chapter] {
   aspect-ratio: var(--hero-headshot-mobile-ratio);
 }
 
-.hero-headshot-image--desktop {
+/* Specificity bump (0,2,0) to beat the legacy rule:
+   .hero-headshot-shell img { object-position: 50% 18% }  ← (0,1,1) wins without this */
+.hero-headshot-shell .hero-headshot-image--desktop {
   object-position: 50% 14%;
 }
 
-.hero-headshot-image--mobile {
+.hero-headshot-shell .hero-headshot-image--mobile {
   object-position: 50% 15%;
 }
 
