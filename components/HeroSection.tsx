@@ -119,7 +119,7 @@ function HeroPortrait({
           sizes={
             isDesktop
               ? '(min-width: 1536px) 260px, (min-width: 1280px) 228px, (min-width: 1024px) 200px, 188px'
-              : '(max-width: 389px) 50vw, (max-width: 639px) 44vw, 190px'
+              : '(max-width: 389px) 42vw, (max-width: 767px) 36vw, 190px'
           }
           quality={88}
           draggable={false}
@@ -418,11 +418,6 @@ export function HeroSection() {
     damping: 26,
     mass: 0.32,
   });
-  const mobileHeadshotY = useSpring(useTransform(heroProgress, [0, 1], [0, -6]), {
-    stiffness: 180,
-    damping: 25,
-    mass: 0.26,
-  });
 
   const previousHeroProgressRef = useRef(0);
 
@@ -548,13 +543,10 @@ export function HeroSection() {
             </m.div>
 
             {/* Mobile Headshot
-                Padding managed entirely by CSS (.mobile-headshot-wrap + #hero .mobile-headshot-wrap).
-                Tailwind pt/pb removed — they were overridden by CSS at ≤639px and unused above. */}
-            <m.div
-              variants={child}
-              // eslint-disable-next-line no-restricted-syntax
-              style={reducedMotion ? undefined : { y: mobileHeadshotY }}
-            >
+                Static on mobile so the first fold stays centered and the portrait
+                does not drift against the text stack while the desktop rail keeps
+                the subtle scroll parallax. Padding is managed entirely by CSS. */}
+            <m.div variants={child} className="mobile-headshot-stage">
               <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="mobile" />
             </m.div>
 
