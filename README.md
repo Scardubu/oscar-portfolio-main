@@ -278,11 +278,11 @@ Validation pass after v1.9:
 
 ### Hero portrait layout correction v2.0
 
-| File                    | Change                                                                                                          | Impact                                                                                                      |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `app/globals.css`       | Removed `container-type: inline-size` from `.hero-headshot-container`                                          | CSS spec forces `overflow:clip` when `container-type` is set — removing it restores `overflow:visible` on the portrait frame and makes the `headshot-ring-breathe` glow animation visible at mobile |
-| `app/globals.css`       | Bumped specificity of `object-position` rules to `.hero-headshot-shell .hero-headshot-image--*` (0,2,0)        | Beats the legacy `.hero-headshot-shell img` selector (0,1,1) — portrait now crops at the correct `50% 14%` instead of being forced to `50% 18%` |
-| `components/HeroSection.tsx` | Fixed `carousel-dot` active class: added missing space before `'active'` in template literal           | CSS rule `.carousel-dot.active` now matches correctly; previously generated `carousel-dotactive` (one token) which never matched the stylesheet |
+| File                         | Change                                                                                                  | Impact                                                                                                                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/globals.css`            | Removed `container-type: inline-size` from `.hero-headshot-container`                                   | CSS spec forces `overflow:clip` when `container-type` is set — removing it restores `overflow:visible` on the portrait frame and makes the `headshot-ring-breathe` glow animation visible at mobile |
+| `app/globals.css`            | Bumped specificity of `object-position` rules to `.hero-headshot-shell .hero-headshot-image--*` (0,2,0) | Beats the legacy `.hero-headshot-shell img` selector (0,1,1) — portrait now crops at the correct `50% 14%` instead of being forced to `50% 18%`                                                     |
+| `components/HeroSection.tsx` | Fixed `carousel-dot` active class: added missing space before `'active'` in template literal            | CSS rule `.carousel-dot.active` now matches correctly; previously generated `carousel-dotactive` (one token) which never matched the stylesheet                                                     |
 
 Validation pass after v2.0:
 - `pnpm run type-check` ✅
