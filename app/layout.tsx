@@ -33,6 +33,7 @@ import { Providers } from '@/app/providers';
 import { CommandPalette } from '@/components/CommandPalette';
 import CursorGlow from '@/components/CursorGlow';
 import { Footer } from '@/components/Footer';
+import { PageWrapper } from '@/components/PageWrapper';
 
 import { GrainOverlay } from '@/components/GrainOverlay';
 import Navbar from '@/components/Navbar';
@@ -263,7 +264,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <ThreeBrushField />
           <Navbar />
           <CommandPalette />
-          <div className="relative isolate z-[2]">{children}</div>
+          <PageWrapper>{children}</PageWrapper>
           <Footer />
         </Providers>
 
