@@ -3929,7 +3929,38 @@ select {
   container-type: inline-size;
 }
 
-.terminal-ambient-glow {
+.hero-headshot-shell {
+  flex: 0 0 auto;
+  contain: layout paint;
+}
+
+.hero-headshot-shell img {
+  object-position: 50% 18%;
+}
+
+.hero-headshot-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, transparent 56%, oklch(4% 0.01 265 / 0.15) 100%);
+  pointer-events: none;
+}
+
+.hero-headshot-frame {
+  padding: 0.625rem;
+}
+
+.hero-headshot-frame .hero-headshot-shell {
+  box-shadow: 0 0 0 1px oklch(100% 0 0 / 0.06) inset;
+}
+
+.hero-headshot-frame .hero-headshot-shell > span {
+  backdrop-filter: blur(12px);
+}
+
+.hero-visual-dashboard .terminal-ambient-glow {
   background:
     radial-gradient(130% 95% at 84% 18%, oklch(70% 0.21 188 / 0.18) 0%, transparent 70%),
     radial-gradient(100% 100% at 35% 78%, oklch(63% 0.22 258 / 0.1) 0%, transparent 74%);
@@ -3949,8 +3980,8 @@ select {
   }
 
   #hero .hero-headshot-ring {
-    width: 7.25rem;
-    height: 7.25rem;
+    width: clamp(7.25rem, 28vw, 8.25rem);
+    height: clamp(7.25rem, 28vw, 8.25rem);
   }
 
   #hero .hero-kicker {
@@ -4318,6 +4349,28 @@ section[data-chapter] {
   }
 }
 
+
+/* ── Hero alignment polish: keep the first fold balanced at the smallest widths ── */
+@media (max-width: 767px) {
+  .hero-grid-shell {
+    justify-items: center;
+  }
+
+  .cta-hero-group {
+    width: 100%;
+    max-width: 32rem;
+    justify-content: center;
+  }
+
+  .mobile-headshot-wrap {
+    width: 100%;
+  }
+
+  .mobile-headshot-wrap .hero-headshot-shell {
+    margin-inline: auto;
+  }
+}
+
 /* ── FIX 3: Portrait tablet treatment (768–1023px) ─────────────────────────
    The right column (hero visual rail) is `hidden lg:flex` — entirely absent
    at 768–1023px. This leaves a single-column hero on iPad portrait with wasted
@@ -4512,6 +4565,11 @@ section[data-chapter] {
 @media (min-width: 768px) and (max-width: 1023px) {
   .hero-headshot-frame::before {
     opacity: 0;
+  }
+
+  .hero-headshot-shell {
+    width: 9.5rem;
+    height: 9.5rem;
   }
 }
 
