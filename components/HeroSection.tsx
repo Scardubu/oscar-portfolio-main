@@ -1,15 +1,28 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 //
-// v2026.3 PATCH:
-//   FIX 1: carousel-dot active class bug — was `carousel-dot${active?'active':''}` which
-//           produced the single class "carousel-dotactive", not the compound ".carousel-dot.active"
-//           the CSS selector expects. Added the missing space: `' active'`.
-//   FIX 2: HeroPortrait — removed ghost CSS classes `hero-headshot-container` and
-//           `hero-headshot-rail` from desktop variant; `hero-headshot-container` from mobile.
-//           Neither class has CSS rules. They were inert noise from previous refactors.
-//           The canonical layout is fully owned by hero-headshot-frame (desktop) and
-//           mobile-headshot-wrap (mobile) — both have well-defined CSS.
+// CHANGELOG v2026.4 (cumulative — all prior fixes included):
+//
+//   FIX 1 (v2026.3): carousel-dot active class — `' active'` space added.
+//           `.carousel-dot.active` is a compound selector; "carousel-dotactive"
+//           (no space) never matched it. Active pill indicator was silently broken.
+//
+//   FIX 2 (v2026.3): HeroPortrait — removed ghost CSS classes `hero-headshot-container`
+//           and `hero-headshot-rail` (desktop) — zero CSS rules, inert noise from
+//           refactors. Layout owned by hero-headshot-frame (desktop) and
+//           mobile-headshot-wrap (mobile) — both have canonical CSS definitions.
+//
+//   FIX 3 (v2026.4): proofContainer double-animation driver — removed.
+//           The `m.div variants={proofContainer} initial="hidden" animate="visible"` wrapper
+//           was a nested independent animation runner inside heroContainer, which
+//           already drives the cascade. Having two separate `animate="visible"` triggers
+//           on ancestor/descendant m.* elements causes sequencing drift: the carousel
+//           could animate in before the stagger reaches it. Replaced with
+//           `variants={child}` — inherits heroContainer orchestration, animates at the
+//           correct stagger position, and no longer double-drives the visible state.
+//
+//   FIX 4 (v2026.4): proofContainer import — staggerContainer import retained
+//           for heroContainer construction. proofContainer variable removed.
 
 'use client';
 
@@ -83,14 +96,13 @@ function HeroPortrait({
           : undefined
       }
       className={[
-        // FIX 2: Removed ghost classes `hero-headshot-container` and `hero-headshot-rail`
-        // (desktop) — these had zero CSS rules and were inert residue from prior refactors.
-        // Layout is fully governed by `hero-headshot-frame` (desktop) and
-        // `mobile-headshot-wrap` (mobile), both of which have canonical CSS definitions.
+        // FIX 2 (v2026.3): Ghost classes `hero-headshot-container` and `hero-headshot-rail`
+        // removed — zero CSS rules, inert noise. Layout is fully governed by
+        // `hero-headshot-frame` (desktop) and `mobile-headshot-wrap` (mobile).
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
           ? 'hero-headshot-frame self-center'
-          : 'mobile-headshot-wrap flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
+          : 'mobile-headshot-wrap flex w-full justify-center lg:hidden',
       ].join(' ')}
     >
       <div
@@ -122,7 +134,6 @@ function HeroPortrait({
           className={[
             'hero-headshot-badge absolute right-2 bottom-2 z-10 rounded-full border border-white/12 bg-black/50 px-2.5 py-1',
             'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
-            isDesktop ? 'translate-y-0' : 'translate-y-0.5',
           ].join(' ')}
         >
           {isDesktop ? 'Lagos · Staff+' : 'Staff+'}
@@ -143,8 +154,6 @@ const CONVICTION_STATS = [
 ] as const;
 
 // v26 FIX: PROOF_COLUMNS body copy updated to match corrected stat.
-// "45% MTTD improvement over reactive alerting baseline" replaces
-// "45% faster alert detection" — consistent with SabiScore outcomes[].
 const PROOF_COLUMNS = [
   {
     label: 'LIVE IN PRODUCTION',
@@ -194,17 +203,10 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-
       e.preventDefault();
 
-      if (e.key === 'Home') {
-        scrollToIndex(0);
-        return;
-      }
-      if (e.key === 'End') {
-        scrollToIndex(PROOF_COLUMNS.length - 1);
-        return;
-      }
+      if (e.key === 'Home') { scrollToIndex(0); return; }
+      if (e.key === 'End') { scrollToIndex(PROOF_COLUMNS.length - 1); return; }
 
       const direction = e.key === 'ArrowRight' ? 1 : -1;
       const nextIndex = Math.max(0, Math.min(PROOF_COLUMNS.length - 1, activeIndex + direction));
@@ -217,7 +219,6 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 640px)');
     const update = () => setIsDesktop(mq.matches);
-
     update();
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
@@ -241,16 +242,13 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         entries.forEach((entry) => {
           const index = cardRefs.current.indexOf(entry.target as HTMLElement);
           if (index === -1) return;
-
           if (entry.intersectionRatio > bestRatio) {
             bestRatio = entry.intersectionRatio;
             bestIndex = index;
           }
         });
 
-        if (bestRatio > 0.35) {
-          setActiveIndex(bestIndex);
-        }
+        if (bestRatio > 0.35) setActiveIndex(bestIndex);
       },
       {
         root,
@@ -261,7 +259,6 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
 
     const validCards = cardRefs.current.filter(Boolean) as HTMLElement[];
     validCards.forEach((card) => observer.observe(card));
-
     return () => observer.disconnect();
   }, [isDesktop]);
 
@@ -270,8 +267,8 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <>
       <p id="hero-proof-help" className="sr-only">
-        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End. On
-        larger screens, displayed as a two-column grid.
+        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End.
+        On larger screens, displayed as a two-column grid.
       </p>
       <p id="hero-proof-status" className="sr-only" aria-live="polite">
         Showing proof {activeIndex + 1} of {PROOF_COLUMNS.length}: {activeLabel}
@@ -292,9 +289,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             <m.article
               key={col.label}
               id={`hero-proof-card-${index}`}
-              ref={(node) => {
-                cardRefs.current[index] = node;
-              }}
+              ref={(node) => { cardRefs.current[index] = node; }}
               role="tabpanel"
               aria-labelledby={`hero-proof-tab-${index}`}
               aria-hidden={!isDesktop && index !== activeIndex}
@@ -304,22 +299,24 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
               <p className="label-mono text-color-film-teal">{col.label}</p>
-              <p className="mt-3 text-sm leading-7 text-[oklch(94%_0.007_80_/_0.62)]">{col.body}</p>
+              <p className="mt-3 text-sm leading-7 text-[oklch(94%_0.007_80_/_0.62)]">
+                {col.body}
+              </p>
             </m.article>
           ))}
         </div>
 
-        {/* Scroll fade affordance - mobile only */}
+        {/* Scroll fade affordance — mobile only */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-[var(--color-bg)]/90 sm:hidden"
         />
       </div>
 
-      {/* FIX 1: Carousel dots — was `carousel-dot${active?'active':''}` (no space)
-          which produced the single class "carousel-dotactive". The CSS selector
-          `.carousel-dot.active` is a compound (two-class) selector and never matched
-          "carousel-dotactive". Fixed by adding the required space before 'active'. */}
+      {/* FIX 1 (v2026.3): className=`carousel-dot${active ? ' active' : ''}` — note the space.
+          Previous version `carousel-dot${active ? 'active' : ''}` produced "carousel-dotactive"
+          (single class), which never matched the compound selector `.carousel-dot.active`.
+          The active pill indicator — expanding width + chapter-accent color — was silent. */}
       <div className="carousel-dots sm:hidden" role="tablist" aria-label="Proof pillar navigation">
         {PROOF_COLUMNS.map((col, i) => (
           <button
@@ -342,8 +339,8 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
 
 // V1.0 Change 7: Count-up animation for CONVICTION_STATS.
 // Numeric values animate 0 → target over 600ms (easeOutQuart) on first viewport
-// intersection. Non-numeric strings ("4h → 15min", "sub-150ms", "45% MTTD")
-// render immediately — intentional per spec. prefers-reduced-motion respected.
+// intersection. Non-numeric strings render immediately — intentional per spec.
+// prefers-reduced-motion respected throughout.
 function ConvictionStat({
   value,
   label,
@@ -366,6 +363,7 @@ function ConvictionStat({
       setDisplayed(value);
       return;
     }
+
     const target = parseFloat(numericMatch[1]);
     const suffix = numericMatch[2];
     const duration = 600;
@@ -407,7 +405,9 @@ function ConvictionStat({
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const { scrollToSection, setActiveChapter, scrollProgressRef } = useScrollCinema();
+
   const heroProgress = useMotionValue(0);
+
   const rightRailY = useSpring(useTransform(heroProgress, [0, 1], [0, -18]), {
     stiffness: 170,
     damping: 24,
@@ -423,14 +423,14 @@ export function HeroSection() {
     damping: 25,
     mass: 0.26,
   });
+
   const previousHeroProgressRef = useRef(0);
 
-  // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter
-  // active whenever the hero comes back into view. HeroSection is a bare
-  // <m.section> — not wrapped in ChapterFrame — so useChapterTimeline is never
-  // called here. Without this, activeChapter stays on the last chapter after
-  // scrolling down and the navbar dot / brush field palette remain wrong on
-  // scroll-back.
+  // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter active whenever
+  // the hero comes back into view. HeroSection is a bare <m.section> — not wrapped in
+  // ChapterFrame — so useChapterTimeline is never called here. Without this,
+  // activeChapter stays on the last chapter after scrolling down and the navbar dot /
+  // brush field palette remain wrong on scroll-back.
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -441,9 +441,7 @@ export function HeroSection() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
-          setActiveChapter('prologue');
-        }
+        if (entry?.isIntersecting) setActiveChapter('prologue');
       },
       {
         threshold: 0.35,
@@ -452,7 +450,6 @@ export function HeroSection() {
     );
 
     observer.observe(el);
-
     return () => observer.disconnect();
   }, [setActiveChapter]);
 
@@ -465,23 +462,23 @@ export function HeroSection() {
 
   useAnimationFrame(() => {
     if (reducedMotion) return;
-
     // Emphasize first-fold progress while keeping motion subtle and stable.
     const progress = Math.min(1, Math.max(0, scrollProgressRef.current * 8));
     if (Math.abs(progress - previousHeroProgressRef.current) < 0.0015) return;
-
     previousHeroProgressRef.current = progress;
     heroProgress.set(progress);
   });
 
+  // FIX 4 (v2026.4): proofContainer removed — was causing double-animation with heroContainer.
+  // All carousel children now animate at their stagger position within heroContainer via `child`.
   const heroContainer = staggerContainer(0.055, 0.05);
-  const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
 
   // V1.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
+
   useEffect(() => {
     const el = statsRef.current;
     if (!el) return;
@@ -524,6 +521,7 @@ export function HeroSection() {
 
       <div className="relative z-10 container">
         <div className="hero-grid-shell grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[minmax(0,var(--hero-left-width))_minmax(0,var(--hero-right-width))]">
+
           {/* ── Left Column: Conviction Content ── */}
           <m.div
             variants={heroContainer}
@@ -531,7 +529,9 @@ export function HeroSection() {
             animate="visible"
             className="hero-grid-child flex flex-col items-center text-center lg:items-start lg:text-left"
           >
-            {/* Availability Pill — dark pattern ban: no fake slot counts or artificial deadlines */}
+            {/* Availability Pill
+                Dark-pattern ban: no fake slot counts or artificial deadlines.
+                Border color tracks --chapter-accent via CSS (v2026.4 enhancement). */}
             <m.div variants={child} data-cinematic="panel">
               <div
                 className="hero-availability-pill inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
@@ -547,7 +547,9 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Mobile Headshot */}
+            {/* Mobile Headshot
+                Padding managed entirely by CSS (.mobile-headshot-wrap + #hero .mobile-headshot-wrap).
+                Tailwind pt/pb removed — they were overridden by CSS at ≤639px and unused above. */}
             <m.div
               variants={child}
               // eslint-disable-next-line no-restricted-syntax
@@ -629,7 +631,7 @@ export function HeroSection() {
               relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
             </m.p>
 
-            {/* Stats Strip — V1.0 Change 7: count-up on viewport intersection */}
+            {/* Stats Strip — count-up on viewport intersection */}
             <m.div
               variants={child}
               data-cinematic="proof"
@@ -650,7 +652,7 @@ export function HeroSection() {
               </div>
             </m.div>
 
-            {/* Proof Callout — v27.1: rhythm fix — each system on its own line via block spans for better readability at sm viewport */}
+            {/* Proof Callout — each system on its own line for sm+ readability */}
             <m.div
               variants={child}
               data-cinematic="panel"
@@ -701,11 +703,8 @@ export function HeroSection() {
             </m.div>
 
             <m.div variants={child} className="response-reassurance mx-auto lg:mx-0">
-              {/* v27.1 FIX: flex row replaces inline-block + align-middle.
-                  On iOS Safari, a h-1.5 inline-block dot with align-middle
-                  visually merges with the capital "I" at 10px mono — the
-                  baseline offset collapses the gap that mr-1.5 should create.
-                  Flex + items-center is cross-browser reliable. */}
+              {/* flex + items-center: reliable iOS Safari alignment (inline-block + align-middle
+                  collapses the gap at 10px mono on retina, merging dot into capital "I"). */}
               <p className="text-color-text-secondary flex items-center gap-2 font-mono text-[10px] tracking-wider">
                 <span
                   className="bg-color-success inline-block h-1.5 w-1.5 shrink-0 rounded-full"
@@ -726,9 +725,8 @@ export function HeroSection() {
               </a>
             </m.div>
 
-            {/* V1.0 Change 2: Warmup micro-CTA — per spec §CONVERSION_MISS:warmup.
-                For the evaluating visitor who reads before committing.
-                mono 12px, opacity 0.45, not a button. */}
+            {/* Warmup micro-CTA — for the evaluating visitor who reads before committing.
+                mono 12px, secondary color, not a button. */}
             <m.div variants={child} className="mt-2 text-center lg:text-left">
               <Link
                 href={anchorUrl('section-writing')}
@@ -740,12 +738,15 @@ export function HeroSection() {
               </Link>
             </m.div>
 
-            {/* Proof Carousel */}
-            <m.div variants={proofContainer} initial="hidden" animate="visible">
+            {/* Proof Carousel
+                FIX 3 (v2026.4): Replaced `m.div variants={proofContainer} initial="hidden"
+                animate="visible"` (double-animation driver) with `variants={child}` — inherits
+                heroContainer orchestration, animates at correct stagger position, no drift. */}
+            <m.div variants={child}>
               <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
             </m.div>
 
-            {/* V1.0 Change 8: ⌘K hint — surfaces the command palette for power users. */}
+            {/* ⌘K hint — surfaces the command palette for power users */}
             <m.div
               variants={child}
               className="mt-4 flex transform-gpu justify-center lg:justify-end"
@@ -772,6 +773,7 @@ export function HeroSection() {
             <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="desktop" />
             <HeroVisual />
           </m.div>
+
         </div>
       </div>
     </m.section>
