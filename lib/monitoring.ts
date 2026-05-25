@@ -2,6 +2,8 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 // lib/monitoring.ts - Web Vitals monitoring
 
+import { trackEvent } from '@/app/lib/analytics';
+
 // Web Vitals metric type (compatible with Next.js built-in types)
 interface WebVitalMetric {
   id: string;
@@ -13,29 +15,15 @@ interface WebVitalMetric {
 
 /**
  * Report Web Vitals to analytics
- * Integrates with Vercel Analytics and Google Analytics
+ * Integrates with Vercel Analytics custom events.
  */
 export function reportWebVitals(metric: WebVitalMetric) {
-  // Send to Vercel Analytics (automatically handled by @vercel/analytics)
-  // The SpeedInsights component handles this
-
-  // Send to Google Analytics if configured
-  if (typeof window !== 'undefined') {
-    const win = window as Window & {
-      gtag?: (command: string, action: string, params: Record<string, unknown>) => void;
-    };
-
-    if (win.gtag) {
-      win.gtag('event', metric.name, {
-        value: Math.round(metric.value),
-        event_label: metric.id,
-        non_interaction: true,
-        // Custom dimensions for better analysis
-        metric_rating: metric.rating,
-        metric_delta: Math.round(metric.delta),
-      });
-    }
-  }
+  trackEvent('Performance', 'WebVital', metric.name, Math.round(metric.value), {
+    metric_id: metric.id,
+    metric_rating: metric.rating,
+    metric_delta: Math.round(metric.delta),
+    non_interaction: true,
+  });
 }
 
 /**

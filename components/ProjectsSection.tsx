@@ -7,6 +7,7 @@ import { ArrowUpRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { trackEvent } from '@/app/lib/analytics';
 import { ArchDecision } from '@/components/ArchDecision';
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { SectionIntro } from '@/components/shared/SectionIntro';
@@ -27,6 +28,13 @@ const FEATURED_PRIMARY_VARIANT = cardReveal(28);
 const FEATURED_SECONDARY_VARIANT = cardReveal(20);
 const GRID_VARIANT_A = cardReveal(24);
 const GRID_VARIANT_B = cardReveal(-20);
+
+function trackProjectClick(projectSlug: string, target: 'case-study' | 'demo' | 'source') {
+  trackEvent('Portfolio', 'ProjectClick', projectSlug, undefined, {
+    project_slug: projectSlug,
+    target,
+  });
+}
 
 function StatusBadge({ status }: Readonly<{ status: Project['status'] }>) {
   if (status === 'case-study') {
@@ -177,7 +185,11 @@ function FeaturedProjectCard({
       <div className="px-4 pb-5 sm:px-8 sm:pb-8 lg:px-10 lg:pb-10">
         <div className="border-color-border mt-2 flex flex-col gap-3 border-t pt-5">
           {featured.caseStudy && (
-            <Link href={featured.caseStudy} className="cta-primary w-full justify-center">
+            <Link
+              href={featured.caseStudy}
+              className="cta-primary w-full justify-center"
+              onClick={() => trackProjectClick(featured.slug, 'case-study')}
+            >
               Read case study
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
@@ -188,6 +200,7 @@ function FeaturedProjectCard({
                 href={featured.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackProjectClick(featured.slug, 'demo')}
                 className="cta-secondary w-full justify-center sm:w-auto sm:justify-start"
               >
                 Live demo <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -198,6 +211,7 @@ function FeaturedProjectCard({
                 href={featured.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackProjectClick(featured.slug, 'source')}
                 className="cta-ghost flex min-h-[48px] items-center justify-center text-center sm:justify-start sm:text-left"
               >
                 View source
@@ -303,6 +317,7 @@ function SecondaryFeaturedCard({
             <Link
               href={project.caseStudy}
               className="cta-primary justify-center text-xs sm:justify-start"
+              onClick={() => trackProjectClick(project.slug, 'case-study')}
             >
               Read the case study <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
             </Link>
@@ -312,6 +327,7 @@ function SecondaryFeaturedCard({
               href={project.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackProjectClick(project.slug, 'demo')}
               className="cta-secondary justify-center text-xs sm:justify-start"
             >
               Live demo <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
@@ -322,6 +338,7 @@ function SecondaryFeaturedCard({
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackProjectClick(project.slug, 'source')}
               className="cta-ghost flex min-h-[44px] items-center justify-center text-xs sm:justify-start"
             >
               View source
@@ -399,6 +416,7 @@ function ProjectCard({
           <Link
             href={project.caseStudy}
             className="cta-ghost group flex min-h-[48px] items-center justify-center gap-1 text-xs sm:justify-start"
+            onClick={() => trackProjectClick(project.slug, 'case-study')}
           >
             Read case study
             <m.span
@@ -415,6 +433,7 @@ function ProjectCard({
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackProjectClick(project.slug, 'source')}
             className="cta-ghost flex min-h-[48px] items-center justify-center text-xs sm:justify-start"
           >
             View source

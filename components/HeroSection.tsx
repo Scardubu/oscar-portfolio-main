@@ -3,7 +3,7 @@
 
 'use client';
 
-import { m, useReducedMotion } from 'framer-motion';
+import { m, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ import {
   useState,
 } from 'react';
 
+import { trackEvent } from '@/app/lib/analytics';
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
@@ -89,9 +90,10 @@ function HeroPortrait({
           fill
           sizes={
             isDesktop
-              ? '(min-width: 1536px) 224px, (min-width: 1280px) 200px, (min-width: 1024px) 176px, 160px'
-              : '(max-width: 639px) 160px, 144px'
+              ? '(min-width: 1536px) 224px, (min-width: 1280px) 208px, (min-width: 1024px) 184px, 160px'
+              : '(max-width: 389px) 116px, (max-width: 767px) 132px, 152px'
           }
+          quality={88}
           className="object-cover object-[50%_18%]"
           priority
         />
@@ -309,7 +311,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -383,7 +385,23 @@ function ConvictionStat({
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const { scrollToSection, setActiveChapter } = useScrollCinema();
+  const { scrollToSection, setActiveChapter, scrollProgressRef } = useScrollCinema();
+  const heroProgress = useMotionValue(0);
+  const rightRailY = useSpring(useTransform(heroProgress, [0, 1], [0, -18]), {
+    stiffness: 170,
+    damping: 24,
+    mass: 0.28,
+  });
+  const rightRailOpacity = useSpring(useTransform(heroProgress, [0, 1], [1, 0.94]), {
+    stiffness: 160,
+    damping: 26,
+    mass: 0.32,
+  });
+  const mobileHeadshotY = useSpring(useTransform(heroProgress, [0, 1], [0, -10]), {
+    stiffness: 180,
+    damping: 25,
+    mass: 0.26,
+  });
 
   // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter
   // active whenever the hero comes back into view. HeroSection is a bare
@@ -416,6 +434,27 @@ export function HeroSection() {
     return () => observer.disconnect();
   }, [setActiveChapter]);
 
+  useEffect(() => {
+    if (reducedMotion) {
+      heroProgress.set(0);
+      return;
+    }
+
+    let raf = 0;
+    const tick = () => {
+      // Emphasize first-fold progress while keeping motion subtle and stable.
+      const progress = Math.min(1, Math.max(0, scrollProgressRef.current * 8));
+      heroProgress.set(progress);
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    raf = window.requestAnimationFrame(tick);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+    };
+  }, [heroProgress, reducedMotion, scrollProgressRef]);
+
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
   const child = reducedMotion ? noMotion : fadeRise;
@@ -441,11 +480,14 @@ export function HeroSection() {
   }, []);
 
   const handleAnchorJump = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    (event: MouseEvent<HTMLAnchorElement>, sectionId: string, ctaLabel: string) => {
       const section = document.getElementById(sectionId);
       if (!section) return;
 
       event.preventDefault();
+      trackEvent('Portfolio', 'HeroCtaClick', ctaLabel, undefined, {
+        target_section: sectionId,
+      });
       window.history.replaceState(null, '', anchorUrl(sectionId));
       scrollToSection(sectionId);
     },
@@ -479,7 +521,7 @@ export function HeroSection() {
                 <span className="dot-live" aria-hidden="true" />
                 <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
-                  <span className="hero-availability-updated ml-2 text-[9px] tracking-normal normal-case opacity-50">
+                  <span className="hero-availability-updated mt-1 block text-center text-[9px] tracking-normal normal-case text-white/50 sm:mt-0 sm:ml-2 sm:inline sm:text-left">
                     · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
@@ -487,7 +529,11 @@ export function HeroSection() {
             </m.div>
 
             {/* Mobile Headshot */}
-            <m.div variants={child}>
+            <m.div
+              variants={child}
+              // eslint-disable-next-line no-restricted-syntax
+              style={reducedMotion ? undefined : { y: mobileHeadshotY }}
+            >
               <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="mobile" />
             </m.div>
 
@@ -495,7 +541,7 @@ export function HeroSection() {
             <m.p
               variants={child}
               data-cinematic="eyebrow"
-              className="hero-kicker mx-auto max-w-[36ch] text-color-film-teal font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase lg:mx-0"
+              className="hero-kicker text-color-film-teal mx-auto max-w-[36ch] font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase lg:mx-0"
             >
               <span className="inline sm:hidden">
                 <span className="whitespace-nowrap">Full-Stack</span>
@@ -615,7 +661,7 @@ export function HeroSection() {
             <m.div variants={child} data-cinematic="cta" className="cta-hero-group mx-auto lg:mx-0">
               <Link
                 href={anchorUrl('section-contact')}
-                onClick={(event) => handleAnchorJump(event, 'section-contact')}
+                onClick={(event) => handleAnchorJump(event, 'section-contact', 'contact')}
                 className="cta-primary cta-primary--lg tactile-press"
                 aria-label="Tell me about your constraints"
               >
@@ -627,7 +673,7 @@ export function HeroSection() {
               </Link>
               <Link
                 href={anchorUrl('section-projects')}
-                onClick={(event) => handleAnchorJump(event, 'section-projects')}
+                onClick={(event) => handleAnchorJump(event, 'section-projects', 'projects')}
                 className="cta-secondary tactile-press"
                 aria-label="See the work"
               >
@@ -641,7 +687,7 @@ export function HeroSection() {
                   visually merges with the capital "I" at 10px mono — the
                   baseline offset collapses the gap that mr-1.5 should create.
                   Flex + items-center is cross-browser reliable. */}
-              <p className="flex items-center gap-2 font-mono text-[10px] tracking-wider text-[oklch(93%_0.006_264_/_0.50)]">
+              <p className="text-color-text-secondary flex items-center gap-2 font-mono text-[10px] tracking-wider">
                 <span
                   className="bg-color-success inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                   aria-hidden="true"
@@ -667,8 +713,8 @@ export function HeroSection() {
             <m.div variants={child} className="mt-2 text-center lg:text-left">
               <Link
                 href={anchorUrl('section-writing')}
-                onClick={(event) => handleAnchorJump(event, 'section-writing')}
-                className="text-color-text-muted font-mono text-[12px] opacity-45 transition-opacity hover:opacity-70"
+                onClick={(event) => handleAnchorJump(event, 'section-writing', 'writing')}
+                className="text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
                 aria-label="Read how the 2am constraint became the design system"
               >
                 Or read how the 2am constraint became the design system →
@@ -680,17 +726,15 @@ export function HeroSection() {
               <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
             </m.div>
 
-            {/* V1.0 Change 8: ⌘K hint — surfaces the command palette for power users.
-                Per spec §DELIGHT_MISS:personality. Hidden from screen readers (aria-hidden). */}
+            {/* V1.0 Change 8: ⌘K hint — surfaces the command palette for power users. */}
             <m.div
               variants={child}
               className="mt-4 flex transform-gpu justify-center lg:justify-end"
-              aria-hidden="true"
             >
               <button
                 type="button"
                 onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
-                className="border-color-border text-color-text-muted inline-flex cursor-pointer items-center gap-1.5 rounded border px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase opacity-30 transition-opacity hover:opacity-60"
+                className="border-color-border text-color-text-secondary hover:text-color-text-primary inline-flex cursor-pointer items-center gap-1.5 rounded border bg-white/[0.02] px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors hover:border-white/20"
                 aria-label="Open command palette"
               >
                 <kbd>⌘K</kbd>
@@ -703,6 +747,8 @@ export function HeroSection() {
           <m.div
             data-cinematic="media"
             className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
+            // eslint-disable-next-line no-restricted-syntax
+            style={reducedMotion ? undefined : { y: rightRailY, opacity: rightRailOpacity }}
           >
             <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="desktop" />
             <HeroVisual />

@@ -78,7 +78,7 @@ function ConvictionRecap() {
           {PROOF_ITEMS.map((item) => (
             <span
               key={item}
-              className="font-mono text-[11px] tracking-widest text-white/35 uppercase"
+              className="font-mono text-[11px] tracking-widest text-white/60 uppercase"
             >
               {item}
             </span>

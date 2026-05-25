@@ -137,7 +137,8 @@ html {
      chapters change. Browsers that don't support color-mix() fall back to a
      transparent thumb (scrollable but invisible) — not broken.              */
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklch, var(--chapter-accent) 30%, transparent) var(--color-space-black);
+  scrollbar-color: color-mix(in oklch, var(--chapter-accent) 30%, transparent)
+    var(--color-space-black);
 }
 ::-webkit-scrollbar {
   width: 4px;
@@ -171,8 +172,8 @@ html {
   --chapter-ink: #06070a;
   transition:
     --chapter-accent 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    --chapter-wash   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    --chapter-ink    0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    --chapter-wash 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    --chapter-ink 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -181,14 +182,46 @@ html {
   }
 }
 
-html[data-active-chapter='prologue']    { --chapter-accent: #67e8f9; --chapter-wash: #0c1320; --chapter-ink: #06070a; }
-html[data-active-chapter='proof']       { --chapter-accent: #5eead4; --chapter-wash: #101825; --chapter-ink: #07080b; }
-html[data-active-chapter='credibility'] { --chapter-accent: #fbbf24; --chapter-wash: #161411; --chapter-ink: #090a0d; }
-html[data-active-chapter='craft']       { --chapter-accent: #38bdf8; --chapter-wash: #11192a; --chapter-ink: #07090c; }
-html[data-active-chapter='range']       { --chapter-accent: #c084fc; --chapter-wash: #171120; --chapter-ink: #07080b; }
-html[data-active-chapter='human']       { --chapter-accent: #fde68a; --chapter-wash: #20170f; --chapter-ink: #0a0807; }
-html[data-active-chapter='judgment']    { --chapter-accent: #93c5fd; --chapter-wash: #101624; --chapter-ink: #08090c; }
-html[data-active-chapter='epilogue']    { --chapter-accent: #34d399; --chapter-wash: #07110e; --chapter-ink: #06070a; }
+html[data-active-chapter='prologue'] {
+  --chapter-accent: #67e8f9;
+  --chapter-wash: #0c1320;
+  --chapter-ink: #06070a;
+}
+html[data-active-chapter='proof'] {
+  --chapter-accent: #5eead4;
+  --chapter-wash: #101825;
+  --chapter-ink: #07080b;
+}
+html[data-active-chapter='credibility'] {
+  --chapter-accent: #fbbf24;
+  --chapter-wash: #161411;
+  --chapter-ink: #090a0d;
+}
+html[data-active-chapter='craft'] {
+  --chapter-accent: #38bdf8;
+  --chapter-wash: #11192a;
+  --chapter-ink: #07090c;
+}
+html[data-active-chapter='range'] {
+  --chapter-accent: #c084fc;
+  --chapter-wash: #171120;
+  --chapter-ink: #07080b;
+}
+html[data-active-chapter='human'] {
+  --chapter-accent: #fde68a;
+  --chapter-wash: #20170f;
+  --chapter-ink: #0a0807;
+}
+html[data-active-chapter='judgment'] {
+  --chapter-accent: #93c5fd;
+  --chapter-wash: #101624;
+  --chapter-ink: #08090c;
+}
+html[data-active-chapter='epilogue'] {
+  --chapter-accent: #34d399;
+  --chapter-wash: #07110e;
+  --chapter-ink: #06070a;
+}
 
 /* ════ :root DESIGN TOKENS — v18 ════ */
 :root {
@@ -207,8 +240,10 @@ html[data-active-chapter='epilogue']    { --chapter-accent: #34d399; --chapter-w
   --border: var(--color-border);
 
   --color-text-primary: oklch(94% 0.007 80);
-  --color-text-secondary: oklch(57% 0.005 264);
-  --color-text-muted: oklch(43% 0.005 264);
+  /* v33: raised from oklch(57%) → oklch(67%) to clear WCAG AA 4.5:1 on dark bg */
+  --color-text-secondary: oklch(67% 0.005 264);
+  /* v33: raised from oklch(43%) → oklch(63%) to clear WCAG AA 4.5:1 on dark bg */
+  --color-text-muted: oklch(63% 0.005 264);
   --color-text-disabled: oklch(100% 0 0 / 0.18);
 
   --color-accent: oklch(63% 0.22 258);
@@ -1287,7 +1322,7 @@ h3,
   gap: 0.25rem;
   min-height: 48px;
   padding: 0.5rem 0;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   text-decoration: none;
@@ -1456,7 +1491,7 @@ h3,
   font-size: 0.5625rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 @media (max-width: 389px) {
@@ -3655,21 +3690,18 @@ section,
   min-width: 0;
 }
 
-/* ── v34: response reassurance — increase presence without losing restraint ──
-   Current: oklch(93% 0.006 264 / 0.35) — barely readable on OLED dark panels.
-   Fix: raise opacity to 0.50 and anchor with a 1px left border teal accent
-   so the trust signal is immediately visible without competing with the CTA.
-   The border-left uses the same 4% teal surface used throughout, keeping
-   the signal warm rather than loud.
-   Applied via the .response-reassurance utility class added to the element.
+/* ── v34: response reassurance — keep the trust signal readable and restrained ──
+   The accent border can stay subtle, but the copy itself must clear WCAG AA
+   at 10px in the hero. Use the shared secondary token instead of a translucent
+   custom override so the reassurance line stays aligned with the rest of the
+   type system and doesn't drift below contrast thresholds.
 */
 .response-reassurance {
   padding-left: 0.625rem;
   border-left: 1px solid oklch(70% 0.21 188 / 0.22);
 }
-.response-reassurance p,
-.response-reassurance span {
-  color: oklch(93% 0.006 264 / 0.5) !important;
+.response-reassurance p {
+  color: var(--color-text-secondary) !important;
 }
 
 /* ── Section shell ──────────────────────────────────────────────────────── */
@@ -4175,12 +4207,21 @@ select {
 }
 
 @keyframes chapter-dot-breathe {
-  0%   { box-shadow: 0 0 0 0   color-mix(in oklch, var(--chapter-accent) 55%, transparent),
-                     0 0 12px  color-mix(in oklch, var(--chapter-accent) 35%, transparent); }
-  50%  { box-shadow: 0 0 0 4px color-mix(in oklch, var(--chapter-accent) 22%, transparent),
-                     0 0 20px  color-mix(in oklch, var(--chapter-accent) 20%, transparent); }
-  100% { box-shadow: 0 0 0 0   color-mix(in oklch, var(--chapter-accent) 55%, transparent),
-                     0 0 12px  color-mix(in oklch, var(--chapter-accent) 35%, transparent); }
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in oklch, var(--chapter-accent) 55%, transparent),
+      0 0 12px color-mix(in oklch, var(--chapter-accent) 35%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px color-mix(in oklch, var(--chapter-accent) 22%, transparent),
+      0 0 20px color-mix(in oklch, var(--chapter-accent) 20%, transparent);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in oklch, var(--chapter-accent) 55%, transparent),
+      0 0 12px color-mix(in oklch, var(--chapter-accent) 35%, transparent);
+  }
 }
 
 /* Applied via JS className in ScrollProgress — keeps CSS fully declarative */
@@ -4189,7 +4230,7 @@ select {
   animation: chapter-dot-breathe 2.4s ease-in-out infinite;
   transition:
     background 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform   0.3s  cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4203,8 +4244,16 @@ select {
    ChapterFrame border-t when it exists. The slide uses transform + opacity
    only — no layout thrash.                                                    */
 @keyframes chapter-line-enter {
-  from { transform: scaleX(0); opacity: 0; transform-origin: left; }
-  to   { transform: scaleX(1); opacity: 1; transform-origin: left; }
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+    transform-origin: left;
+  }
 }
 
 section[data-chapter] .chapter-accent-line {
@@ -4278,7 +4327,6 @@ section[data-chapter] {
    END PREMIUM CINEMATIC ELEVATION
    ========================================================================== */
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    RESPONSIVENESS SURGICAL AUDIT V1.1 — scardubu.dev
    Addresses the 5 high-impact issues identified in RESPONSIVENESS_AUDIT.md
@@ -4320,14 +4368,14 @@ section[data-chapter] {
 @media (max-width: 389px) {
   /* Availability pill — max-width guard prevents overflow past viewport edge */
   .hero-availability-pill,
-  [aria-label="Currently available for Staff+ roles"] {
+  [aria-label='Currently available for Staff+ roles'] {
     max-width: calc(100vw - 2rem);
   }
 
   /* Conviction stat values — at 320px, 0.8125rem mono with nowrap can overflow.
      Allow the value to break at the slash or arrow characters. */
   .conviction-stat-value,
-  [class*="conviction-stat-value"] {
+  [class*='conviction-stat-value'] {
     white-space: normal;
     word-break: break-word;
     overflow-wrap: anywhere;
@@ -4348,7 +4396,6 @@ section[data-chapter] {
     padding-left: 0.5rem;
   }
 }
-
 
 /* ── Hero alignment polish: keep the first fold balanced at the smallest widths ── */
 @media (max-width: 767px) {
@@ -4412,7 +4459,7 @@ section[data-chapter] {
   }
 
   /* Hide the full HeroVisual dashboard at tablet — too dense for 200px column */
-  .hero-visual-rail [class*="hero-visual"],
+  .hero-visual-rail [class*='hero-visual'],
   .hero-visual-rail > div:last-child {
     display: none;
   }
@@ -4474,7 +4521,7 @@ section[data-chapter] {
 /* ── Carousel dot active state — enhanced for button context ───────────────
    The original .carousel-dot.active rule must still work now that dots
    are buttons. These rules reinforce the active state specificity.           */
-.carousel-dots [role="tab"][aria-selected="true"].carousel-dot,
+.carousel-dots [role='tab'][aria-selected='true'].carousel-dot,
 .carousel-dot.active {
   /* These properties are already defined in the main .carousel-dot.active
      rule above; this block exists to ensure they win over browser button
@@ -4504,7 +4551,7 @@ section[data-chapter] {
 
 @media (min-width: 640px) and (max-width: 1023px) {
   :root {
-    --glow-intensity: 0.50;
+    --glow-intensity: 0.5;
   }
 }
 
@@ -4548,7 +4595,7 @@ section[data-chapter] {
   inset: -1.25rem;
   background: radial-gradient(
     ellipse 85% 85% at 50% 48%,
-    oklch(70% 0.21 188 / 0.10) 0%,
+    oklch(70% 0.21 188 / 0.1) 0%,
     oklch(70% 0.21 188 / 0.04) 48%,
     transparent 72%
   );
@@ -4637,5 +4684,73 @@ section[data-chapter] {
 @media (min-width: 768px) and (max-width: 1023px) {
   .mobile-headshot-wrap {
     display: none !important;
+  }
+}
+
+/* ── v32: transition + hero stability pass ─────────────────────────────── */
+#page-wrapper[data-page-transitioning='true'] {
+  will-change: opacity, transform;
+}
+
+#page-wrapper[data-page-transitioning='true'] #main-content {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #page-wrapper[data-page-transitioning='true'] #main-content {
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 639px) {
+  #hero .hero-grid-shell {
+    gap: clamp(1.25rem, 6vw, 2rem);
+  }
+
+  #hero .hero-availability-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  #hero .hero-availability-updated {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  #hero .mobile-headshot-wrap {
+    padding-block: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  #hero .hero-kicker,
+  #hero .hero-body-text,
+  #hero .hero-proof-callout {
+    max-width: min(100%, 34rem);
+  }
+
+  #hero .hero-body-text {
+    text-wrap: pretty;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  #hero .hero-grid-shell {
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  #hero .hero-availability-label {
+    justify-content: flex-start;
+  }
+
+  #hero .hero-availability-updated {
+    width: auto;
+    text-align: left;
+  }
+
+  #hero .hero-proof-callout {
+    max-width: min(100%, 52ch);
   }
 }

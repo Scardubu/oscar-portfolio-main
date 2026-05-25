@@ -1,22 +1,16 @@
 /// lib/metrics/analytics.ts
 
-const seenMetricViews = new Set<string>()
+import { trackEvent } from '@/app/lib/analytics';
+
+const seenMetricViews = new Set<string>();
 
 export function trackMetricView(metricId: string) {
-  if (typeof window === 'undefined' || seenMetricViews.has(metricId)) return
+  if (typeof window === 'undefined' || seenMetricViews.has(metricId)) return;
 
-  seenMetricViews.add(metricId)
+  seenMetricViews.add(metricId);
 
-  const win = window as Window & {
-    gtag?: (
-      command: string,
-      action: string,
-      params: Record<string, unknown>
-    ) => void
-  }
-
-  win.gtag?.('event', 'metric_view', {
+  trackEvent('Portfolio', 'MetricView', metricId, undefined, {
     metric_id: metricId,
     non_interaction: true,
-  })
+  });
 }

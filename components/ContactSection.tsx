@@ -3,8 +3,17 @@
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
-import { type ChangeEvent, type FocusEvent, type FormEvent, useMemo, useState } from 'react';
+import {
+  type ChangeEvent,
+  type FocusEvent,
+  type FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
+import { trackEvent } from '@/app/lib/analytics';
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { CopyEmail } from '@/components/CopyEmail';
 import { SectionIntro } from '@/components/shared/SectionIntro';
@@ -102,10 +111,15 @@ function ContactForm() {
   });
   // Change 1d — V1.0: field-level validation errors per spec §Form State Copy
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
+  const successRef = useRef<HTMLDivElement>(null);
 
-  function handleBlur(
-    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) {
+  useEffect(() => {
+    if (state === 'success') {
+      successRef.current?.focus();
+    }
+  }, [state]);
+
+  function handleBlur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     if (!value.trim()) {
       setFieldErrors((prev) => ({ ...prev, [name]: FIELD_ERRORS[name] }));
@@ -138,9 +152,15 @@ function ContactForm() {
         throw new Error(json.error ?? `HTTP ${res.status}`);
       }
 
+      trackEvent('Portfolio', 'ContactSubmit', values.inquiryType, undefined, {
+        status: 'success',
+      });
       setState('success');
       setValues({ name: '', email: '', company: '', inquiryType: 'job', message: '' });
     } catch {
+      trackEvent('Portfolio', 'ContactSubmit', values.inquiryType, undefined, {
+        status: 'error',
+      });
       setState('error');
     }
   }
@@ -149,9 +169,11 @@ function ContactForm() {
     return (
       <div
         data-cinematic="panel"
+        ref={successRef}
         className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border border-[oklch(65%_0.18_155_/_0.4)] bg-[oklch(65%_0.18_155_/_0.06)] p-8 text-center sm:p-10"
         role="status"
         aria-live="polite"
+        tabIndex={-1}
       >
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[oklch(65%_0.18_155_/_0.15)]">
           <svg
@@ -194,6 +216,7 @@ function ContactForm() {
       className="border-color-border rounded-[var(--radius-xl)] border bg-[oklch(100%_0_0_/_0.02)] p-5 sm:p-7"
       noValidate
       aria-label="Contact Oscar Ndugbu"
+      aria-busy={state === 'loading'}
     >
       <p className="label-mono text-color-film-teal mb-5">START A CONVERSATION</p>
 
@@ -219,9 +242,15 @@ function ContactForm() {
             placeholder="Your name"
             className="contact-field-input"
             disabled={state === 'loading'}
+            aria-invalid={Boolean(fieldErrors.name)}
+            aria-describedby={fieldErrors.name ? 'cf-name-error' : undefined}
           />
           {fieldErrors.name && (
-            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
+            <p
+              id="cf-name-error"
+              className="text-2xs text-color-film-teal mt-1 font-mono"
+              role="alert"
+            >
               {fieldErrors.name}
             </p>
           )}
@@ -246,9 +275,15 @@ function ContactForm() {
             placeholder="you@company.com"
             className="contact-field-input"
             disabled={state === 'loading'}
+            aria-invalid={Boolean(fieldErrors.email)}
+            aria-describedby={fieldErrors.email ? 'cf-email-error' : undefined}
           />
           {fieldErrors.email && (
-            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
+            <p
+              id="cf-email-error"
+              className="text-2xs text-color-film-teal mt-1 font-mono"
+              role="alert"
+            >
               {fieldErrors.email}
             </p>
           )}
@@ -290,6 +325,8 @@ function ContactForm() {
             onBlur={handleBlur}
             className="contact-field-input contact-field-select"
             disabled={state === 'loading'}
+            aria-invalid={Boolean(fieldErrors.inquiryType)}
+            aria-describedby={fieldErrors.inquiryType ? 'cf-type-error' : undefined}
           >
             {INQUIRY_TYPES.map(({ value, label }) => (
               <option key={value} value={value}>
@@ -298,7 +335,11 @@ function ContactForm() {
             ))}
           </select>
           {fieldErrors.inquiryType && (
-            <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
+            <p
+              id="cf-type-error"
+              className="text-2xs text-color-film-teal mt-1 font-mono"
+              role="alert"
+            >
               {fieldErrors.inquiryType}
             </p>
           )}
@@ -325,13 +366,21 @@ function ContactForm() {
           placeholder="Describe the constraint, deadline, and risk."
           className="contact-field-input contact-field-textarea"
           disabled={state === 'loading'}
+          aria-invalid={Boolean(fieldErrors.message)}
+          aria-describedby={
+            fieldErrors.message ? 'cf-message-error cf-message-count' : 'cf-message-count'
+          }
         />
         {fieldErrors.message && (
-          <p className="text-2xs text-color-film-teal mt-1 font-mono" role="alert">
+          <p
+            id="cf-message-error"
+            className="text-2xs text-color-film-teal mt-1 font-mono"
+            role="alert"
+          >
             {fieldErrors.message}
           </p>
         )}
-        <p className="text-2xs text-color-text-muted mt-1.5 font-mono">
+        <p id="cf-message-count" className="text-2xs text-color-text-muted mt-1.5 font-mono">
           {values.message.length}/500 characters
         </p>
       </div>

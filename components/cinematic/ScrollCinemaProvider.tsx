@@ -15,6 +15,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { trackSectionView } from '@/app/lib/analytics';
 import type { ChapterId } from '@/lib/cinematic/chapters';
 import { CHAPTERS } from '@/lib/cinematic/chapters';
 
@@ -46,6 +47,19 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const activeChapterRef = useRef<ChapterId>('prologue');
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
+  const retryTimerRef = useRef<number | null>(null);
+  const trackedSectionsRef = useRef(new Set<ChapterId>());
+
+  const getSectionOffset = useCallback(() => {
+    if (typeof window === 'undefined') return -88;
+    const navHeightToken = getComputedStyle(document.documentElement)
+      .getPropertyValue('--nav-height')
+      .trim();
+    const navHeight = Number.parseFloat(navHeightToken);
+
+    if (!Number.isFinite(navHeight)) return -88;
+    return -(navHeight + 16);
+  }, []);
 
   const setActiveChapter = useCallback((chapter: ChapterId) => {
     activeChapterRef.current = chapter;
@@ -59,30 +73,50 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     (sectionId: string) => {
       const maxAttempts = 120;
 
+      if (retryTimerRef.current !== null) {
+        window.clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+
       const tryScroll = (attempt: number) => {
         const el = document.getElementById(sectionId);
         if (!el) {
           if (attempt < maxAttempts) {
-            window.setTimeout(() => tryScroll(attempt + 1), 100);
+            retryTimerRef.current = window.setTimeout(() => {
+              retryTimerRef.current = null;
+              tryScroll(attempt + 1);
+            }, 80);
           }
           return;
         }
 
+        retryTimerRef.current = null;
+
         if (reducedMotion || !lenisRef.current) {
-          el.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+          const top = el.getBoundingClientRect().top + window.scrollY + getSectionOffset();
+          window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
           return;
         }
 
         // FIX BUG 1: removed `immediate: true` — that flag bypasses Lenis's
         // lerp interpolation and produces an instant jump instead of the
         // cinematic glide the design requires.
-        lenisRef.current.scrollTo(el, { offset: -88 });
+        lenisRef.current.scrollTo(el, { offset: getSectionOffset() });
       };
 
       tryScroll(0);
     },
-    [reducedMotion]
+    [getSectionOffset, reducedMotion]
   );
+
+  useEffect(() => {
+    return () => {
+      if (retryTimerRef.current !== null) {
+        window.clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -140,6 +174,18 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof document === 'undefined') return;
     document.documentElement.dataset.activeChapter = activeChapter;
+  }, [activeChapter]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const chapter = CHAPTERS.find((item) => item.id === activeChapter);
+    if (!chapter) return;
+    if (!document.getElementById(chapter.sectionId)) return;
+    if (trackedSectionsRef.current.has(chapter.id)) return;
+
+    trackedSectionsRef.current.add(chapter.id);
+    trackSectionView(chapter.sectionId, chapter.id, chapter.label);
   }, [activeChapter]);
 
   useEffect(() => {
@@ -231,12 +277,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   return (
     <ScrollCinemaContext.Provider value={value}>
       {children}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {`Now viewing: ${chapterLabel}`}
       </div>
     </ScrollCinemaContext.Provider>

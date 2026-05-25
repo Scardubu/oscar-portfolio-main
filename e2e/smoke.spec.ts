@@ -1,5 +1,6 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { CONTACT_EMAIL } from '@/lib/config';
@@ -10,7 +11,9 @@ type CommandPaletteGlobal = typeof globalThis & {
 
 async function goto(page: Page) {
   await page.goto('/');
-  await page.waitForLoadState('networkidle');
+  // Live activity and metrics endpoints can keep requests open briefly.
+  // `load` is enough for structural smoke checks and avoids flaky idle waits.
+  await page.waitForLoadState('load');
 }
 
 async function expectNoOverflowAtWidth(browser: Browser, width: number) {
@@ -107,14 +110,24 @@ test.describe('Portfolio smoke tests', () => {
     await expect(strictStatusLocator).toHaveCount(1, { timeout: 20000 });
   });
 
+  test('homepage has no serious accessibility violations', async ({ page }) => {
+    await goto(page);
+
+    const results = await new AxeBuilder({ page }).include('body').analyze();
+    const blockingViolations = results.violations.filter((violation) => {
+      return violation.impact === 'serious' || violation.impact === 'critical';
+    });
+
+    expect(blockingViolations).toEqual([]);
+  });
+
   test('command palette opens and closes from its global trigger', async ({ page }) => {
     await goto(page);
 
     await page.addInitScript(() => {
       (globalThis as CommandPaletteGlobal).__commandPaletteRequested = true;
     });
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    await page.reload({ waitUntil: 'load' });
 
     const dialog = page.getByRole('dialog', { name: /command palette/i });
     const isOpen = await dialog.isVisible().catch(() => false);
@@ -161,9 +174,9 @@ test.describe('Portfolio smoke tests', () => {
     await expect(section).toBeAttached();
     // Scroll to trigger the GSAP ScrollTrigger reveal before asserting visibility.
     await section.scrollIntoViewIfNeeded();
-    await expect(
-      page.getByRole('heading', { name: /Writing that ships decisions/i })
-    ).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: /Writing that ships decisions/i })).toBeVisible({
+      timeout: 8000,
+    });
   });
 
   test('all target blank links include noopener and noreferrer', async ({ page }) => {

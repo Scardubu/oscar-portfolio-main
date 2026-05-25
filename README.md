@@ -28,6 +28,12 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 | CI         | Lighthouse CI, husky pre-commit (lint + type-check + smoke)        |
 | Deployment | Vercel — main branch auto-deploys                                  |
 
+### Observability and accessibility
+
+- Vercel Analytics + Speed Insights are mounted from the App Router root layout in production.
+- Custom Vercel events track section views, hero CTA clicks, project link clicks, contact submissions, code-copy actions, metric impressions, and web vitals.
+- Accessibility automation includes `eslint-plugin-jsx-a11y`, Playwright + `@axe-core/playwright`, skip navigation, reduced-motion handling, and Lighthouse CI.
+
 ---
 
 ## Cinematic Scroll System
@@ -194,41 +200,41 @@ Two real UX bugs and a non-trivial maintenance pass.
 
 #### CommandPalette — Lenis integration + iOS safe area
 
-| File                          | Change                                                                                                                  | Impact                                                                                                                                                       |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `components/CommandPalette.tsx` | Replaced native `element.scrollIntoView({ behavior: 'smooth' })` with `useScrollCinema().scrollToSection()`             | Palette navigation now glides via Lenis with the same `-88px` nav offset and `prefers-reduced-motion` handling as the navbar and hero CTAs (single source of truth) |
-| `components/CommandPalette.tsx` | Mobile FAB `bottom` switched from fixed `1.5rem` to `max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))`     | FAB no longer lands on iOS Safari's home-indicator gesture zone on iPhone X+ devices                                                                          |
+| File                            | Change                                                                                                              | Impact                                                                                                                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/CommandPalette.tsx` | Replaced native `element.scrollIntoView({ behavior: 'smooth' })` with `useScrollCinema().scrollToSection()`         | Palette navigation now glides via Lenis with the same `-88px` nav offset and `prefers-reduced-motion` handling as the navbar and hero CTAs (single source of truth) |
+| `components/CommandPalette.tsx` | Mobile FAB `bottom` switched from fixed `1.5rem` to `max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))` | FAB no longer lands on iOS Safari's home-indicator gesture zone on iPhone X+ devices                                                                                |
 
 #### Code hygiene — removed dead modules
 
-| Removal                                              | Reason                                                                                       |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `components/ThreeBrushField.tsx`                     | Re-export shim; zero importers. Canonical module lives at `components/cinematic/ThreeBrushField.tsx` |
-| `lib/cinematic/ThreeBrushField.tsx`                  | Re-export shim; zero importers                                                               |
-| `lib/cinematic/ScrollCinemaProvider.tsx`             | Re-export shim; zero importers                                                               |
-| `.backup-pre-cinematic-patch/` (7 stale files)       | Pre-patch snapshot left in the working tree. Git history preserves the same content. Removed to stop polluting code search, grep, and editor file pickers |
+| Removal                                        | Reason                                                                                                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/ThreeBrushField.tsx`               | Re-export shim; zero importers. Canonical module lives at `components/cinematic/ThreeBrushField.tsx`                                                      |
+| `lib/cinematic/ThreeBrushField.tsx`            | Re-export shim; zero importers                                                                                                                            |
+| `lib/cinematic/ScrollCinemaProvider.tsx`       | Re-export shim; zero importers                                                                                                                            |
+| `.backup-pre-cinematic-patch/` (7 stale files) | Pre-patch snapshot left in the working tree. Git history preserves the same content. Removed to stop polluting code search, grep, and editor file pickers |
 
 #### Dead CSS prune — `app/globals.css` slimmed by ~254 lines
 
-| Removal                                              | Reason                                                                                       |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `.bottom-nav`, `.bottom-nav-item*` (block + media + print + safe-area variants) | No `<BottomNav>` component renders. Navbar uses a hamburger pattern. Class list reduced.     |
-| `.floating-hire-cta` (block + active + data-hidden + print variants) | No floating-hire-cta component is mounted. Hero CTA + CommandPalette FAB cover mobile conversion. |
-| `.contact-sticky-cta` (legacy alias + active + data-hidden variants) | Same: zero JSX consumers.                                                                    |
-| `@keyframes floatIn`                                 | Only the deleted CTAs animated with it.                                                      |
-| Two duplicate `.skeleton-shimmer` blocks + duplicate `@keyframes skeleton-sweep` | Three near-identical declarations existed; the canonical pair beside `.skeleton` is retained. |
-| `.bottom-nav-item` removed from the `touch-action: manipulation` selector list | The class no longer exists; selector list shortened.                                          |
+| Removal                                                                          | Reason                                                                                            |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `.bottom-nav`, `.bottom-nav-item*` (block + media + print + safe-area variants)  | No `<BottomNav>` component renders. Navbar uses a hamburger pattern. Class list reduced.          |
+| `.floating-hire-cta` (block + active + data-hidden + print variants)             | No floating-hire-cta component is mounted. Hero CTA + CommandPalette FAB cover mobile conversion. |
+| `.contact-sticky-cta` (legacy alias + active + data-hidden variants)             | Same: zero JSX consumers.                                                                         |
+| `@keyframes floatIn`                                                             | Only the deleted CTAs animated with it.                                                           |
+| Two duplicate `.skeleton-shimmer` blocks + duplicate `@keyframes skeleton-sweep` | Three near-identical declarations existed; the canonical pair beside `.skeleton` is retained.     |
+| `.bottom-nav-item` removed from the `touch-action: manipulation` selector list   | The class no longer exists; selector list shortened.                                              |
 
 #### Maintenance — `tsconfig.typecheck.json`
 
-| File                       | Change                                                                                          | Impact                                                                                                                                  |
-| -------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `tsconfig.typecheck.json`  | Stale per-file include list replaced with `components/**/*` glob (mirrors `tsconfig.json`)      | `pnpm type-check` (used by the husky pre-commit hook) now type-checks `CommandPalette.tsx`, every `components/cinematic/*`, and other newer components that the explicit list missed — the pre-commit gate is no longer a partial gate |
+| File                      | Change                                                                                     | Impact                                                                                                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tsconfig.typecheck.json` | Stale per-file include list replaced with `components/**/*` glob (mirrors `tsconfig.json`) | `pnpm type-check` (used by the husky pre-commit hook) now type-checks `CommandPalette.tsx`, every `components/cinematic/*`, and other newer components that the explicit list missed — the pre-commit gate is no longer a partial gate |
 
 #### Cosmetic — `components/ContactSection.tsx`
 
-| Change                                                                  | Impact                                                                              |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Change                                                                                                                                                                     | Impact                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Removed redundant `import React from 'react'` (Next 15 + React 19 JSX transform doesn't need it). Switched `handleBlur` to the named `FocusEvent` import already in scope. | Smaller import footprint, consistent with the rest of the codebase |
 
 Validation pass after v1.7:
@@ -236,6 +242,18 @@ Validation pass after v1.7:
 - `pnpm run lint` ✅
 - `pnpm run build` ✅ (no warnings, no bundle regressions)
 - Manual scan: zero remaining references to `.bottom-nav`, `.floating-hire-cta`, `.contact-sticky-cta` in source, content, tests, or `public/`
+
+### Accessibility contrast + smoke stability v1.8
+
+| File                | Change                                                                                      | Impact                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `app/globals.css`   | Replaced the hero reassurance line's translucent forced color with `var(--color-text-secondary)` | Clears the last axe WCAG AA contrast violation on the homepage without adding a one-off token |
+| `app/globals.css`   | Kept the reassurance border accent but aligned the copy color with the shared text system   | Better visual cohesion and fewer contrast regressions hiding behind `!important` rules |
+| `e2e/smoke.spec.ts` | Switched homepage/reload waits from `networkidle` to `load` for the command palette path    | Removes a smoke-test flake caused by live activity requests that keep the network busy |
+
+Validation pass after v1.8:
+- `pnpm exec playwright test e2e/smoke.spec.ts --grep "accessibility" --project=chromium --workers=1` ✅
+- `pnpm run test:smoke` ✅
 
 ---
 
@@ -269,6 +287,7 @@ pnpm type-check     # strict TypeScript, zero tolerance
 pnpm lint           # ESLint across all source paths
 pnpm lint:fix       # auto-fix lint issues
 pnpm test:smoke     # build + Playwright smoke suite (fast, Chromium only)
+pnpm test:a11y      # build + axe-powered accessibility smoke gate
 pnpm test:e2e       # full Playwright suite (Chromium)
 pnpm test:mobile    # Playwright mobile (Chrome + Safari)
 pnpm test:all       # complete matrix across all configured projects
@@ -420,15 +439,41 @@ pnpm build
 # 4. Playwright smoke (Chromium, built output)
 pnpm test:smoke
 
-# 5. Full suite
+# 5. Accessibility smoke gate
+pnpm test:a11y
+
+# 6. Full suite
 pnpm test:all
 
-# 6. Lighthouse CI (requires build to be running)
+# 7. Lighthouse CI (requires build to be running)
 pnpm start &
 pnpm lhci
 ```
 
 Lighthouse targets: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 100.
+
+Current hardened CI targets in `lighthouserc.json` enforce `0.95` minimum across Performance, Accessibility, Best Practices, and SEO, with CLS capped at `0.1`.
+
+## Analytics events
+
+The production deployment emits the following privacy-friendly Vercel Analytics events:
+
+- `SectionView` — fired once per chapter/section per page session
+- `HeroCtaClick` — hero CTA navigation intent
+- `ProjectClick` — case study, demo, and source interactions
+- `ContactSubmit` — success or error outcome without personal message content
+- `MetricView` — metric badge impressions
+- `CodeBlockCopy` — writing/code interaction signal
+- `WebVital` — client-reported vitals metadata via the shared monitoring layer
+
+All analytics events avoid sending message bodies, email addresses, or other user-provided contact content.
+
+## Accessibility verification
+
+- `pnpm lint` includes `eslint-plugin-jsx-a11y` rules.
+- `pnpm test:a11y` runs an axe scan against the homepage and fails on serious or critical violations.
+- `pnpm lhci` enforces Lighthouse accessibility scores alongside CLS and performance budgets.
+- Dynamic UI surfaces preserve ARIA relationships, live regions, keyboard focus order, and reduced-motion fallbacks.
 
 ---
 
@@ -454,6 +499,12 @@ open https://scardubu.dev/work/taxbridge             # case study
 open https://scardubu.dev/writing                    # writing index
 open https://scardubu.dev/api/og                     # OG image (200 OK)
 curl -I https://scardubu.dev/cv/oscar-ndugbu-resume.pdf  # 200 OK
+
+# 5. Verify observability after deploy:
+#    - Visit the homepage and click hero/project/contact flows
+#    - Confirm events appear in the Vercel Analytics dashboard
+#    - Confirm Speed Insights receives page and vitals data
+#    - Run Lighthouse against the deployed URL
 ```
 
 Note: Vercel Analytics and Speed Insights are mounted only when `NEXT_PUBLIC_VERCEL_ENV=production` to avoid preview-environment script-load noise.

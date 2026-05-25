@@ -15,6 +15,7 @@
     "analyze": "ANALYZE=true next build",
     "test": "pnpm build && playwright test",
     "test:smoke": "pnpm build && playwright test e2e/smoke.spec.ts tests/e2e/smoke.spec.ts tests/e2e/user-journey.spec.ts --project=chromium --workers=1",
+    "test:a11y": "pnpm build && playwright test e2e/smoke.spec.ts --project=chromium --grep \"accessibility\" --workers=1",
     "test:unit": "vitest run",
     "test:e2e": "pnpm build && playwright test --project=chromium",
     "test:mobile": "pnpm build && playwright test --project=mobile-chrome --project=mobile-safari",
@@ -70,6 +71,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@next/bundle-analyzer": "^15.5.10",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.0.0",
@@ -80,10 +82,12 @@
     "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "axe-core": "^4.11.4",
     "critters": "0.0.24",
     "eslint": "^9.0.0",
     "eslint-config-next": "15.5.10",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "globals": "17.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",

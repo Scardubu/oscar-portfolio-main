@@ -7,45 +7,55 @@
 // they add ~120ms perceived latency on Android mid-range.
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
-import { useEffect, useMemo, useState, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
+import { useEffect, useMemo, useState, useTransition, type ReactNode } from 'react';
 
 interface PageWrapperProps {
-  readonly children: React.ReactNode;
+  readonly children: ReactNode;
 }
 
 export function PageWrapper({ children }: PageWrapperProps) {
-  const reduce  dMotion = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [activePath, setActivePath] = useState(pathname);
 
   useEffect(() => {
+    const root = document.documentElement;
+    const previousOverscrollBehaviorY = root.style.overscrollBehaviorY;
+
     // iOS Safari: prevent elastic overscroll from exposing raw background
-    document.documentElement.style.overscrollBehaviorY = 'none';
+    root.style.overscrollBehaviorY = 'none';
 
     // Apply reduced-motion class for CSS fallbacks
     if (reducedMotion) {
-      document.documentElement.setAttribute('data-reduced-motion', 'true');
+      root.setAttribute('data-reduced-motion', 'true');
     } else {
-      document.documentElement.removeAttribute('data-reduced-motion');
+      root.removeAttribute('data-reduced-motion');
     }
+
+    return () => {
+      root.style.overscrollBehaviorY = previousOverscrollBehaviorY;
+      if (!reducedMotion) {
+        root.removeAttribute('data-reduced-motion');
+      }
+    };
   }, [reducedMotion]);
 
   useEffect(() => {
+    if (pathname === activePath) return;
+
     startTransition(() => {
       setActivePath(pathname);
     });
-  }, [pathname, startTransition]);
+  }, [activePath, pathname, startTransition]);
 
   const pageTransition = useMemo(
     () => ({
       initial: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 },
       animate: { opacity: 1, y: 0 },
       exit: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 },
-      transition: reducedMotion
-        ? { duration: 0 }
-        : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+      transition: reducedMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
     }),
     [reducedMotion]
   );
@@ -53,14 +63,24 @@ export function PageWrapper({ children }: PageWrapperProps) {
   return (
     <div
       id="page-wrapper"
-      className="relative isolate flex min-h-[100svh] flex-col overflow-x-hidden"
+      className="relative flex min-h-[100svh] flex-col overflow-x-hidden"
       data-page-transitioning={isPending ? 'true' : 'false'}
     >
       <AnimatePresence mode="wait" initial={false}>
-        <m.div key={activePath} {...pageTransition} className="relative z-[2] flex-1">
+        <m.div
+          key={activePath}
+          {...pageTransition}
+          className="relative z-[2] flex-1 will-change-transform"
+        >
           {children}
         </m.div>
       </AnimatePresence>
+      <m.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[3] bg-black/35"
+        animate={{ opacity: isPending && !reducedMotion ? 0.1 : 0 }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+      />
     </div>
   );
 }
