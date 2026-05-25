@@ -81,7 +81,7 @@ else:
 # 9 hero-grid-child .mobile-carousel rule
 content = remove_between(content, '\u2500\u2500 Proof carousel: lock to 2-col inside hero left column at xl', '\u2500\u2500 Tablet (768', 'hero-grid-child .mobile-carousel')
 
-# 10 Tablet mobile-headshot-wrap hide rule  
+# 10 Tablet mobile-headshot-wrap hide rule
 content = remove_between(content, '\u2500\u2500 Tablet (768\u20131023px): hide mobile headshot via explicit class', '\u2500\u2500 v32: transition + hero stability pass', 'Tablet 768-1023 mobile-headshot-wrap')
 
 # 11

@@ -14,10 +14,10 @@
 //   - No new framer-motion scroll hooks. No Lenis competition.
 //   - All animation logic preserved. Menu close on resize/escape preserved.
 
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useAnimationFrame, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { anchorUrl } from '@/lib/config';
@@ -74,11 +74,20 @@ function getActiveIdFromChapter(activeChapter: string) {
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const scrolledRef = useRef(false);
   const reducedMotion = useReducedMotion();
-  const { activeChapter, scrollToSection } = useScrollCinema();
+  const { activeChapter, scrollToSection, scrollYRef } = useScrollCinema();
 
   const navItems = useMemo(() => NAV_ITEMS, []);
   const activeSectionId = getActiveIdFromChapter(activeChapter);
+
+  useAnimationFrame(() => {
+    const nextScrolled = scrollYRef.current > 20;
+    if (nextScrolled === scrolledRef.current) return;
+
+    scrolledRef.current = nextScrolled;
+    setScrolled(nextScrolled);
+  });
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -108,14 +117,6 @@ export default function Navbar() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [mobileOpen]);
-
-  // Scroll state: darken nav background once content scrolls under it
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll(); // Initialize from current scroll position on mount
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const closeMenu = () => setMobileOpen(false);
 

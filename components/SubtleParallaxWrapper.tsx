@@ -33,94 +33,67 @@
  */
 
 import { cn } from '@/lib/utils';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  m,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
+
+import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 
 interface SubtleParallaxWrapperProps {
-  children:   React.ReactNode;
-  speed?:     number;
+  children: React.ReactNode;
+  speed?: number;
   direction?: 'up' | 'down';
   className?: string;
-  disabled?:  boolean;
-}
-
-/** Walk offsetParent chain to get element's document-relative top. No layout flush on scroll. */
-function getDocumentTop(el: HTMLElement | null): number {
-  let top = 0;
-  let node: HTMLElement | null = el;
-  while (node) {
-    top += node.offsetTop;
-    node = node.offsetParent as HTMLElement | null;
-  }
-  return top;
+  disabled?: boolean;
 }
 
 export function SubtleParallaxWrapper({
   children,
-  speed     = 0.2,
+  speed = 0.2,
   direction = 'up',
   className,
-  disabled  = false,
+  disabled = false,
 }: Readonly<SubtleParallaxWrapperProps>) {
-  const ref         = useRef<HTMLDivElement | null>(null);
-  const parentTopRef = useRef(0);  // cached document-relative top of parent
-  const viewHRef    = useRef(0);   // cached viewport height
-  const [active, setActive] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const { scrollProgressRef } = useScrollCinema();
+  const scrollProgress = useMotionValue(0);
 
-  // Only activate on desktop pointer:fine (non-touch) devices
-  useEffect(() => {
-    const pointerFine   = window.matchMedia('(pointer: fine)').matches;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setActive(pointerFine && !reducedMotion && !disabled);
-  }, [disabled]);
+  const shouldDisable = reducedMotion || disabled;
 
-  // Cache layout values — called on mount and on resize (not on scroll)
-  const measureLayout = useCallback(() => {
-    const parent = ref.current?.parentElement ?? null;
-    parentTopRef.current = getDocumentTop(parent);
-    viewHRef.current = window.innerHeight;
-  }, []);
+  useAnimationFrame(() => {
+    if (shouldDisable) {
+      if (scrollProgress.get() !== 0) scrollProgress.set(0);
+      return;
+    }
 
-  // Scroll handler: pure reads from cached values — zero layout recalc
-  const handleScroll = useCallback(() => {
-    const el = ref.current;
-    if (!el || viewHRef.current === 0) return;
-    const currentParentTop = parentTopRef.current - window.scrollY;
-    const offset = (currentParentTop / viewHRef.current) * speed * 100;
-    const y = direction === 'up' ? -offset : offset;
-    el.style.transform = `translateY(${y.toFixed(2)}px)`;
-  }, [speed, direction]);
+    const next = scrollProgressRef.current;
+    if (Math.abs(next - scrollProgress.get()) > 0.0007) {
+      scrollProgress.set(next);
+    }
+  });
 
-  useEffect(() => {
-    if (!active) return;
-
-    // Initial measurement
-    measureLayout();
-    handleScroll();
-
-    // ResizeObserver: recalculate cached values when layout changes
-    const ro = new ResizeObserver(() => {
-      measureLayout();
-      handleScroll();
-    });
-    const parent = ref.current?.parentElement;
-    if (parent) ro.observe(parent);
-    if (ref.current) ro.observe(ref.current);
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      ro.disconnect();
-    };
-  }, [active, handleScroll, measureLayout]);
+  const boundedSpeed = Math.max(0, Math.min(speed, 0.4));
+  const directionSign = direction === 'up' ? -1 : 1;
+  const yRaw = useTransform(
+    scrollProgress,
+    [0, 1],
+    shouldDisable ? [0, 0] : [0, directionSign * boundedSpeed * 120]
+  );
+  const y = useSpring(yRaw, { stiffness: 130, damping: 24, mass: 0.75 });
 
   return (
-    <div
-      ref={ref}
-      className={cn(active && 'will-change-transform', className)}
+    <m.div
+      className={cn(!shouldDisable && 'will-change-transform', className)}
       aria-hidden="true"
+      // eslint-disable-next-line no-restricted-syntax
+      style={shouldDisable ? undefined : { y, willChange: 'transform' }}
     >
       {children}
-    </div>
+    </m.div>
   );
 }

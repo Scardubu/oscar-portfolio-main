@@ -2,8 +2,18 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 
-import { m, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import {
+  m,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
 import { useEffect, useState } from 'react';
+
+import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 
 function useIsPointerFine(): boolean {
   const [fine, setFine] = useState(false); // mobile-first: no scroll sub until confirmed
@@ -28,26 +38,22 @@ const ORBITAL_STYLES = `
   }
 `;
 
-// Desktop: scroll-driven parallax + CSS orbital animations ──────────────────────
-// Sub-component so useScroll() hook is scoped — on mobile this component never mounts.
-function DesktopOrbs({ reducedMotion }: { reducedMotion: boolean }) {
-  const { scrollYProgress } = useScroll();
+// Desktop: parallax is driven from ScrollCinema provider progress,
+// avoiding independent framer scroll subscribers.
+function DesktopOrbs({
+  reducedMotion,
+  scrollProgress,
+}: {
+  reducedMotion: boolean;
+  scrollProgress: MotionValue<number>;
+}) {
+  const indigoRaw = useTransform(scrollProgress, [0, 1], reducedMotion ? [0, 0] : [0, 96]);
+  const greenRaw = useTransform(scrollProgress, [0, 1], reducedMotion ? [0, 0] : [0, -72]);
+  const amberRaw = useTransform(scrollProgress, [0, 1], reducedMotion ? [0, 0] : [0, -44]);
 
-  const indigoY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reducedMotion ? ['0%', '0%'] : ['0%', '15%']
-  );
-  const greenY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reducedMotion ? ['0%', '0%'] : ['0%', '-10%']
-  );
-  const amberY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reducedMotion ? ['0%', '0%'] : ['0%', '-6%']
-  );
+  const indigoY = useSpring(indigoRaw, { stiffness: 130, damping: 24, mass: 0.7 });
+  const greenY = useSpring(greenRaw, { stiffness: 130, damping: 24, mass: 0.7 });
+  const amberY = useSpring(amberRaw, { stiffness: 130, damping: 24, mass: 0.7 });
 
   return (
     <>
@@ -128,10 +134,28 @@ function MobileOrbs() {
 export function GradientMesh() {
   const reducedMotion = useReducedMotion();
   const isPointerFine = useIsPointerFine();
+  const { scrollProgressRef } = useScrollCinema();
+  const scrollProgress = useMotionValue(0);
+
+  useAnimationFrame(() => {
+    if (reducedMotion) {
+      if (scrollProgress.get() !== 0) scrollProgress.set(0);
+      return;
+    }
+
+    const next = scrollProgressRef.current;
+    if (Math.abs(next - scrollProgress.get()) > 0.0007) {
+      scrollProgress.set(next);
+    }
+  });
 
   return (
     <div aria-hidden="true" className="gradient-mesh">
-      {isPointerFine ? <DesktopOrbs reducedMotion={Boolean(reducedMotion)} /> : <MobileOrbs />}
+      {isPointerFine ? (
+        <DesktopOrbs reducedMotion={Boolean(reducedMotion)} scrollProgress={scrollProgress} />
+      ) : (
+        <MobileOrbs />
+      )}
     </div>
   );
 }

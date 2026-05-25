@@ -2,6 +2,19 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-25 — Cinematic Scroll Stabilization v2 final polish and sign-off
+
+- Fixed a reintroduced hero proof-carousel regression in `components/HeroSection.tsx` where the active dot class string lost the required leading space (`carousel-dot active`), restoring the active chapter pill state.
+- Improved Command Palette responsiveness in `components/CommandPalette.tsx` by making pointer-mode detection reactive to media-query changes instead of one-time mount detection.
+- Simplified `components/ScrollProgress.tsx` by removing a no-op inline style allocation on chapter dots, reducing render noise and keeping the rail fully CSS-driven.
+- Kept the reduced-motion hardening from this stabilization cycle in `app/globals.css`, including explicit animation shutdown for `.live-bar-dot`.
+
+Validation after final polish:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm build` passed cleanly with 27/27 static pages generated.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 pre-existing skips (`command palette global trigger`, `nav links scroll to matching sections`).
+
 ## 2026-05-21 — Cinematic Homepage Integration hardening
 
 ## 2026-05-22 — Production readiness integration pass

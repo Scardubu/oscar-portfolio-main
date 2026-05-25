@@ -101,6 +101,8 @@ export function ThreeBrushField() {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const frameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
+  const lastFrameTimeRef = useRef<number>(0);
+  const targetFrameMsRef = useRef<number>(1000 / 60);
   const pointerRef = useRef(new THREE.Vector2(0.5, 0.5));
   const [supportsWebGl, setSupportsWebGl] = useState(true);
 
@@ -135,10 +137,20 @@ export function ThreeBrushField() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const hasWebGL2 = !!canvas.getContext('webgl2', { alpha: true });
-    const hasWebGL = hasWebGL2 || !!canvas.getContext('webgl', { alpha: true });
+    // Acquire exactly one rendering context and pass it to THREE to avoid
+    // repeated getContext probes per mount.
+    const contextAttributes: WebGLContextAttributes = {
+      alpha: true,
+      antialias: false,
+      powerPreference: 'high-performance',
+      premultipliedAlpha: true,
+    };
 
-    if (!hasWebGL) {
+    const webgl2Context = canvas.getContext('webgl2', contextAttributes);
+    const webgl1Context = webgl2Context ?? canvas.getContext('webgl', contextAttributes);
+    const glContext = webgl1Context as WebGLRenderingContext | null;
+
+    if (!glContext) {
       setSupportsWebGl(false);
       return;
     }
@@ -147,6 +159,7 @@ export function ThreeBrushField() {
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
+      context: glContext,
       alpha: true,
       antialias: false,
       powerPreference: 'high-performance',
@@ -195,6 +208,13 @@ export function ThreeBrushField() {
       renderer.setSize(width, height, false);
     };
 
+    const frameBudgetMedia = window.matchMedia('(max-width: 768px), (pointer: coarse)');
+    const updateFrameBudget = () => {
+      targetFrameMsRef.current = frameBudgetMedia.matches ? 1000 / 30 : 1000 / 60;
+    };
+
+    updateFrameBudget();
+
     const pointerMedia = window.matchMedia('(pointer: fine)');
 
     const onPointerMove = (event: PointerEvent) => {
@@ -215,13 +235,23 @@ export function ThreeBrushField() {
       uniforms.uIntensity.value = chapter.motion.drift;
     };
 
-    const render = () => {
+    const render = (now: number) => {
       const uniformsState = uniformsRef.current;
       const rendererState = rendererRef.current;
 
       if (!uniformsState || !rendererState) return;
 
-      const elapsed = (performance.now() - startTimeRef.current) / 1000;
+      if (
+        lastFrameTimeRef.current !== 0 &&
+        now - lastFrameTimeRef.current < targetFrameMsRef.current
+      ) {
+        frameRef.current = window.requestAnimationFrame(render);
+        return;
+      }
+
+      lastFrameTimeRef.current = now;
+
+      const elapsed = (now - startTimeRef.current) / 1000;
       uniformsState.uTime.value = elapsed;
       uniformsState.uScroll.value +=
         (scrollProgressRef.current - uniformsState.uScroll.value) * 0.06;
@@ -231,16 +261,41 @@ export function ThreeBrushField() {
       frameRef.current = window.requestAnimationFrame(render);
     };
 
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        if (frameRef.current) {
+          window.cancelAnimationFrame(frameRef.current);
+          frameRef.current = null;
+        }
+        return;
+      }
+
+      startTimeRef.current = performance.now() - uniforms.uTime.value * 1000;
+      lastFrameTimeRef.current = 0;
+      if (!frameRef.current) {
+        frameRef.current = window.requestAnimationFrame(render);
+      }
+    };
+
+    const onContextLost = (event: Event) => {
+      event.preventDefault();
+      setSupportsWebGl(false);
+    };
+
     setInitialPalette();
     resize();
+    lastFrameTimeRef.current = 0;
     startTimeRef.current = performance.now();
-    render();
+    frameRef.current = window.requestAnimationFrame(render);
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(document.documentElement);
 
+    frameBudgetMedia.addEventListener('change', updateFrameBudget);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('resize', resize, { passive: true });
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    canvas.addEventListener('webglcontextlost', onContextLost);
 
     return () => {
       if (frameRef.current) {
@@ -248,8 +303,11 @@ export function ThreeBrushField() {
       }
 
       resizeObserver.disconnect();
+      frameBudgetMedia.removeEventListener('change', updateFrameBudget);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      canvas.removeEventListener('webglcontextlost', onContextLost);
       geometry.dispose();
       material.dispose();
       renderer.dispose();

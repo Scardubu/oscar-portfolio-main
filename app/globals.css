@@ -1497,6 +1497,19 @@ h3,
   color: var(--color-text-secondary);
 }
 
+/* ── Conviction stat hover glow ─────────────────────────────────────────────
+   On fine-pointer hover the stat value gets a soft text-shadow in its own
+   accent colour (via currentColor), reinforcing the per-metric palette
+   system without any layout shift or copy change.                            */
+@media (hover: hover) and (pointer: fine) {
+  .conviction-stat-value {
+    transition: text-shadow var(--dur-fast) var(--ease-out);
+  }
+  .conviction-stat:hover .conviction-stat-value {
+    text-shadow: 0 0 10px currentColor;
+  }
+}
+
 @media (max-width: 389px) {
   .hero-availability-pill {
     width: 100%;
@@ -1714,6 +1727,40 @@ h3,
   }
 }
 
+.craft-project-card {
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .craft-project-card:hover {
+    border-color: oklch(73% 0.18 196 / 0.24);
+    box-shadow:
+      0 0 0 1px oklch(73% 0.18 196 / 0.18),
+      0 18px 44px oklch(0% 0 0 / 0.42),
+      0 0 30px oklch(73% 0.18 196 / 0.2);
+  }
+}
+
+.craft-metric-chip {
+  border: 1px solid oklch(73% 0.18 196 / 0.22);
+  border-radius: var(--radius-full);
+  background: oklch(73% 0.18 196 / 0.08);
+  color: var(--color-text-primary);
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-jetbrains-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.craft-metric-chip--muted {
+  border-color: oklch(100% 0 0 / 0.14);
+  background: oklch(100% 0 0 / 0.03);
+  color: var(--color-text-muted);
+}
+
 /* ════ HIRE CARDS ════ */
 .hire-card {
   border: 1px solid var(--glass-border);
@@ -1902,6 +1949,7 @@ h3,
   .shimmer-sweep::after,
   .glass-medium::before,
   .dot-live,
+  .live-bar-dot,
   .metric-pulse {
     animation: none !important;
   }
@@ -4397,7 +4445,6 @@ section[data-chapter] {
     max-width: 32rem;
     justify-content: center;
   }
-
 }
 
 /* ── FIX 4: Ultra-wide (1536–1920px+) treatment ────────────────────────────
@@ -4602,12 +4649,7 @@ section[data-chapter] {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 38%,
-    oklch(100% 0 0 / 0.22) 50%,
-    transparent 62%
-  );
+  background: linear-gradient(105deg, transparent 38%, oklch(100% 0 0 / 0.22) 50%, transparent 62%);
   transform: translateX(-110%) skewX(-12deg);
   pointer-events: none;
 }
@@ -4679,4 +4721,3 @@ section[data-chapter] {
 /* ═══════════════════════════════════════════════════════════════════════════
    END HERO REFINEMENT v2026.4
    ═══════════════════════════════════════════════════════════════════════════ */
-

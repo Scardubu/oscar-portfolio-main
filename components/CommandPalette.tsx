@@ -65,7 +65,18 @@ export function CommandPalette() {
   const { resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
-    setIsMobile(!window.matchMedia('(pointer: fine)').matches);
+    const media = window.matchMedia('(pointer: fine)');
+
+    const syncMobile = () => {
+      setIsMobile(!media.matches);
+    };
+
+    syncMobile();
+    media.addEventListener('change', syncMobile);
+
+    return () => {
+      media.removeEventListener('change', syncMobile);
+    };
   }, []);
 
   useEffect(() => {
@@ -574,23 +585,23 @@ export function CommandPalette() {
         )}
       </AnimatePresence>
 
-      {/* Mobile FAB — FIX v22 [COMPOSITOR-2]:
-          backdrop-blur-xl removed — was triggering on-demand GPU layer promotion
-          each time the FAB appeared after the palette closed. bg-black/85 is
-          opaque enough to read on any background without needing blur.
-          transform-gpu permanently pre-promotes the FAB so appearance is instant. */}
+      {/* Persistent FAB — FIX v23 [COMPOSITOR-2]:
+          Keep a single fixed affordance across chapters for fast command access.
+          bg-black/85 keeps readability without blur-driven layer promotion.
+          transform-gpu pre-promotes for instant re-entry after palette close. */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Open command palette"
-          className="fixed right-4 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none lg:hidden"
+          className="fixed right-4 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none sm:h-11 sm:w-auto sm:min-w-[3.5rem] sm:px-3 lg:h-10"
           // Lifts the FAB above iOS Safari's home-indicator gesture zone.
           // eslint-disable-next-line no-restricted-syntax
           style={{ bottom: 'max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))' }}
         >
           <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">
-            ⌘
+            <span className="sm:hidden">⌘</span>
+            <span className="hidden sm:inline">⌘K</span>
           </span>
         </button>
       )}

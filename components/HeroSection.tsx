@@ -781,10 +781,16 @@ export function HeroSection() {
               <Link
                 href={anchorUrl('section-writing')}
                 onClick={(event) => handleAnchorJump(event, 'section-writing', 'writing')}
-                className="text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
+                className="group text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
                 aria-label="Read how the 2am constraint became the design system"
               >
-                Or read how the 2am constraint became the design system →
+                Or read how the 2am constraint became the design system{' '}
+                <span
+                  aria-hidden="true"
+                  className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+                >
+                  →
+                </span>
               </Link>
             </m.div>
 

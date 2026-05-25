@@ -17,6 +17,8 @@ const OSS_PROJECTS = [
     name: 'pg-tenant',
     stack: 'Node.js · PostgreSQL',
     desc: "Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant's records are mathematically invisible to another. Production-deployed in TaxBridge, where a single data-leak event means regulatory audit.",
+    metric: 'DB-layer tenant isolation',
+    metricEvidence: 'Shipped in TaxBridge',
     href: 'https://github.com/Scardubu/pg-tenant',
     install: 'npm i pg-tenant',
     badge: 'Production-grade',
@@ -27,6 +29,8 @@ const OSS_PROJECTS = [
     name: 'audit-chain',
     stack: 'Fintech · Compliance',
     desc: 'Retroactive tampering becomes mathematically detectable. Every log entry is cryptographically bound to the previous — any edit breaks the chain instantly. Built for NRS and GDPR trails where proof of integrity is non-negotiable.',
+    metric: 'Tamper-evident log chain',
+    metricEvidence: 'NRS · GDPR audit trails',
     href: 'https://github.com/Scardubu/audit-chain',
     install: 'npm i audit-chain',
     badge: 'NRS · GDPR',
@@ -37,6 +41,8 @@ const OSS_PROJECTS = [
     name: 'node-debug-llm',
     stack: 'AI · DevOps',
     desc: 'Incident triage in minutes, not hours. Streams live system logs and traces to an AI model, returning a ranked plain-English list of likely root causes — with full context, not just stack traces.',
+    metric: 'Ranked root-cause suggestions',
+    metricEvidence: 'Live traces + logs input',
     href: 'https://github.com/Scardubu/node-debug-llm',
     install: 'npm i node-debug-llm',
     badge: 'AI-powered',
@@ -47,6 +53,8 @@ const OSS_PROJECTS = [
     name: 'llm-dispatch',
     stack: 'AI · Agent Orchestration',
     desc: 'Triadic model routing extracted from SwarmXQ. Routes tasks to the right local GGUF model — Phi-4-mini for classification, DeepSeek-R1 for reasoning, Qwen2.5-Coder for code — with fallback chains and zero cloud egress.',
+    metric: 'Triadic local model routing',
+    metricEvidence: 'Zero cloud egress',
     href: 'https://github.com/Scardubu/SwarmXQ',
     install: 'pip install llm-dispatch',
     badge: 'Zero cloud',
@@ -169,7 +177,7 @@ export function OpenSourceSection() {
               variants={card}
               data-cinematic="card"
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
-              className="glass-medium flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
+              className="glass-medium craft-project-card flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
             >
               {/* Stack + badge row */}
               <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
@@ -195,6 +203,13 @@ export function OpenSourceSection() {
               <p className="text-color-text-secondary mt-3 flex-1 text-sm leading-[1.8] break-words">
                 {item.desc}
               </p>
+
+              <div className="mt-4 flex flex-wrap gap-2" aria-label={`${item.name} key signals`}>
+                <span className="craft-metric-chip">Signal: {item.metric}</span>
+                <span className="craft-metric-chip craft-metric-chip--muted">
+                  Evidence: {item.metricEvidence}
+                </span>
+              </div>
 
               {/* Install command with useAnimate() COPY → COPIED ✓ sequence */}
               <div className="mt-5">

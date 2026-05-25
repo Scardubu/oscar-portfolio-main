@@ -46,7 +46,7 @@ export function ScrollProgress() {
                 'group relative flex h-3.5 w-3.5 items-center justify-center rounded-full',
                 // CSS transition handles scale — no framer-motion scroll hook
                 'transition-all duration-300',
-                active ? 'scale-110' : 'scale-100 opacity-50 hover:opacity-90 hover:scale-105',
+                active ? 'scale-110' : 'scale-100 opacity-50 hover:scale-105 hover:opacity-90',
               ].join(' ')}
               aria-label={`Jump to ${chapter.label}`}
               aria-current={active ? 'step' : undefined}
@@ -55,21 +55,8 @@ export function ScrollProgress() {
               <span
                 className={[
                   'h-2.5 w-2.5 rounded-full border transition-all duration-300',
-                  active
-                    ? 'chapter-dot-active border-white/40'
-                    : 'border-white/20 bg-white/10',
+                  active ? 'chapter-dot-active border-white/40' : 'border-white/20 bg-white/10',
                 ].join(' ')}
-                // Inline style fallback for the inactive dot colour — active dot
-                // is fully handled by the CSS class + @property transition.
-                // eslint-disable-next-line no-restricted-syntax
-                style={
-                  active
-                    ? {
-                        // background intentionally left to .chapter-dot-active CSS rule
-                        // which uses `var(--chapter-accent)` — the transition is CSS-native.
-                      }
-                    : undefined
-                }
               />
 
               {/* Tooltip — always rendered, opacity-toggled for no layout shift */}

@@ -26,6 +26,7 @@ import { useEffect, useState } from 'react';
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
 import { SectionIntro } from '@/components/shared/SectionIntro';
 import { SkillsMap } from '@/components/skills/SkillsMap';
+import { SkillsRadar } from '@/components/skills/SkillsRadar';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import { getCoreProductionSkills, SYSTEM_LINEAGE } from '@/lib/data/skills';
@@ -219,6 +220,7 @@ export function SkillsSection() {
   const chapter = getChapterBySectionId('skills');
   const [coreVisibleCount, setCoreVisibleCount] = useState(MOBILE_CORE_COUNT);
   const [isExplorerOpen, setIsExplorerOpen] = useState(false);
+  const [radarView, setRadarView] = useState(false);
   const child = reducedMotion ? noMotion : fadeRise;
   const coreSkills = getCoreProductionSkills();
   const visibleCoreSkills = coreSkills.slice(0, coreVisibleCount);
@@ -352,23 +354,38 @@ export function SkillsSection() {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsExplorerOpen((v) => !v)}
-              data-cinematic="cta"
-              aria-expanded={isExplorerOpen}
-              aria-controls="skills-explorer-panel"
-              aria-label={
-                isExplorerOpen
-                  ? 'Collapse full skills explorer'
-                  : `Open full engineering stack — ${TOTAL_SKILL_COUNT} tools across 8 pillars`
-              }
-              className="cta-secondary min-h-[48px] shrink-0 justify-center text-xs sm:text-sm"
-            >
-              {isExplorerOpen
-                ? 'Hide full explorer'
-                : `Explore full engineering stack (${TOTAL_SKILL_COUNT})`}
-            </button>
+            <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+              <button
+                type="button"
+                onClick={() => setIsExplorerOpen((v) => !v)}
+                data-cinematic="cta"
+                aria-expanded={isExplorerOpen}
+                aria-controls="skills-explorer-panel"
+                aria-label={
+                  isExplorerOpen
+                    ? 'Collapse full skills explorer'
+                    : `Open full engineering stack — ${TOTAL_SKILL_COUNT} tools across 8 pillars`
+                }
+                className="cta-secondary min-h-[48px] justify-center text-xs sm:text-sm"
+              >
+                {isExplorerOpen
+                  ? 'Hide full explorer'
+                  : `Explore full engineering stack (${TOTAL_SKILL_COUNT})`}
+              </button>
+
+              {isExplorerOpen && (
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={radarView}
+                  aria-label="Toggle radar skills view"
+                  onClick={() => setRadarView((v) => !v)}
+                  className="cta-ghost min-h-[44px] justify-center text-xs sm:text-sm"
+                >
+                  Radar view: {radarView ? 'on' : 'off'}
+                </button>
+              )}
+            </div>
           </div>
 
           <AnimatePresence initial={false}>
@@ -385,7 +402,37 @@ export function SkillsSection() {
                 }
                 className="pb-2"
               >
-                <SkillsMap />
+                <AnimatePresence mode="wait" initial={false}>
+                  {radarView ? (
+                    <m.div
+                      key="skills-radar"
+                      initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                      transition={
+                        reducedMotion
+                          ? { duration: 0.01 }
+                          : { type: 'spring', stiffness: 280, damping: 26 }
+                      }
+                    >
+                      <SkillsRadar />
+                    </m.div>
+                  ) : (
+                    <m.div
+                      key="skills-list"
+                      initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                      transition={
+                        reducedMotion
+                          ? { duration: 0.01 }
+                          : { type: 'spring', stiffness: 280, damping: 26 }
+                      }
+                    >
+                      <SkillsMap />
+                    </m.div>
+                  )}
+                </AnimatePresence>
               </m.div>
             )}
           </AnimatePresence>
