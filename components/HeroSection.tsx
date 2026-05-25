@@ -3,7 +3,14 @@
 
 'use client';
 
-import { m, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
+import {
+  m,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -66,40 +73,40 @@ function HeroPortrait({
           : undefined
       }
       className={[
-        'relative isolate overflow-visible',
+        'relative isolate overflow-visible transform-gpu will-change-transform',
         isDesktop
-          ? 'hero-headshot-frame hero-headshot-rail self-center'
-          : 'mobile-headshot-wrap flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
+          ? 'hero-headshot-frame hero-headshot-container hero-headshot-rail self-center'
+          : 'mobile-headshot-wrap hero-headshot-container flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
       ].join(' ')}
     >
       <div
         className={[
-          'hero-headshot-ring hero-headshot-shell relative isolate overflow-hidden rounded-full',
-          isDesktop
-            ? 'h-[clamp(10rem,13vw,14rem)] w-[clamp(10rem,13vw,14rem)]'
-            : 'h-[clamp(7.25rem,29vw,9rem)] w-[clamp(7.25rem,29vw,9rem)]',
+          'hero-headshot-ring hero-headshot-shell relative isolate overflow-hidden',
+          isDesktop ? 'hero-headshot-shell--desktop' : 'hero-headshot-shell--mobile',
         ].join(' ')}
       >
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_28%,oklch(100%_0_0_/_0.12)_0%,transparent_44%)]"
-        />
+        <div aria-hidden="true" className="hero-headshot-overlay absolute inset-0 z-0" />
         <Image
           src="/headshot.webp"
           alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
           fill
           sizes={
             isDesktop
-              ? '(min-width: 1536px) 224px, (min-width: 1280px) 208px, (min-width: 1024px) 184px, 160px'
-              : '(max-width: 389px) 116px, (max-width: 767px) 132px, 152px'
+              ? '(min-width: 1536px) 260px, (min-width: 1280px) 228px, (min-width: 1024px) 200px, 188px'
+              : '(max-width: 389px) 42vw, (max-width: 767px) 36vw, 190px'
           }
           quality={88}
-          className="object-cover object-[50%_18%]"
+          draggable={false}
+          className={
+            isDesktop
+              ? 'hero-headshot-image--desktop object-cover'
+              : 'hero-headshot-image--mobile object-cover'
+          }
           priority
         />
         <span
           className={[
-            'absolute right-2 bottom-2 z-10 rounded-full border border-white/12 bg-black/50 px-2.5 py-1',
+            'hero-headshot-badge absolute right-2 bottom-2 z-10 rounded-full border border-white/12 bg-black/50 px-2.5 py-1',
             'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
             isDesktop ? 'translate-y-0' : 'translate-y-0.5',
           ].join(' ')}
@@ -402,6 +409,7 @@ export function HeroSection() {
     damping: 25,
     mass: 0.26,
   });
+  const previousHeroProgressRef = useRef(0);
 
   // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter
   // active whenever the hero comes back into view. HeroSection is a bare
@@ -436,24 +444,21 @@ export function HeroSection() {
 
   useEffect(() => {
     if (reducedMotion) {
+      previousHeroProgressRef.current = 0;
       heroProgress.set(0);
-      return;
     }
+  }, [heroProgress, reducedMotion]);
 
-    let raf = 0;
-    const tick = () => {
-      // Emphasize first-fold progress while keeping motion subtle and stable.
-      const progress = Math.min(1, Math.max(0, scrollProgressRef.current * 8));
-      heroProgress.set(progress);
-      raf = window.requestAnimationFrame(tick);
-    };
+  useAnimationFrame(() => {
+    if (reducedMotion) return;
 
-    raf = window.requestAnimationFrame(tick);
+    // Emphasize first-fold progress while keeping motion subtle and stable.
+    const progress = Math.min(1, Math.max(0, scrollProgressRef.current * 8));
+    if (Math.abs(progress - previousHeroProgressRef.current) < 0.0015) return;
 
-    return () => {
-      window.cancelAnimationFrame(raf);
-    };
-  }, [heroProgress, reducedMotion, scrollProgressRef]);
+    previousHeroProgressRef.current = progress;
+    heroProgress.set(progress);
+  });
 
   const heroContainer = staggerContainer(0.055, 0.05);
   const proofContainer = staggerContainer(0.08, 0.45);
@@ -521,7 +526,7 @@ export function HeroSection() {
                 <span className="dot-live" aria-hidden="true" />
                 <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
                   AVAILABLE · STAFF+ ROLES
-                  <span className="hero-availability-updated mt-1 block text-center text-[9px] tracking-normal normal-case text-white/50 sm:mt-0 sm:ml-2 sm:inline sm:text-left">
+                  <span className="hero-availability-updated mt-1 block text-center text-[9px] tracking-normal text-white/50 normal-case sm:mt-0 sm:ml-2 sm:inline sm:text-left">
                     · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
                   </span>
                 </span>
@@ -746,7 +751,7 @@ export function HeroSection() {
           {/* ── Right Column: Desktop Visuals ── */}
           <m.div
             data-cinematic="media"
-            className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
+            className="hero-visual-rail hidden transform-gpu lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
             // eslint-disable-next-line no-restricted-syntax
             style={reducedMotion ? undefined : { y: rightRailY, opacity: rightRailOpacity }}
           >

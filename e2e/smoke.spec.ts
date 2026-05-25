@@ -153,10 +153,15 @@ test.describe('Portfolio smoke tests', () => {
     await goto(page);
 
     const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
+    const emailLink = section.locator(`a[href="mailto:${CONTACT_EMAIL}"]`).first();
+    const form = page.locator('form[aria-label="Contact Oscar Ndugbu"]');
+
     await expect(section).toBeAttached();
     await section.scrollIntoViewIfNeeded();
-    await expect(section.locator(`a[href="mailto:${CONTACT_EMAIL}"]`).first()).toBeVisible();
-    await expect(page.locator('form[aria-label="Contact Oscar Ndugbu"]')).toBeVisible();
+    await emailLink.scrollIntoViewIfNeeded();
+    await form.scrollIntoViewIfNeeded();
+    await expect(emailLink).toBeVisible();
+    await expect(form).toBeVisible();
   });
 
   test('resume download points to the canonical asset', async ({ page }) => {

@@ -481,6 +481,9 @@ html {
   /* Offset anchors by nav height so section headings don't hide under the fixed bar */
   scroll-padding-top: calc(var(--nav-height) + 1.5rem);
 }
+html[data-scroll-engine='lenis'] {
+  scroll-behavior: auto;
+}
 @media (max-width: 768px) {
   /* Mobile has bottom nav, not top. Minimal top offset for the fixed header only. */
   html {
@@ -4752,5 +4755,175 @@ section[data-chapter] {
 
   #hero .hero-proof-callout {
     max-width: min(100%, 52ch);
+  }
+}
+
+/* ==========================================================================
+   HERO REFINEMENT v2026.2 — canonical portrait + motion sync polish
+   This block sits last on purpose to win against historical hero overrides.
+   ========================================================================== */
+
+:root {
+  --hero-headshot-mobile-ratio: 1 / 1;
+  --hero-headshot-mobile-min: 7.5rem;
+  --hero-headshot-mobile-max: 10.75rem;
+}
+
+#hero .hero-grid-child {
+  container-type: inline-size;
+}
+
+.hero-headshot-container {
+  container-type: inline-size;
+}
+
+.hero-headshot-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: clamp(1rem, 2vw, 1.4rem);
+  transform: translateZ(0);
+}
+
+.hero-headshot-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(
+    164deg,
+    oklch(100% 0 0 / 0.16) 0%,
+    oklch(100% 0 0 / 0.04) 36%,
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+.hero-headshot-shell::after {
+  border-radius: inherit;
+  background: linear-gradient(180deg, transparent 52%, oklch(4% 0.01 265 / 0.2) 100%);
+}
+
+.hero-headshot-shell--desktop {
+  width: clamp(11rem, 15vw, 16rem);
+  aspect-ratio: 4 / 5;
+}
+
+.hero-headshot-shell--mobile {
+  width: clamp(var(--hero-headshot-mobile-min), 42vw, var(--hero-headshot-mobile-max));
+  max-width: min(70vw, var(--hero-headshot-mobile-max));
+  aspect-ratio: var(--hero-headshot-mobile-ratio);
+}
+
+.hero-headshot-image--desktop {
+  object-position: 50% 14%;
+}
+
+.hero-headshot-image--mobile {
+  object-position: 50% 15%;
+}
+
+.hero-headshot-overlay {
+  background: radial-gradient(circle at 50% 24%, oklch(100% 0 0 / 0.14) 0%, transparent 48%);
+}
+
+.hero-headshot-badge {
+  max-width: calc(100% - 0.75rem);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@container (max-width: 17.5rem) {
+  .hero-headshot-shell--mobile {
+    width: min(56cqw, 9rem);
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero-headshot-badge {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    padding: 0.1875rem 0.4375rem;
+  }
+}
+
+@container (min-width: 17.501rem) and (max-width: 25rem) {
+  .hero-headshot-shell--mobile {
+    width: min(48cqw, 10rem);
+    aspect-ratio: 10 / 11;
+  }
+}
+
+@container (min-width: 25.001rem) {
+  .hero-headshot-shell--mobile {
+    width: min(44cqw, var(--hero-headshot-mobile-max));
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (max-width: 389px) {
+  :root {
+    --hero-headshot-mobile-min: 7rem;
+    --hero-headshot-mobile-max: 9.25rem;
+  }
+
+  #hero .hero-grid-shell {
+    gap: clamp(1rem, 4vw, 1.5rem);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #hero .hero-headshot-shell--desktop {
+    width: clamp(9.5rem, 20vw, 11rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-ring,
+  .hero-headshot-frame::before {
+    animation: none !important;
+  }
+}
+
+@supports (animation-timeline: view()) and (animation-range: entry 0% cover 45%) {
+  @media (prefers-reduced-motion: no-preference) {
+    #hero .hero-headshot-frame::before {
+      animation-name: hero-headshot-glow-reveal;
+      animation-duration: 1ms;
+      animation-fill-mode: both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 45%;
+    }
+
+    #hero .hero-proof-callout {
+      animation-name: hero-proof-settle;
+      animation-duration: 1ms;
+      animation-fill-mode: both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes hero-headshot-glow-reveal {
+  from {
+    opacity: 0.2;
+    transform: translate3d(0, 10px, 0) scale(0.96);
+  }
+  to {
+    opacity: 0.48;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes hero-proof-settle {
+  from {
+    opacity: 0.72;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }

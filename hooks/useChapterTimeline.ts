@@ -26,7 +26,13 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
 
     const mm = window.matchMedia('(min-width: 1024px)');
     const canPin = Boolean(chapter.pin && mm.matches && !reducedMotion);
-    const start = canPin ? 'top top' : reducedMotion ? 'top 85%' : 'top 72%';
+    const start = canPin
+      ? 'top top'
+      : chapter.id === 'epilogue'
+        ? 'top bottom'
+        : reducedMotion
+          ? 'top 85%'
+          : 'top 72%';
 
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(root);

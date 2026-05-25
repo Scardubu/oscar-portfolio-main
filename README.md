@@ -101,6 +101,11 @@ Three RAF loops share one frame budget:
 
 Lenis feeds into GSAP ticker via `gsap.ticker.add(raf)`. `ScrollTrigger.update()` is intentionally NOT called manually — GSAP drives it from the ticker. On mobile, `mix-blend-mode: screen` is disabled (costs a GPU compositor pass per frame on low-power devices).
 
+Current resilience notes:
+- `ScrollCinemaProvider` now exposes `data-scroll-engine="lenis|native"` on `<html>` so CSS and diagnostics can distinguish the active path.
+- If Lenis initialization or `scrollTo()` fails, the homepage falls back to native scroll with the same chapter tracking and anchor offsets.
+- Hero parallax progress is synced through Framer Motion's shared animation frame loop instead of a custom RAF, reducing drift between scroll interpolation and motion transforms.
+
 ---
 
 ## Patch changelog — Cinematic Scroll v1.1
@@ -253,6 +258,22 @@ Validation pass after v1.7:
 
 Validation pass after v1.8:
 - `pnpm exec playwright test e2e/smoke.spec.ts --grep "accessibility" --project=chromium --workers=1` ✅
+- `pnpm run test:smoke` ✅
+
+### Hero responsiveness + scroll resilience v1.9
+
+| File                       | Change                                                                                           | Impact                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `ScrollCinemaProvider.tsx` | Added guarded Lenis init/destroy + native-scroll fallback with `data-scroll-engine` state        | Keeps cinematic navigation functional even if Lenis fails or reduced motion is enabled |
+| `HeroSection.tsx`          | Moved hero progress updates to Framer Motion `useAnimationFrame`                                 | Reduces motion drift and keeps the hero rail/headshot parallax stable                  |
+| `HeroSection.tsx`          | Added canonical portrait utility classes and GPU-safe motion wrappers                             | Cleaner headshot rendering and lower transform jank on desktop and mobile              |
+| `globals.css`              | Added terminal override block for container-query portrait ratios and View Timeline enhancement    | Narrow screens get square/near-square crops first, then scale cleanly to 4:5           |
+| `globals.css`              | Disabled native `scroll-behavior: smooth` when `data-scroll-engine='lenis'`                      | Prevents double-smoothing when Lenis is active                                         |
+
+Validation pass after v1.9:
+- `pnpm run type-check` ✅
+- `pnpm run build` ✅
+- `pnpm exec eslint components/cinematic/ScrollCinemaProvider.tsx components/HeroSection.tsx` ✅
 - `pnpm run test:smoke` ✅
 
 ---

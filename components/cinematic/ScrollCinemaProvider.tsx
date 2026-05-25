@@ -50,6 +50,23 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const retryTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
+  const warnDev = useCallback((message: string, error?: unknown) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`[scroll-cinema] ${message}`, error);
+    }
+  }, []);
+
+  const syncNativeScrollProgress = useCallback(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    const doc = document.documentElement;
+    const body = document.body;
+    const scrollTop = window.scrollY || doc.scrollTop || body.scrollTop || 0;
+    const scrollHeight = Math.max(doc.scrollHeight, body.scrollHeight);
+    const viewportHeight = window.innerHeight || doc.clientHeight || 0;
+    const limit = Math.max(scrollHeight - viewportHeight, 0);
+    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, scrollTop / limit)) : 0;
+  }, []);
+
   const getSectionOffset = useCallback(() => {
     if (typeof window === 'undefined') return -88;
     const navHeightToken = getComputedStyle(document.documentElement)
@@ -92,21 +109,34 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
         retryTimerRef.current = null;
 
-        if (reducedMotion || !lenisRef.current) {
+        const nativeScroll = () => {
           const top = el.getBoundingClientRect().top + window.scrollY + getSectionOffset();
           window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
+        };
+
+        if (reducedMotion || !lenisRef.current) {
+          nativeScroll();
           return;
         }
 
         // FIX BUG 1: removed `immediate: true` — that flag bypasses Lenis's
         // lerp interpolation and produces an instant jump instead of the
         // cinematic glide the design requires.
-        lenisRef.current.scrollTo(el, { offset: getSectionOffset() });
+        try {
+          lenisRef.current.scrollTo(el, { offset: getSectionOffset() });
+        } catch (error) {
+          warnDev('Lenis scrollTo failed. Falling back to native smooth scrolling.', error);
+          lenisRef.current = null;
+          if (typeof document !== 'undefined') {
+            document.documentElement.dataset.scrollEngine = 'native';
+          }
+          nativeScroll();
+        }
       };
 
       tryScroll(0);
     },
-    [getSectionOffset, reducedMotion]
+    [getSectionOffset, reducedMotion, warnDev]
   );
 
   useEffect(() => {
@@ -191,24 +221,65 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    const setupNativeScrollProgress = () => {
+      if (typeof document !== 'undefined') {
+        document.documentElement.dataset.scrollEngine = 'native';
+      }
+
+      const onNativeScroll = () => {
+        syncNativeScrollProgress();
+      };
+
+      onNativeScroll();
+
+      window.addEventListener('scroll', onNativeScroll, { passive: true });
+      window.addEventListener('resize', onNativeScroll, { passive: true });
+      window.addEventListener('orientationchange', onNativeScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', onNativeScroll);
+        window.removeEventListener('resize', onNativeScroll);
+        window.removeEventListener('orientationchange', onNativeScroll);
+      };
+    };
+
     if (reducedMotion) {
-      scrollProgressRef.current = 0;
       if (lenisRef.current) {
-        lenisRef.current.destroy();
+        try {
+          lenisRef.current.destroy();
+        } catch (error) {
+          warnDev('Lenis destroy failed while entering reduced-motion mode.', error);
+        }
         lenisRef.current = null;
       }
+      const cleanupNative = setupNativeScrollProgress();
       ScrollTrigger.refresh(true);
-      return;
+      return () => {
+        cleanupNative();
+      };
     }
 
-    const lenis = new Lenis({
-      lerp: 0.08,
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.1,
-    });
+    let lenis: Lenis | null = null;
+    let usingLenis = true;
+    let cleanupNative: (() => void) | null = null;
 
-    lenisRef.current = lenis;
+    try {
+      lenis = new Lenis({
+        lerp: 0.08,
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.1,
+      });
+      lenisRef.current = lenis;
+      if (typeof document !== 'undefined') {
+        document.documentElement.dataset.scrollEngine = 'lenis';
+      }
+    } catch (error) {
+      usingLenis = false;
+      lenisRef.current = null;
+      warnDev('Lenis initialization failed. Falling back to native scrolling.', error);
+      cleanupNative = setupNativeScrollProgress();
+    }
 
     // FIX ENHANCEMENT 8: removed the `ScrollTrigger.update()` call from
     // this handler. GSAP's ticker.add(raf) already drives ScrollTrigger
@@ -218,14 +289,19 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       scrollProgressRef.current = limit > 0 ? scroll / limit : 0;
     };
 
-    lenis.on('scroll', onScroll);
+    if (lenis) {
+      lenis.on('scroll', onScroll);
+    }
 
     const raf = (time: number) => {
+      if (!usingLenis || !lenis) return;
       lenis.raf(time * 1000);
     };
 
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+    if (usingLenis) {
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
+    }
 
     const refresh = () => ScrollTrigger.refresh();
 
@@ -246,15 +322,26 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }
 
     return () => {
-      lenis.off('scroll', onScroll);
-      lenis.destroy();
+      if (cleanupNative) {
+        cleanupNative();
+      }
+      if (lenis) {
+        lenis.off('scroll', onScroll);
+        try {
+          lenis.destroy();
+        } catch (error) {
+          warnDev('Lenis destroy failed during ScrollCinemaProvider cleanup.', error);
+        }
+      }
       lenisRef.current = null;
-      gsap.ticker.remove(raf);
+      if (usingLenis) {
+        gsap.ticker.remove(raf);
+      }
       window.removeEventListener('resize', refresh);
       window.removeEventListener('orientationchange', refresh);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, syncNativeScrollProgress, warnDev]);
 
   const value = useMemo<ScrollCinemaContextValue>(
     () => ({
