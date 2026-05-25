@@ -4,8 +4,6 @@
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -44,6 +42,72 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
 });
 
 const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
+
+type HeroPortraitVariant = 'mobile' | 'desktop';
+
+function HeroPortrait({
+  reducedMotion,
+  variant,
+}: Readonly<{
+  reducedMotion: boolean;
+  variant: HeroPortraitVariant;
+}>) {
+  const isDesktop = variant === 'desktop';
+
+  return (
+    <m.div
+      initial={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
+      animate={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={
+        isDesktop && !reducedMotion
+          ? { scale: 1.02, transition: { type: 'spring', stiffness: 240, damping: 22 } }
+          : undefined
+      }
+      className={[
+        'relative isolate overflow-visible',
+        isDesktop
+          ? 'hero-headshot-frame hero-headshot-rail self-center'
+          : 'mobile-headshot-wrap flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
+      ].join(' ')}
+    >
+      <div
+        className={[
+          'hero-headshot-ring hero-headshot-shell relative isolate overflow-hidden rounded-full',
+          isDesktop
+            ? 'h-[clamp(10rem,13vw,14rem)] w-[clamp(10rem,13vw,14rem)]'
+            : 'h-[clamp(7.25rem,29vw,9rem)] w-[clamp(7.25rem,29vw,9rem)]',
+        ].join(' ')}
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_28%,oklch(100%_0_0_/_0.12)_0%,transparent_44%)]"
+        />
+        <Image
+          src="/headshot.webp"
+          alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+          fill
+          sizes={
+            isDesktop
+              ? '(min-width: 1536px) 224px, (min-width: 1280px) 200px, (min-width: 1024px) 176px, 160px'
+              : '(max-width: 639px) 160px, 144px'
+          }
+          className="object-cover object-[50%_18%]"
+          priority
+        />
+        <span
+          className={[
+            'absolute right-2 bottom-2 z-10 rounded-full border border-white/12 bg-black/50 px-2.5 py-1',
+            'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
+            isDesktop ? 'translate-y-0' : 'translate-y-0.5',
+          ].join(' ')}
+        >
+          {isDesktop ? 'Lagos · Staff+' : 'Staff+'}
+        </span>
+      </div>
+    </m.div>
+  );
+}
 
 // v26 FIX: Synced to lib/portfolio-data.ts CONVICTION_STATS (canonical source).
 // '45% MTTD' / 'Improvement' replaces '45% faster' / 'Alert detection' —
@@ -321,26 +385,35 @@ export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const { scrollToSection, setActiveChapter } = useScrollCinema();
 
-  // BUG FIX 3: heroRef + ScrollTrigger that re-activates 'prologue' when the
-  // user scrolls back up into the hero. HeroSection is a bare <m.section> —
-  // not wrapped in ChapterFrame — so useChapterTimeline is never called here.
-  // Without this, activeChapter stays on the last chapter after scrolling down
-  // and the navbar dot / brush field palette remain wrong on scroll-back.
+  // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter
+  // active whenever the hero comes back into view. HeroSection is a bare
+  // <m.section> — not wrapped in ChapterFrame — so useChapterTimeline is never
+  // called here. Without this, activeChapter stays on the last chapter after
+  // scrolling down and the navbar dot / brush field palette remain wrong on
+  // scroll-back.
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
     const el = heroRef.current;
     if (!el) return;
 
-    const st = ScrollTrigger.create({
-      trigger: el,
-      start: 'top 60%',
-      onEnter: () => setActiveChapter('prologue'),
-      onEnterBack: () => setActiveChapter('prologue'),
-    });
+    setActiveChapter('prologue');
 
-    return () => st.kill();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setActiveChapter('prologue');
+        }
+      },
+      {
+        threshold: 0.35,
+        rootMargin: '-12% 0px -48% 0px',
+      }
+    );
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
   }, [setActiveChapter]);
 
   const heroContainer = staggerContainer(0.055, 0.05);
@@ -395,7 +468,7 @@ export function HeroSection() {
             variants={heroContainer}
             initial="hidden"
             animate="visible"
-            className="hero-grid-child"
+            className="hero-grid-child flex flex-col items-center text-center lg:items-start lg:text-left"
           >
             {/* Availability Pill — dark pattern ban: no fake slot counts or artificial deadlines */}
             <m.div variants={child} data-cinematic="panel">
@@ -414,40 +487,15 @@ export function HeroSection() {
             </m.div>
 
             {/* Mobile Headshot */}
-            <m.div
-              variants={child}
-              className="mobile-headshot-wrap flex justify-center py-6 sm:py-8 lg:hidden"
-              aria-hidden="true"
-            >
-              <div
-                className="hero-headshot-ring relative h-32 w-32 overflow-hidden rounded-full sm:h-36 sm:w-36"
-                // eslint-disable-next-line no-restricted-syntax
-                style={{
-                  border: '3px solid oklch(70% 0.21 188 / 0.60)',
-                  boxShadow: [
-                    '0 0 0 1px oklch(70% 0.21 188 / 0.18)',
-                    '0 0 0 7px oklch(70% 0.21 188 / 0.10)',
-                    '0 0 0 15px oklch(70% 0.21 188 / 0.05)',
-                    '0 16px 52px oklch(0% 0 0 / 0.65)',
-                  ].join(', '),
-                }}
-              >
-                <Image
-                  src="/headshot.webp"
-                  alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-                  fill
-                  sizes="(min-width: 640px) 144px, 128px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
+            <m.div variants={child}>
+              <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="mobile" />
             </m.div>
 
             {/* Kicker */}
             <m.p
               variants={child}
               data-cinematic="eyebrow"
-              className="hero-kicker text-color-film-teal font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase"
+              className="hero-kicker mx-auto max-w-[36ch] text-color-film-teal font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase lg:mx-0"
             >
               <span className="inline sm:hidden">
                 <span className="whitespace-nowrap">Full-Stack</span>
@@ -469,7 +517,7 @@ export function HeroSection() {
             <h1
               id="hero-heading"
               data-cinematic="title"
-              className="w-full max-w-[var(--hero-headline-max)] text-balance"
+              className="w-full max-w-[var(--hero-headline-max)] text-balance lg:mx-0"
               aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
             >
               <m.span
@@ -510,7 +558,7 @@ export function HeroSection() {
             <m.p
               variants={child}
               data-cinematic="lede"
-              className="hero-body-text w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
+              className="hero-body-text mx-auto w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)] lg:mx-0"
             >
               Production systems that stay alive when it matters most — compliant, fast, and
               relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
@@ -564,7 +612,7 @@ export function HeroSection() {
             </m.div>
 
             {/* CTAs */}
-            <m.div variants={child} data-cinematic="cta" className="cta-hero-group">
+            <m.div variants={child} data-cinematic="cta" className="cta-hero-group mx-auto lg:mx-0">
               <Link
                 href={anchorUrl('section-contact')}
                 onClick={(event) => handleAnchorJump(event, 'section-contact')}
@@ -587,7 +635,7 @@ export function HeroSection() {
               </Link>
             </m.div>
 
-            <m.div variants={child} className="response-reassurance">
+            <m.div variants={child} className="response-reassurance mx-auto lg:mx-0">
               {/* v27.1 FIX: flex row replaces inline-block + align-middle.
                   On iOS Safari, a h-1.5 inline-block dot with align-middle
                   visually merges with the capital "I" at 10px mono — the
@@ -602,7 +650,7 @@ export function HeroSection() {
               </p>
             </m.div>
 
-            <m.div variants={child} className="cv-ghost-wrapper">
+            <m.div variants={child} className="cv-ghost-wrapper mx-auto lg:mx-0">
               <a
                 href={CV_ASSET_PATH}
                 download
@@ -616,7 +664,7 @@ export function HeroSection() {
             {/* V1.0 Change 2: Warmup micro-CTA — per spec §CONVERSION_MISS:warmup.
                 For the evaluating visitor who reads before committing.
                 mono 12px, opacity 0.45, not a button. */}
-            <m.div variants={child} className="mt-2">
+            <m.div variants={child} className="mt-2 text-center lg:text-left">
               <Link
                 href={anchorUrl('section-writing')}
                 onClick={(event) => handleAnchorJump(event, 'section-writing')}
@@ -636,7 +684,7 @@ export function HeroSection() {
                 Per spec §DELIGHT_MISS:personality. Hidden from screen readers (aria-hidden). */}
             <m.div
               variants={child}
-              className="mt-4 flex transform-gpu justify-end"
+              className="mt-4 flex transform-gpu justify-center lg:justify-end"
               aria-hidden="true"
             >
               <button
@@ -656,36 +704,7 @@ export function HeroSection() {
             data-cinematic="media"
             className="hero-visual-rail hidden lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
           >
-            <div className="hero-headshot-frame self-center">
-              <m.div
-                className="hero-headshot-ring hero-desktop-headshot relative overflow-hidden rounded-full"
-                // eslint-disable-next-line no-restricted-syntax
-                style={{
-                  border: '2.5px solid oklch(70% 0.21 188 / 0.55)',
-                  boxShadow: [
-                    '0 0 0 1px oklch(70% 0.21 188 / 0.12)',
-                    '0 0 0 8px oklch(70% 0.21 188 / 0.08)',
-                    '0 0 0 16px oklch(70% 0.21 188 / 0.04)',
-                    '0 28px 80px oklch(0% 0 0 / 0.65)',
-                    'inset 0 1px 0 oklch(100% 0 0 / 0.16)',
-                  ].join(', '),
-                }}
-                whileHover={
-                  reducedMotion
-                    ? undefined
-                    : { scale: 1.03, transition: { type: 'spring', stiffness: 240, damping: 22 } }
-                }
-              >
-                <Image
-                  src="/headshot.webp"
-                  alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-                  fill
-                  sizes="(min-width: 1536px) 224px, (min-width: 1280px) 200px, (min-width: 1024px) 164px, (min-width: 768px) 160px, 144px"
-                  className="object-cover"
-                  priority
-                />
-              </m.div>
-            </div>
+            <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="desktop" />
             <HeroVisual />
           </m.div>
         </div>
