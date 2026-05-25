@@ -4990,3 +4990,244 @@ section[data-chapter] {
 /* ═══════════════════════════════════════════════════════════════════════════
    END HERO REFINEMENT v2026.3
    ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO REFINEMENT v2026.4 — Cascade-final corrections & creative polish
+   Positioned last. Every rule here overrides any prior definition by document
+   order. No prior rules are deleted — cascade wins cleanly.
+
+   FIXES IN THIS BLOCK:
+   F1. Tablet portrait aspect-ratio — the 768–1023px media block targeting
+       `.hero-headshot-shell { height: 9.5rem }` forces a square by overriding
+       aspect-ratio on .hero-headshot-shell--desktop. Corrected by targeting
+       --desktop explicitly with height:auto + canonical 4/5 ratio.
+   F2. Callout-reveal CSS animation vs Framer Motion conflict — the
+       `.hero-proof-callout { animation: callout-reveal 0.28s ... 1.2s both }`
+       at line ~2129 animates opacity from 0→1 at 1.2s. Framer Motion's
+       `fadeRise` variant also animates opacity: 0→1 on the same element.
+       Dual opacity drivers caused a flash-of-invisible-content at 1.2s on
+       some browsers. CSS animation suppressed; Framer Motion owns it.
+   F3. Duplicate object-position mobile rule — v2026.3 appended the correct
+       `object-position: 50% 18%` rule. The canonical block at line ~4828
+       still reads `50% 15%`. v2026.3 wins by cascade order (it's later), but
+       the conflict is confusing. This block provides a definitive override
+       with a higher-specificity selector to fully settle the cascade.
+
+   CREATIVE ENHANCEMENTS:
+   E1. Headshot ring breathe — hardcoded `oklch(70% 0.21 188)` (always teal)
+       replaced with `color-mix(in oklch, var(--chapter-accent) ...)`. The ring
+       now resonates with the active chapter's accent color — deep blue on
+       §prologue, amber on §credibility, violet on §range, etc. Smooth
+       cross-fade because --chapter-accent is a registered @property with a
+       0.65s transition.
+   E2. CTA primary hover shimmer — adds a single diagonal light sweep on
+       hover. `.cta-primary` already has `overflow: hidden`, so the ::after
+       pseudo-element doesn't require markup changes. Disabled under
+       prefers-reduced-motion.
+   E3. Hero availability pill — border-color tracks --chapter-accent at 22%
+       opacity. The pill visually connects to the chapter palette without
+       distracting from the status text.
+   E4. Proof callout border-left — tracks --chapter-accent at 55% opacity
+       (was hardcoded teal). Box-shadow glow also adapts to chapter.
+   E5. Headshot badge — add `transition: opacity 0.3s ease` and a subtle
+       delayed fade-in so the badge doesn't compete with the portrait on load.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── F1: Tablet portrait aspect-ratio fix ───────────────────────────────────
+   The 768-1023px @media block at line ~4619 sets `.hero-headshot-shell {
+   height: 9.5rem }` — targeting ALL headshot shells, not just --desktop.
+   An explicit `height` overrides `aspect-ratio` on the --desktop variant,
+   producing a square instead of the canonical 4/5 portrait.
+   Fix: scope to --desktop, remove explicit height, restore aspect-ratio. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-headshot-shell--desktop {
+    width: clamp(9rem, 18vw, 10.5rem);
+    height: auto; /* Cancel the height:9.5rem square-forcing rule above */
+    aspect-ratio: 4 / 5; /* Restore canonical portrait ratio */
+  }
+}
+
+/* ── F2: Suppress callout-reveal CSS animation ──────────────────────────────
+   Framer Motion `fadeRise` variant drives opacity + translateY on the proof
+   callout's m.div wrapper. The CSS `callout-reveal` animation at line ~2129
+   also drives opacity from 0 at a 1.2s delay — after Framer has already
+   resolved opacity:1. On Safari, this causes the element to flash invisible
+   at 1.2s as the CSS animation overwrites Framer's inline style.
+   Framer Motion wins; CSS animation suppressed. */
+.hero-proof-callout {
+  animation: none !important;
+}
+
+/* ── F3: Definitive object-position for mobile portrait ────────────────────
+   Higher-specificity rule (#hero .hero-headshot-shell) fully settles the
+   cascade conflict between line ~4828 (50% 15%) and v2026.3 (50% 18%). */
+#hero .hero-headshot-shell .hero-headshot-image--mobile {
+  object-position: 50% 18%;
+}
+
+/* ── E1: Chapter-resonant headshot ring breathe ────────────────────────────
+   Replaces the hardcoded teal `headshot-ring-breathe` keyframes.
+   color-mix(in oklch, var(--chapter-accent) N%, transparent) sources the
+   ring glow from the active chapter's @property-registered accent color.
+   The 0.65s transition on --chapter-accent (declared on html) means the
+   ring cross-fades between chapter colors smoothly — no JS required.
+   Fallback: if color-mix is unsupported, the fixed teal from the earlier
+   @keyframes rule still applies (no regression for older browsers). */
+@supports (color: color-mix(in oklch, red 50%, blue)) {
+  @keyframes headshot-ring-chapter {
+    0%,
+    100% {
+      box-shadow:
+        0 0 0 3px color-mix(in oklch, var(--chapter-accent) 20%, transparent),
+        0 0 0 7px color-mix(in oklch, var(--chapter-accent) 7%, transparent),
+        0 12px 40px oklch(0% 0 0 / 0.58);
+    }
+    50% {
+      box-shadow:
+        0 0 0 4px color-mix(in oklch, var(--chapter-accent) 34%, transparent),
+        0 0 0 10px color-mix(in oklch, var(--chapter-accent) 12%, transparent),
+        0 16px 48px oklch(0% 0 0 / 0.65);
+    }
+  }
+
+  .hero-headshot-ring {
+    animation: headshot-ring-chapter 4s ease-in-out infinite;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-headshot-ring {
+      animation: none; /* Desktop: Framer Motion whileHover owns interaction */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-headshot-ring {
+      animation: none !important;
+    }
+  }
+}
+
+/* ── E2: CTA primary hover shimmer sweep ───────────────────────────────────
+   A single 105° diagonal light sweep fires once on :hover.
+   `.cta-primary` already has `position: relative; overflow: hidden;` —
+   no markup change needed. The sweep is a ::after pseudo-element with a
+   linear-gradient mask. `animation-fill-mode: forwards` ensures it doesn't
+   loop. Disabled under prefers-reduced-motion. */
+@keyframes cta-shimmer-sweep {
+  0% {
+    transform: translateX(-110%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(210%) skewX(-12deg);
+  }
+}
+
+.cta-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    oklch(100% 0 0 / 0.22) 50%,
+    transparent 62%
+  );
+  transform: translateX(-110%) skewX(-12deg);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta-primary:hover::after {
+    animation: cta-shimmer-sweep 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-primary::after {
+    display: none;
+  }
+}
+
+/* ── E3: Availability pill border tracks chapter accent ────────────────────
+   At 22% opacity the border is visible but not dominant. The 0.65s transition
+   is inherited from the --chapter-accent @property transition on `html`.
+   Fallback: `border-white/14` (the Tailwind class on the element) applies
+   for browsers that don't support color-mix. */
+@supports (color: color-mix(in oklch, red 50%, blue)) {
+  .hero-availability-pill {
+    border-color: color-mix(in oklch, var(--chapter-accent) 22%, oklch(100% 0 0 / 0.08));
+    transition:
+      border-color 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* ── E4: Proof callout border-left tracks chapter accent ───────────────────
+   The left-border accent is the dominant visual cue for the callout block.
+   It previously read hardcoded teal (`oklch(70% 0.21 188 / 0.25)`).
+   Now it cross-fades with the chapter — amber on §credibility, violet on
+   §range, etc. Box-shadow glow adapts too.
+   55% opacity keeps the border clearly visible on dark bg. */
+@supports (color: color-mix(in oklch, red 50%, blue)) {
+  .hero-proof-callout {
+    border-left-color: color-mix(in oklch, var(--chapter-accent) 55%, transparent);
+    box-shadow: -4px 0 16px color-mix(in oklch, var(--chapter-accent) 8%, transparent);
+    background: color-mix(in oklch, var(--chapter-accent) 4%, transparent);
+    transition:
+      border-left-color 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+      background 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* ── E5: Headshot badge delayed fade-in ────────────────────────────────────
+   The badge (LAGOS · STAFF+) appears 0.45s after the portrait animates in,
+   preventing it from competing with the face for first-fold attention.
+   Uses CSS animation not Framer Motion — it's a pure decoration inside
+   the Next.js Image wrapper which Framer shouldn't control directly. */
+@keyframes badge-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-headshot-badge {
+  animation: badge-reveal 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+  transition: opacity 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-headshot-badge {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── Carousel dot active — compound-selector belt-and-suspenders ────────────
+   Provides a definitive high-specificity `.active` state that survives any
+   future class-string concatenation bugs. Complements FIX 1 in HeroSection. */
+#hero .carousel-dot.active::before,
+.carousel-dot.active::before {
+  width: 20px;
+  border-radius: 3px;
+  background: var(--chapter-accent, oklch(70% 0.21 188));
+  transition:
+    width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* When a dot becomes active, its sibling dots are inactive — shrink smoothly */
+#hero .carousel-dot:not(.active)::before {
+  transition:
+    width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.24s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   END HERO REFINEMENT v2026.4
+   ═══════════════════════════════════════════════════════════════════════════ */
