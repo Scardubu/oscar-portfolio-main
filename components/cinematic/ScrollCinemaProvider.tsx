@@ -274,6 +274,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
       }
+      syncNativeScrollProgress();
     } catch (error) {
       usingLenis = false;
       lenisRef.current = null;
@@ -334,6 +335,9 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
       }
       lenisRef.current = null;
+      if (typeof document !== 'undefined') {
+        document.documentElement.dataset.scrollEngine = 'native';
+      }
       if (usingLenis) {
         gsap.ticker.remove(raf);
       }
