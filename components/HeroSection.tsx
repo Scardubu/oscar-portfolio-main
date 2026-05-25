@@ -1,5 +1,15 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
+//
+// v2026.3 PATCH:
+//   FIX 1: carousel-dot active class bug — was `carousel-dot${active?'active':''}` which
+//           produced the single class "carousel-dotactive", not the compound ".carousel-dot.active"
+//           the CSS selector expects. Added the missing space: `' active'`.
+//   FIX 2: HeroPortrait — removed ghost CSS classes `hero-headshot-container` and
+//           `hero-headshot-rail` from desktop variant; `hero-headshot-container` from mobile.
+//           Neither class has CSS rules. They were inert noise from previous refactors.
+//           The canonical layout is fully owned by hero-headshot-frame (desktop) and
+//           mobile-headshot-wrap (mobile) — both have well-defined CSS.
 
 'use client';
 
@@ -73,10 +83,14 @@ function HeroPortrait({
           : undefined
       }
       className={[
+        // FIX 2: Removed ghost classes `hero-headshot-container` and `hero-headshot-rail`
+        // (desktop) — these had zero CSS rules and were inert residue from prior refactors.
+        // Layout is fully governed by `hero-headshot-frame` (desktop) and
+        // `mobile-headshot-wrap` (mobile), both of which have canonical CSS definitions.
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
-          ? 'hero-headshot-frame hero-headshot-container hero-headshot-rail self-center'
-          : 'mobile-headshot-wrap hero-headshot-container flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
+          ? 'hero-headshot-frame self-center'
+          : 'mobile-headshot-wrap flex w-full justify-center pt-5 pb-4 sm:pt-7 sm:pb-5 lg:hidden',
       ].join(' ')}
     >
       <div
@@ -302,10 +316,10 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         />
       </div>
 
-      {/* RESPONSIVE FIX: dots upgraded from aria-hidden spans to interactive
-          buttons. Each button is a valid WCAG 2.5.5 touch target (min 44px via
-          padding). The class name bug (`carousel-dotactive` → `carousel-dot active`)
-          is fixed by the space before 'active'. */}
+      {/* FIX 1: Carousel dots — was `carousel-dot${active?'active':''}` (no space)
+          which produced the single class "carousel-dotactive". The CSS selector
+          `.carousel-dot.active` is a compound (two-class) selector and never matched
+          "carousel-dotactive". Fixed by adding the required space before 'active'. */}
       <div className="carousel-dots sm:hidden" role="tablist" aria-label="Proof pillar navigation">
         {PROOF_COLUMNS.map((col, i) => (
           <button
@@ -318,7 +332,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
           />
         ))}
       </div>
