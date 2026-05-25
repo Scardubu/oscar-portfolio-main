@@ -4839,7 +4839,7 @@ section[data-chapter] {
   white-space: nowrap;
 }
 
-@container (max-width: 17.5rem) {
+@container (max-width: 18rem) {
   .hero-headshot-shell--mobile {
     width: min(56cqw, 9rem);
     aspect-ratio: 1 / 1;
@@ -4852,14 +4852,14 @@ section[data-chapter] {
   }
 }
 
-@container (min-width: 17.501rem) and (max-width: 25rem) {
+@container (min-width: 18.001rem) and (max-width: 25rem) {
   .hero-headshot-shell--mobile {
-    width: min(48cqw, 10rem);
-    aspect-ratio: 10 / 11;
+    width: min(50cqw, 10.25rem);
+    aspect-ratio: 5 / 6;
   }
 }
 
-@container (min-width: 25.001rem) {
+@container (min-width: 25.001rem) and (max-width: 31rem) {
   .hero-headshot-shell--mobile {
     width: min(44cqw, var(--hero-headshot-mobile-max));
     aspect-ratio: 4 / 5;
@@ -4956,27 +4956,37 @@ section[data-chapter] {
      height = 144px * 5/4 = 180px  ← balanced at iPhone SE scale
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* 1. Better face centering on mobile — Y anchor raised from 15% to 18% */
-.hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 18%;
+/* 1. Better face centering on mobile — keep the crop balanced as the ratio
+      moves from square on narrow phones to portrait on wider containers. */
+#hero .hero-headshot-shell .hero-headshot-image--mobile {
+  object-position: 50% 20%;
 }
 
-/* 2. Common phone viewports (280–400px viewport width = 17.5–25rem container):
-      Override 10/11 → 4/5 for a clearly portrait-like composition. */
-@container (min-width: 17.501rem) and (max-width: 25rem) {
-  .hero-headshot-shell--mobile {
-    width: min(50cqw, 10.5rem);
-    aspect-ratio: 4 / 5;
+/* 2. Common phone viewports (≈280–400px viewport width = ~17.5–25rem container):
+      Keep the smallest phones square, then move to a slightly taller portrait
+      as horizontal space increases. */
+@container (max-width: 18rem) {
+  #hero .hero-headshot-shell--mobile {
+    width: min(56cqw, 9rem);
+    aspect-ratio: 1 / 1;
+  }
+}
+
+@container (min-width: 18.001rem) and (max-width: 25rem) {
+  #hero .hero-headshot-shell--mobile {
+    width: min(50cqw, 10.25rem);
+    aspect-ratio: 5 / 6;
   }
 }
 
 /* 3. Wider phones / small-tablet single column (400–640px viewport).
-      The min-width: 25.001rem container query already sets 4/5 — confirmed
-      correct. No change needed. Selector included here for audit clarity:
-      @container (min-width: 25.001rem) {
-        .hero-headshot-shell--mobile { aspect-ratio: 4 / 5; } ← already correct
-      }
-*/
+      Preserve the premium portrait framing without widening the crop further. */
+@container (min-width: 25.001rem) and (max-width: 31rem) {
+  #hero .hero-headshot-shell--mobile {
+    width: min(44cqw, var(--hero-headshot-mobile-max));
+    aspect-ratio: 4 / 5;
+  }
+}
 
 /* ── Carousel dot active — CSS-layer failsafe ───────────────────────────────
    Ensures .carousel-dot.active renders correctly even if a future refactor
@@ -5060,9 +5070,10 @@ section[data-chapter] {
 
 /* ── F3: Definitive object-position for mobile portrait ────────────────────
    Higher-specificity rule (#hero .hero-headshot-shell) fully settles the
-   cascade conflict between line ~4828 (50% 15%) and v2026.3 (50% 18%). */
+   cascade conflict and keeps the face centered across the square → portrait
+   progression on narrow screens. */
 #hero .hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 18%;
+  object-position: 50% 20%;
 }
 
 /* ── E1: Chapter-resonant headshot ring breathe ────────────────────────────
