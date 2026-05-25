@@ -4931,3 +4931,62 @@ section[data-chapter] {
     transform: translate3d(0, 0, 0);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO REFINEMENT v2026.3 — Portrait proportion & composition polish
+   Positioned last in the cascade to win against all prior overrides.
+
+   CHANGES:
+   1. Mobile object-position: 50% 15% → 50% 18% for better face centering.
+      The +3% Y shift brings eye-line into the sweet spot at 4/5 crop.
+   2. 17.5–25rem container range (common phones 320–400px viewport):
+      aspect-ratio: 10/11 → 4/5  —  near-square was too compact; 4/5 reads
+      as a proper portrait and gives the face natural vertical breathing room.
+      width: min(48cqw, 10rem) → min(50cqw, 10.5rem) — slight size lift to
+      compensate for the taller aspect (total rendered height stays reasonable).
+   3. max-width from the base .hero-headshot-shell--mobile rule is NOT touched;
+      it continues to cap width at min(70vw, --hero-headshot-mobile-max) which
+      prevents the portrait from overwhelming very narrow screens.
+
+   At 375px viewport (container ≈ 343px = 21.4rem):
+     width  = min(50% * 343px, 168px) = min(171.5px, 168px) = 168px
+     height = 168px * 5/4 = 210px  ← clean portrait fill
+   At 320px viewport (container ≈ 288px = 18rem, --max: 9.25rem):
+     width  = min(50% * 288px, 168px) = 144px  (max-width: 148px, no clash)
+     height = 144px * 5/4 = 180px  ← balanced at iPhone SE scale
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Better face centering on mobile — Y anchor raised from 15% to 18% */
+.hero-headshot-shell .hero-headshot-image--mobile {
+  object-position: 50% 18%;
+}
+
+/* 2. Common phone viewports (280–400px viewport width = 17.5–25rem container):
+      Override 10/11 → 4/5 for a clearly portrait-like composition. */
+@container (min-width: 17.501rem) and (max-width: 25rem) {
+  .hero-headshot-shell--mobile {
+    width: min(50cqw, 10.5rem);
+    aspect-ratio: 4 / 5;
+  }
+}
+
+/* 3. Wider phones / small-tablet single column (400–640px viewport).
+      The min-width: 25.001rem container query already sets 4/5 — confirmed
+      correct. No change needed. Selector included here for audit clarity:
+      @container (min-width: 25.001rem) {
+        .hero-headshot-shell--mobile { aspect-ratio: 4 / 5; } ← already correct
+      }
+*/
+
+/* ── Carousel dot active — CSS-layer failsafe ───────────────────────────────
+   Ensures .carousel-dot.active renders correctly even if a future refactor
+   re-introduces a class-concatenation bug. Redundant with line ~979 above
+   but harmless — same rule, same specificity, document-order wins correctly. */
+.carousel-dot.active::before {
+  width: 20px;
+  background: var(--chapter-accent, oklch(80% 0.15 188));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   END HERO REFINEMENT v2026.3
+   ═══════════════════════════════════════════════════════════════════════════ */
