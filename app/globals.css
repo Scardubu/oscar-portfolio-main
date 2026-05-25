@@ -3846,7 +3846,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer,
-  .hero-headshot-ring,
   .metric-pulse,
   .shimmer-sweep::after {
     animation: none !important;
@@ -3952,10 +3951,6 @@ select {
   min-height: 100dvh;
 }
 
-.hero-grid-shell {
-  align-items: center;
-}
-
 .hero-visual-dashboard .terminal-ambient-glow {
   opacity: var(--hero-dashboard-glow);
 }
@@ -4012,11 +4007,6 @@ select {
     --hero-pad-top: max(calc(env(safe-area-inset-top, 0px) + 3.75rem), 4.25rem);
     --hero-pad-bottom: clamp(1.5rem, 5vw, 2.25rem);
     --hero-dashboard-glow: 0.12;
-  }
-
-  #hero .hero-headshot-ring {
-    width: clamp(7.25rem, 28vw, 8.25rem);
-    height: clamp(7.25rem, 28vw, 8.25rem);
   }
 
   #hero .hero-kicker {
@@ -4402,70 +4392,12 @@ section[data-chapter] {
 
 /* ── Hero alignment polish: keep the first fold balanced at the smallest widths ── */
 @media (max-width: 767px) {
-  .hero-grid-shell {
-    justify-items: center;
-  }
-
   .cta-hero-group {
     width: 100%;
     max-width: 32rem;
     justify-content: center;
   }
 
-  .mobile-headshot-wrap {
-    width: 100%;
-  }
-
-  .mobile-headshot-wrap .hero-headshot-shell {
-    margin-inline: auto;
-  }
-}
-
-/* ── FIX 3: Portrait tablet treatment (768–1023px) ─────────────────────────
-   The right column (hero visual rail) is `hidden lg:flex` — entirely absent
-   at 768–1023px. This leaves a single-column hero on iPad portrait with wasted
-   horizontal space. The fix:
-   1. At md+ show a compact visual strip (headshot + mini system-monitor summary)
-   2. Increase the headshot size at 768px to fill the visual void better
-   3. Push the proof callout to visible at md (it was sm:block already — good) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* At tablet, the hero grid switches to a 2-col layout with a narrower right
-     column for the headshot only. The full HeroVisual panel stays desktop-only
-     to prevent content cramming.
-     NOTE: These targets via Tailwind's responsive prose work because the
-     grid template is controlled by .hero-grid-shell CSS vars. */
-  .hero-grid-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 200px);
-    align-items: center;
-  }
-
-  /* Show a simplified right column at tablet — headshot at larger scale */
-  .hero-visual-rail {
-    display: flex !important;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 1rem;
-    /* Only show the headshot, not the full HeroVisual dashboard panels */
-  }
-
-  /* Hide the mobile headshot (which sits in left column at mobile) since
-     the right column headshot now appears at tablet */
-  .hero-grid-shell > div:first-child [class*='lg:hidden'] {
-    display: none;
-  }
-
-  /* Headshot at tablet — larger than mobile, positioned in right column */
-  .hero-desktop-headshot {
-    display: block !important;
-    width: 160px !important;
-    height: 160px !important;
-  }
-
-  /* Hide the full HeroVisual dashboard at tablet — too dense for 200px column */
-  .hero-visual-rail [class*='hero-visual'],
-  .hero-visual-rail > div:last-child {
-    display: none;
-  }
 }
 
 /* ── FIX 4: Ultra-wide (1536–1920px+) treatment ────────────────────────────
@@ -4482,42 +4414,9 @@ section[data-chapter] {
     padding-inline: clamp(2.5rem, 4vw, 5rem);
   }
 
-  /* Hero text scale — controlled boost at ultrawide */
-  .hero-grid-shell {
-    --hero-left-width: 55%;
-    --hero-right-width: 45%;
-  }
-
   /* Glow intensity — more ambient bloom suits 4K canvas */
   .work-surface-glow {
     --glow-intensity: 0.75;
-  }
-}
-
-/* ── FIX 5: Container queries for hero visual panels ───────────────────────
-   The hero right column uses `.hero-visual-rail` as the container query
-   root. At narrow widths (~449px when the right column is 46% of 976px),
-   panel content density stays adaptive to its own container width.           */
-.hero-visual-rail {
-  container-type: inline-size;
-  container-name: hero-visual;
-}
-
-/* When the visual rail is narrower than 360px, reduce panel density */
-@container hero-visual (max-width: 360px) {
-  /* Latency bar labels condense at very narrow column widths */
-  .latency-bar-label,
-  .api-latency-label {
-    font-size: 9px;
-    letter-spacing: 0.08em;
-  }
-
-  /* Panel gaps tighten */
-  .system-status-panel,
-  .api-latency-panel,
-  .deploy-feed-panel {
-    gap: 0.375rem;
-    padding: 0.625rem;
   }
 }
 
@@ -4562,133 +4461,9 @@ section[data-chapter] {
    END RESPONSIVENESS SURGICAL AUDIT V1.1
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ==========================================================================
-   HEADSHOT SYSTEM — canonical rules (cascade position ensures these win)
-   Replaces: headshot-ring-pulse v20 / v21 / v24 / v27 keyframe variants.
-   All previous @keyframes definitions remain inert — this block overrides
-   via document-order cascade precedence at equal specificity.
-   ========================================================================== */
-
-/* ── Fluid sizing — desktop headshot (.hero-desktop-headshot) ──────────────
-   clamp(10rem, 14.5vw, 14rem):
-     1024px → 148px  → min clamp kicks in → 160px
-     1104px → 160px  → fluid zone begins
-     1280px → 186px  → fluid scaling
-     1536px → 223px  → max clamp → 224px
-   Tablet (!important overrides in the 768–1023px @media block above stay intact) */
-.hero-desktop-headshot {
-  width: clamp(10rem, 14.5vw, 14rem);
-  height: clamp(10rem, 14.5vw, 14rem);
-}
-
-/* ── Headshot frame — ambient radial glow backdrop ─────────────────────────
-   .hero-headshot-frame wraps .hero-desktop-headshot in the right rail.
-   ::before paints a soft radial gradient that bleeds outward — connects the
-   portrait to the ThreeBrushField ambient without competing with the WebGL
-   canvas. Using transform:translateZ(0) to keep it on its own compositor layer.
-   Disabled at tablet (768–1023px) — 200px column is too narrow for the bleed. */
-.hero-headshot-frame {
-  position: relative;
-  padding: 0.75rem;
-}
-
-.hero-headshot-frame::before {
-  content: '';
-  position: absolute;
-  inset: -1.25rem;
-  background: radial-gradient(
-    ellipse 85% 85% at 50% 48%,
-    oklch(70% 0.21 188 / 0.1) 0%,
-    oklch(70% 0.21 188 / 0.04) 48%,
-    transparent 72%
-  );
-  pointer-events: none;
-  z-index: 0;
-  transform: translateZ(0);
-}
-
-.hero-headshot-frame > * {
-  position: relative;
-  z-index: 1;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .hero-headshot-frame::before {
-    opacity: 0;
-  }
-
-  .hero-headshot-shell {
-    width: 9.5rem;
-    height: 9.5rem;
-  }
-}
-
-/* ── Canonical headshot ring animation ─────────────────────────────────────
-   Single authoritative @keyframes + animation rule.
-   Mobile (≤1023px): 4s breathe cycle — double concentric ring depth.
-   Desktop (≥1024px): animation none — Framer Motion whileHover owns it.
-   prefers-reduced-motion: animation none always. */
-@keyframes headshot-ring-breathe {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 3px oklch(70% 0.21 188 / 0.13),
-      0 0 0 7px oklch(70% 0.21 188 / 0.05),
-      0 12px 40px oklch(0% 0 0 / 0.58);
-  }
-  50% {
-    box-shadow:
-      0 0 0 4px oklch(70% 0.21 188 / 0.24),
-      0 0 0 10px oklch(70% 0.21 188 / 0.09),
-      0 16px 48px oklch(0% 0 0 / 0.65);
-  }
-}
-
-.hero-headshot-ring {
-  animation: headshot-ring-breathe 4s ease-in-out infinite;
-}
-
-@media (min-width: 1024px) {
-  .hero-headshot-ring {
-    animation: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-ring {
-    animation: none !important;
-  }
-}
-
-/* ── hero-headshot-frame: graceful ultrawide scale cap ─────────────────────
-   At 1920px+, the .hero-desktop-headshot clamp() cap (14rem = 224px) holds.
-   No additional override needed — clamp()'s max value stays at 224px. */
-
 /* ═══════════════════════════════════════════════════════════════════════════
    CONVICTION ENGINE V1.0 — HERO + NAVBAR POLISH PASS
    ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── Proof carousel: lock to 2-col inside hero left column at xl ─────────────
-   The global .mobile-carousel rule becomes repeat(3, 1fr) at 1280px+.
-   The carousel lives inside .hero-grid-child (~628px at 1280px — only 54% of
-   viewport). Three columns of proof cards is too cramped at that width.
-   This scoped rule keeps the hero carousel at 2 columns regardless of viewport. */
-@media (min-width: 1280px) {
-  .hero-grid-child .mobile-carousel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* ── Tablet (768–1023px): hide mobile headshot via explicit class ─────────────
-   FIX 3 already hides it via [class*='lg:hidden'], but that selector is fragile
-   in Tailwind v4 if class names are escaped at runtime. The .mobile-headshot-wrap
-   class (added to the wrapper div in HeroSection.tsx) provides a reliable target.
-   Belt-and-suspenders with the existing FIX 3 selector — both target the same node. */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .mobile-headshot-wrap {
-    display: none !important;
-  }
-}
 
 /* ── v32: transition + hero stability pass ─────────────────────────────── */
 #page-wrapper[data-page-transitioning='true'] {
@@ -4706,10 +4481,6 @@ section[data-chapter] {
 }
 
 @media (max-width: 639px) {
-  #hero .hero-grid-shell {
-    gap: clamp(1.25rem, 6vw, 2rem);
-  }
-
   #hero .hero-availability-label {
     display: flex;
     flex-wrap: wrap;
@@ -4724,10 +4495,6 @@ section[data-chapter] {
     text-align: center;
   }
 
-  #hero .mobile-headshot-wrap {
-    padding-block: clamp(0.75rem, 2vw, 1.25rem);
-  }
-
   #hero .hero-kicker,
   #hero .hero-body-text,
   #hero .hero-proof-callout {
@@ -4740,10 +4507,6 @@ section[data-chapter] {
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {
-  #hero .hero-grid-shell {
-    gap: clamp(1.5rem, 3vw, 2.25rem);
-  }
-
   #hero .hero-availability-label {
     justify-content: flex-start;
   }
@@ -4758,226 +4521,6 @@ section[data-chapter] {
   }
 }
 
-/* ==========================================================================
-   HERO REFINEMENT v2026.2 — canonical portrait + motion sync polish
-   This block sits last on purpose to win against historical hero overrides.
-   ========================================================================== */
-
-:root {
-  --hero-headshot-mobile-ratio: 1 / 1;
-  --hero-headshot-mobile-min: 7.5rem;
-  --hero-headshot-mobile-max: 10.75rem;
-}
-
-/* #hero .hero-grid-child is the container for portrait container-queries.
-   NOTE: .hero-headshot-container intentionally has NO container-type — setting
-   container-type: inline-size forces overflow:clip regardless of the
-   overflow:visible declaration, which would clip the .hero-headshot-ring
-   breathe animation's box-shadow. Container queries for portrait sizing
-   inherit from this ancestor instead. */
-#hero .hero-grid-child {
-  container-type: inline-size;
-}
-
-.hero-headshot-shell {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  border-radius: clamp(1rem, 2vw, 1.4rem);
-  transform: translateZ(0);
-}
-
-.hero-headshot-shell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background: linear-gradient(
-    164deg,
-    oklch(100% 0 0 / 0.16) 0%,
-    oklch(100% 0 0 / 0.04) 36%,
-    transparent 62%
-  );
-  pointer-events: none;
-}
-
-.hero-headshot-shell::after {
-  border-radius: inherit;
-  background: linear-gradient(180deg, transparent 52%, oklch(4% 0.01 265 / 0.2) 100%);
-}
-
-.hero-headshot-shell--desktop {
-  width: clamp(11rem, 15vw, 16rem);
-  aspect-ratio: 4 / 5;
-}
-
-.hero-headshot-shell--mobile {
-  width: clamp(var(--hero-headshot-mobile-min), 42vw, var(--hero-headshot-mobile-max));
-  max-width: min(70vw, var(--hero-headshot-mobile-max));
-  aspect-ratio: var(--hero-headshot-mobile-ratio);
-}
-
-/* Specificity bump (0,2,0) to beat the legacy rule:
-   .hero-headshot-shell img { object-position: 50% 18% }  ← (0,1,1) wins without this */
-.hero-headshot-shell .hero-headshot-image--desktop {
-  object-position: 50% 14%;
-}
-
-.hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 15%;
-}
-
-.hero-headshot-overlay {
-  background: radial-gradient(circle at 50% 24%, oklch(100% 0 0 / 0.14) 0%, transparent 48%);
-}
-
-.hero-headshot-badge {
-  max-width: calc(100% - 0.75rem);
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-@container (max-width: 17.5rem) {
-  .hero-headshot-shell--mobile {
-    width: min(56cqw, 9rem);
-    aspect-ratio: 1 / 1;
-  }
-
-  .hero-headshot-badge {
-    font-size: 8px;
-    letter-spacing: 0.14em;
-    padding: 0.1875rem 0.4375rem;
-  }
-}
-
-@container (min-width: 17.501rem) and (max-width: 25rem) {
-  .hero-headshot-shell--mobile {
-    width: min(48cqw, 10rem);
-    aspect-ratio: 10 / 11;
-  }
-}
-
-@container (min-width: 25.001rem) {
-  .hero-headshot-shell--mobile {
-    width: min(44cqw, var(--hero-headshot-mobile-max));
-    aspect-ratio: 4 / 5;
-  }
-}
-
-@media (max-width: 389px) {
-  :root {
-    --hero-headshot-mobile-min: 7rem;
-    --hero-headshot-mobile-max: 9.25rem;
-  }
-
-  #hero .hero-grid-shell {
-    gap: clamp(1rem, 4vw, 1.5rem);
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  #hero .hero-headshot-shell--desktop {
-    width: clamp(9.5rem, 20vw, 11rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-ring,
-  .hero-headshot-frame::before {
-    animation: none !important;
-  }
-}
-
-@supports (animation-timeline: view()) and (animation-range: entry 0% cover 45%) {
-  @media (prefers-reduced-motion: no-preference) {
-    #hero .hero-headshot-frame::before {
-      animation-name: hero-headshot-glow-reveal;
-      animation-duration: 1ms;
-      animation-fill-mode: both;
-      animation-timeline: view(block);
-      animation-range: entry 0% cover 45%;
-    }
-
-    #hero .hero-proof-callout {
-      animation-name: hero-proof-settle;
-      animation-duration: 1ms;
-      animation-fill-mode: both;
-      animation-timeline: view(block);
-      animation-range: entry 0% cover 40%;
-    }
-  }
-}
-
-@keyframes hero-headshot-glow-reveal {
-  from {
-    opacity: 0.2;
-    transform: translate3d(0, 10px, 0) scale(0.96);
-  }
-  to {
-    opacity: 0.48;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-@keyframes hero-proof-settle {
-  from {
-    opacity: 0.72;
-    transform: translate3d(0, 8px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   HERO REFINEMENT v2026.3 — Portrait proportion & composition polish
-   Positioned last in the cascade to win against all prior overrides.
-
-   CHANGES:
-   1. Mobile object-position: 50% 15% → 50% 18% for better face centering.
-      The +3% Y shift brings eye-line into the sweet spot at 4/5 crop.
-   2. 17.5–25rem container range (common phones 320–400px viewport):
-      aspect-ratio: 10/11 → 4/5  —  near-square was too compact; 4/5 reads
-      as a proper portrait and gives the face natural vertical breathing room.
-      width: min(48cqw, 10rem) → min(50cqw, 10.5rem) — slight size lift to
-      compensate for the taller aspect (total rendered height stays reasonable).
-   3. max-width from the base .hero-headshot-shell--mobile rule is NOT touched;
-      it continues to cap width at min(70vw, --hero-headshot-mobile-max) which
-      prevents the portrait from overwhelming very narrow screens.
-
-   At 375px viewport (container ≈ 343px = 21.4rem):
-     width  = min(50% * 343px, 168px) = min(171.5px, 168px) = 168px
-     height = 168px * 5/4 = 210px  ← clean portrait fill
-   At 320px viewport (container ≈ 288px = 18rem, --max: 9.25rem):
-     width  = min(50% * 288px, 168px) = 144px  (max-width: 148px, no clash)
-     height = 144px * 5/4 = 180px  ← balanced at iPhone SE scale
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* 1. Better face centering on mobile — Y anchor raised from 15% to 18% */
-.hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 18%;
-}
-
-/* 2. Common phone viewports (280–400px viewport width = 17.5–25rem container):
-      Override 10/11 → 4/5 for a clearly portrait-like composition. */
-@container (min-width: 17.501rem) and (max-width: 25rem) {
-  .hero-headshot-shell--mobile {
-    width: min(50cqw, 10.5rem);
-    aspect-ratio: 4 / 5;
-  }
-}
-
-/* 3. Wider phones / small-tablet single column (400–640px viewport).
-      The min-width: 25.001rem container query already sets 4/5 — confirmed
-      correct. No change needed. Selector included here for audit clarity:
-      @container (min-width: 25.001rem) {
-        .hero-headshot-shell--mobile { aspect-ratio: 4 / 5; } ← already correct
-      }
-*/
-
 /* ── Carousel dot active — CSS-layer failsafe ───────────────────────────────
    Ensures .carousel-dot.active renders correctly even if a future refactor
    re-introduces a class-concatenation bug. Redundant with line ~979 above
@@ -4986,10 +4529,6 @@ section[data-chapter] {
   width: 20px;
   background: var(--chapter-accent, oklch(80% 0.15 188));
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   END HERO REFINEMENT v2026.3
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    HERO REFINEMENT v2026.4 — Cascade-final corrections & creative polish
@@ -5033,20 +4572,6 @@ section[data-chapter] {
        delayed fade-in so the badge doesn't compete with the portrait on load.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── F1: Tablet portrait aspect-ratio fix ───────────────────────────────────
-   The 768-1023px @media block at line ~4619 sets `.hero-headshot-shell {
-   height: 9.5rem }` — targeting ALL headshot shells, not just --desktop.
-   An explicit `height` overrides `aspect-ratio` on the --desktop variant,
-   producing a square instead of the canonical 4/5 portrait.
-   Fix: scope to --desktop, remove explicit height, restore aspect-ratio. */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .hero-headshot-shell--desktop {
-    width: clamp(9rem, 18vw, 10.5rem);
-    height: auto; /* Cancel the height:9.5rem square-forcing rule above */
-    aspect-ratio: 4 / 5; /* Restore canonical portrait ratio */
-  }
-}
-
 /* ── F2: Suppress callout-reveal CSS animation ──────────────────────────────
    Framer Motion `fadeRise` variant drives opacity + translateY on the proof
    callout's m.div wrapper. The CSS `callout-reveal` animation at line ~2129
@@ -5056,55 +4581,6 @@ section[data-chapter] {
    Framer Motion wins; CSS animation suppressed. */
 .hero-proof-callout {
   animation: none !important;
-}
-
-/* ── F3: Definitive object-position for mobile portrait ────────────────────
-   Higher-specificity rule (#hero .hero-headshot-shell) fully settles the
-   cascade conflict between line ~4828 (50% 15%) and v2026.3 (50% 18%). */
-#hero .hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 18%;
-}
-
-/* ── E1: Chapter-resonant headshot ring breathe ────────────────────────────
-   Replaces the hardcoded teal `headshot-ring-breathe` keyframes.
-   color-mix(in oklch, var(--chapter-accent) N%, transparent) sources the
-   ring glow from the active chapter's @property-registered accent color.
-   The 0.65s transition on --chapter-accent (declared on html) means the
-   ring cross-fades between chapter colors smoothly — no JS required.
-   Fallback: if color-mix is unsupported, the fixed teal from the earlier
-   @keyframes rule still applies (no regression for older browsers). */
-@supports (color: color-mix(in oklch, red 50%, blue)) {
-  @keyframes headshot-ring-chapter {
-    0%,
-    100% {
-      box-shadow:
-        0 0 0 3px color-mix(in oklch, var(--chapter-accent) 20%, transparent),
-        0 0 0 7px color-mix(in oklch, var(--chapter-accent) 7%, transparent),
-        0 12px 40px oklch(0% 0 0 / 0.58);
-    }
-    50% {
-      box-shadow:
-        0 0 0 4px color-mix(in oklch, var(--chapter-accent) 34%, transparent),
-        0 0 0 10px color-mix(in oklch, var(--chapter-accent) 12%, transparent),
-        0 16px 48px oklch(0% 0 0 / 0.65);
-    }
-  }
-
-  .hero-headshot-ring {
-    animation: headshot-ring-chapter 4s ease-in-out infinite;
-  }
-
-  @media (min-width: 1024px) {
-    .hero-headshot-ring {
-      animation: none; /* Desktop: Framer Motion whileHover owns interaction */
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-headshot-ring {
-      animation: none !important;
-    }
-  }
 }
 
 /* ── E2: CTA primary hover shimmer sweep ───────────────────────────────────
@@ -5180,34 +4656,6 @@ section[data-chapter] {
   }
 }
 
-/* ── E5: Headshot badge delayed fade-in ────────────────────────────────────
-   The badge (LAGOS · STAFF+) appears 0.45s after the portrait animates in,
-   preventing it from competing with the face for first-fold attention.
-   Uses CSS animation not Framer Motion — it's a pure decoration inside
-   the Next.js Image wrapper which Framer shouldn't control directly. */
-@keyframes badge-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-headshot-badge {
-  animation: badge-reveal 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
-  transition: opacity 0.2s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-headshot-badge {
-    animation: none;
-    opacity: 1;
-  }
-}
-
 /* ── Carousel dot active — compound-selector belt-and-suspenders ────────────
    Provides a definitive high-specificity `.active` state that survives any
    future class-string concatenation bugs. Complements FIX 1 in HeroSection. */
@@ -5232,75 +4680,3 @@ section[data-chapter] {
    END HERO REFINEMENT v2026.4
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   HERO FINAL PASS v2026.5 — mobile portrait balance + motion cleanup
-   This last block settles the remaining mobile composition drift without
-   changing the desktop framing or the existing chapter motion system.
-   ── Narrow phones: square frame for breathing room
-   ── Standard phones: slightly taller portrait
-   ── Larger mobile / small tablet: canonical 4 / 5 portrait
-   ── Mobile headshot remains visually steady; scroll motion stays on desktop
-      where it supports the cinematic rail without compressing the first fold.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#hero .mobile-headshot-stage {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-block: clamp(0.15rem, 0.8vw, 0.45rem) clamp(0.2rem, 1vw, 0.6rem);
-}
-
-#hero .mobile-headshot-stage .hero-headshot-shell {
-  will-change: auto;
-  transform: none;
-}
-
-#hero .mobile-headshot-stage .hero-headshot-shell--mobile {
-  margin-inline: auto;
-}
-
-#hero .hero-headshot-shell .hero-headshot-image--mobile {
-  object-position: 50% 18%;
-}
-
-@container (max-width: 21rem) {
-  #hero .hero-headshot-shell--mobile {
-    width: min(46cqw, 8.9rem);
-    aspect-ratio: 1 / 1;
-  }
-
-  #hero .hero-headshot-shell .hero-headshot-image--mobile {
-    object-position: 50% 22%;
-  }
-}
-
-@container (min-width: 21.001rem) and (max-width: 25rem) {
-  #hero .hero-headshot-shell--mobile {
-    width: min(48cqw, 10rem);
-    aspect-ratio: 10 / 11;
-  }
-
-  #hero .hero-headshot-shell .hero-headshot-image--mobile {
-    object-position: 50% 20%;
-  }
-}
-
-@container (min-width: 25.001rem) {
-  #hero .hero-headshot-shell--mobile {
-    width: min(44cqw, var(--hero-headshot-mobile-max));
-    aspect-ratio: 4 / 5;
-  }
-
-  #hero .hero-headshot-shell .hero-headshot-image--mobile {
-    object-position: 50% 18%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #hero .mobile-headshot-stage,
-  #hero .mobile-headshot-stage .hero-headshot-shell,
-  #hero .hero-headshot-shell--mobile {
-    transform: none !important;
-  }
-}

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
+import { useTheme } from '@/components/ThemeProvider';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
 import { springs } from '@/lib/motionVariants';
 
@@ -61,6 +62,7 @@ export function CommandPalette() {
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
   const { scrollToSection } = useScrollCinema();
+  const { resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
     setIsMobile(!window.matchMedia('(pointer: fine)').matches);
@@ -237,8 +239,7 @@ export function CommandPalette() {
         group: 'Actions',
         label: 'Toggle theme',
         action: () => {
-          const root = document.documentElement;
-          root.classList.toggle('light');
+          setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
           close();
         },
       },
@@ -266,7 +267,7 @@ export function CommandPalette() {
           ]
         : []),
     ],
-    [router, scrollTo, close, statusAvailable]
+    [close, resolvedTheme, router, scrollTo, setTheme, statusAvailable]
   );
 
   const filtered = useMemo(() => {

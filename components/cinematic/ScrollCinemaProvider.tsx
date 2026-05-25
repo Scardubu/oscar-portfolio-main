@@ -25,6 +25,7 @@ type ScrollCinemaContextValue = {
   reducedMotion: boolean;
   activeChapter: ChapterId;
   activeChapterRef: MutableRefObject<ChapterId>;
+  scrollYRef: MutableRefObject<number>;
   scrollProgressRef: MutableRefObject<number>;
   setActiveChapter: (chapter: ChapterId) => void;
   scrollToSection: (sectionId: string) => void;
@@ -45,6 +46,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const [activeChapter, setActiveChapterState] = useState<ChapterId>('prologue');
 
   const activeChapterRef = useRef<ChapterId>('prologue');
+  const scrollYRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
   const retryTimerRef = useRef<number | null>(null);
@@ -56,8 +58,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }
   }, []);
 
-  const syncScrollProgress = useCallback((scrollTop: number, limit: number) => {
-    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, scrollTop / limit)) : 0;
+  const syncScrollState = useCallback((scrollTop: number, limit: number) => {
+    const clampedScrollTop = Math.max(0, scrollTop);
+    scrollYRef.current = clampedScrollTop;
+    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, clampedScrollTop / limit)) : 0;
   }, []);
 
   const syncNativeScrollProgress = useCallback(() => {
@@ -68,8 +72,8 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const scrollHeight = Math.max(doc.scrollHeight, body.scrollHeight);
     const viewportHeight = window.innerHeight || doc.clientHeight || 0;
     const limit = Math.max(scrollHeight - viewportHeight, 0);
-    syncScrollProgress(scrollTop, limit);
-  }, [syncScrollProgress]);
+    syncScrollState(scrollTop, limit);
+  }, [syncScrollState]);
 
   const getSectionOffset = useCallback(() => {
     if (typeof window === 'undefined') return -88;
@@ -290,7 +294,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     // internally — calling update() here caused double-processing per frame
     // and introduced subtle animation stutter on pinned sections.
     const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
-      syncScrollProgress(scroll, limit);
+      syncScrollState(scroll, limit);
     };
 
     if (lenis) {
@@ -353,13 +357,14 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       window.removeEventListener('orientationchange', refresh);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [reducedMotion, syncNativeScrollProgress, warnDev]);
+  }, [reducedMotion, syncNativeScrollProgress, syncScrollState, warnDev]);
 
   const value = useMemo<ScrollCinemaContextValue>(
     () => ({
       reducedMotion,
       activeChapter,
       activeChapterRef,
+      scrollYRef,
       scrollProgressRef,
       setActiveChapter,
       scrollToSection,

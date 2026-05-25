@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 
-type Theme = 'dark' | 'light' | 'system';
+type Theme = 'dark' | 'light';
 type ResolvedTheme = 'dark' | 'light';
 
 interface ThemeContextValue {
@@ -21,46 +21,22 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function resolveTheme(selectedTheme: Theme, prefersLight: boolean): ResolvedTheme {
-  if (selectedTheme === 'system') {
-    return prefersLight ? 'light' : 'dark';
-  }
-
-  return selectedTheme;
-}
-
 export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [theme, setThemeState] = useState<Theme>('system');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
 
   useEffect(() => {
     const stored = globalThis.localStorage.getItem('theme');
-    const initialTheme: Theme =
-      stored === 'dark' || stored === 'light' || stored === 'system' ? stored : 'system';
+    const initialTheme: Theme = stored === 'light' ? 'light' : 'dark';
 
     setThemeState(initialTheme);
   }, []);
 
   useEffect(() => {
-    const media = globalThis.matchMedia('(prefers-color-scheme: light)');
-    const applyTheme = (nextTheme: Theme) => {
-      const resolved = resolveTheme(nextTheme, media.matches);
-
-      setResolvedTheme(resolved);
-      document.documentElement.dataset.theme = resolved;
-    };
-
-    applyTheme(theme);
-
-    if (theme !== 'system') {
-      return;
-    }
-
-    const onChange = () => applyTheme('system');
-
-    media.addEventListener('change', onChange);
-
-    return () => media.removeEventListener('change', onChange);
+    setResolvedTheme(theme);
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle('light', theme === 'light');
+    document.documentElement.style.colorScheme = theme;
   }, [theme]);
 
   const setTheme = useCallback((nextTheme: Theme) => {

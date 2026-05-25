@@ -39,7 +39,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const navbarVariants = {
-  hidden: { y: -32, opacity: 0 },
+  hidden: { y: -20, opacity: 1 },
   visible: {
     y: 0,
     opacity: 1,
@@ -139,11 +139,11 @@ export default function Navbar() {
         animate="visible"
         variants={navbarVariants}
         className={[
-          'fixed inset-x-0 top-0 z-50 transform-gpu backdrop-blur-xl border-b',
+          'fixed inset-x-0 top-0 z-50 transform-gpu border-b backdrop-blur-xl',
           'transition-[background-color,border-color,box-shadow] duration-200',
           scrolled
-            ? 'bg-[oklch(7%_0.01_265/0.92)] border-white/10 shadow-[0_1px_0_oklch(100%_0_0/0.04),0_4px_24px_-4px_oklch(0%_0_0/0.45)]'
-            : 'bg-black/20 border-white/8',
+            ? 'border-white/10 bg-[oklch(7%_0.01_265/0.92)] shadow-[0_1px_0_oklch(100%_0_0/0.04),0_4px_24px_-4px_oklch(0%_0_0/0.45)]'
+            : 'border-white/8 bg-black/20',
         ].join(' ')}
         // eslint-disable-next-line no-restricted-syntax
         style={{ translateZ: 0 }}

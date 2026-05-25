@@ -1,8 +1,8 @@
-import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
-import rehypeSlug from 'rehype-slug';
+import type { NextConfig } from 'next';
 import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
+import remarkGfm from 'remark-gfm';
 
 const withMDX = createMDX({
   options: {
@@ -23,8 +23,12 @@ const withMDX = createMDX({
 const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['127.0.0.1'],
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
-  images: { formats: ['image/avif', 'image/webp'] },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 88],
+  },
 
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,

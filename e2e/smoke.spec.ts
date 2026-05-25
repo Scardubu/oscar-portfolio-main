@@ -80,6 +80,18 @@ test.describe('Portfolio smoke tests', () => {
     );
   });
 
+  test('root theme defaults to dark semantics', async ({ page }) => {
+    await goto(page);
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    const hasLightClass = await page.evaluate(() => {
+      return document.documentElement.classList.contains('light');
+    });
+
+    expect(hasLightClass).toBe(false);
+  });
+
   test('home has no horizontal overflow at 320px, 360px, 375px, 390px, and 430px', async ({
     browser,
   }) => {

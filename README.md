@@ -42,7 +42,7 @@ The homepage uses an 8-chapter cinematic scroll architecture. Understanding it i
 
 ### Architecture overview
 
-```
+```text
 ScrollCinemaProvider          — Lenis instance, activeChapter state, scrollProgressRef
   └── GSAP ticker             — single RAF loop shared by Lenis + ScrollTrigger
        └── ScrollTrigger      — per-section reveal timelines (via useChapterTimeline)
@@ -74,7 +74,7 @@ Chapter configuration is canonical in `lib/cinematic/chapters.ts`. Do not modify
 **Framer Motion** owns the hero section, micro-interactions (hover, accordion, mobile menu), and carousels.
 They do not overlap. Mixing them inside the same element causes competing animation ownership.
 
-```
+```text
 ✅ DO:     whileHover, whileTap, AnimatePresence inside any component
 ✅ DO:     data-cinematic="title|eyebrow|panel|card|media|cta" on elements inside ChapterFrame
 ✅ DO:     setActiveChapter() inside ScrollTrigger onEnter/onEnterBack callbacks
@@ -95,6 +95,7 @@ They do not overlap. Mixing them inside the same element causes competing animat
 ### ThreeBrushField performance budget
 
 Three RAF loops share one frame budget:
+
 - Lenis: smooth scroll interpolation
 - GSAP ticker: ScrollTrigger calculations
 - ThreeBrushField: WebGL render
@@ -102,6 +103,7 @@ Three RAF loops share one frame budget:
 Lenis feeds into GSAP ticker via `gsap.ticker.add(raf)`. `ScrollTrigger.update()` is intentionally NOT called manually — GSAP drives it from the ticker. On mobile, `mix-blend-mode: screen` is disabled (costs a GPU compositor pass per frame on low-power devices).
 
 Current resilience notes:
+
 - `ScrollCinemaProvider` now exposes `data-scroll-engine="lenis|native"` on `<html>` so CSS and diagnostics can distinguish the active path.
 - If Lenis initialization or `scrollTo()` fails, the homepage falls back to native scroll with the same chapter tracking and anchor offsets.
 - Hero parallax progress is synced through Framer Motion's shared animation frame loop instead of a custom RAF, reducing drift between scroll interpolation and motion transforms.
@@ -144,6 +146,7 @@ Seven files were patched to fix critical bugs and add polish enhancements. The p
 | `Footer.tsx`      | Removed no-op inline style object from primary CTA                                                      | Cleaner code and reduced maintenance overhead    |
 
 Validation pass after v1.2 polish:
+
 - `pnpm run type-check` ✅
 - `pnpm run lint` ✅
 - `pnpm run build` ✅
@@ -156,6 +159,7 @@ Validation pass after v1.2 polish:
 | `tests/setup.ts`        | Added `scrollMargin` to `MockIntersectionObserver` and removed unresolved side-effect import | Clears editor diagnostics and keeps test setup aligned with current DOM typings |
 
 Validation pass after v1.3 stability fix:
+
 - `pnpm run type-check` ✅
 - `pnpm run lint` ✅
 - `pnpm run build` ✅
@@ -169,6 +173,7 @@ Validation pass after v1.3 stability fix:
 | `app/globals.css` | Kept targeted small-screen and ultrawide guards from the surgical responsive audit     | Preserves stable hero/navigation composition across edge viewport classes  |
 
 Validation pass after v1.4 hardening:
+
 - `pnpm run type-check` ✅
 - `pnpm run lint` ✅
 - Responsive sweep at `320, 375, 390, 430, 768, 1024, 1280, 1920` ✅
@@ -183,6 +188,7 @@ Validation pass after v1.4 hardening:
 | `components/*Section.tsx`            | Migrated the landing sections to the shared intro pattern | Visual rhythm is now consistent across the full page                                                                              |
 
 Validation pass after v1.5 consistency refactor:
+
 - `pnpm test:smoke` ✅
 
 ### Runtime hygiene + browser data refresh v1.6
@@ -194,6 +200,7 @@ Validation pass after v1.5 consistency refactor:
 | `pnpm-lock.yaml` | Refreshed `caniuse-lite` and `baseline-browser-mapping`                        | Removes stale browser dataset warnings from routine builds                                   |
 
 Validation pass after v1.6 maintenance:
+
 - `pnpm run type-check` ✅
 - `pnpm run lint` ✅
 - `pnpm run build` ✅
@@ -243,6 +250,7 @@ Two real UX bugs and a non-trivial maintenance pass.
 | Removed redundant `import React from 'react'` (Next 15 + React 19 JSX transform doesn't need it). Switched `handleBlur` to the named `FocusEvent` import already in scope. | Smaller import footprint, consistent with the rest of the codebase |
 
 Validation pass after v1.7:
+
 - `pnpm run type-check` ✅ (now covers every component under `components/**`)
 - `pnpm run lint` ✅
 - `pnpm run build` ✅ (no warnings, no bundle regressions)
@@ -257,6 +265,7 @@ Validation pass after v1.7:
 | `e2e/smoke.spec.ts` | Switched homepage/reload waits from `networkidle` to `load` for the command palette path         | Removes a smoke-test flake caused by live activity requests that keep the network busy        |
 
 Validation pass after v1.8:
+
 - `pnpm exec playwright test e2e/smoke.spec.ts --grep "accessibility" --project=chromium --workers=1` ✅
 - `pnpm run test:smoke` ✅
 
@@ -271,6 +280,7 @@ Validation pass after v1.8:
 | `globals.css`              | Disabled native `scroll-behavior: smooth` when `data-scroll-engine='lenis'`                     | Prevents double-smoothing when Lenis is active                                         |
 
 Validation pass after v1.9:
+
 - `pnpm run type-check` ✅
 - `pnpm run build` ✅
 - `pnpm exec eslint components/cinematic/ScrollCinemaProvider.tsx components/HeroSection.tsx` ✅
@@ -285,6 +295,7 @@ Validation pass after v1.9:
 | `components/HeroSection.tsx` | Fixed `carousel-dot` active class: added missing space before `'active'` in template literal            | CSS rule `.carousel-dot.active` now matches correctly; previously generated `carousel-dotactive` (one token) which never matched the stylesheet                                                     |
 
 Validation pass after v2.0:
+
 - `pnpm run type-check` ✅
 - `pnpm run build` ✅ (36.9 kB homepage, 229 kB First Load JS — no regression)
 - `pnpm run test:smoke` ✅ (17 passed, 3 skipped — same baseline)
@@ -344,7 +355,7 @@ This updates the lockfile entries used by `browserslist`, `autoprefixer`, and Ne
 
 ## Project structure
 
-```
+```text
 oscar-portfolio/
 │
 ├── app/
@@ -572,7 +583,7 @@ netlify deploy --prod --dir=.next
 
 After any hero or layout change, verify these breakpoints:
 
-```
+```text
 320px   — smallest phone (iPhone SE gen 1)
 360px   — standard Android
 390px   — iPhone 14 Pro
@@ -583,6 +594,7 @@ After any hero or layout change, verify these breakpoints:
 ```
 
 For hero validation specifically, confirm four things together:
+
 1. No horizontal overflow
 2. Stable headline wrapping
 3. Proof carousel snap behavior
@@ -594,26 +606,32 @@ For hero validation specifically, confirm four things together:
 
 After the v1.1 patch, verify each of the following manually:
 
-**Smooth scroll**
+### Smooth scroll
+
 - Click any navbar link → Lenis glides to section (not instant jump)
 - Click hash link in hero CTAs → same cinematic glide
 
-**Chapter system**
+### Chapter system
+
 - Scroll down into Projects → progress rail shows "Proof" active
 - Scroll back up into hero → progress rail returns to "Prologue" active
 - Repeat for every chapter bidirectionally
 
-**WebGL canvas**
+### WebGL canvas
+
 - Scroll slowly from hero into Projects → no black flash on canvas
 - Continue through all 8 chapters → palette shifts smoothly with each
 
-**CSS cross-fade**
+### CSS cross-fade
+
 - Observe scrollbar thumb colour while scrolling → it shifts through teal → mint → amber → sky → violet → gold → blue → green
 
-**Border continuity**
+### Border continuity
+
 - Inspect hero/projects boundary → no visible horizontal rule line
 
-**Accessibility**
+### Accessibility
+
 - Screen reader: chapter changes announce "Now viewing: [chapter label]"
 - Keyboard: Tab through entire page without getting stuck
 
@@ -647,7 +665,7 @@ After the v1.1 patch, verify each of the following manually:
 
 ## Contact
 
-**oscar@scardubu.dev** — response within 24 hours, usually faster.
+**[oscar@scardubu.dev](mailto:oscar@scardubu.dev)** — response within 24 hours, usually faster.
 
 ---
 

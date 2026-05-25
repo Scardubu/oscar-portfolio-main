@@ -23,6 +23,15 @@
 //
 //   FIX 4 (v2026.4): proofContainer import — staggerContainer import retained
 //           for heroContainer construction. proofContainer variable removed.
+//
+//   FIX 5 (v2026.5): portrait geometry decoupled from legacy global hero
+//           selectors. Mobile and desktop wrappers now reserve deterministic
+//           4:5 media space directly in component classes, eliminating CLS and
+//           narrow-screen composition drift caused by competing global rules.
+//
+//   FIX 6 (v2026.5): right-rail parallax now maps to hero-local scroll range
+//           using provider scrollY as source-of-truth. This avoids jitter from
+//           full-page normalization changes during async layout growth.
 
 'use client';
 
@@ -84,6 +93,9 @@ function HeroPortrait({
   variant: HeroPortraitVariant;
 }>) {
   const isDesktop = variant === 'desktop';
+  const portraitSizes = isDesktop
+    ? '(min-width: 1536px) 256px, (min-width: 1280px) 224px, (min-width: 1024px) 208px, 192px'
+    : '(max-width: 389px) 46vw, (max-width: 639px) 40vw, (max-width: 1023px) 224px, 192px';
 
   return (
     <m.div
@@ -96,43 +108,34 @@ function HeroPortrait({
           : undefined
       }
       className={[
-        // FIX 2 (v2026.3): Ghost classes `hero-headshot-container` and `hero-headshot-rail`
-        // removed — zero CSS rules, inert noise. Layout is fully governed by
-        // `hero-headshot-frame` (desktop) and `mobile-headshot-wrap` (mobile).
-        'relative isolate transform-gpu overflow-visible will-change-transform',
+        'relative transform-gpu overflow-visible will-change-transform',
         isDesktop
-          ? 'hero-headshot-frame self-center'
-          : 'mobile-headshot-wrap flex w-full justify-center lg:hidden',
+          ? 'w-full max-w-64 min-w-48 self-center'
+          : 'w-2/3 max-w-52 min-w-40 sm:max-w-56 md:max-w-60 lg:hidden',
       ].join(' ')}
     >
       <div
-        className={[
-          'hero-headshot-ring hero-headshot-shell relative isolate overflow-hidden',
-          isDesktop ? 'hero-headshot-shell--desktop' : 'hero-headshot-shell--mobile',
-        ].join(' ')}
-      >
-        <div aria-hidden="true" className="hero-headshot-overlay absolute inset-0 z-0" />
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-3 -z-10 rounded-[calc(var(--radius-xl)+0.75rem)] bg-cyan-300/10 blur-2xl"
+      />
+      <div className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-xl)] border border-white/14 bg-[oklch(20%_0.02_255_/_0.74)] shadow-[0_18px_48px_oklch(0%_0_0_/_0.5)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-white/14 via-transparent to-black/20"
+        />
         <Image
           src="/headshot.webp"
           alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
           fill
-          sizes={
-            isDesktop
-              ? '(min-width: 1536px) 260px, (min-width: 1280px) 228px, (min-width: 1024px) 200px, 188px'
-              : '(max-width: 389px) 42vw, (max-width: 767px) 36vw, 190px'
-          }
+          sizes={portraitSizes}
           quality={88}
           draggable={false}
-          className={
-            isDesktop
-              ? 'hero-headshot-image--desktop object-cover'
-              : 'hero-headshot-image--mobile object-cover'
-          }
+          className={isDesktop ? 'object-cover object-[50%_14%]' : 'object-cover object-[50%_18%]'}
           priority
         />
         <span
           className={[
-            'hero-headshot-badge absolute right-2 bottom-2 z-10 rounded-full border border-white/12 bg-black/50 px-2.5 py-1',
+            'absolute right-2 bottom-2 z-[2] max-w-[calc(100%-0.75rem)] overflow-hidden rounded-full border border-white/12 bg-black/55 px-2.5 py-1 text-ellipsis whitespace-nowrap',
             'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
           ].join(' ')}
         >
@@ -205,8 +208,14 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
       e.preventDefault();
 
-      if (e.key === 'Home') { scrollToIndex(0); return; }
-      if (e.key === 'End') { scrollToIndex(PROOF_COLUMNS.length - 1); return; }
+      if (e.key === 'Home') {
+        scrollToIndex(0);
+        return;
+      }
+      if (e.key === 'End') {
+        scrollToIndex(PROOF_COLUMNS.length - 1);
+        return;
+      }
 
       const direction = e.key === 'ArrowRight' ? 1 : -1;
       const nextIndex = Math.max(0, Math.min(PROOF_COLUMNS.length - 1, activeIndex + direction));
@@ -267,8 +276,8 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <>
       <p id="hero-proof-help" className="sr-only">
-        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End.
-        On larger screens, displayed as a two-column grid.
+        Production proof pillars. On mobile, swipe horizontally or use arrow keys, Home, and End. On
+        larger screens, displayed as a two-column grid.
       </p>
       <p id="hero-proof-status" className="sr-only" aria-live="polite">
         Showing proof {activeIndex + 1} of {PROOF_COLUMNS.length}: {activeLabel}
@@ -289,7 +298,9 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             <m.article
               key={col.label}
               id={`hero-proof-card-${index}`}
-              ref={(node) => { cardRefs.current[index] = node; }}
+              ref={(node) => {
+                cardRefs.current[index] = node;
+              }}
               role="tabpanel"
               aria-labelledby={`hero-proof-tab-${index}`}
               aria-hidden={!isDesktop && index !== activeIndex}
@@ -299,9 +310,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
               <p className="label-mono text-color-film-teal">{col.label}</p>
-              <p className="mt-3 text-sm leading-7 text-[oklch(94%_0.007_80_/_0.62)]">
-                {col.body}
-              </p>
+              <p className="mt-3 text-sm leading-7 text-[oklch(94%_0.007_80_/_0.62)]">{col.body}</p>
             </m.article>
           ))}
         </div>
@@ -329,7 +338,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -404,7 +413,7 @@ function ConvictionStat({
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
-  const { scrollToSection, setActiveChapter, scrollProgressRef } = useScrollCinema();
+  const { scrollToSection, setActiveChapter, scrollYRef } = useScrollCinema();
 
   const heroProgress = useMotionValue(0);
 
@@ -420,6 +429,8 @@ export function HeroSection() {
   });
 
   const previousHeroProgressRef = useRef(0);
+  const heroScrollStartRef = useRef(0);
+  const heroScrollRangeRef = useRef(1);
 
   // BUG FIX 3: heroRef + IntersectionObserver keeps the prologue chapter active whenever
   // the hero comes back into view. HeroSection is a bare <m.section> — not wrapped in
@@ -448,6 +459,55 @@ export function HeroSection() {
     return () => observer.disconnect();
   }, [setActiveChapter]);
 
+  const syncHeroScrollRange = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const el = heroRef.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const start = rect.top + scrollYRef.current;
+    const localRange = Math.max(el.offsetHeight * 0.82, window.innerHeight * 0.72, 1);
+
+    heroScrollStartRef.current = start;
+    heroScrollRangeRef.current = localRange;
+  }, [scrollYRef]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = heroRef.current;
+    if (!el) return;
+
+    syncHeroScrollRange();
+
+    const onViewportChange = () => {
+      syncHeroScrollRange();
+    };
+
+    const observer =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            syncHeroScrollRange();
+          })
+        : null;
+
+    observer?.observe(el);
+    window.addEventListener('resize', onViewportChange, { passive: true });
+    window.addEventListener('orientationchange', onViewportChange, { passive: true });
+
+    const fontsReady = document.fonts?.ready;
+    if (fontsReady) {
+      void fontsReady.then(() => {
+        syncHeroScrollRange();
+      });
+    }
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', onViewportChange);
+      window.removeEventListener('orientationchange', onViewportChange);
+    };
+  }, [syncHeroScrollRange]);
+
   useEffect(() => {
     if (reducedMotion) {
       previousHeroProgressRef.current = 0;
@@ -457,8 +517,8 @@ export function HeroSection() {
 
   useAnimationFrame(() => {
     if (reducedMotion) return;
-    // Emphasize first-fold progress while keeping motion subtle and stable.
-    const progress = Math.min(1, Math.max(0, scrollProgressRef.current * 8));
+    const localScroll = Math.max(0, scrollYRef.current - heroScrollStartRef.current);
+    const progress = Math.min(1, localScroll / heroScrollRangeRef.current);
     if (Math.abs(progress - previousHeroProgressRef.current) < 0.0015) return;
     previousHeroProgressRef.current = progress;
     heroProgress.set(progress);
@@ -515,14 +575,13 @@ export function HeroSection() {
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
-        <div className="hero-grid-shell grid items-center gap-[var(--hero-col-gap)] lg:grid-cols-[minmax(0,var(--hero-left-width))_minmax(0,var(--hero-right-width))]">
-
+        <div className="grid items-start gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(16rem,0.98fr)] lg:items-center lg:gap-10 xl:gap-14">
           {/* ── Left Column: Conviction Content ── */}
           <m.div
             variants={heroContainer}
             initial="hidden"
             animate="visible"
-            className="hero-grid-child flex flex-col items-center text-center lg:items-start lg:text-left"
+            className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left"
           >
             {/* Availability Pill
                 Dark-pattern ban: no fake slot counts or artificial deadlines.
@@ -543,10 +602,9 @@ export function HeroSection() {
             </m.div>
 
             {/* Mobile Headshot
-                Static on mobile so the first fold stays centered and the portrait
-                does not drift against the text stack while the desktop rail keeps
-                the subtle scroll parallax. Padding is managed entirely by CSS. */}
-            <m.div variants={child} className="mobile-headshot-stage">
+                Portrait sizing is tied to the hero column width for consistent
+                composition across 320/375/390 and tablet single-column layouts. */}
+            <m.div variants={child} className="flex w-full justify-center py-1 sm:py-2 lg:hidden">
               <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="mobile" />
             </m.div>
 
@@ -758,14 +816,15 @@ export function HeroSection() {
           {/* ── Right Column: Desktop Visuals ── */}
           <m.div
             data-cinematic="media"
-            className="hero-visual-rail hidden transform-gpu lg:flex lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
+            className="hidden transform-gpu lg:flex lg:w-full lg:max-w-xl lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
             // eslint-disable-next-line no-restricted-syntax
             style={reducedMotion ? undefined : { y: rightRailY, opacity: rightRailOpacity }}
           >
             <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="desktop" />
-            <HeroVisual />
+            <div className="min-h-80 w-full">
+              <HeroVisual />
+            </div>
           </m.div>
-
         </div>
       </div>
     </m.section>
