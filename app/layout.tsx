@@ -17,8 +17,9 @@
 //     extractor uses the description as fallback location context for Person
 //     entities when the structured data address is ambiguous.
 //
-//   KEEP: Playfair Display — true Didone, hairline strokes, A24 cinematic
-//     authority. The `--font-didone` CSS var is consumed by globals.css.
+//   NOTE: Didone + mono families now rely on local fallback stacks in CSS.
+//     This keeps production builds resilient when remote font fetches timeout
+//     and reduces critical font payload for hero-first rendering.
 //
 //   KEEP: LazyMotion + domAnimation in MotionProvider (providers.tsx).
 //     useScroll / useTransform are hooks, domMax is not needed.
@@ -26,29 +27,22 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
-import dynamic from 'next/dynamic';
-import { DM_Sans, JetBrains_Mono, Playfair_Display, Syne } from 'next/font/google';
+import { DM_Sans, Syne } from 'next/font/google';
 
 import { Providers } from '@/app/providers';
-import { CommandPalette } from '@/components/CommandPalette';
 import CursorGlow from '@/components/CursorGlow';
+import { DeferredCommandPalette } from '@/components/DeferredCommandPalette';
 import { Footer } from '@/components/Footer';
 import { PageWrapper } from '@/components/PageWrapper';
 
 import { GrainOverlay } from '@/components/GrainOverlay';
 import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
+import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
 
 // v2026.8: import order corrected — globals.css first, fixes.css overrides
-import './globals.css';
 import './fixes.css';
-
-const ThreeBrushField = dynamic(
-  () => import('@/components/cinematic/ThreeBrushField').then((mod) => mod.ThreeBrushField),
-  {
-    loading: () => null,
-  }
-);
+import './globals.css';
 
 const syne = Syne({
   subsets: ['latin'],
@@ -64,22 +58,6 @@ const dmSans = DM_Sans({
   display: 'swap',
   preload: true,
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-  preload: true,
-  fallback: ['SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-didone-var',
-  display: 'swap',
-  preload: true,
-  fallback: ['Iowan Old Style', 'Times New Roman', 'serif'],
 });
 
 const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
@@ -214,11 +192,7 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${syne.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="dark" />
 
@@ -282,9 +256,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <CursorGlow />
           <GrainOverlay />
           <ScrollProgress />
-          <ThreeBrushField />
+          <DeferredThreeBrushField />
           <Navbar />
-          <CommandPalette />
+          <DeferredCommandPalette />
           <PageWrapper>{children}</PageWrapper>
           <Footer />
         </Providers>

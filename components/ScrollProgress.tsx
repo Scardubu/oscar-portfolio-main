@@ -29,11 +29,11 @@ export function ScrollProgress() {
       data-testid="scroll-progress"
       data-reduced-motion={reducedMotion ? 'true' : 'false'}
       className={[
-        'fixed top-1/2 right-4 z-[60] hidden -translate-y-1/2 lg:flex',
+        'hero-chapter-rail fixed top-1/2 right-4 z-[60] hidden -translate-y-1/2 lg:flex',
         reducedMotion ? 'pointer-events-none opacity-35' : 'pointer-events-auto',
       ].join(' ')}
     >
-      <div className="flex flex-col items-center gap-3 rounded-full border border-white/8 bg-black/30 px-2 py-3 backdrop-blur-md">
+      <div className="hero-chapter-rail-shell flex flex-col items-center gap-3 rounded-full border border-white/8 bg-black/30 px-2 py-3 backdrop-blur-md">
         {CHAPTERS.map((chapter) => {
           const active = chapter.id === activeChapter;
 
@@ -43,7 +43,7 @@ export function ScrollProgress() {
               type="button"
               onClick={() => scrollToSection(chapter.sectionId)}
               className={[
-                'group relative flex h-3.5 w-3.5 items-center justify-center rounded-full',
+                'hero-chapter-button group relative flex h-3.5 w-3.5 items-center justify-center rounded-full',
                 // CSS transition handles scale — no framer-motion scroll hook
                 'transition-all duration-300',
                 'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
@@ -55,15 +55,17 @@ export function ScrollProgress() {
               {/* Dot — uses .chapter-dot-active for CSS-driven glow animation */}
               <span
                 className={[
-                  'h-2.5 w-2.5 rounded-full border transition-all duration-300',
-                  active ? 'chapter-dot-active border-white/40' : 'border-white/20 bg-white/10',
+                  'hero-chapter-dot h-2.5 w-2.5 rounded-full border transition-all duration-300',
+                  active
+                    ? 'hero-chapter-dot-active chapter-dot-active border-white/40'
+                    : 'border-white/20 bg-white/10',
                 ].join(' ')}
               />
 
               {/* Tooltip — always rendered, opacity-toggled for no layout shift */}
               <span
                 className={[
-                  'pointer-events-none absolute top-1/2 right-7 -translate-y-1/2',
+                  'hero-chapter-tooltip pointer-events-none absolute top-1/2 right-7 -translate-y-1/2',
                   'rounded-full border border-white/8 bg-black/70 px-2.5 py-1',
                   'font-mono text-[10px] tracking-[0.2em] whitespace-nowrap text-white/70 uppercase',
                   'opacity-0 transition-opacity duration-200',

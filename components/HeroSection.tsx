@@ -86,17 +86,20 @@ import {
 import { trackEvent } from '@/app/lib/analytics';
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
+import { useMagnetic } from '@/hooks/useMagnetic';
 import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
+import { trackMetricView } from '@/lib/metrics/analytics';
 import {
   cardReveal,
   fadeRise,
   hoverLift,
+  magneticButton,
   noMotion,
   staggerContainer,
   wordReveal,
   wordRevealContainer,
 } from '@/lib/motionVariants';
-import { HERO } from '@/lib/portfolio-data';
+import { CONVICTION_STATS, HERO } from '@/lib/portfolio-data';
 import { formatMonthYear } from '@/lib/utils';
 
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
@@ -109,29 +112,63 @@ const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m
   ),
 });
 
-const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
+const HEADLINE_WORDS = HERO.h1.split(' ') as readonly string[];
+const TRUST_STRIP_ITEMS = HERO.trustStrip.split(' · ') as readonly string[];
+
+type HeroMetricKey = (typeof CONVICTION_STATS)[number]['stat'];
+
+const METRIC_DETAILS: Record<
+  HeroMetricKey,
+  {
+    source: string;
+    detail: string;
+    status: string;
+  }
+> = {
+  filing: {
+    source: 'TaxBridge · NRS',
+    detail: 'Compressed a live tax workflow under real audit-season pressure.',
+    status: 'Audit live',
+  },
+  uptime: {
+    source: 'Prometheus · 90d',
+    detail: 'Observed in production over time, not reconstructed from staging.',
+    status: 'Healthy',
+  },
+  latency: {
+    source: 'API surface · p99',
+    detail: 'Fast under real user load, with Lagos network reality in the loop.',
+    status: 'Stable',
+  },
+  mttd: {
+    source: 'SabiScore · ops',
+    detail: 'Detection tightened before incidents could turn into user pain.',
+    status: 'Improved',
+  },
+};
 
 type HeroPortraitVariant = IdentityCardVariant;
 
 function HeroPortrait({
   reducedMotion,
   variant,
+  className,
+  priority,
 }: Readonly<{
   reducedMotion: boolean;
   variant: HeroPortraitVariant;
+  className?: string;
+  priority?: boolean;
 }>) {
-  return <IdentityCard reducedMotion={reducedMotion} variant={variant} />;
+  return (
+    <IdentityCard
+      className={className}
+      priority={priority}
+      reducedMotion={reducedMotion}
+      variant={variant}
+    />
+  );
 }
-
-// v26 FIX: Synced to lib/portfolio-data.ts CONVICTION_STATS (canonical source).
-// '45% MTTD' / 'Improvement' replaces '45% faster' / 'Alert detection' —
-// MTTD is the precise Prometheus-traceable metric; "faster" was imprecise.
-const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Filing time', stat: 'filing' },
-  { value: '99.9%+', label: '90-day uptime', stat: 'uptime' },
-  { value: 'sub-150ms', label: 'API p99', stat: 'latency' },
-  { value: '45% MTTD', label: 'Improvement', stat: 'mttd' },
-] as const;
 
 // v26 FIX: PROOF_COLUMNS body copy updated to match corrected stat.
 const PROOF_COLUMNS = [
@@ -315,7 +352,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -331,17 +368,29 @@ function ConvictionStat({
   value,
   label,
   stat,
+  source,
+  detail,
+  status,
   reducedMotion,
   shouldAnimate,
 }: {
   value: string;
   label: string;
-  stat: string;
+  stat: HeroMetricKey;
+  source: string;
+  detail: string;
+  status: string;
   reducedMotion: boolean;
   shouldAnimate: boolean;
 }) {
   const [displayed, setDisplayed] = useState(value);
   const frameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (shouldAnimate || reducedMotion) {
+      trackMetricView(`hero-${stat}`);
+    }
+  }, [reducedMotion, shouldAnimate, stat]);
 
   useEffect(() => {
     const numericMatch = value.match(/^(\d+(?:\.\d+)?)(.*)/);
@@ -381,16 +430,33 @@ function ConvictionStat({
   }, [value, shouldAnimate, reducedMotion]);
 
   return (
-    <div className="conviction-stat" data-stat={stat} role="listitem">
+    <m.article
+      className="conviction-stat hero-metric-card group"
+      data-stat={stat}
+      role="listitem"
+      aria-label={`${value} ${label}. ${detail}`}
+      whileHover={reducedMotion ? undefined : hoverLift(-4)}
+    >
+      <div className="hero-metric-head">
+        <span className="hero-metric-source">{source}</span>
+        <span className="hero-metric-status">{status}</span>
+      </div>
       <span className="conviction-stat-value">{displayed}</span>
-      <span className="conviction-stat-label">{label}</span>
-    </div>
+      <div className="hero-metric-copy">
+        <span className="conviction-stat-label">{label}</span>
+        <span className="hero-metric-detail">{detail}</span>
+      </div>
+    </m.article>
   );
 }
 
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const { scrollToSection, setActiveChapter, scrollYRef } = useScrollCinema();
+  const primaryMagnetic = useMagnetic<HTMLDivElement>({ strength: 0.2, radius: 144 });
+  const secondaryMagnetic = useMagnetic<HTMLDivElement>({ strength: 0.18, radius: 120 });
+  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
+  const [showHeroVisual, setShowHeroVisual] = useState(false);
 
   const heroProgress = useMotionValue(0);
 
@@ -506,6 +572,32 @@ export function HeroSection() {
   const heroContainer = staggerContainer(0.055, 0.05);
   const child = reducedMotion ? noMotion : fadeRise;
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
+  const heroRightRailStyle = reducedMotion
+    ? undefined
+    : { y: rightRailY, opacity: rightRailOpacity };
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const sync = () => setIsDesktopViewport(mq.matches);
+
+    sync();
+    mq.addEventListener('change', sync);
+
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktopViewport) {
+      setShowHeroVisual(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setShowHeroVisual(true);
+    }, 420);
+
+    return () => window.clearTimeout(timer);
+  }, [isDesktopViewport]);
 
   // V1.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
   const statsRef = useRef<HTMLDivElement>(null);
@@ -552,264 +644,299 @@ export function HeroSection() {
       <div className="work-surface-glow" aria-hidden="true" />
 
       <div className="relative z-10 container">
-        <div className="grid items-start gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(16rem,0.98fr)] lg:items-center lg:gap-10 xl:gap-14">
-          {/* ── Left Column: Conviction Content ── */}
-          <m.div
-            variants={heroContainer}
-            initial="hidden"
-            animate="visible"
-            className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left"
-          >
-            {/* Availability Pill
-                Dark-pattern ban: no fake slot counts or artificial deadlines.
-                Border color tracks --chapter-accent via CSS (v2026.4 enhancement). */}
-            <m.div variants={child} data-cinematic="panel">
-              <div
-                className="hero-availability-pill inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
-                aria-label="Currently available for Staff+ roles"
-              >
-                <span className="dot-live" aria-hidden="true" />
-                <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
-                  AVAILABLE · STAFF+ ROLES
-                  <span className="hero-availability-updated mt-1 block text-center text-[9px] tracking-normal text-white/50 normal-case sm:mt-0 sm:ml-2 sm:inline sm:text-left">
-                    · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
-                  </span>
-                </span>
-              </div>
-            </m.div>
-
-            {/* Identity Module
-                Portrait sizing is tied to the hero column width for consistent
-                composition across 320/375/390 and tablet single-column layouts. */}
-            <m.div variants={child} className="flex w-full justify-center py-1 sm:py-2 lg:hidden">
-              <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="mobile" />
-            </m.div>
-
-            {/* Kicker */}
-            <m.p
-              variants={child}
-              data-cinematic="eyebrow"
-              className="hero-kicker text-color-film-teal mx-auto max-w-[36ch] font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase lg:mx-0"
-            >
-              <span className="inline sm:hidden">
-                <span className="whitespace-nowrap">Full-Stack</span>
-                {' · '}
-                <span className="whitespace-nowrap">Java</span>
-                {' · '}
-                <span className="whitespace-nowrap">Next.js 15</span>
-                <br />
-                <span className="whitespace-nowrap">React Native</span>
-                {' · '}
-                <span className="whitespace-nowrap">AI Systems · Fintech</span>
-              </span>
-              <span className="hidden sm:inline">
-                Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech
-              </span>
-            </m.p>
-
-            {/* Headline */}
-            <h1
-              id="hero-heading"
-              data-cinematic="title"
-              className="w-full max-w-[var(--hero-headline-max)] text-balance lg:mx-0"
-              aria-label="The system has to work at 2am. That's not a slogan. It's a design constraint."
-            >
-              <m.span
-                variants={wordContainer}
-                initial="hidden"
-                animate="visible"
-                className="inline"
-                aria-hidden="true"
-              >
-                {HEADLINE_WORDS.map((word, i) => (
-                  <span
-                    key={`${word}-${i}`}
-                    className="inline-block overflow-hidden"
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{
-                      marginRight:
-                        i < HEADLINE_WORDS.length - 1 ? 'var(--hero-word-gap,0.28em)' : '0',
-                      lineHeight: 'var(--leading-tight)',
-                      paddingBottom: 'var(--hero-word-pad-bottom, 0em)',
-                      verticalAlign: 'bottom',
-                    }}
-                  >
-                    <m.span
-                      variants={reducedMotion ? noMotion : wordReveal}
-                      className="inline-block"
-                    >
-                      {word}
-                    </m.span>
-                  </span>
-                ))}
-              </m.span>
-            </h1>
-
-            <m.p variants={child} className="text-didone-sub max-w-[30ch]" aria-hidden="true">
-              {"That's not a slogan. It's a design constraint."}
-            </m.p>
-
-            {/* Body */}
-            <m.p
-              variants={child}
-              data-cinematic="lede"
-              className="hero-body-text mx-auto w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)] lg:mx-0"
-            >
-              Production systems that stay alive when it matters most — compliant, fast, and
-              relentlessly reliable. Built under Lagos constraints. Deployed to global standards.
-            </m.p>
-
-            {/* Stats Strip — count-up on viewport intersection */}
-            <m.div
-              variants={child}
-              data-cinematic="proof"
-              aria-label="Performance metrics"
-              ref={statsRef}
-            >
-              <div className="conviction-stat-strip" role="list">
-                {CONVICTION_STATS.map(({ value, label, stat }) => (
-                  <ConvictionStat
-                    key={label}
-                    value={value}
-                    label={label}
-                    stat={stat}
-                    reducedMotion={Boolean(reducedMotion)}
-                    shouldAnimate={statsVisible}
-                  />
-                ))}
-              </div>
-            </m.div>
-
-            {/* Proof Callout — each system on its own line for sm+ readability */}
-            <m.div
-              variants={child}
-              data-cinematic="panel"
-              className="hero-proof-callout hidden overflow-hidden sm:block"
-            >
-              <p className="hero-body-text text-sm leading-7 font-medium text-[oklch(94%_0.007_80_/_0.70)]">
-                <span className="block">
-                  TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.
-                </span>
-                <span className="block">
-                  SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.
-                </span>
-                <span className="block">
-                  SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.
-                </span>
-                <span className="text-color-film-teal mt-1 block">
-                  Shipped in Lagos · Running globally · Battle-tested.
-                </span>
-              </p>
-            </m.div>
-
-            <m.div variants={child} data-cinematic="panel" className="live-bar-wrapper-hero">
-              <LiveActivityBar />
-            </m.div>
-
-            {/* CTAs */}
-            <m.div variants={child} data-cinematic="cta" className="cta-hero-group mx-auto lg:mx-0">
-              <Link
-                href={anchorUrl('section-contact')}
-                onClick={(event) => handleAnchorJump(event, 'section-contact', 'contact')}
-                className="cta-primary cta-primary--lg tactile-press"
-                aria-label="Tell me about your constraints"
-              >
-                <span
-                  className="bg-color-success inline-block h-2 w-2 rounded-full"
-                  aria-hidden="true"
-                />
-                Tell me your constraints
-              </Link>
-              <Link
-                href={anchorUrl('section-projects')}
-                onClick={(event) => handleAnchorJump(event, 'section-projects', 'projects')}
-                className="cta-secondary tactile-press"
-                aria-label="See the work"
-              >
-                See the work <span aria-hidden="true">↓</span>
-              </Link>
-            </m.div>
-
-            <m.div variants={child} className="response-reassurance mx-auto lg:mx-0">
-              {/* flex + items-center: reliable iOS Safari alignment (inline-block + align-middle
-                  collapses the gap at 10px mono on retina, merging dot into capital "I"). */}
-              <p className="text-color-text-secondary flex items-center gap-2 font-mono text-[10px] tracking-wider">
-                <span
-                  className="bg-color-success inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                  aria-hidden="true"
-                />
-                I respond within 24 hours — usually faster.
-              </p>
-            </m.div>
-
-            <m.div variants={child} className="cv-ghost-wrapper mx-auto lg:mx-0">
-              <a
-                href={CV_ASSET_PATH}
-                download
-                className="cta-ghost tactile-press"
-                aria-label="Download Oscar's resume as PDF"
-              >
-                Download CV <span aria-hidden="true">↓</span>
-              </a>
-            </m.div>
-
-            {/* Warmup micro-CTA — for the evaluating visitor who reads before committing.
-                mono 12px, secondary color, not a button. */}
-            <m.div variants={child} className="mt-2 text-center lg:text-left">
-              <Link
-                href={anchorUrl('section-writing')}
-                onClick={(event) => handleAnchorJump(event, 'section-writing', 'writing')}
-                className="group text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
-                aria-label="Read how the 2am constraint became the design system"
-              >
-                Or read how the 2am constraint became the design system{' '}
-                <span
-                  aria-hidden="true"
-                  className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+        <m.div
+          variants={heroContainer}
+          initial="hidden"
+          animate="visible"
+          className="hero-shell flex flex-col gap-8 lg:gap-10"
+        >
+          <div className="grid items-start gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(19rem,0.92fr)] lg:gap-14 xl:gap-16">
+            {/* ── Left Column: Conviction Content ── */}
+            <div className="flex min-w-0 flex-col items-start text-left">
+              <m.div variants={child} data-cinematic="panel">
+                <div
+                  className="hero-availability-pill inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                  aria-label="Currently available for Staff+ roles"
                 >
-                  →
-                </span>
-              </Link>
+                  <span className="dot-live" aria-hidden="true" />
+                  <span className="hero-availability-label font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
+                    {HERO.availability}
+                    <span className="hero-availability-updated mt-1 block text-[9px] tracking-normal text-white/50 normal-case sm:mt-0 sm:ml-2 sm:inline">
+                      · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
+                    </span>
+                  </span>
+                </div>
+              </m.div>
+
+              <m.p
+                variants={child}
+                data-cinematic="eyebrow"
+                className="hero-kicker text-color-film-teal mt-4 max-w-[42ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase"
+              >
+                {HERO.kicker}
+              </m.p>
+
+              <m.div
+                variants={child}
+                className="hero-heading-stack mt-4 flex w-full max-w-[var(--hero-body-max)] flex-col gap-4 sm:gap-5"
+              >
+                <h1
+                  id="hero-heading"
+                  data-cinematic="title"
+                  className="w-full max-w-[var(--hero-headline-max)] text-balance"
+                  aria-label={`${HERO.h1} ${HERO.subHeadline}`}
+                >
+                  <m.span
+                    variants={wordContainer}
+                    initial="hidden"
+                    animate="visible"
+                    className="inline"
+                    aria-hidden="true"
+                  >
+                    {HEADLINE_WORDS.map((word, i) => (
+                      <span
+                        key={`${word}-${i}`}
+                        className="inline-block overflow-hidden"
+                        // eslint-disable-next-line no-restricted-syntax
+                        style={{
+                          marginRight:
+                            i < HEADLINE_WORDS.length - 1 ? 'var(--hero-word-gap,0.28em)' : '0',
+                          lineHeight: 'var(--leading-tight)',
+                          paddingBottom: 'var(--hero-word-pad-bottom, 0em)',
+                          verticalAlign: 'bottom',
+                        }}
+                      >
+                        <m.span
+                          variants={reducedMotion ? noMotion : wordReveal}
+                          className="inline-block"
+                        >
+                          {word}
+                        </m.span>
+                      </span>
+                    ))}
+                  </m.span>
+                </h1>
+
+                <p className="text-didone-sub max-w-[30ch]" aria-hidden="true">
+                  {HERO.subHeadline}
+                </p>
+
+                <p
+                  data-cinematic="lede"
+                  className="hero-body-text w-full max-w-[var(--hero-body-max)] text-base leading-[1.8] text-[oklch(94%_0.007_80_/_0.70)]"
+                >
+                  {HERO.body}
+                </p>
+              </m.div>
+
+              <m.div
+                variants={child}
+                className="hero-mobile-portrait-wrap mt-2 flex w-full justify-center lg:hidden"
+              >
+                <div className="hero-mobile-portrait-shell">
+                  <HeroPortrait
+                    className="mx-auto"
+                    priority={!isDesktopViewport}
+                    reducedMotion={Boolean(reducedMotion)}
+                    variant="mobile"
+                  />
+                </div>
+              </m.div>
+
+              <m.div variants={child} className="hero-trust-strip mt-4" aria-label="Trust signals">
+                {TRUST_STRIP_ITEMS.map((item) => (
+                  <span key={item} className="hero-trust-chip">
+                    {item}
+                  </span>
+                ))}
+              </m.div>
+
+              <m.div
+                variants={child}
+                data-cinematic="proof"
+                aria-label="Performance metrics"
+                ref={statsRef}
+                className="w-full"
+              >
+                <div className="conviction-stat-strip hero-metrics-grid" role="list">
+                  {CONVICTION_STATS.map(({ value, label, stat }) => {
+                    const detail = METRIC_DETAILS[stat];
+
+                    return (
+                      <ConvictionStat
+                        key={label}
+                        value={value}
+                        label={label}
+                        stat={stat}
+                        source={detail.source}
+                        detail={detail.detail}
+                        status={detail.status}
+                        reducedMotion={Boolean(reducedMotion)}
+                        shouldAnimate={statsVisible}
+                      />
+                    );
+                  })}
+                </div>
+              </m.div>
+
+              <m.div variants={child} data-cinematic="cta" className="cta-hero-group mt-2">
+                <m.div
+                  ref={primaryMagnetic.ref}
+                  // eslint-disable-next-line no-restricted-syntax
+                  style={{ x: primaryMagnetic.x, y: primaryMagnetic.y }}
+                  variants={magneticButton}
+                  initial="rest"
+                  animate="rest"
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Link
+                    href={HERO.cta.primary.href}
+                    onClick={(event) => handleAnchorJump(event, 'section-contact', 'contact')}
+                    className="cta-primary cta-primary--lg tactile-press"
+                    aria-label="Tell me about your constraints"
+                  >
+                    <span
+                      className="bg-color-success inline-block h-2 w-2 rounded-full"
+                      aria-hidden="true"
+                    />
+                    {HERO.cta.primary.label}
+                  </Link>
+                </m.div>
+
+                <m.div
+                  ref={secondaryMagnetic.ref}
+                  // eslint-disable-next-line no-restricted-syntax
+                  style={{ x: secondaryMagnetic.x, y: secondaryMagnetic.y }}
+                  variants={magneticButton}
+                  initial="rest"
+                  animate="rest"
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Link
+                    href={HERO.cta.secondary.href}
+                    onClick={(event) => handleAnchorJump(event, 'section-projects', 'projects')}
+                    className="cta-secondary tactile-press"
+                    aria-label="See the work"
+                  >
+                    {HERO.cta.secondary.label} <span aria-hidden="true">↓</span>
+                  </Link>
+                </m.div>
+              </m.div>
+
+              <m.div
+                variants={child}
+                className="hero-support-links mt-4 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
+              >
+                <div className="response-reassurance">
+                  <p className="text-color-text-secondary flex items-center gap-2 font-mono text-[10px] tracking-wider">
+                    <span
+                      className="bg-color-success inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                      aria-hidden="true"
+                    />
+                    I respond within 24 hours — usually faster.
+                  </p>
+                </div>
+
+                <div className="cv-ghost-wrapper">
+                  <a
+                    href={CV_ASSET_PATH}
+                    download
+                    className="cta-ghost tactile-press"
+                    aria-label="Download Oscar's resume as PDF"
+                  >
+                    {HERO.cta.cv.label} <span aria-hidden="true">↓</span>
+                  </a>
+                </div>
+              </m.div>
+
+              <m.div variants={child} className="mt-1 text-left">
+                <Link
+                  href={anchorUrl('section-writing')}
+                  onClick={(event) => handleAnchorJump(event, 'section-writing', 'writing')}
+                  className="group text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
+                  aria-label="Read how the 2am constraint became the design system"
+                >
+                  Or read how the 2am constraint became the design system{' '}
+                  <span
+                    aria-hidden="true"
+                    className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
+                </Link>
+              </m.div>
+            </div>
+
+            {/* ── Right Column: Desktop Visuals ── */}
+            <m.div
+              variants={child}
+              data-cinematic="media"
+              className="hidden transform-gpu lg:flex lg:w-full lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
+              // eslint-disable-next-line no-restricted-syntax
+              style={heroRightRailStyle}
+            >
+              <div className="hero-portrait-dock flex w-full justify-center xl:justify-end">
+                <HeroPortrait
+                  className="mx-auto xl:mx-0"
+                  priority={isDesktopViewport}
+                  reducedMotion={Boolean(reducedMotion)}
+                  variant="desktop"
+                />
+              </div>
+              <div className="hero-visual-dock min-h-80 w-full max-w-[34rem]">
+                {showHeroVisual ? (
+                  <HeroVisual />
+                ) : (
+                  <div
+                    className="glass-elevated min-h-80 w-full rounded-[var(--radius-xl)] opacity-30"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            </m.div>
+          </div>
+
+          <div className="hero-support-grid grid gap-4 lg:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)] lg:gap-6">
+            <m.div variants={child} className="hero-support-cluster flex flex-col gap-4">
+              <div className="hero-support-panel overflow-hidden">
+                <LiveActivityBar />
+              </div>
+
+              <div className="hero-proof-callout hero-support-panel hidden overflow-hidden lg:block">
+                <p className="hero-body-text text-sm leading-7 font-medium text-[oklch(94%_0.007_80_/_0.70)]">
+                  <span className="block">
+                    TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.
+                  </span>
+                  <span className="block">
+                    SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.
+                  </span>
+                  <span className="block">
+                    SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.
+                  </span>
+                  <span className="text-color-film-teal mt-1 block">{HERO.trustStrip}</span>
+                </p>
+              </div>
             </m.div>
 
-            {/* Proof Carousel
-                FIX 3 (v2026.4): Replaced `m.div variants={proofContainer} initial="hidden"
-                animate="visible"` (double-animation driver) with `variants={child}` — inherits
-                heroContainer orchestration, animates at correct stagger position, no drift. */}
-            <m.div variants={child}>
+            <m.div variants={child} className="hero-support-panel hero-carousel-shell p-4 sm:p-5">
               <ProofCarousel reducedMotion={Boolean(reducedMotion)} />
             </m.div>
+          </div>
 
-            {/* ⌘K hint — surfaces the command palette for power users */}
-            <m.div
-              variants={child}
-              className="mt-4 flex transform-gpu justify-center lg:justify-end"
+          <m.div variants={child} className="flex justify-start">
+            <button
+              type="button"
+              onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
+              className="border-color-border text-color-text-secondary hover:text-color-text-primary inline-flex cursor-pointer items-center gap-1.5 rounded border bg-white/[0.02] px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors hover:border-white/20"
+              aria-label="Open command palette"
             >
-              <button
-                type="button"
-                onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
-                className="border-color-border text-color-text-secondary hover:text-color-text-primary inline-flex cursor-pointer items-center gap-1.5 rounded border bg-white/[0.02] px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors hover:border-white/20"
-                aria-label="Open command palette"
-              >
-                <kbd>⌘K</kbd>
-                <span>Navigate</span>
-              </button>
-            </m.div>
+              <kbd>⌘K</kbd>
+              <span>Navigate</span>
+            </button>
           </m.div>
-
-          {/* ── Right Column: Desktop Visuals ── */}
-          <m.div
-            data-cinematic="media"
-            className="hidden transform-gpu lg:flex lg:w-full lg:max-w-xl lg:min-w-0 lg:flex-col lg:items-end lg:gap-5"
-            // eslint-disable-next-line no-restricted-syntax
-            style={reducedMotion ? undefined : { y: rightRailY, opacity: rightRailOpacity }}
-          >
-            <HeroPortrait reducedMotion={Boolean(reducedMotion)} variant="desktop" />
-            <div className="min-h-80 w-full">
-              <HeroVisual />
-            </div>
-          </m.div>
-        </div>
+        </m.div>
       </div>
     </m.section>
   );

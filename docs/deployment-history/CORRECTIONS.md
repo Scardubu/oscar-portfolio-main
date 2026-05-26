@@ -2,6 +2,29 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-26 — Navbar + chapter rail harmonization and Lighthouse-focused perf pass
+
+- Tightened the global chrome to match the upgraded hero by refactoring `components/Navbar.tsx` and `components/ScrollProgress.tsx` to use dedicated visual-system classes (hero-nav shell, active nav background states, mobile nav panel/item states, chapter rail shell/dot/tooltip states) instead of scattered inline styles.
+- Added a dedicated harmonization layer in `app/globals.css` for nav + chapter rail (`HARMONIZATION v2026.10`) with chapter-accent-aware borders, ambient gradients, indicator glow, and reduced-motion-safe transitions.
+- Improved hero LCP behavior in `components/HeroSection.tsx` and `components/IdentityCard.tsx` by making headshot image priority viewport-aware (`priority` prop) so the visible portrait variant gets eager/high fetch priority while the hidden variant defaults to lazy/auto.
+- Reduced early homepage JS pressure by deferring heavy client surfaces:
+  - `components/DeferredCommandPalette.tsx` now mounts `CommandPalette` only after explicit command intent (`⌘K` / `command-palette:open`), preserving early-open behavior via `window.__commandPaletteRequested`.
+  - `components/cinematic/DeferredThreeBrushField.tsx` defers `ThreeBrushField` mount and skips low-power paths (`max-width: 639px`, coarse pointer, reduced motion).
+  - `components/HeroSection.tsx` now delays `HeroVisual` mount briefly on desktop and renders a lightweight glass placeholder first.
+- Hardened build reliability and reduced non-critical font overhead in `app/layout.tsx` by removing remote Google-font imports for JetBrains Mono and Playfair Display (mono/didone now resolve via existing CSS fallback stacks), while keeping Syne + DM Sans for core brand/body rendering.
+
+Validation after navbar/rail + performance pass:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run lint` passed with zero lint errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --project=mobile-chrome --workers=1` passed with 35 tests passed and 5 expected skips.
+
+Lighthouse execution note:
+
+- `pnpm run lhci` failed because `lhci` is not installed in this environment (`sh: 1: lhci: not found`).
+- Fallback attempt `pnpm dlx @lhci/cli@0.15.1 autorun` failed with npm registry network timeouts (`ETIMEDOUT` / `ERR_PNPM_META_FETCH_FAIL`), so a fresh Lighthouse score sweep could not be completed in this session.
+
 ## 2026-05-26 — Mobile hero recovery + final integration cleanup
 
 - Fixed the mobile luxury identity card in `components/HeroSection.tsx` by aligning the mobile `next/image` `sizes` contract with the actual portrait frame, replacing the percentage-driven mobile width with deterministic card bounds, and keeping `/public/headshot.webp` as the canonical asset.

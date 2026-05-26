@@ -33,8 +33,8 @@
 //     This transforms the blank-card state from "broken" to "developing" — a
 //     premium photo-reveal moment when the portrait fades in.
 
-import { m, useReducedMotion } from 'framer-motion';
-import { useCallback, useRef, useState } from 'react';
+import { m, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
+import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -44,6 +44,7 @@ interface IdentityCardProps {
   variant: IdentityCardVariant;
   className?: string;
   reducedMotion?: boolean;
+  priority?: boolean;
 }
 
 const PORTRAIT_SOURCES = [
@@ -77,10 +78,22 @@ function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
   );
 }
 
-export function IdentityCard({ variant, className, reducedMotion }: Readonly<IdentityCardProps>) {
+export function IdentityCard({
+  variant,
+  className,
+  reducedMotion,
+  priority,
+}: Readonly<IdentityCardProps>) {
   const prefersReducedMotion = useReducedMotion();
   const shouldReduceMotion = reducedMotion ?? Boolean(prefersReducedMotion);
   const isDesktop = variant === 'desktop';
+  const shouldPrioritizeImage = priority ?? !isDesktop;
+  const imageLoading = shouldPrioritizeImage ? 'eager' : 'lazy';
+  const imageFetchPriority = shouldPrioritizeImage ? 'high' : 'auto';
+  const rawRotateX = useMotionValue(0);
+  const rawRotateY = useMotionValue(0);
+  const rotateX = useSpring(rawRotateX, { stiffness: 220, damping: 24, mass: 0.42 });
+  const rotateY = useSpring(rawRotateY, { stiffness: 220, damping: 24, mass: 0.42 });
 
   const [portraitIndex, setPortraitIndex] = useState(0);
   const [portraitReady, setPortraitReady] = useState(false);
@@ -125,6 +138,25 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
   const portraitSrc = PORTRAIT_SOURCES[portraitIndex];
 
+  const handlePointerMove = useCallback(
+    (event: ReactMouseEvent<HTMLElement>) => {
+      if (shouldReduceMotion || !isDesktop) return;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const pointerX = (event.clientX - rect.left) / rect.width;
+      const pointerY = (event.clientY - rect.top) / rect.height;
+
+      rawRotateX.set((0.5 - pointerY) * 5.5);
+      rawRotateY.set((pointerX - 0.5) * 7);
+    },
+    [isDesktop, rawRotateX, rawRotateY, shouldReduceMotion]
+  );
+
+  const resetPointerTilt = useCallback(() => {
+    rawRotateX.set(0);
+    rawRotateY.set(0);
+  }, [rawRotateX, rawRotateY]);
+
   return (
     <m.figure
       initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
@@ -132,9 +164,8 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
       whileHover={
         isDesktop && !shouldReduceMotion
           ? {
-              scale: 1.012,
-              rotateX: -2,
-              rotateY: 2,
+              scale: 1.014,
+              y: -2,
               transition: { type: 'spring', stiffness: 240, damping: 22 },
             }
           : undefined
@@ -147,24 +178,37 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         // FIX 10: removed [transform-style:preserve-3d] — inline style is SoT
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
-          ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]'
-          : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
+          ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
+          : 'w-full max-w-[15.5rem] min-w-[13rem] self-center sm:max-w-[17.5rem] md:max-w-[18.5rem] lg:hidden',
         className
       )}
-      style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat' }}
+      // eslint-disable-next-line no-restricted-syntax
+      style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat', rotateX, rotateY }}
+      onMouseMove={handlePointerMove}
+      onMouseLeave={resetPointerTilt}
     >
       {/* Ambient glow behind the card */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.18),transparent_60%),radial-gradient(circle_at_70%_22%,rgba(255,255,255,0.08),transparent_35%)] blur-3xl"
+        className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.22),transparent_56%),radial-gradient(circle_at_74%_22%,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_50%_88%,rgba(255,255,255,0.05),transparent_38%)] blur-3xl"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-[8%] top-[6%] -z-10 h-10 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),transparent_68%)] opacity-70 blur-2xl"
       />
 
       {/* Card frame */}
-      <div className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[36px] border border-white/12 bg-[oklch(16%_0.015_255_/_0.94)] shadow-[0_26px_72px_rgba(0,0,0,0.58),0_0_0_1px_rgba(255,255,255,0.06)]">
+      <div className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[38px] border border-white/12 bg-[linear-gradient(180deg,rgba(14,20,30,0.98),rgba(6,9,15,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.62),0_0_0_1px_rgba(255,255,255,0.08)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.58),transparent)]"
+        />
+
         {/* Decorative overlays — intentionally z-[1]+ above the image */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_12%,transparent_32%,transparent_70%,rgba(0,0,0,0.58)_100%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_10%,transparent_30%,transparent_72%,rgba(0,0,0,0.62)_100%)]"
         />
         <div
           aria-hidden="true"
@@ -172,7 +216,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.12),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.1),transparent_56%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
         />
         {/* Top edge highlight */}
         <div
@@ -189,13 +233,11 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         {!portraitReady && !portraitFailed && (
           <div
             aria-hidden="true"
-            className={cn(
-              'absolute inset-0 overflow-hidden',
-              shouldReduceMotion && 'hidden'
-            )}
+            className={cn('absolute inset-0 overflow-hidden', shouldReduceMotion && 'hidden')}
           >
             <div
               className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
+              // eslint-disable-next-line no-restricted-syntax
               style={{
                 backgroundImage:
                   'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
@@ -206,19 +248,21 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
         {/* Portrait image */}
         {!portraitFailed ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             ref={imgRef}
             src={portraitSrc}
             alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-            loading="eager"
+            loading={imageLoading}
+            fetchPriority={imageFetchPriority}
             decoding="async"
             draggable={false}
             onLoad={handleLoad}
             onError={handleError}
             className={cn(
-              'absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out',
+              'absolute inset-0 h-full w-full scale-[1.02] object-cover transition-opacity duration-500 ease-out',
               portraitReady ? 'opacity-100' : 'opacity-0',
-              isDesktop ? 'object-[50%_14%]' : 'object-[50%_18%]'
+              isDesktop ? 'object-[50%_12%]' : 'object-[50%_15%]'
             )}
             // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
           />
@@ -229,7 +273,12 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         {/* Inner ring */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[3] rounded-[36px] ring-1 ring-white/10 ring-inset"
+          className="pointer-events-none absolute inset-0 z-[3] rounded-[38px] ring-1 ring-white/10 ring-inset"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-[10px] z-[3] rounded-[30px] border border-white/6"
         />
 
         {/* Top badge row: System ID + Staff+ pill */}
@@ -244,7 +293,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           <div className="min-w-0">
             <span
               className={cn(
-                'block font-mono text-white/46 uppercase',
+                'block font-mono text-white/54 uppercase',
                 isDesktop
                   ? 'text-[9px] tracking-[0.28em]'
                   : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
@@ -254,7 +303,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
             </span>
             <span
               className={cn(
-                'mt-1 block truncate text-white/86 uppercase',
+                'mt-1 block truncate text-white/90 uppercase',
                 isDesktop
                   ? 'text-[11px] tracking-[0.24em]'
                   : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
@@ -266,12 +315,16 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
           <span
             className={cn(
-              'shrink-0 rounded-full border border-white/12 bg-black/45 font-mono text-white/80 uppercase backdrop-blur-md',
+              'shrink-0 rounded-full border border-emerald-400/18 bg-black/46 font-mono text-white/84 uppercase backdrop-blur-md',
               isDesktop
                 ? 'px-2.5 py-1 text-[9px] tracking-[0.2em]'
                 : 'px-2 py-1 text-[8px] tracking-[0.18em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.2em]'
             )}
           >
+            <span
+              className="mr-1.5 inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+              aria-hidden="true"
+            />
             Staff+
           </span>
         </div>
@@ -288,7 +341,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           <div className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}>
             <span
               className={cn(
-                'block font-mono text-white/46 uppercase',
+                'block font-mono text-white/54 uppercase',
                 isDesktop
                   ? 'text-[9px] tracking-[0.26em]'
                   : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
@@ -298,7 +351,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
             </span>
             <span
               className={cn(
-                'mt-1 block font-mono text-white/78 uppercase',
+                'mt-1 block font-mono text-white/82 uppercase',
                 isDesktop
                   ? 'truncate text-[10px] tracking-[0.18em]'
                   : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
@@ -310,7 +363,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
           <span
             className={cn(
-              'shrink-0 font-mono text-white/56 uppercase',
+              'shrink-0 font-mono text-white/60 uppercase',
               isDesktop
                 ? 'text-[9px] tracking-[0.22em]'
                 : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'

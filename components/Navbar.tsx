@@ -139,23 +139,14 @@ export default function Navbar() {
         initial="hidden"
         animate="visible"
         variants={navbarVariants}
-        className={[
-          'fixed inset-x-0 top-0 z-50 transform-gpu border-b backdrop-blur-xl',
-          'transition-[background-color,border-color,box-shadow] duration-200',
-          scrolled
-            ? 'border-white/10 bg-[oklch(7%_0.01_265/0.92)] shadow-[0_1px_0_oklch(100%_0_0/0.04),0_4px_24px_-4px_oklch(0%_0_0/0.45)]'
-            : 'border-white/8 bg-black/20',
-        ].join(' ')}
-        // eslint-disable-next-line no-restricted-syntax
-        style={{ translateZ: 0 }}
+        className="glass-nav hero-nav-shell [transform:translateZ(0)]"
+        data-scrolled={scrolled ? 'true' : 'false'}
       >
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* ── Wordmark ───────────────────────────────────────────────── */}
           <Link
             href="/"
-            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
-            // eslint-disable-next-line no-restricted-syntax
-            style={{ '--tw-ring-color': 'var(--chapter-accent)' } as React.CSSProperties}
+            className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
             aria-label="Oscar Ndugbu — Homepage"
           >
             <div className="flex flex-col gap-0.5">
@@ -184,29 +175,21 @@ export default function Navbar() {
                   onClick={(e) => handleNavClick(e, item.id)}
                   aria-current={active ? 'page' : undefined}
                   className={[
-                    'group relative rounded-full px-3 py-2 text-sm transition-colors duration-200',
+                    'hero-nav-item group relative rounded-full px-3 py-2 text-sm transition-colors duration-200',
                     'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                    'focus-visible:ring-[color:var(--chapter-accent)]',
                     active ? 'text-white' : 'text-white/60 hover:text-white/90',
                   ].join(' ')}
-                  // eslint-disable-next-line no-restricted-syntax
-                  style={{ '--tw-ring-color': 'var(--chapter-accent)' } as React.CSSProperties}
                 >
                   {/* Tinted glass background — chapter-accent tinted on active */}
                   <span
                     aria-hidden="true"
                     className={[
-                      'absolute inset-0 rounded-full transition-opacity duration-300',
-                      active ? 'opacity-100' : 'opacity-0 group-hover:opacity-60',
+                      'hero-nav-item-bg absolute inset-0 rounded-full transition-opacity duration-300',
+                      active
+                        ? 'hero-nav-item-bg-active opacity-100'
+                        : 'hero-nav-item-bg-idle opacity-0 group-hover:opacity-60',
                     ].join(' ')}
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{
-                      background: active
-                        ? 'color-mix(in oklch, var(--chapter-accent) 12%, oklch(100% 0 0 / 0.06))'
-                        : 'oklch(100% 0 0 / 0.05)',
-                      border: active
-                        ? '1px solid color-mix(in oklch, var(--chapter-accent) 20%, oklch(100% 0 0 / 0.08))'
-                        : '1px solid transparent',
-                    }}
                   />
 
                   <span className="relative">{item.label}</span>
@@ -216,11 +199,9 @@ export default function Navbar() {
                     aria-hidden="true"
                     className={[
                       'nav-item-active-indicator absolute inset-x-3 bottom-1 h-px rounded-full',
-                      'transition-[opacity,transform] duration-300',
+                      'origin-center transition-[opacity,transform] duration-300',
                       active ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
                     ].join(' ')}
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{ transformOrigin: 'center' }}
                   />
                 </a>
               );
@@ -230,7 +211,7 @@ export default function Navbar() {
           {/* ── Mobile menu button ─────────────────────────────────────── */}
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:bg-white/10 lg:hidden"
+            className="hero-nav-menu-button inline-flex h-10 w-10 items-center justify-center rounded-full lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
@@ -272,7 +253,7 @@ export default function Navbar() {
             animate="visible"
             exit="hidden"
             variants={mobileMenuVariants}
-            className="fixed inset-x-0 top-16 z-50 border-b border-white/8 bg-black/95 px-4 py-4 backdrop-blur-xl lg:hidden"
+            className="hero-mobile-nav-panel fixed inset-x-0 top-16 z-50 px-4 py-4 lg:hidden"
           >
             <div className="flex flex-col gap-2">
               {navItems.map((item) => {
@@ -284,31 +265,18 @@ export default function Navbar() {
                       onClick={(e) => handleNavClick(e, item.id)}
                       aria-current={active ? 'page' : undefined}
                       className={[
-                        'flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors duration-200',
+                        'hero-mobile-nav-item flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors duration-200',
                         'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                        'focus-visible:ring-[color:var(--chapter-accent)]',
                         active ? 'text-white' : 'text-white/75',
+                        active ? 'hero-mobile-nav-item--active' : 'hero-mobile-nav-item--idle',
                       ].join(' ')}
-                      // eslint-disable-next-line no-restricted-syntax
-                      style={
-                        {
-                          background: active
-                            ? 'color-mix(in oklch, var(--chapter-accent) 10%, oklch(100% 0 0 / 0.07))'
-                            : 'oklch(100% 0 0 / 0.04)',
-                          borderColor: active
-                            ? 'color-mix(in oklch, var(--chapter-accent) 25%, oklch(100% 0 0 / 0.10))'
-                            : 'oklch(100% 0 0 / 0.08)',
-
-                          '--tw-ring-color': 'var(--chapter-accent)',
-                        } as React.CSSProperties
-                      }
                     >
                       <span>{item.label}</span>
                       {active && (
                         <span
                           aria-hidden="true"
-                          className="h-1.5 w-1.5 rounded-full"
-                          // eslint-disable-next-line no-restricted-syntax
-                          style={{ background: 'var(--chapter-accent)' }}
+                          className="hero-mobile-nav-item-dot h-1.5 w-1.5 rounded-full"
                         />
                       )}
                     </a>
