@@ -3421,7 +3421,7 @@ section.border-t {
    horizontal swipe gestures in the carousel.
 */
 .mobile-carousel {
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
 }
 main,
 section,
@@ -4038,6 +4038,7 @@ select {
   --hero-headline-max: min(100%, 20ch);
   --hero-body-max: min(100%, 58ch);
   --hero-word-gap: 0.28em;
+  --hero-word-pad-bottom: 0em;
   --hero-dashboard-glow: 0.2;
 }
 
@@ -4099,8 +4100,9 @@ select {
     --hero-col-gap: clamp(1.25rem, 5vw, 1.75rem);
     --hero-headline-max: min(100%, 14.5rem);
     --hero-word-gap: 0.22em;
+    --hero-word-pad-bottom: 0.08em;
     --hero-pad-top: max(calc(env(safe-area-inset-top, 0px) + 3.75rem), 4.25rem);
-    --hero-pad-bottom: clamp(1.5rem, 5vw, 2.25rem);
+    --hero-pad-bottom: clamp(2.25rem, 7vw, 3.25rem);
     --hero-dashboard-glow: 0.12;
   }
 
@@ -4126,8 +4128,9 @@ select {
     --text-hero: clamp(2.1rem, 9vw + 0.1rem, 3rem);
     --hero-headline-max: min(100%, 16.5rem);
     --hero-word-gap: 0.24em;
+    --hero-word-pad-bottom: 0.08em;
     --hero-pad-top: max(calc(env(safe-area-inset-top, 0px) + 3.9rem), 4.6rem);
-    --hero-pad-bottom: clamp(1.75rem, 5.6vw, 2.75rem);
+    --hero-pad-bottom: clamp(2.5rem, 6.2vw, 3.5rem);
     --hero-dashboard-glow: 0.14;
   }
 

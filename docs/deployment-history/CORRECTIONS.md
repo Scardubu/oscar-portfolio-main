@@ -2,6 +2,22 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-26 — Mobile hero recovery + final integration cleanup
+
+- Fixed the mobile luxury identity card in `components/HeroSection.tsx` by aligning the mobile `next/image` `sizes` contract with the actual portrait frame, replacing the percentage-driven mobile width with deterministic card bounds, and keeping `/public/headshot.webp` as the canonical asset.
+- Resolved telemetry pill clipping in `components/HeroSection.tsx` by splitting desktop and mobile badge treatments: desktop keeps the single-line premium pill, while mobile now uses bounded insets, wrap-safe copy, and tighter mono sizing so the badge stays inside the frame at 320px-768px.
+- Removed the mobile hero bottom-crop regression in `components/HeroSection.tsx` and `app/globals.css` by relaxing outer hero clipping on non-desktop breakpoints and adding mobile-only headline descender/bottom-spacing tokens.
+- Restored normal vertical gesture flow over the hero carousel in `app/globals.css` by changing `.mobile-carousel` touch behavior from `pan-x` to `pan-x pan-y`, preserving horizontal swipe without trapping page scroll.
+- Cleared the remaining Lenis hook lint warning in `hooks/useLenisScroll.ts` by removing the dependency-array spread pattern, simplifying subscribers to a stable callback-ref model, and updating the writing-route consumers in `hooks/useReadingProgress.ts`, `components/BlogProgressWidget.tsx`, and `components/BlogReadingProgressTracker.tsx`.
+- Applied a final UI hygiene pass in `components/Liveactivitybar.tsx` by replacing the invalid `text-ellipsis` utility with `truncate`, keeping the live activity row visually stable and semantically unchanged.
+
+Validation after the mobile hero recovery + final integration cleanup:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 expected skips.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=mobile-chrome --workers=1` passed with 17 tests passed and 3 expected skips.
+
 ## 2026-05-26 — Phase 2 integration pass (O2 + O4 + O5 + O6 + O7)
 
 - Migrated brand typography in `app/layout.tsx` from inline fallback variables to self-hosted `next/font/google` assignments for Syne, DM Sans, JetBrains Mono, and Playfair Display, then aligned `tailwind.config.ts` to the semantic font-variable contract already consumed by `app/globals.css`.

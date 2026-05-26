@@ -48,7 +48,7 @@ export function BlogProgressWidget({ relatedPosts, currentSlug }: BlogProgressWi
     });
   }, []);
 
-  useLenisScroll(handleScroll, [handleScroll]);
+  useLenisScroll(handleScroll);
 
   useEffect(() => {
     return () => {

@@ -14,12 +14,12 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 
 ## Current release status
 
-As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, the primary Playwright smoke suite on both `chromium` and `mobile-chrome`, and the secondary `tests/e2e/smoke.spec.ts` mobile pass that previously flaked on `networkidle`.
+As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, and the primary Playwright smoke suite on both `chromium` and `mobile-chrome` after the mobile hero recovery and final integration cleanup pass.
 
-- Brand typography is now self-hosted through `next/font/google` for Syne, DM Sans, JetBrains Mono, and Playfair Display while preserving the semantic CSS variable contract used by `app/globals.css` and Tailwind.
-- Blog reading progress surfaces now subscribe through a shared Lenis-aware scroll fan-out instead of three independent `window` listeners, keeping writing-route progress UI aligned with both cinematic and native-scroll fallback modes.
-- Project cards now share a chapter-accent hover glow system, the hero metrics strip has stronger visual hierarchy via glass stat pills, and the mobile proof-carousel active dot regression is corrected.
-- Stale scroll-reveal scaffolding (`useScrollReveal`, `ScrollRevealInit`, and the duplicate UI parallax wrapper) has been removed from the runtime surface.
+- The mobile luxury identity card now renders reliably from `/public/headshot.webp`, keeps its telemetry badge inside the portrait frame on 320px-768px layouts, and no longer crops the hero headline beneath it.
+- Hero gesture behavior has been normalized so swipes starting over the proof carousel no longer trap vertical page scroll on mobile while preserving the horizontal carousel interaction.
+- Writing-route progress surfaces continue to share the centralized Lenis-aware scroll source, and the remaining `useLenisScroll` dependency warning has been removed by simplifying the hook subscription model.
+- The live activity row keeps its existing motion and semantics but now uses a valid truncation utility, tightening the shipped UI surface without changing content or behavior.
 
 ---
 

@@ -26,7 +26,7 @@ export function useReadingProgress(): number {
     frameRef.current = window.requestAnimationFrame(update);
   }, [update]);
 
-  useLenisScroll(onScroll, [onScroll]);
+  useLenisScroll(onScroll);
 
   useEffect(() => {
     return () => {

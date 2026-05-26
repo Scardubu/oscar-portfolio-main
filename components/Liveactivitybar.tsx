@@ -103,7 +103,7 @@ export function LiveActivityBar() {
           )}
 
           <span
-            className="text-color-text-secondary min-w-0 flex-1 overflow-hidden text-xs leading-snug text-ellipsis whitespace-nowrap"
+            className="text-color-text-secondary min-w-0 flex-1 truncate text-xs leading-snug"
             title={label}
           >
             {label}

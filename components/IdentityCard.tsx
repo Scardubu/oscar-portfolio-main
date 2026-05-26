@@ -14,7 +14,7 @@ interface IdentityCardProps {
 }
 
 const CARD_SIZES = {
-  mobile: '(max-width: 389px) 78vw, (max-width: 639px) 72vw, (max-width: 1023px) 18rem, 18rem',
+  mobile: '(max-width: 639px) 208px, (max-width: 767px) 224px, (max-width: 1023px) 240px, 192px',
   desktop: '(min-width: 1536px) 18rem, (min-width: 1280px) 17rem, (min-width: 1024px) 16rem, 18rem',
 } as const;
 
@@ -44,7 +44,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
           ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]'
-          : 'w-[min(78vw,18rem)] max-w-[18rem] self-center lg:hidden',
+          : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
         className
       )}
       style={{ transformStyle: 'preserve-3d' }}
@@ -92,32 +92,78 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           className="pointer-events-none absolute inset-0 z-[3] rounded-[36px] ring-1 ring-inset ring-white/10"
         />
 
-        <div className="absolute inset-x-4 top-4 z-[4] flex items-start justify-between gap-3">
+        <div
+          className={cn(
+            'absolute z-[4] flex items-start justify-between',
+            isDesktop ? 'inset-x-4 top-4 gap-3' : 'inset-x-3.5 top-3.5 gap-2.5 sm:inset-x-4 sm:top-4 sm:gap-3'
+          )}
+        >
           <div className="min-w-0">
-            <span className="block font-mono text-[9px] tracking-[0.28em] text-white/46 uppercase">
+            <span
+              className={cn(
+                'block font-mono uppercase text-white/46',
+                isDesktop ? 'text-[9px] tracking-[0.28em]' : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
+              )}
+            >
               System ID
             </span>
-            <span className="mt-1 block truncate text-[11px] tracking-[0.24em] text-white/86 uppercase">
+            <span
+              className={cn(
+                'mt-1 block truncate uppercase text-white/86',
+                isDesktop ? 'text-[11px] tracking-[0.24em]' : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
+              )}
+            >
               Oscar Ndugbu
             </span>
           </div>
 
-          <span className="shrink-0 rounded-full border border-white/12 bg-black/45 px-2.5 py-1 font-mono text-[9px] tracking-[0.2em] text-white/80 uppercase backdrop-blur-md">
+          <span
+            className={cn(
+              'shrink-0 rounded-full border border-white/12 bg-black/45 font-mono text-white/80 uppercase backdrop-blur-md',
+              isDesktop
+                ? 'px-2.5 py-1 text-[9px] tracking-[0.2em]'
+                : 'px-2 py-1 text-[8px] tracking-[0.18em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.2em]'
+            )}
+          >
             Staff+
           </span>
         </div>
 
-        <div className="absolute inset-x-4 bottom-4 z-[4] flex items-end justify-between gap-3">
-          <div className="min-w-0 max-w-[70%]">
-            <span className="block font-mono text-[9px] tracking-[0.26em] text-white/46 uppercase">
+        <div
+          className={cn(
+            'absolute z-[4] flex justify-between',
+            isDesktop
+              ? 'inset-x-4 bottom-4 items-end gap-3'
+              : 'inset-x-3.5 bottom-3 items-end gap-2.5 sm:inset-x-4 sm:bottom-4 sm:gap-3'
+          )}
+        >
+          <div className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}>
+            <span
+              className={cn(
+                'block font-mono uppercase text-white/46',
+                isDesktop ? 'text-[9px] tracking-[0.26em]' : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
+              )}
+            >
               Engineering Access
             </span>
-            <span className="mt-1 block truncate font-mono text-[10px] tracking-[0.18em] text-white/78 uppercase">
+            <span
+              className={cn(
+                'mt-1 block font-mono uppercase text-white/78',
+                isDesktop
+                  ? 'truncate text-[10px] tracking-[0.18em]'
+                  : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
+              )}
+            >
               Full-Stack · Java · Next.js 15
             </span>
           </div>
 
-          <span className="shrink-0 font-mono text-[9px] tracking-[0.22em] text-white/56 uppercase">
+          <span
+            className={cn(
+              'shrink-0 font-mono uppercase text-white/56',
+              isDesktop ? 'text-[9px] tracking-[0.22em]' : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
+            )}
+          >
             Lagos · UTC+1
           </span>
         </div>

@@ -53,7 +53,7 @@ export function BlogReadingProgressTracker({ slug, title }: BlogReadingProgressT
     timeoutRef.current = setTimeout(trackProgress, 2000);
   }, [trackProgress]);
 
-  useLenisScroll(handleScroll, [handleScroll]);
+  useLenisScroll(handleScroll);
 
   useEffect(() => {
     return () => {

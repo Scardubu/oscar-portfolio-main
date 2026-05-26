@@ -74,25 +74,25 @@ import { formatMonthYear } from '@/lib/utils';
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
   loading: () => (
-    <div
       className="glass-elevated min-h-[320px] w-full rounded-[var(--radius-xl)] opacity-30"
-      aria-hidden="true"
-    />
-  ),
-});
-
-const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
-
-type HeroPortraitVariant = IdentityCardVariant;
-
-function HeroPortrait({
-  reducedMotion,
-  variant,
-}: Readonly<{
-  reducedMotion: boolean;
-  variant: HeroPortraitVariant;
-}>) {
-  return <IdentityCard reducedMotion={reducedMotion} variant={variant} />;
+          className={
+            isDesktop
+              ? [
+                  'absolute right-2 bottom-2 z-[2] max-w-[calc(100%-0.75rem)] truncate rounded-full border border-white/12 bg-black/55 px-2.5 py-1',
+                  'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
+                ].join(' ')
+              : [
+                  'absolute right-2.5 bottom-2.5 left-2.5 z-[2] rounded-full border border-white/12 bg-black/55 px-2 py-1 text-center break-words whitespace-normal',
+                  'font-mono text-[8px] leading-tight tracking-[0.16em] text-white/80 uppercase backdrop-blur-md sm:text-[9px] sm:tracking-[0.18em]',
+                ].join(' ')
+          }
+        >
+          {isDesktop ? 'Lagos · Staff+' : 'Staff+'}
+        </span>
+      </div>
+    </m.div>
+  );
+>>>>>>> 6f9960a (Fix mobile hero recovery and finalize integration cleanup)
 }
 
 // v26 FIX: Synced to lib/portfolio-data.ts CONVICTION_STATS (canonical source).
@@ -519,7 +519,7 @@ export function HeroSection() {
       ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-hidden pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center"
+      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-x-hidden overflow-y-visible pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
@@ -602,6 +602,7 @@ export function HeroSection() {
                       marginRight:
                         i < HEADLINE_WORDS.length - 1 ? 'var(--hero-word-gap,0.28em)' : '0',
                       lineHeight: 'var(--leading-tight)',
+                      paddingBottom: 'var(--hero-word-pad-bottom, 0em)',
                       verticalAlign: 'bottom',
                     }}
                   >

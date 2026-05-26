@@ -1,7 +1,7 @@
 'use client';
 
 import type Lenis from 'lenis';
-import { useEffect, useRef, type DependencyList, type MutableRefObject } from 'react';
+import { useEffect, useRef, type MutableRefObject } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 
@@ -83,7 +83,7 @@ function ensureSourceObserver(lenisRef: MutableRefObject<Lenis | null>) {
   });
 }
 
-export function useLenisScroll(callback: () => void, deps: DependencyList = []) {
+export function useLenisScroll(callback: () => void) {
   const { lenisRef } = useScrollCinema();
   const callbackRef = useRef(callback);
 
@@ -97,7 +97,6 @@ export function useLenisScroll(callback: () => void, deps: DependencyList = []) 
     subscribers.add(subscriber);
     ensureSourceObserver(lenisRef);
     syncScrollSource(lenisRef);
-    subscriber();
 
     return () => {
       subscribers.delete(subscriber);
@@ -107,5 +106,9 @@ export function useLenisScroll(callback: () => void, deps: DependencyList = []) 
         sourceObserver = null;
       }
     };
-  }, [lenisRef, ...deps]);
+  }, [lenisRef]);
+
+  useEffect(() => {
+    callbackRef.current();
+  }, [callback]);
 }
