@@ -1,7 +1,35 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 //
-// CHANGELOG v2026.4 (cumulative — all prior fixes included):
+// CHANGELOG v2026.7 (cumulative — all prior fixes included):
+//
+//   FIX 7 (v2026.7): Hero section overflow corrected to `overflow-x-clip`.
+//           Previous `overflow-x-hidden overflow-y-visible` was upgraded by the
+//           CSS spec (CSS Overflow §3) to compute `overflow-y: auto`, turning
+//           the hero into a potential inner scroll container at exactly viewport
+//           height. `overflow-x-clip` clips horizontally without creating a BFC
+//           or scroll container — native and Lenis scroll remain free.
+//           Desktop preserves `lg:overflow-hidden` for parallax containment.
+//
+//   FIX 8 (v2026.7): Carousel dot active-class string concatenation, again.
+//           The v2026.3 changelog claimed the fix landed; the live source
+//           still emitted `carousel-dotactive` (single token). Now correctly
+//           emits `carousel-dot active` (compound). The `.carousel-dot.active::before`
+//           pill-expansion + chapter-accent animation now matches as designed.
+//           The `[role='tab'][aria-selected='true']` belt-and-suspenders rule
+//           had been masking partial correctness, but the ::before width/color
+//           animation was silently inactive on every dot click.
+//
+//   COMPANION (globals.css v2026.7): html/body switched to `overflow-x: clip`
+//           at cascade end, neutralising the reversed fixes.css import order in
+//           layout.tsx and resolving the iOS Safari scroll trap + absolutely-
+//           positioned-descendant rendering failures (Next.js `fill` images).
+//           Also scopes a `transform-style: flat` override to <1024px on the
+//           IdentityCard figure to defeat the WebKit ancestor-preserve-3d-
+//           disables-descendant-overflow-hidden clipping bug — the portrait
+//           now renders correctly inside its rounded-corner mask on iOS Safari.
+//
+// CHANGELOG v2026.4 (retained for traceability):
 //
 //   FIX 1 (v2026.3): carousel-dot active class — `' active'` space added.
 //           `.carousel-dot.active` is a compound selector; "carousel-dotactive"
@@ -287,7 +315,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
           />
         ))}
       </div>
@@ -519,7 +547,7 @@ export function HeroSection() {
       ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-x-hidden overflow-y-visible pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
+      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-x-clip pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
