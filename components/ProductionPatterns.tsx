@@ -138,7 +138,7 @@ function PatternCard({
         onClick={toggle}
         aria-expanded={expanded}
         aria-label={`${expanded ? 'Collapse' : 'Expand'} details: ${pattern.title}`}
-        className="flex min-h-[80px] w-full items-start gap-4 rounded-[var(--radius-xl)] p-5 text-left focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:outline-none sm:p-6"
+        className="flex min-h-[80px] w-full items-start gap-4 rounded-[var(--radius-xl)] p-5 text-left focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none sm:p-6"
       >
         {/* Icon */}
         <div

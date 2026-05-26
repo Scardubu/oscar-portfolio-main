@@ -1852,6 +1852,7 @@ h3,
   transition:
     border-color var(--dur-base) var(--ease-out),
     background var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
     transform var(--dur-slow) var(--ease-spring);
 }
 .article-card:hover {
@@ -1861,6 +1862,7 @@ h3,
 @media (hover: hover) and (pointer: fine) {
   .article-card:hover {
     transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-hover);
   }
 }
 
@@ -1895,11 +1897,17 @@ h3,
   gap: 0.75rem;
   transition:
     background var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
 }
 .cert-card:hover {
   background: oklch(100% 0 0 / 0.04);
   border-color: var(--glass-border-hover);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cert-card:hover {
+    box-shadow: var(--glass-shadow-hover);
+  }
 }
 .cert-provider-badge {
   font-family: var(--font-mono);

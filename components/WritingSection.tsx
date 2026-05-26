@@ -90,7 +90,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                     className={[
                       'writing-filter-chip shrink-0 snap-start rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest whitespace-nowrap uppercase',
                       'min-h-[44px] border transition-all duration-200',
-                      'focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none',
+                      'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                       'active:scale-[0.97]',
                       isActive
                         ? 'border-white/28 bg-white/10 text-white'
@@ -157,7 +157,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
 
               <Link
                 href={`/writing/${featuredPost.slug}`}
-                className="text-color-film-teal mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-[var(--color-film-teal-glow)] px-5 py-2.5 text-sm transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
+                className="text-color-film-teal mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-[var(--color-film-teal-glow)] px-5 py-2.5 text-sm transition focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
               >
                 <span>Read the article</span>
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -230,7 +230,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
               <Link
                 href="/writing"
                 data-cinematic="cta"
-                className="border-color-border text-color-film-teal inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border px-6 py-3 font-mono text-[11px] tracking-widest uppercase transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
+                className="border-color-border text-color-film-teal inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border px-6 py-3 font-mono text-[11px] tracking-widest uppercase transition focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none active:scale-[0.97] sm:w-auto sm:justify-start"
               >
                 See all {posts.length} articles
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />

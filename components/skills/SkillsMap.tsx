@@ -193,7 +193,7 @@ export function SkillsMap(): React.ReactElement {
               className={[
                 'shrink-0 rounded-full px-3.5 py-2 text-xs font-medium whitespace-nowrap',
                 'min-h-[44px] transition-all duration-200',
-                'focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none',
+                'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                 isActive
                   ? 'border border-white/25 bg-white/10 text-white shadow-sm'
                   : 'border border-white/10 bg-transparent text-white/50 hover:border-white/20 hover:text-white/80',

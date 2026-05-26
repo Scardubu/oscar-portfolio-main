@@ -26,7 +26,7 @@ export function ThemeToggle() {
       type="button"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="text-color-text-muted inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-white/10 transition hover:border-white/20 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none active:scale-[0.96]"
+      className="text-color-text-muted inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-lg border border-white/10 transition hover:border-white/20 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none active:scale-[0.96]"
     >
       <AnimatePresence initial={false} mode="wait">
         {isDark ? (

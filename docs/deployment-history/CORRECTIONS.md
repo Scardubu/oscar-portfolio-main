@@ -2,6 +2,20 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-26 — Follow-up interaction harmonization
+
+- Harmonized remaining high-traffic focus states in `components/ProjectsSection.tsx`, `components/OpenSourceSection.tsx`, `components/WritingSection.tsx`, `components/skills/SkillsMap.tsx`, `components/ProductionPatterns.tsx`, and `components/ThemeToggle.tsx` so keyboard rings now use the chapter-accent system instead of older white-only values.
+- Refined `components/AboutSection.tsx` so the desktop profile headshot hover effect fully respects `prefers-reduced-motion`.
+- Deepened hover cohesion in `app/globals.css` by giving `article-card` and `cert-card` the same token-driven hover shadow language used by the rest of the glass card system.
+- Cleaned the working tree by removing stale Lighthouse JSON artifacts that were not part of the tracked source tree.
+
+Validation after follow-up harmonization:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 expected skips.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=mobile-chrome --workers=1` passed with 17 tests passed and 3 expected skips.
+
 ## 2026-05-26 — Final production polish pass
 
 - Fixed the last mobile smoke accessibility blocker in `components/Footer.tsx` by lifting the inherited footer status line color on small screens, allowing the `SystemStatus` full-label copy to clear WCAG AA contrast.

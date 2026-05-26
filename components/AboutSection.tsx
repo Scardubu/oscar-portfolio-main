@@ -255,10 +255,14 @@ export function AboutSection() {
               <m.div
                 className="relative"
                 aria-hidden="true"
-                whileHover={{
-                  scale: 1.04,
-                  transition: { type: 'spring', stiffness: 260, damping: 22 },
-                }}
+                whileHover={
+                  reducedMotion
+                    ? undefined
+                    : {
+                        scale: 1.04,
+                        transition: { type: 'spring', stiffness: 260, damping: 22 },
+                      }
+                }
               >
                 {/* Conic teal ring — larger radius to match 180px image */}
                 <div

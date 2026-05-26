@@ -126,7 +126,7 @@ function FeaturedProjectCard({
         <TechStrip stack={featured.stack} slug={featured.slug} />
 
         <details className="group mt-5">
-          <summary className="text-color-text-muted inline-flex min-h-[48px] cursor-pointer list-none items-center gap-1.5 rounded-full border border-white/14 px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none">
+          <summary className="text-color-text-muted inline-flex min-h-[48px] cursor-pointer list-none items-center gap-1.5 rounded-full border border-white/14 px-4 py-2.5 font-mono text-[11px] tracking-widest uppercase transition hover:border-white/28 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none">
             <span className="group-open:hidden">Full brief ↓</span>
             <span className="hidden group-open:inline">Hide brief ↑</span>
           </summary>
@@ -142,7 +142,7 @@ function FeaturedProjectCard({
         <button
           type="button"
           onClick={() => setArchOpen((v) => !v)}
-          className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-3 font-mono text-[11px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none lg:hidden"
+          className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-3 font-mono text-[11px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:hidden"
           aria-expanded={archOpen}
           aria-controls={`arch-mobile-${featured.slug}`}
           aria-label={`Toggle architecture decision for ${featured.title}`}
@@ -274,7 +274,7 @@ function SecondaryFeaturedCard({
           <button
             type="button"
             onClick={() => setArchOpen((v) => !v)}
-            className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-2.5 font-mono text-[10px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
+            className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-2.5 font-mono text-[10px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
             aria-expanded={archOpen}
             aria-controls={`arch-secondary-${project.slug}`}
             aria-label={`Toggle architecture decision for ${project.title}`}
