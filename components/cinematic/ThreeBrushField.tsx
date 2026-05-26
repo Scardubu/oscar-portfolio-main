@@ -82,6 +82,43 @@ void main() {
 }
 `;
 
+type QualityTier = 'full' | 'balanced' | 'low';
+
+type NavigatorPerformanceHints = Navigator & {
+  connection?: {
+    saveData?: boolean;
+  };
+  deviceMemory?: number;
+};
+
+function getFrameBudgetMs(tier: QualityTier) {
+  switch (tier) {
+    case 'low':
+      return 1000 / 24;
+    case 'balanced':
+      return 1000 / 40;
+    default:
+      return 1000 / 60;
+  }
+}
+
+function getPixelRatioCap(tier: QualityTier) {
+  switch (tier) {
+    case 'low':
+      return 0.9;
+    case 'balanced':
+      return 1.15;
+    default:
+      return 1.5;
+  }
+}
+
+function getNextQualityTier(tier: QualityTier): QualityTier {
+  if (tier === 'full') return 'balanced';
+  if (tier === 'balanced') return 'low';
+  return 'low';
+}
+
 function FallbackField() {
   return (
     <div
@@ -103,6 +140,9 @@ export function ThreeBrushField() {
   const startTimeRef = useRef<number>(0);
   const lastFrameTimeRef = useRef<number>(0);
   const targetFrameMsRef = useRef<number>(1000 / 60);
+  const pixelRatioCapRef = useRef<number>(1.5);
+  const qualityTierRef = useRef<QualityTier>('balanced');
+  const slowFrameStreakRef = useRef<number>(0);
   const pointerRef = useRef(new THREE.Vector2(0.5, 0.5));
   const [supportsWebGl, setSupportsWebGl] = useState(true);
 
@@ -201,7 +241,7 @@ export function ThreeBrushField() {
     const resize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, pixelRatioCapRef.current);
 
       uniforms.uResolution.value.set(width, height);
       renderer.setPixelRatio(dpr);
@@ -209,8 +249,27 @@ export function ThreeBrushField() {
     };
 
     const frameBudgetMedia = window.matchMedia('(max-width: 768px), (pointer: coarse)');
+    const getPreferredQualityTier = (): QualityTier => {
+      const navigatorWithHints = navigator as NavigatorPerformanceHints;
+      const saveData = navigatorWithHints.connection?.saveData ?? false;
+      const deviceMemory = navigatorWithHints.deviceMemory ?? 8;
+      const cpuBudget = navigator.hardwareConcurrency ?? 8;
+
+      if (saveData || deviceMemory <= 4 || cpuBudget <= 4) return 'low';
+      if (frameBudgetMedia.matches || deviceMemory <= 8 || cpuBudget <= 8) return 'balanced';
+      return 'full';
+    };
+
+    const applyQualityTier = (tier: QualityTier) => {
+      qualityTierRef.current = tier;
+      targetFrameMsRef.current = getFrameBudgetMs(tier);
+      pixelRatioCapRef.current = getPixelRatioCap(tier);
+      resize();
+    };
+
     const updateFrameBudget = () => {
-      targetFrameMsRef.current = frameBudgetMedia.matches ? 1000 / 30 : 1000 / 60;
+      applyQualityTier(getPreferredQualityTier());
+      slowFrameStreakRef.current = 0;
     };
 
     updateFrameBudget();
@@ -241,12 +300,23 @@ export function ThreeBrushField() {
 
       if (!uniformsState || !rendererState) return;
 
-      if (
-        lastFrameTimeRef.current !== 0 &&
-        now - lastFrameTimeRef.current < targetFrameMsRef.current
-      ) {
+      const elapsedSinceLastFrame =
+        lastFrameTimeRef.current === 0 ? targetFrameMsRef.current : now - lastFrameTimeRef.current;
+
+      if (lastFrameTimeRef.current !== 0 && elapsedSinceLastFrame < targetFrameMsRef.current) {
         frameRef.current = window.requestAnimationFrame(render);
         return;
+      }
+
+      if (elapsedSinceLastFrame > targetFrameMsRef.current * 1.85) {
+        slowFrameStreakRef.current += 1;
+      } else {
+        slowFrameStreakRef.current = Math.max(0, slowFrameStreakRef.current - 1);
+      }
+
+      if (slowFrameStreakRef.current >= 8 && qualityTierRef.current !== 'low') {
+        applyQualityTier(getNextQualityTier(qualityTierRef.current));
+        slowFrameStreakRef.current = 0;
       }
 
       lastFrameTimeRef.current = now;
@@ -283,7 +353,6 @@ export function ThreeBrushField() {
     };
 
     setInitialPalette();
-    resize();
     lastFrameTimeRef.current = 0;
     startTimeRef.current = performance.now();
     frameRef.current = window.requestAnimationFrame(render);

@@ -41,7 +41,7 @@ function typeLabel(type: string): string {
 
 function ActivitySkeleton() {
   return (
-    <div className="flex min-h-[24px] items-center gap-2" aria-hidden="true">
+    <div className="flex h-6 items-center gap-2" aria-hidden="true">
       <div className="bg-color-border h-1.5 w-1.5 animate-pulse rounded-full" />
       <div className="bg-color-border h-3 w-44 animate-pulse rounded" />
     </div>
@@ -84,7 +84,7 @@ export function LiveActivityBar() {
       aria-atomic="true"
       aria-busy={loading ? 'true' : 'false'}
       aria-label="Latest commit activity"
-      className="live-bar-text flex min-h-[24px] items-center gap-2 overflow-hidden"
+      className="live-bar-text flex h-6 items-center gap-2 overflow-hidden"
     >
       <span className="sr-only">{announcement}</span>
 
@@ -93,7 +93,7 @@ export function LiveActivityBar() {
           <ActivitySkeleton />
         </div>
       ) : (
-        <div className="flex min-h-[24px] min-w-0 flex-1 items-center gap-2" aria-hidden="true">
+        <div className="flex h-6 min-w-0 flex-1 items-center gap-2" aria-hidden="true">
           <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
 
           {safeActivity.sha && safeActivity.sha !== 'unknown' && (

@@ -305,7 +305,15 @@ export function CommandPalette() {
     }
     const saved = triggerRef.current;
     const t = setTimeout(() => {
-      saved?.focus({ preventScroll: true });
+      const fallbackTarget = document.getElementById('main-content');
+      const target =
+        saved && saved !== document.body
+          ? saved
+          : fallbackTarget instanceof HTMLElement
+            ? fallbackTarget
+            : null;
+
+      target?.focus({ preventScroll: true });
       triggerRef.current = null;
     }, 150);
     return () => clearTimeout(t);

@@ -167,7 +167,7 @@ export default function Navbar() {
               >
                 Oscar Ndugbu
               </m.span>
-              <span className="text-[10px] tracking-[0.24em] text-white/45 uppercase">
+              <span className="text-[10px] tracking-[0.24em] text-white/55 uppercase sm:text-white/45">
                 Principal Full-Stack Engineer
               </span>
             </div>

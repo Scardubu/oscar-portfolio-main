@@ -46,6 +46,7 @@ export function ScrollProgress() {
                 'group relative flex h-3.5 w-3.5 items-center justify-center rounded-full',
                 // CSS transition handles scale — no framer-motion scroll hook
                 'transition-all duration-300',
+                'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                 active ? 'scale-110' : 'scale-100 opacity-50 hover:scale-105 hover:opacity-90',
               ].join(' ')}
               aria-label={`Jump to ${chapter.label}`}

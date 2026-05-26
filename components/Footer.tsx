@@ -90,11 +90,13 @@ export function Footer() {
           </div>
 
           <div className="text-2xs flex flex-col gap-1 font-mono tracking-wide">
-            <p className="flex items-center gap-2 text-[oklch(93%_0.006_264_/_0.42)]">
+            <div className="text-secondary-boost text-color-text-secondary flex items-center gap-2 sm:text-[oklch(93%_0.006_264_/_0.42)]">
               <SystemStatus labelMode="full" />
+            </div>
+            <p className="text-[oklch(93%_0.006_264_/_0.58)] sm:text-[oklch(93%_0.006_264_/_0.24)]">
+              TaxBridge · SabiScore · SwarmXQ
             </p>
-            <p className="text-[oklch(93%_0.006_264_/_0.24)]">TaxBridge · SabiScore · SwarmXQ</p>
-            <p className="text-[oklch(93%_0.006_264_/_0.18)]">
+            <p className="text-[oklch(93%_0.006_264_/_0.54)] sm:text-[oklch(93%_0.006_264_/_0.18)]">
               © 2024–{year} Oscar Ndugbu · Next.js 15
             </p>
           </div>
@@ -178,7 +180,7 @@ export function Footer() {
               Tell me your constraints
             </a>
 
-            <p className="text-2xs mt-3 text-center font-mono tracking-wider text-[oklch(93%_0.006_264_/_0.45)] sm:text-left">
+            <p className="text-2xs mt-3 text-center font-mono tracking-wider text-[oklch(93%_0.006_264_/_0.62)] sm:text-left sm:text-[oklch(93%_0.006_264_/_0.45)]">
               Response within 24 hours · no fluff, only signal
             </p>
           </div>
@@ -188,10 +190,12 @@ export function Footer() {
       {/* ── Legal strip ─────────────────────────────────────────────────── */}
       <div className="border-color-border-subtle text-3xs border-t py-4 font-mono">
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="tracking-[0.5px] text-balance text-[oklch(93%_0.006_264_/_0.22)] uppercase">
+          <p className="tracking-[0.5px] text-balance text-[oklch(93%_0.006_264_/_0.60)] uppercase sm:text-[oklch(93%_0.006_264_/_0.22)]">
             Shipped in Lagos · Running globally · Battle-tested in audit season
           </p>
-          <p className="text-[oklch(93%_0.006_264_/_0.16)]">scardubu.dev</p>
+          <p className="text-[oklch(93%_0.006_264_/_0.56)] sm:text-[oklch(93%_0.006_264_/_0.16)]">
+            scardubu.dev
+          </p>
         </div>
       </div>
     </footer>

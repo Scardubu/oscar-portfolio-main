@@ -102,7 +102,9 @@ test.describe('Portfolio smoke tests', () => {
     await expectNoOverflowAtWidth(browser, 430);
   });
 
-  test('desktop nav exposes projects hash target', async ({ page }) => {
+  test('desktop nav exposes projects hash target', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Desktop primary nav is hidden on mobile by design.');
+
     await goto(page);
 
     const projectsLink = page

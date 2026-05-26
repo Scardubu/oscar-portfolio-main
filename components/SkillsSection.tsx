@@ -374,16 +374,47 @@ export function SkillsSection() {
               </button>
 
               {isExplorerOpen && (
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={radarView}
-                  aria-label="Toggle radar skills view"
-                  onClick={() => setRadarView((v) => !v)}
-                  className="cta-ghost min-h-[44px] justify-center text-xs sm:text-sm"
+                <div
+                  className="glass-light inline-flex min-h-[44px] items-center gap-1 rounded-full border border-white/10 p-1"
+                  role="tablist"
+                  aria-label="Skills explorer view"
                 >
-                  Radar view: {radarView ? 'on' : 'off'}
-                </button>
+                  <button
+                    id="skills-list-tab"
+                    type="button"
+                    role="tab"
+                    aria-selected={!radarView}
+                    aria-controls="skills-list-panel"
+                    tabIndex={!radarView ? 0 : -1}
+                    onClick={() => setRadarView(false)}
+                    className={[
+                      'min-h-[36px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                      !radarView
+                        ? 'text-color-text-primary bg-white/10 shadow-[0_10px_24px_oklch(0%_0_0_/_0.18)]'
+                        : 'text-color-text-muted hover:text-color-text-secondary',
+                    ].join(' ')}
+                  >
+                    List view
+                  </button>
+
+                  <button
+                    id="skills-radar-tab"
+                    type="button"
+                    role="tab"
+                    aria-selected={radarView}
+                    aria-controls="skills-radar-panel"
+                    tabIndex={radarView ? 0 : -1}
+                    onClick={() => setRadarView(true)}
+                    className={[
+                      'min-h-[36px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                      radarView
+                        ? 'text-color-text-primary bg-white/10 shadow-[0_10px_24px_oklch(0%_0_0_/_0.18)]'
+                        : 'text-color-text-muted hover:text-color-text-secondary',
+                    ].join(' ')}
+                  >
+                    Radar view
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -406,6 +437,9 @@ export function SkillsSection() {
                   {radarView ? (
                     <m.div
                       key="skills-radar"
+                      id="skills-radar-panel"
+                      role="tabpanel"
+                      aria-labelledby="skills-radar-tab"
                       initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
@@ -420,6 +454,9 @@ export function SkillsSection() {
                   ) : (
                     <m.div
                       key="skills-list"
+                      id="skills-list-panel"
+                      role="tabpanel"
+                      aria-labelledby="skills-list-tab"
                       initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}

@@ -72,20 +72,20 @@ export function SystemStatus({ showLabel = true, labelMode = 'short' }: SystemSt
   }
 
   const cfg = STATUS_CONFIG[status];
+  const toneClass = labelMode === 'full' ? 'text-color-text-secondary' : 'text-color-text-muted';
+  const labelClass = labelMode === 'full' ? 'inline text-color-text-primary' : 'hidden sm:inline';
 
   return (
     <span
       role="status"
       aria-label={cfg.label}
       title={cfg.label}
-      className="text-color-text-muted text-2xs relative inline-flex items-center gap-1.5 font-mono tracking-widest uppercase select-none"
+      className={`${toneClass} text-2xs relative inline-flex items-center gap-1.5 font-mono tracking-widest uppercase select-none`}
     >
       <StatusPulseDot color={cfg.color} pulseDuration="1.4s" />
 
       {showLabel && (
-        <span className={labelMode === 'full' ? 'inline' : 'hidden sm:inline'}>
-          {labelMode === 'full' ? cfg.label : cfg.shortLabel}
-        </span>
+        <span className={labelClass}>{labelMode === 'full' ? cfg.label : cfg.shortLabel}</span>
       )}
     </span>
   );

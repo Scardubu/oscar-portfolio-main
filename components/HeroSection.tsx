@@ -338,7 +338,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>

@@ -12,6 +12,15 @@ Staff+ Full-Stack / Infra / AI portfolio. Production systems that stay alive whe
 
 A proof system, not a brag sheet. Four production case studies, four open-source packages, 62 verified skills, and writing that explains the decisions behind the work.
 
+## Current release status
+
+As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, and Playwright smoke validation on both `chromium` and `mobile-chrome`.
+
+- Mobile footer trust-strip contrast was corrected so the live status copy now clears the accessibility gate on small screens.
+- The skills explorer now uses an accessible list-versus-radar segmented control instead of a binary text switch.
+- The WebGL brush field now degrades more gracefully on lower-power devices by lowering frame cadence and pixel ratio when runtime conditions demand it.
+- Command palette focus restoration and chapter-rail focus visibility were tightened to keep keyboard navigation stable across desktop and mobile assistive flows.
+
 ---
 
 ## Tech stack

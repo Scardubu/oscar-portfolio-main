@@ -2,6 +2,23 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-26 — Final production polish pass
+
+- Fixed the last mobile smoke accessibility blocker in `components/Footer.tsx` by lifting the inherited footer status line color on small screens, allowing the `SystemStatus` full-label copy to clear WCAG AA contrast.
+- Tightened keyboard affordances in `components/ScrollProgress.tsx` with explicit `focus-visible` ring treatment on chapter rail buttons so the active target remains visible during keyboard and assistive navigation.
+- Stabilized `components/Liveactivitybar.tsx` by locking both the skeleton and resolved activity row to the same 24px height, reducing small but repeatable layout movement on load.
+- Hardened `components/CommandPalette.tsx` focus restoration so closing the palette falls back to `#main-content` when the original trigger is no longer focusable.
+- Refined `components/SkillsSection.tsx` with a proper list-versus-radar segmented control (`tablist`/`tabpanel`) instead of a binary switch copy, improving both polish and accessibility.
+- Added adaptive quality scaling to `components/cinematic/ThreeBrushField.tsx`, lowering the frame budget and pixel ratio on constrained devices or under sustained slow-frame pressure while keeping the existing Lenis + ScrollTrigger + Three.js architecture intact.
+
+Validation after final production polish:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=mobile-chrome --workers=1` passed with 17 tests passed and 3 expected skips.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 expected skips.
+- Fresh Lighthouse collection could not be rerun in this environment because the `lighthouse` CLI is not installed locally and the registry fetch for `pnpm dlx lighthouse` failed with network timeouts.
+
 ## 2026-05-25 — Cinematic Scroll Stabilization v2 final polish and sign-off
 
 - Fixed a reintroduced hero proof-carousel regression in `components/HeroSection.tsx` where the active dot class string lost the required leading space (`carousel-dot active`), restoring the active chapter pill state.
