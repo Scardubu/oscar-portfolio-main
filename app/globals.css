@@ -4861,3 +4861,253 @@ body {
    Supersedes: v2026.4 HERO REFINEMENT (which closed at the carousel-dot
    compound-selector belt-and-suspenders rules above — those remain active).
    ═══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ════ HERO / IDENTITY CARD UPGRADE v2026.8 ════ */
+#hero .hero-headline-word {
+  animation: hero-headline-glitch 760ms var(--ease-out-expo) both;
+  will-change: transform, opacity, filter, text-shadow;
+  text-shadow: 0 0 0 transparent;
+}
+
+.hero-headshot-frame {
+  padding: clamp(0.45rem, 1.35vw, 0.75rem);
+  contain: layout paint;
+}
+
+.hero-headshot-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0.2rem;
+  z-index: -1;
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 50% 18%, oklch(73% 0.2 190 / 0.14) 0%, transparent 42%),
+    radial-gradient(circle at 80% 12%, oklch(68% 0.24 258 / 0.1) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.42));
+  filter: blur(18px);
+  opacity: 0.95;
+  animation: hero-card-breathe 5.8s ease-in-out infinite;
+}
+
+.hero-headshot-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0.2rem;
+  z-index: -1;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(103, 232, 249, 0.04) inset,
+    0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+.hero-headshot-shell {
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 28px 90px rgba(0, 0, 0, 0.46);
+}
+
+.hero-headshot-shell img {
+  object-position: 50% 16%;
+  transform: translateZ(0);
+}
+
+.hero-headshot-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.06) 0,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  opacity: 0.08;
+  mix-blend-mode: soft-light;
+  animation: hero-scanline-drift 9s linear infinite;
+}
+
+.hero-headshot-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), transparent 24%),
+    radial-gradient(circle at 52% 82%, rgba(56, 189, 248, 0.1), transparent 52%),
+    linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.42) 100%);
+  mix-blend-mode: screen;
+}
+
+.hero-headshot-scanlines {
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 18%),
+    repeating-linear-gradient(
+      180deg,
+      rgba(103, 232, 249, 0.015) 0,
+      rgba(103, 232, 249, 0.015) 3px,
+      transparent 3px,
+      transparent 7px
+    );
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
+  animation: hero-scanline-drift 7s linear infinite;
+}
+
+.hero-headshot-matrix {
+  opacity: 0.12;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(103, 232, 249, 0.35) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 80% 35%, rgba(103, 232, 249, 0.2) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 35% 72%, rgba(255, 255, 255, 0.24) 0 1px, transparent 1.4px),
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 40%, transparent 100%);
+  background-size: 18px 18px, 22px 22px, 26px 26px, 100% 100%;
+  background-position: 0 0, 8px 0, 0 12px, 0 0;
+  mix-blend-mode: screen;
+  animation: hero-matrix-drift 18s linear infinite;
+}
+
+.hero-tech-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  background: rgba(8, 14, 24, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 0 0 1px rgba(103, 232, 249, 0.03) inset,
+    0 6px 18px rgba(0, 0, 0, 0.18);
+  transform: translateZ(0);
+  animation: hero-tag-breathe 4.8s ease-in-out infinite;
+}
+
+.hero-tech-tag:nth-child(2n) {
+  animation-duration: 5.6s;
+}
+
+.hero-tech-tag:nth-child(3n) {
+  animation-duration: 6.1s;
+}
+
+@media (max-width: 639px) {
+  .hero-headshot-frame {
+    padding: 0.45rem;
+  }
+
+  .hero-headshot-frame::before,
+  .hero-headshot-frame::after {
+    inset: 0.1rem;
+    border-radius: 1.6rem;
+  }
+
+  .hero-tech-tag {
+    font-size: 0.53rem;
+    letter-spacing: 0.16em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero .hero-headline-word,
+  .hero-headshot-frame::before,
+  .hero-headshot-scanlines,
+  .hero-headshot-matrix,
+  .hero-tech-tag {
+    animation: none !important;
+  }
+}
+
+@keyframes hero-headline-glitch {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0.45em, 0) skewY(1.2deg);
+    filter: blur(8px) saturate(0.9);
+    text-shadow: 0 0 0 transparent;
+  }
+  18% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+  30% {
+    transform: translate3d(-0.025em, -0.02em, 0);
+    text-shadow:
+      0.02em 0 0 rgba(103, 232, 249, 0.42),
+      -0.02em 0 0 rgba(168, 85, 247, 0.16);
+  }
+  44% {
+    transform: translate3d(0.025em, 0, 0);
+  }
+  64% {
+    transform: translate3d(-0.01em, 0.01em, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    text-shadow: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-card-breathe {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.012);
+  }
+}
+
+@keyframes hero-scanline-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 18px, 0 42px;
+  }
+}
+
+@keyframes hero-matrix-drift {
+  from {
+    background-position: 0 0, 8px 0, 0 12px, 0 0;
+  }
+  to {
+    background-position: 0 42px, 8px 54px, 0 66px, 0 0;
+  }
+}
+
+@keyframes hero-tag-breathe {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    box-shadow:
+      0 0 0 1px rgba(103, 232, 249, 0.03) inset,
+      0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+  50% {
+    transform: translate3d(0, -1px, 0);
+    box-shadow:
+      0 0 0 1px rgba(103, 232, 249, 0.08) inset,
+      0 8px 20px rgba(0, 0, 0, 0.22);
+  }
+}
