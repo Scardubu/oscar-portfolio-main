@@ -689,7 +689,11 @@ h3,
   font-weight: var(--weight-medium);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: color-mix(
+    in oklch,
+    var(--chapter-accent, var(--color-film-teal)) 12%,
+    var(--color-text-muted)
+  );
 }
 
 /* ════ GLASS SYSTEM ════ */
@@ -1298,6 +1302,7 @@ h3,
   transition:
     border-color var(--dur-fast) var(--ease-out),
     color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
     transform var(--dur-base) var(--ease-spring),
     opacity var(--dur-instant) var(--ease-out);
 }
@@ -1310,6 +1315,10 @@ h3,
   .cta-secondary:hover {
     border-color: var(--glass-border-hover);
     color: var(--color-text-primary);
+    box-shadow:
+      0 8px 24px -10px
+        color-mix(in oklch, var(--chapter-accent, var(--color-film-teal)) 18%, transparent),
+      0 2px 8px oklch(0% 0 0 / 0.22);
     transform: translateY(-1px);
   }
 }
