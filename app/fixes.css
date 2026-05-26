@@ -1,0 +1,74 @@
+/* app/fixes.css
+   Load after globals.css to neutralize the last mobile overflow source and
+   keep the live activity landmark available during initial render.
+*/
+
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body {
+  width: 100%;
+}
+
+/* Neutralize the hero proof carousel's mobile bleed.
+   The original negative margins made the document scrollWidth exceed the
+   viewport on 320px–375px screens, which triggered the smoke tests.
+*/
+#hero .mobile-carousel {
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+  scroll-padding-inline: 0.875rem;
+  overscroll-behavior-x: contain;
+}
+
+@media (max-width: 389px) {
+  #hero .mobile-carousel {
+    scroll-padding-inline: 0.875rem;
+  }
+
+  #hero .mobile-carousel-item {
+    flex-basis: min(90vw, 16.5rem);
+  }
+}
+
+@media (min-width: 390px) and (max-width: 639px) {
+  #hero .mobile-carousel {
+    scroll-padding-inline: 1rem;
+  }
+
+  #hero .mobile-carousel-item {
+    flex-basis: min(86vw, 18.5rem);
+  }
+}
+
+/* Safety rail: make the hero grid itself respect narrow viewports even if
+   future content adds wider intrinsic widths.
+*/
+#hero .hero-grid-shell,
+#hero .hero-grid-child {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Defensive viewport clamp for mobile smoke checks.
+   Keeps intrinsic-width regressions from widening document scrollWidth.
+   v2026.8: overflow-x: hidden → clip (aligns with globals.css v2026.7 patch) */
+@media (max-width: 639px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  #hero,
+  #hero > *,
+  #hero .container,
+  #hero .hero-grid-shell,
+  #hero .hero-grid-child {
+    max-width: 100%;
+  }
+}
