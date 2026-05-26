@@ -35,6 +35,7 @@
 
 'use client';
 
+import { IdentityCard, type IdentityCardVariant } from '@/components/IdentityCard';
 import {
   m,
   useAnimationFrame,
@@ -44,7 +45,6 @@ import {
   useTransform,
 } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { IdentityCard, type IdentityCardVariant } from '@/components/IdentityCard';
 import Link from 'next/link';
 import {
   type KeyboardEvent,
@@ -74,25 +74,25 @@ import { formatMonthYear } from '@/lib/utils';
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
   loading: () => (
+    <div
       className="glass-elevated min-h-[320px] w-full rounded-[var(--radius-xl)] opacity-30"
-          className={
-            isDesktop
-              ? [
-                  'absolute right-2 bottom-2 z-[2] max-w-[calc(100%-0.75rem)] truncate rounded-full border border-white/12 bg-black/55 px-2.5 py-1',
-                  'font-mono text-[9px] tracking-[0.18em] text-white/75 uppercase backdrop-blur-md',
-                ].join(' ')
-              : [
-                  'absolute right-2.5 bottom-2.5 left-2.5 z-[2] rounded-full border border-white/12 bg-black/55 px-2 py-1 text-center break-words whitespace-normal',
-                  'font-mono text-[8px] leading-tight tracking-[0.16em] text-white/80 uppercase backdrop-blur-md sm:text-[9px] sm:tracking-[0.18em]',
-                ].join(' ')
-          }
-        >
-          {isDesktop ? 'Lagos · Staff+' : 'Staff+'}
-        </span>
-      </div>
-    </m.div>
-  );
->>>>>>> 6f9960a (Fix mobile hero recovery and finalize integration cleanup)
+      aria-hidden="true"
+    />
+  ),
+});
+
+const HEADLINE_WORDS = ['The', 'system', 'has', 'to', 'work', 'at', '2am.'];
+
+type HeroPortraitVariant = IdentityCardVariant;
+
+function HeroPortrait({
+  reducedMotion,
+  variant,
+}: Readonly<{
+  reducedMotion: boolean;
+  variant: HeroPortraitVariant;
+}>) {
+  return <IdentityCard reducedMotion={reducedMotion} variant={variant} />;
 }
 
 // v26 FIX: Synced to lib/portfolio-data.ts CONVICTION_STATS (canonical source).

@@ -38,16 +38,17 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
             }
           : undefined
       }
-      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      transition={
+        shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+      }
       aria-label="Luxury operating-system identity card portrait"
       className={cn(
-        'relative isolate transform-gpu overflow-visible will-change-transform',
+        'relative isolate transform-gpu overflow-visible [transform-style:preserve-3d] will-change-transform',
         isDesktop
           ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]'
           : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
         className
       )}
-      style={{ transformStyle: 'preserve-3d' }}
     >
       <div
         aria-hidden="true"
@@ -61,7 +62,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] opacity-70 mix-blend-overlay [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px]"
+          className="pointer-events-none absolute inset-0 z-[1] [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px] opacity-70 mix-blend-overlay"
         />
         <div
           aria-hidden="true"
@@ -89,28 +90,34 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[3] rounded-[36px] ring-1 ring-inset ring-white/10"
+          className="pointer-events-none absolute inset-0 z-[3] rounded-[36px] ring-1 ring-white/10 ring-inset"
         />
 
         <div
           className={cn(
             'absolute z-[4] flex items-start justify-between',
-            isDesktop ? 'inset-x-4 top-4 gap-3' : 'inset-x-3.5 top-3.5 gap-2.5 sm:inset-x-4 sm:top-4 sm:gap-3'
+            isDesktop
+              ? 'inset-x-4 top-4 gap-3'
+              : 'inset-x-3.5 top-3.5 gap-2.5 sm:inset-x-4 sm:top-4 sm:gap-3'
           )}
         >
           <div className="min-w-0">
             <span
               className={cn(
-                'block font-mono uppercase text-white/46',
-                isDesktop ? 'text-[9px] tracking-[0.28em]' : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
+                'block font-mono text-white/46 uppercase',
+                isDesktop
+                  ? 'text-[9px] tracking-[0.28em]'
+                  : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
               )}
             >
               System ID
             </span>
             <span
               className={cn(
-                'mt-1 block truncate uppercase text-white/86',
-                isDesktop ? 'text-[11px] tracking-[0.24em]' : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
+                'mt-1 block truncate text-white/86 uppercase',
+                isDesktop
+                  ? 'text-[11px] tracking-[0.24em]'
+                  : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
               )}
             >
               Oscar Ndugbu
@@ -140,15 +147,17 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           <div className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}>
             <span
               className={cn(
-                'block font-mono uppercase text-white/46',
-                isDesktop ? 'text-[9px] tracking-[0.26em]' : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
+                'block font-mono text-white/46 uppercase',
+                isDesktop
+                  ? 'text-[9px] tracking-[0.26em]'
+                  : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
               )}
             >
               Engineering Access
             </span>
             <span
               className={cn(
-                'mt-1 block font-mono uppercase text-white/78',
+                'mt-1 block font-mono text-white/78 uppercase',
                 isDesktop
                   ? 'truncate text-[10px] tracking-[0.18em]'
                   : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
@@ -160,8 +169,10 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
 
           <span
             className={cn(
-              'shrink-0 font-mono uppercase text-white/56',
-              isDesktop ? 'text-[9px] tracking-[0.22em]' : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
+              'shrink-0 font-mono text-white/56 uppercase',
+              isDesktop
+                ? 'text-[9px] tracking-[0.22em]'
+                : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
             )}
           >
             Lagos · UTC+1
