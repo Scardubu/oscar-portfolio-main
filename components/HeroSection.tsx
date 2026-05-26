@@ -63,7 +63,7 @@
 
 'use client';
 
-import { IdentityCard, type IdentityCardVariant } from './IdentityCard';
+import { IdentityCard, type IdentityCardVariant } from '@/components/IdentityCard';
 import {
   m,
   useAnimationFrame,
@@ -97,7 +97,7 @@ import {
   wordRevealContainer,
 } from '@/lib/motionVariants';
 import { HERO } from '@/lib/portfolio-data';
-import { cn, formatMonthYear } from '@/lib/utils';
+import { formatMonthYear } from '@/lib/utils';
 
 const HeroVisual = dynamic(() => import('@/components/HeroVisual').then((m) => m.HeroVisual), {
   ssr: false,
@@ -624,14 +624,19 @@ export function HeroSection() {
                 {HEADLINE_WORDS.map((word, i) => (
                   <span
                     key={`${word}-${i}`}
-                    className={cn(
-                      'hero-headline-word-shell inline-block overflow-hidden',
-                      i < HEADLINE_WORDS.length - 1 && 'mr-[var(--hero-word-gap,0.28em)]'
-                    )}
+                    className="inline-block overflow-hidden"
+                    // eslint-disable-next-line no-restricted-syntax
+                    style={{
+                      marginRight:
+                        i < HEADLINE_WORDS.length - 1 ? 'var(--hero-word-gap,0.28em)' : '0',
+                      lineHeight: 'var(--leading-tight)',
+                      paddingBottom: 'var(--hero-word-pad-bottom, 0em)',
+                      verticalAlign: 'bottom',
+                    }}
                   >
                     <m.span
                       variants={reducedMotion ? noMotion : wordReveal}
-                      className="hero-headline-word inline-block"
+                      className="inline-block"
                     >
                       {word}
                     </m.span>
