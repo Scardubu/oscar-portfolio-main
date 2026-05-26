@@ -40,9 +40,9 @@ import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
 
-// v2026.8: import order corrected — globals.css first, fixes.css overrides
-import './fixes.css';
+// v2026.9: import order corrected — globals.css first, fixes.css second (overrides)
 import './globals.css';
+import './fixes.css';
 
 const syne = Syne({
   subsets: ['latin'],
