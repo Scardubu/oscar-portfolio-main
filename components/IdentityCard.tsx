@@ -1,7 +1,7 @@
 'use client';
 
 import { m, useReducedMotion } from 'framer-motion';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -13,16 +13,53 @@ interface IdentityCardProps {
   reducedMotion?: boolean;
 }
 
-const CARD_SIZES = {
-  mobile: '(max-width: 639px) 208px, (max-width: 767px) 224px, (max-width: 1023px) 240px, 192px',
-  desktop: '(min-width: 1536px) 18rem, (min-width: 1280px) 17rem, (min-width: 1024px) 16rem, 18rem',
-} as const;
+const PORTRAIT_SOURCES = [
+  '/headshot.webp',
+  '/images/oscar-headshot.jpg',
+  '/images/scar-headshot.jpeg',
+] as const;
+
+function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_50%_28%,rgba(56,189,248,0.16),transparent_44%),radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.05),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.03),rgba(0,0,0,0.28))]"
+    >
+      <div
+        className={cn(
+          'grid place-items-center rounded-full border border-white/12 bg-black/35 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm',
+          isDesktop ? 'h-24 w-24' : 'h-20 w-20'
+        )}
+      >
+        <span
+          className={cn(
+            'font-display font-semibold tracking-[-0.08em] text-white/85',
+            isDesktop ? 'text-3xl' : 'text-2xl'
+          )}
+        >
+          ON
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function IdentityCard({ variant, className, reducedMotion }: Readonly<IdentityCardProps>) {
   const prefersReducedMotion = useReducedMotion();
   const shouldReduceMotion = reducedMotion ?? Boolean(prefersReducedMotion);
   const isDesktop = variant === 'desktop';
-  const sizes = CARD_SIZES[variant];
+
+  const [portraitIndex, setPortraitIndex] = useState(0);
+  const [portraitReady, setPortraitReady] = useState(false);
+  const [portraitFailed, setPortraitFailed] = useState(false);
+
+  useEffect(() => {
+    setPortraitIndex(0);
+    setPortraitReady(false);
+    setPortraitFailed(false);
+  }, [variant]);
+
+  const portraitSrc = PORTRAIT_SOURCES[portraitIndex];
 
   return (
     <m.figure
@@ -49,6 +86,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
         className
       )}
+      style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat' }}
     >
       <div
         aria-hidden="true"
@@ -77,16 +115,34 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.36))]"
         />
 
-        <Image
-          src="/headshot.webp"
-          alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-          fill
-          sizes={sizes}
-          quality={90}
-          draggable={false}
-          priority
-          className={cn('object-cover', isDesktop ? 'object-[50%_14%]' : 'object-[50%_18%]')}
-        />
+        {!portraitFailed ? (
+          <img
+            src={portraitSrc}
+            alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+            loading="eager"
+            decoding="async"
+            draggable={false}
+            onLoad={() => setPortraitReady(true)}
+            onError={() => {
+              setPortraitReady(false);
+              setPortraitIndex((current) => {
+                if (current >= PORTRAIT_SOURCES.length - 1) {
+                  setPortraitFailed(true);
+                  return current;
+                }
+                return current + 1;
+              });
+            }}
+            className={cn(
+              'absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out',
+              portraitReady ? 'opacity-100' : 'opacity-0',
+              isDesktop ? 'object-[50%_14%]' : 'object-[50%_18%]'
+            )}
+            style={{ backfaceVisibility: 'hidden' }}
+          />
+        ) : (
+          <PortraitFallback isDesktop={isDesktop} />
+        )}
 
         <div
           aria-hidden="true"
