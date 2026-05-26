@@ -399,10 +399,24 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     try {
       lenis = new Lenis({
+        // 2026 best practice: lerp 0.08 gives cinematic glide without
+        // feeling sluggish on flagship devices. Lower values feel syrupy
+        // on mid-range hardware.
         lerp: 0.08,
         smoothWheel: true,
+        // syncTouch: syncs lerp to touch velocity so scroll feels physical
+        // on mobile Safari / Android Chrome. Without it, touch scroll has
+        // the same artificial smoothing as wheel, which feels wrong.
+        syncTouch: true,
+        // Multipliers tuned for comfortable reading across device types.
+        // wheelMultiplier 1 = native-feeling; touchMultiplier 1.1 = slight
+        // momentum boost for swipe-heavy mobile navigation.
         wheelMultiplier: 1,
         touchMultiplier: 1.1,
+        // autoRaf: false — we drive the RAF via gsap.ticker below for
+        // frame-perfect sync with GSAP ScrollTrigger. Double-RAF would
+        // cause double updates and potential jank.
+        autoRaf: false,
       });
       lenisRef.current = lenis;
       if (typeof document !== 'undefined') {
@@ -453,8 +467,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {
+        // Resume Lenis when tab becomes active again
+        if (lenis) lenis.start();
         safeRefresh(true);
         syncNativeScrollProgress();
+      } else {
+        // Pause Lenis when tab is hidden — saves GPU/CPU on background tabs
+        if (lenis) lenis.stop();
       }
     };
 
