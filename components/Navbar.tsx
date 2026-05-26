@@ -17,6 +17,7 @@
 import { AnimatePresence, m, useAnimationFrame, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
@@ -77,6 +78,25 @@ export default function Navbar() {
   const scrolledRef = useRef(false);
   const reducedMotion = useReducedMotion();
   const { activeChapter, scrollToSection, scrollYRef } = useScrollCinema();
+  const pathname = usePathname();
+
+  // SAFETY: close mobile menu and release body lock on route change.
+  // Without this, an unmount mid-animation could leak `body { overflow: hidden }`,
+  // causing the page to render with content invisible below viewport on return.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // SAFETY: defensive cleanup — ensure body.overflow is reset on unmount,
+  // covering edge cases where the cleanup in the lock effect didn't fire
+  // (e.g. React 19 concurrent unmount during animation).
+  useEffect(() => {
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+      }
+    };
+  }, []);
 
   const navItems = useMemo(() => NAV_ITEMS, []);
   const activeSectionId = getActiveIdFromChapter(activeChapter);
@@ -91,11 +111,19 @@ export default function Navbar() {
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (!mobileOpen) return;
+    if (!mobileOpen) {
+      // Ensure the html attribute clears so fallback CSS guard re-enables scroll
+      if (typeof document !== 'undefined') {
+        document.documentElement.removeAttribute('data-nav-open');
+      }
+      return;
+    }
     const orig = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.setAttribute('data-nav-open', 'true');
     return () => {
       document.body.style.overflow = orig;
+      document.documentElement.removeAttribute('data-nav-open');
     };
   }, [mobileOpen]);
 
