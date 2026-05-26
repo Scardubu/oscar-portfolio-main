@@ -5,6 +5,14 @@
 // Mobile-native page shell: bottom-nav padding, scroll-reveal init,
 // reduced-motion safety. Page transitions removed from mobile path —
 // they add ~120ms perceived latency on Android mid-range.
+//
+// v2026.7: wrapper overflow `overflow-x-hidden` → `overflow-x-clip`.
+//   `hidden` creates a new Block Formatting Context which, on iOS Safari,
+//   can intercept vertical page scroll and cause absolutely-positioned
+//   descendants (Next.js `fill` images) to render incorrectly. `clip` clips
+//   horizontal overflow without creating a BFC or scroll container — native
+//   and Lenis scroll remain unaffected. Aligns with the pattern already used
+//   by ProjectsSection, OpenSourceSection, and TestimonialsSection.
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -63,7 +71,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
   return (
     <div
       id="page-wrapper"
-      className="relative flex min-h-[100svh] flex-col overflow-x-hidden"
+      className="relative flex min-h-[100svh] flex-col overflow-x-clip"
       data-page-transitioning={isPending ? 'true' : 'false'}
     >
       <AnimatePresence mode="wait" initial={false}>
