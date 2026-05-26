@@ -39,8 +39,9 @@ import { GrainOverlay } from '@/components/GrainOverlay';
 import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 
-import './fixes.css';
+// v2026.8: import order corrected — globals.css first, fixes.css overrides
 import './globals.css';
+import './fixes.css';
 
 const ThreeBrushField = dynamic(
   () => import('@/components/cinematic/ThreeBrushField').then((mod) => mod.ThreeBrushField),
@@ -246,7 +247,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body className="relative overflow-x-hidden">
+      <body className="relative overflow-x-clip">
         {/* ── Skip navigation — WCAG 2.2 §2.4.1 ──────────────────────── */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
