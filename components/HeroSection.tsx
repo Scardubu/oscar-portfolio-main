@@ -352,7 +352,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
           />
         ))}
       </div>
@@ -925,12 +925,12 @@ export function HeroSection() {
             </m.div>
           </div>
 
-          <m.div variants={child} className="flex justify-start">
+          <m.div variants={child} className="hidden justify-start sm:flex">
             <button
               type="button"
               onClick={() => globalThis.dispatchEvent(new Event('command-palette:open'))}
               className="border-color-border text-color-text-secondary hover:text-color-text-primary inline-flex cursor-pointer items-center gap-1.5 rounded border bg-white/[0.02] px-2.5 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors hover:border-white/20"
-              aria-label="Open command palette"
+              aria-label="Open command palette (keyboard shortcut Cmd K)"
             >
               <kbd>⌘K</kbd>
               <span>Navigate</span>
