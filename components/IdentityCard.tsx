@@ -1,12 +1,42 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { m, useAnimationFrame, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
-import { type PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+// CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
+// IdentityCard — Luxury operating-system identity card portrait
+//
+// CHANGELOG v2026.8:
+//
+//   FIX 9: Headshot image visibility restored.
+//     Root cause: the useEffect at line 56–60 (v2026.7) fired after mount and
+//     reset `portraitReady` to false — even if the browser had already fired
+//     `onLoad` for a cached image. Since the browser never re-fires `onLoad`
+//     for the same src, the image stayed at `opacity-0` permanently.
+//
+//     Fix: (a) removed the variant-triggered useEffect entirely — mobile and
+//     desktop instances are separate mounts, (b) added a ref callback that
+//     checks `img.complete` synchronously on DOM attachment as a fallback for
+//     cached images where `onLoad` fires before React's handler attaches,
+//     (c) `onLoad` still works as the primary async handler.
+//
+//   FIX 10: Removed conflicting `[transform-style:preserve-3d]` from className.
+//     The inline `style={{ transformStyle: ... }}` is the single source of truth.
+//     The Tailwind class was a specificity hazard that competed with both the
+//     inline style and the globals.css `@media (max-width: 1023px)` override.
+//
+//   FIX 11: Removed `backfaceVisibility: 'hidden'` from the img inline style.
+//     With mobile transform-style set to 'flat', backface-visibility has no
+//     effect. Removing it eliminates a potential iOS WebKit compositing edge
+//     case where hidden-backface interacts unexpectedly with ancestor 3D
+//     context changes during scroll/animation.
+//
+//   FIX 12: Added subtle loading shimmer to the portrait area. While the image
+//     loads, a gentle animated gradient sweep plays across the card center.
+//     This transforms the blank-card state from "broken" to "developing" — a
+//     premium photo-reveal moment when the portrait fades in.
 
-import { useScrollCinema } from './cinematic/ScrollCinemaProvider';
-import { cn } from '../lib/utils';
+import { m, useReducedMotion } from 'framer-motion';
+import { useCallback, useRef, useState } from 'react';
+
+import { cn } from '@/lib/utils';
 
 export type IdentityCardVariant = 'mobile' | 'desktop';
 
@@ -21,29 +51,6 @@ const PORTRAIT_SOURCES = [
   '/images/oscar-headshot.jpg',
   '/images/scar-headshot.jpeg',
 ] as const;
-
-const TECH_TAGS = ['FULL-STACK', 'JAVA', 'NEXT.JS 15', 'REACT NATIVE', 'AI SYSTEMS', 'FINTECH'] as const;
-
-type PerformanceHints = Navigator & {
-  connection?: {
-    effectiveType?: string;
-    saveData?: boolean;
-  };
-  deviceMemory?: number;
-  hardwareConcurrency?: number;
-};
-
-const HeroPortraitShader = dynamic(
-  () => import('./cinematic/HeroPortraitShader').then((mod) => mod.HeroPortraitShader),
-  {
-    ssr: false,
-    loading: () => null,
-  }
-);
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
 
 function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
   return (
@@ -75,122 +82,59 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
   const shouldReduceMotion = reducedMotion ?? Boolean(prefersReducedMotion);
   const isDesktop = variant === 'desktop';
 
-  const { scrollYRef } = useScrollCinema();
-
-  const shellRef = useRef<HTMLElement | null>(null);
   const [portraitIndex, setPortraitIndex] = useState(0);
   const [portraitReady, setPortraitReady] = useState(false);
   const [portraitFailed, setPortraitFailed] = useState(false);
-  const [allowShader, setAllowShader] = useState(false);
 
-  const pointerX = useMotionValue(0.5);
-  const pointerY = useMotionValue(0.38);
-  const scrollDepth = useMotionValue(0);
+  // FIX 9: Track the actual img element to detect cached-image loads.
+  // When a browser serves an image from memory/disk cache, `onLoad` can fire
+  // synchronously during element creation — before React attaches the handler.
+  // The callback ref checks `img.complete` as a sync fallback.
+  const imgReadyRef = useRef(false);
 
-  const rotateY = useSpring(useTransform(pointerX, [0, 1], [-7.5, 7.5]), {
-    stiffness: 150,
-    damping: 24,
-    mass: 0.26,
-  });
-  const rotateX = useSpring(useTransform(pointerY, [0, 1], [8, -8]), {
-    stiffness: 150,
-    damping: 24,
-    mass: 0.26,
-  });
-  const lift = useSpring(useTransform(scrollDepth, [0, 1], [0, 8]), {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.24,
-  });
+  const handleLoad = useCallback(() => {
+    if (!imgReadyRef.current) {
+      imgReadyRef.current = true;
+      setPortraitReady(true);
+    }
+  }, []);
+
+  const handleError = useCallback(() => {
+    imgReadyRef.current = false;
+    setPortraitReady(false);
+    setPortraitIndex((current) => {
+      if (current >= PORTRAIT_SOURCES.length - 1) {
+        setPortraitFailed(true);
+        return current;
+      }
+      return current + 1;
+    });
+  }, []);
+
+  // Callback ref: fires when the <img> DOM node mounts.
+  // Checks `img.complete && img.naturalWidth > 0` to catch cached images
+  // whose `onLoad` fired before React could attach the handler.
+  const imgRef = useCallback(
+    (node: HTMLImageElement | null) => {
+      if (node && node.complete && node.naturalWidth > 0 && !imgReadyRef.current) {
+        handleLoad();
+      }
+    },
+    [handleLoad]
+  );
 
   const portraitSrc = PORTRAIT_SOURCES[portraitIndex];
 
-  useEffect(() => {
-    setPortraitIndex(0);
-    setPortraitReady(false);
-    setPortraitFailed(false);
-  }, [variant]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const hints = navigator as PerformanceHints;
-    const connection = hints.connection;
-    const prefersCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    const prefersFinePointer = window.matchMedia('(pointer: fine)').matches;
-    const saveData = Boolean(connection?.saveData);
-    const slowConnection = /(^|-)2g$|slow-2g/i.test(connection?.effectiveType ?? '');
-    const lowMemory = typeof hints.deviceMemory === 'number' && hints.deviceMemory <= 4;
-    const lowCores = typeof hints.hardwareConcurrency === 'number' && hints.hardwareConcurrency <= 4;
-
-    setAllowShader(
-      isDesktop &&
-        !shouldReduceMotion &&
-        prefersFinePointer &&
-        !prefersCoarsePointer &&
-        !saveData &&
-        !slowConnection &&
-        !lowMemory &&
-        !lowCores
-    );
-  }, [isDesktop, shouldReduceMotion]);
-
-  useAnimationFrame(() => {
-    if (shouldReduceMotion) return;
-    const nextDepth = clamp(scrollYRef.current / 5600, 0, 1);
-    scrollDepth.set(nextDepth);
-  });
-
-  const handlePointerMove = useCallback(
-    (event: ReactPointerEvent<HTMLElement>) => {
-      if (shouldReduceMotion) return;
-
-      const shell = shellRef.current;
-      if (!shell) return;
-
-      const rect = shell.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-
-      pointerX.set(clamp((event.clientX - rect.left) / rect.width, 0, 1));
-      pointerY.set(clamp((event.clientY - rect.top) / rect.height, 0, 1));
-    },
-    [pointerX, pointerY, shouldReduceMotion]
-  );
-
-  const resetPointer = useCallback(() => {
-    pointerX.set(0.5);
-    pointerY.set(0.38);
-  }, [pointerX, pointerY]);
-
-  const techTagAnimations = useMemo(
-    () =>
-      TECH_TAGS.map((tag, index) => (
-        <m.span
-          key={tag}
-          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 8, filter: 'blur(4px)' }}
-          animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={
-            shouldReduceMotion
-              ? { duration: 0 }
-              : { delay: 0.28 + index * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-          }
-          className="hero-tech-tag"
-        >
-          {tag}
-        </m.span>
-      )),
-    [shouldReduceMotion]
-  );
-
   return (
     <m.figure
-      ref={shellRef}
       initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
       animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
       whileHover={
         isDesktop && !shouldReduceMotion
           ? {
-              scale: 1.01,
+              scale: 1.012,
+              rotateX: -2,
+              rotateY: 2,
               transition: { type: 'spring', stiffness: 240, damping: 22 },
             }
           : undefined
@@ -200,99 +144,95 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
       }
       aria-label="Luxury operating-system identity card portrait"
       className={cn(
-        'hero-headshot-frame relative isolate transform-gpu will-change-transform [transform-style:preserve-3d]',
-        isDesktop ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]' : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
+        // FIX 10: removed [transform-style:preserve-3d] — inline style is SoT
+        'relative isolate transform-gpu overflow-visible will-change-transform',
+        isDesktop
+          ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]'
+          : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
         className
       )}
-      style={{
-        transformStyle: 'preserve-3d',
-        perspective: 1200,
-        rotateX: shouldReduceMotion ? 0 : rotateX,
-        rotateY: shouldReduceMotion ? 0 : rotateY,
-        y: shouldReduceMotion ? 0 : lift,
-      }}
+      style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat' }}
     >
+      {/* Ambient glow behind the card */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.18),transparent_60%),radial-gradient(circle_at_70%_22%,rgba(255,255,255,0.08),transparent_35%)] blur-3xl"
       />
 
-      <div
-        className="hero-headshot-shell relative aspect-[4/5] w-full overflow-hidden rounded-[36px] border border-white/12 bg-[oklch(16%_0.015_255_/_0.94)] shadow-[0_26px_72px_rgba(0,0,0,0.58),0_0_0_1px_rgba(255,255,255,0.06)]"
-        onPointerMove={handlePointerMove}
-        onPointerLeave={resetPointer}
-        onPointerCancel={resetPointer}
-      >
+      {/* Card frame */}
+      <div className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[36px] border border-white/12 bg-[oklch(16%_0.015_255_/_0.94)] shadow-[0_26px_72px_rgba(0,0,0,0.58),0_0_0_1px_rgba(255,255,255,0.06)]">
+        {/* Decorative overlays — intentionally z-[1]+ above the image */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.05)_10%,transparent_30%,transparent_68%,rgba(0,0,0,0.68)_100%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.06)_12%,transparent_32%,transparent_70%,rgba(0,0,0,0.58)_100%)]"
         />
         <div
           aria-hidden="true"
-          className="hero-headshot-scanlines pointer-events-none absolute inset-0 z-[1]"
-        />
-        <div
-          aria-hidden="true"
-          className="hero-headshot-matrix pointer-events-none absolute inset-0 z-[1]"
+          className="pointer-events-none absolute inset-0 z-[1] [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px] opacity-70 mix-blend-overlay"
         />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.12),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.1),transparent_56%)]"
         />
+        {/* Top edge highlight */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.34),transparent)]"
         />
+        {/* Bottom vignette */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.42))]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[2] rounded-[36px] ring-1 ring-inset ring-white/10"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.36))]"
         />
 
-        {allowShader ? <HeroPortraitShader /> : null}
+        {/* FIX 12: Loading shimmer — visible only while image loads */}
+        {!portraitReady && !portraitFailed && (
+          <div
+            aria-hidden="true"
+            className={cn(
+              'absolute inset-0 overflow-hidden',
+              shouldReduceMotion && 'hidden'
+            )}
+          >
+            <div
+              className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
+              }}
+            />
+          </div>
+        )}
 
+        {/* Portrait image */}
         {!portraitFailed ? (
-          <Image
+          <img
+            ref={imgRef}
             src={portraitSrc}
             alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-            fill
-            priority
-            sizes={isDesktop ? '(min-width: 1280px) 18rem, (min-width: 1024px) 17rem, 56vw' : '100vw'}
-            quality={92}
+            loading="eager"
+            decoding="async"
             draggable={false}
-            onLoad={() => setPortraitReady(true)}
-            onError={() => {
-              setPortraitReady(false);
-              setPortraitIndex((current) => {
-                if (current >= PORTRAIT_SOURCES.length - 1) {
-                  setPortraitFailed(true);
-                  return current;
-                }
-
-                return current + 1;
-              });
-            }}
+            onLoad={handleLoad}
+            onError={handleError}
             className={cn(
-              'absolute inset-0 z-[0] h-full w-full object-cover transition-[opacity,transform,filter] duration-700 ease-out',
-              portraitReady ? 'opacity-100' : 'opacity-0')}
-            style={{
-              backfaceVisibility: 'hidden',
-              filter: 'contrast(1.08) saturate(1.06) brightness(0.92)',
-              transform: shouldReduceMotion ? 'none' : 'scale(1.02)',
-              objectPosition: isDesktop ? '50% 14%' : '50% 18%',
-            }}
+              'absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out',
+              portraitReady ? 'opacity-100' : 'opacity-0',
+              isDesktop ? 'object-[50%_14%]' : 'object-[50%_18%]'
+            )}
+            // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
           />
         ) : (
           <PortraitFallback isDesktop={isDesktop} />
         )}
 
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-4 top-[4.4rem] z-[4] flex flex-wrap gap-1.5">
-          {techTagAnimations}
-        </div>
+        {/* Inner ring */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[3] rounded-[36px] ring-1 ring-white/10 ring-inset"
+        />
 
+        {/* Top badge row: System ID + Staff+ pill */}
         <div
           className={cn(
             'absolute z-[4] flex items-start justify-between',
@@ -336,6 +276,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
           </span>
         </div>
 
+        {/* Bottom badge row: Engineering Access + Location */}
         <div
           className={cn(
             'absolute z-[4] flex justify-between',
