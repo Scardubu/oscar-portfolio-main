@@ -3,6 +3,7 @@
 // Major Reset • Lagos → Global • Production Conviction Architecture
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import { Mail, MessageSquareText, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -43,6 +44,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [fabExpanded, setFabExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [whyLagosOpen, setWhyLagosOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -51,6 +53,9 @@ export function CommandPalette() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const quickActionsRef = useRef<HTMLDivElement>(null);
+  const quickContactRef = useRef<HTMLButtonElement>(null);
+  const quickToggleRef = useRef<HTMLButtonElement>(null);
   // Stores the element that had focus before the palette opened so we can
   // restore it on close — critical for keyboard and screen-reader UX.
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -111,6 +116,11 @@ export function CommandPalette() {
     setActiveIndex(0);
   }, []);
 
+  const openPaletteFromQuickAction = useCallback(() => {
+    globalThis.dispatchEvent(new Event('command-palette:open'));
+    setOpen(true);
+  }, []);
+
   const scrollTo = useCallback(
     (id: string) => {
       if (pathname !== '/') {
@@ -126,6 +136,16 @@ export function CommandPalette() {
     },
     [close, pathname, router, scrollToSection]
   );
+
+  const openConstraints = useCallback(() => {
+    setFabExpanded(false);
+    scrollTo('section-contact');
+  }, [scrollTo]);
+
+  const openPaletteShortcuts = useCallback(() => {
+    setFabExpanded(false);
+    openPaletteFromQuickAction();
+  }, [openPaletteFromQuickAction]);
 
   const commands = useMemo<CommandItem[]>(
     () => [
@@ -413,6 +433,86 @@ export function CommandPalette() {
     return () => clearTimeout(t);
   }, [open, isMobile]);
 
+  useEffect(() => {
+    if (open && fabExpanded) {
+      setFabExpanded(false);
+    }
+  }, [fabExpanded, open]);
+
+  useEffect(() => {
+    if (!fabExpanded || open) return;
+
+    const focusTimeout = window.setTimeout(
+      () => {
+        quickContactRef.current?.focus();
+      },
+      reducedMotion ? 0 : 120
+    );
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!quickActionsRef.current) return;
+      const target = event.target;
+      if (target instanceof Node && !quickActionsRef.current.contains(target)) {
+        setFabExpanded(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setFabExpanded(false);
+        quickToggleRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !quickActionsRef.current) return;
+
+      const focusable = Array.from(
+        quickActionsRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(
+        (element) =>
+          !element.hasAttribute('hidden') &&
+          getComputedStyle(element).display !== 'none' &&
+          getComputedStyle(element).visibility !== 'hidden'
+      );
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey) {
+        if (
+          document.activeElement === first ||
+          !quickActionsRef.current.contains(document.activeElement)
+        ) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else if (
+        document.activeElement === last ||
+        !quickActionsRef.current.contains(document.activeElement)
+      ) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown, { capture: true });
+
+    return () => {
+      window.clearTimeout(focusTimeout);
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown, { capture: true });
+    };
+  }, [fabExpanded, open, reducedMotion]);
+
   // Groups for display
   const groups = useMemo(() => {
     const map = new Map<string, CommandItem[]>();
@@ -593,25 +693,82 @@ export function CommandPalette() {
         )}
       </AnimatePresence>
 
-      {/* Persistent FAB — FIX v23 [COMPOSITOR-2]:
-          Keep a single fixed affordance across chapters for fast command access.
-          bg-black/85 keeps readability without blur-driven layer promotion.
-          transform-gpu pre-promotes for instant re-entry after palette close. */}
+      {/* Persistent quick-actions FAB.
+          Keeps one global affordance while exposing a fast-contact action.
+          Uses chapter-accent glow and safe-area-aware fixed positioning. */}
       {!open && (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open command palette"
-          className="fixed right-4 z-40 flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/70 shadow-[0_4px_24px_oklch(0%_0_0_/_0.4)] transition-colors duration-200 hover:border-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-[oklch(73%_0.18_196)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none sm:h-11 sm:w-auto sm:min-w-[3.5rem] sm:px-3 lg:h-10"
-          // Lifts the FAB above iOS Safari's home-indicator gesture zone.
+        <div
+          ref={quickActionsRef}
+          role="group"
+          aria-label="Quick actions"
+          className="fixed right-4 z-[80] flex flex-col items-end gap-2"
+          // Keeps the FAB above mobile bottom navigation and safe-area inset.
           // eslint-disable-next-line no-restricted-syntax
-          style={{ bottom: 'max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))' }}
+          style={{
+            bottom: isMobile
+              ? 'calc(var(--bottom-nav-height, 0px) + 1.25rem + env(safe-area-inset-bottom, 0px))'
+              : 'max(1.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))',
+          }}
         >
-          <span className="font-mono text-sm font-semibold tracking-tight" aria-hidden="true">
-            <span className="sm:hidden">⌘</span>
-            <span className="hidden sm:inline">⌘K</span>
-          </span>
-        </button>
+          <AnimatePresence initial={false}>
+            {fabExpanded && (
+              <m.div
+                id="quick-actions-menu"
+                key="quick-actions-menu"
+                initial={reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 6, scale: 0.98 }}
+                transition={reducedMotion ? { duration: 0 } : springs.smooth}
+                className="flex flex-col items-end gap-2"
+              >
+                <button
+                  ref={quickContactRef}
+                  type="button"
+                  onClick={openConstraints}
+                  className="border-color-border text-color-text-primary flex min-h-[44px] items-center gap-2 rounded-full border bg-[oklch(14%_0.008_264_/_0.92)] px-4 py-2 font-mono text-[11px] tracking-wide transition-colors hover:border-white/30 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
+                  aria-label="Tell me your constraints"
+                >
+                  <MessageSquareText className="h-3.5 w-3.5" aria-hidden="true" />
+                  Tell me your constraints
+                </button>
+
+                <button
+                  type="button"
+                  onClick={openPaletteShortcuts}
+                  className="border-color-border text-color-text-primary flex min-h-[44px] items-center gap-2 rounded-full border bg-[oklch(14%_0.008_264_/_0.92)] px-4 py-2 font-mono text-[11px] tracking-wide transition-colors hover:border-white/30 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
+                  aria-label="Open command palette"
+                >
+                  <span>Open command palette</span>
+                  <kbd className="border-color-border text-color-text-muted rounded border px-1.5 py-0.5 font-mono text-[10px]">
+                    ⌘K
+                  </kbd>
+                </button>
+              </m.div>
+            )}
+          </AnimatePresence>
+
+          <button
+            ref={quickToggleRef}
+            type="button"
+            onClick={() => setFabExpanded((value) => !value)}
+            aria-label={fabExpanded ? 'Collapse quick actions' : 'Open quick actions'}
+            aria-expanded={fabExpanded}
+            aria-controls="quick-actions-menu"
+            className="flex h-12 w-12 transform-gpu items-center justify-center rounded-2xl border border-white/12 bg-black/85 text-white/80 transition-colors duration-200 hover:border-white/24 hover:text-white focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+            // Chapter-aware glow keeps the FAB visually in sync with active section.
+            // eslint-disable-next-line no-restricted-syntax
+            style={{
+              boxShadow:
+                '0 10px 30px -14px color-mix(in oklch, var(--chapter-accent) 58%, transparent)',
+            }}
+          >
+            {fabExpanded ? (
+              <X className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Mail className="h-4 w-4" aria-hidden="true" />
+            )}
+          </button>
+        </div>
       )}
 
       {/* /why-lagos modal — V1.0 Change 9: §DELIGHT_MISS:personality easter egg.

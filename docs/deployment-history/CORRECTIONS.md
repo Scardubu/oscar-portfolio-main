@@ -2,6 +2,38 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-05-26 — Phase 2 integration pass (O2 + O4 + O5 + O6 + O7)
+
+- Migrated brand typography in `app/layout.tsx` from inline fallback variables to self-hosted `next/font/google` assignments for Syne, DM Sans, JetBrains Mono, and Playfair Display, then aligned `tailwind.config.ts` to the semantic font-variable contract already consumed by `app/globals.css`.
+- Removed dead reveal scaffolding by deleting `components/ScrollRevealInit.tsx`, `hooks/useScrollReveal.ts`, and `components/ui/SubtleParallaxWrapper.tsx`, and by dropping the stale barrel export from `hooks/index.ts`.
+- Exposed `lenisRef` from `components/cinematic/ScrollCinemaProvider.tsx`, added shared `hooks/useLenisScroll.ts`, and refactored `components/BlogReadingProgressTracker.tsx`, `components/BlogProgressWidget.tsx`, and `hooks/useReadingProgress.ts` so writing-route progress UI now rides one Lenis/native scroll source instead of three separate `window` listeners.
+- Added chapter-accent project-card hover glow styling in `app/globals.css` and applied it across all project card variants in `components/ProjectsSection.tsx`.
+- Elevated the hero conviction metrics in `components/HeroSection.tsx` and `app/globals.css` with glass stat pills, stronger numeric hierarchy, and restored mobile proof-carousel active-dot state.
+- Replaced the flaky `networkidle` wait in `tests/e2e/smoke.spec.ts` with `load`, matching the actual readiness contract of the homepage while background live activity requests remain active.
+
+Validation after Phase 2 integration:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 expected skips.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=mobile-chrome --workers=1` passed with 17 tests passed and 3 expected skips.
+- `pnpm exec playwright test tests/e2e/smoke.spec.ts --project=mobile-chrome --workers=1` passed with 4 tests passed and 1 expected skip.
+
+## 2026-05-26 — Phase 1 stability hardening (O0 + O1 + O3)
+
+- Hardened cinematic startup in `components/cinematic/ScrollCinemaProvider.tsx` by removing module-scope GSAP registration, adding guarded runtime registration, and adding safe ScrollTrigger refresh/update wrappers so mobile initialization failures degrade safely instead of blank-screening.
+- Added `ScrollCinemaStaticProvider` fallback path in `components/cinematic/ScrollCinemaProvider.tsx` and wrapped cinematic composition in `components/CinematicErrorBoundary.tsx` via `app/providers.tsx` so failures downgrade to static native scroll context without breaking consumers of `useScrollCinema()`.
+- Guarded `gsap.context()` setup in `hooks/useChapterTimeline.ts` with try/catch and null-safe cleanup so timeline bootstrap errors no longer cascade to root-level runtime crashes.
+- Restored Lenis-to-ScrollTrigger post-scroll sync in `components/cinematic/ScrollCinemaProvider.tsx` with explicit subscribe/unsubscribe symmetry (`lenis.on/off('scroll', syncScrollTrigger)`), keeping ticker ownership intact.
+- Upgraded the existing floating command affordance in `components/CommandPalette.tsx` into an accessible quick-actions FAB: expandable contact shortcut (`Tell me your constraints`), command palette shortcut (`⌘K` dispatch path), Escape collapse, focus trapping when expanded, and safe-area-aware fixed positioning with chapter-accent glow.
+
+Validation after Phase 1 implementation:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --workers=1` passed with 18 tests passed and 2 expected skips.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=mobile-chrome --workers=1` completed with 16 tests passed, 3 expected skips, and 1 flaky retry pass caused by an existing `networkidle` wait in `tests/e2e/smoke.spec.ts`.
+
 ## 2026-05-26 — Follow-up interaction harmonization
 
 - Harmonized remaining high-traffic focus states in `components/ProjectsSection.tsx`, `components/OpenSourceSection.tsx`, `components/WritingSection.tsx`, `components/skills/SkillsMap.tsx`, `components/ProductionPatterns.tsx`, and `components/ThemeToggle.tsx` so keyboard rings now use the chapter-accent system instead of older white-only values.

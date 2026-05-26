@@ -14,12 +14,12 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 
 ## Current release status
 
-As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, and Playwright smoke validation on both `chromium` and `mobile-chrome`.
+As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, the primary Playwright smoke suite on both `chromium` and `mobile-chrome`, and the secondary `tests/e2e/smoke.spec.ts` mobile pass that previously flaked on `networkidle`.
 
-- Mobile footer trust-strip contrast was corrected so the live status copy now clears the accessibility gate on small screens.
-- The skills explorer now uses an accessible list-versus-radar segmented control instead of a binary text switch.
-- The WebGL brush field now degrades more gracefully on lower-power devices by lowering frame cadence and pixel ratio when runtime conditions demand it.
-- Command palette focus restoration and chapter-rail focus visibility were tightened to keep keyboard navigation stable across desktop and mobile assistive flows.
+- Brand typography is now self-hosted through `next/font/google` for Syne, DM Sans, JetBrains Mono, and Playfair Display while preserving the semantic CSS variable contract used by `app/globals.css` and Tailwind.
+- Blog reading progress surfaces now subscribe through a shared Lenis-aware scroll fan-out instead of three independent `window` listeners, keeping writing-route progress UI aligned with both cinematic and native-scroll fallback modes.
+- Project cards now share a chapter-accent hover glow system, the hero metrics strip has stronger visual hierarchy via glass stat pills, and the mobile proof-carousel active dot regression is corrected.
+- Stale scroll-reveal scaffolding (`useScrollReveal`, `ScrollRevealInit`, and the duplicate UI parallax wrapper) has been removed from the runtime surface.
 
 ---
 
@@ -52,9 +52,10 @@ The homepage uses an 8-chapter cinematic scroll architecture. Understanding it i
 ### Architecture overview
 
 ```text
-ScrollCinemaProvider          — Lenis instance, activeChapter state, scrollProgressRef
+ScrollCinemaProvider          — Lenis instance, activeChapter state, scrollProgressRef, lenisRef
   └── GSAP ticker             — single RAF loop shared by Lenis + ScrollTrigger
        └── ScrollTrigger      — per-section reveal timelines (via useChapterTimeline)
+     └── useLenisScroll          — shared subscriber for reading progress surfaces
   └── ThreeBrushField         — Three.js WebGL atmospheric shader
        ├── Renderer RAF       — reads scrollProgressRef, updates uniforms
        └── Palette effect     — imperative uniform mutation on activeChapter change
@@ -109,11 +110,12 @@ Three RAF loops share one frame budget:
 - GSAP ticker: ScrollTrigger calculations
 - ThreeBrushField: WebGL render
 
-Lenis feeds into GSAP ticker via `gsap.ticker.add(raf)`. `ScrollTrigger.update()` is intentionally NOT called manually — GSAP drives it from the ticker. On mobile, `mix-blend-mode: screen` is disabled (costs a GPU compositor pass per frame on low-power devices).
+Lenis feeds into GSAP ticker via `gsap.ticker.add(raf)`. The ticker still owns the RAF loop, and `ScrollCinemaProvider` now adds a guarded post-Lenis `ScrollTrigger.update()` sync callback so chapter triggers stay aligned with the active smooth-scroll path. On mobile, `mix-blend-mode: screen` is disabled (costs a GPU compositor pass per frame on low-power devices).
 
 Current resilience notes:
 
 - `ScrollCinemaProvider` now exposes `data-scroll-engine="lenis|native"` on `<html>` so CSS and diagnostics can distinguish the active path.
+- `ScrollCinemaProvider` also exposes `lenisRef`, and writing-route progress surfaces consume it through `useLenisScroll` so Lenis/native fallback stays centralized.
 - If Lenis initialization or `scrollTo()` fails, the homepage falls back to native scroll with the same chapter tracking and anchor offsets.
 - Hero parallax progress is synced through Framer Motion's shared animation frame loop instead of a custom RAF, reducing drift between scroll interpolation and motion transforms.
 

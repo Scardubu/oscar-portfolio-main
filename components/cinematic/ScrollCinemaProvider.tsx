@@ -19,12 +19,11 @@ import { trackSectionView } from '@/app/lib/analytics';
 import type { ChapterId } from '@/lib/cinematic/chapters';
 import { CHAPTERS } from '@/lib/cinematic/chapters';
 
-gsap.registerPlugin(ScrollTrigger);
-
 type ScrollCinemaContextValue = {
   reducedMotion: boolean;
   activeChapter: ChapterId;
   activeChapterRef: MutableRefObject<ChapterId>;
+  lenisRef: MutableRefObject<Lenis | null>;
   scrollYRef: MutableRefObject<number>;
   scrollProgressRef: MutableRefObject<number>;
   setActiveChapter: (chapter: ChapterId) => void;
@@ -33,12 +32,132 @@ type ScrollCinemaContextValue = {
 
 const ScrollCinemaContext = createContext<ScrollCinemaContextValue | null>(null);
 
+function getSectionOffset() {
+  if (typeof window === 'undefined') return -88;
+  const navHeightToken = getComputedStyle(document.documentElement)
+    .getPropertyValue('--nav-height')
+    .trim();
+  const navHeight = Number.parseFloat(navHeightToken);
+
+  if (!Number.isFinite(navHeight)) return -88;
+  return -(navHeight + 16);
+}
+
 export function useScrollCinema() {
   const value = useContext(ScrollCinemaContext);
   if (!value) {
     throw new Error('useScrollCinema must be used within ScrollCinemaProvider');
   }
   return value;
+}
+
+export function ScrollCinemaStaticProvider({ children }: Readonly<{ children: ReactNode }>) {
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [activeChapter, setActiveChapterState] = useState<ChapterId>('prologue');
+
+  const activeChapterRef = useRef<ChapterId>('prologue');
+  const lenisRef = useRef<Lenis | null>(null);
+  const scrollYRef = useRef(0);
+  const scrollProgressRef = useRef(0);
+
+  const setActiveChapter = useCallback((chapter: ChapterId) => {
+    activeChapterRef.current = chapter;
+    setActiveChapterState(chapter);
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.activeChapter = chapter;
+    }
+  }, []);
+
+  const syncNativeScrollProgress = useCallback(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    const doc = document.documentElement;
+    const body = document.body;
+    const scrollTop = window.scrollY || doc.scrollTop || body.scrollTop || 0;
+    const scrollHeight = Math.max(doc.scrollHeight, body.scrollHeight);
+    const viewportHeight = window.innerHeight || doc.clientHeight || 0;
+    const limit = Math.max(scrollHeight - viewportHeight, 0);
+
+    scrollYRef.current = Math.max(0, scrollTop);
+    scrollProgressRef.current = limit > 0 ? Math.min(1, Math.max(0, scrollTop / limit)) : 0;
+  }, []);
+
+  const scrollToSection = useCallback(
+    (sectionId: string) => {
+      if (typeof document === 'undefined' || typeof window === 'undefined') return;
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+
+      const top = el.getBoundingClientRect().top + window.scrollY + getSectionOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
+    },
+    [reducedMotion]
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotion = () => {
+      const reduce = media.matches;
+      setReducedMotion(reduce);
+      document.documentElement.dataset.reducedMotion = reduce ? 'true' : 'false';
+    };
+
+    syncMotion();
+    media.addEventListener('change', syncMotion);
+    return () => media.removeEventListener('change', syncMotion);
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.dataset.activeChapter = activeChapter;
+  }, [activeChapter]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    document.documentElement.dataset.scrollEngine = 'static';
+
+    const onNativeScroll = () => {
+      syncNativeScrollProgress();
+    };
+
+    onNativeScroll();
+    window.addEventListener('scroll', onNativeScroll, { passive: true });
+    window.addEventListener('resize', onNativeScroll, { passive: true });
+    window.addEventListener('orientationchange', onNativeScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onNativeScroll);
+      window.removeEventListener('resize', onNativeScroll);
+      window.removeEventListener('orientationchange', onNativeScroll);
+    };
+  }, [syncNativeScrollProgress]);
+
+  const value = useMemo<ScrollCinemaContextValue>(
+    () => ({
+      reducedMotion,
+      activeChapter,
+      activeChapterRef,
+      lenisRef,
+      scrollYRef,
+      scrollProgressRef,
+      setActiveChapter,
+      scrollToSection,
+    }),
+    [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
+  );
+
+  const chapterLabel = CHAPTERS.find((c) => c.id === activeChapter)?.label ?? '';
+
+  return (
+    <ScrollCinemaContext.Provider value={value}>
+      {children}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {`Now viewing: ${chapterLabel}`}
+      </div>
+    </ScrollCinemaContext.Provider>
+  );
 }
 
 export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNode }>) {
@@ -49,6 +168,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const scrollYRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
+  const pluginRegisteredRef = useRef(false);
   const retryTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
@@ -74,17 +194,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const limit = Math.max(scrollHeight - viewportHeight, 0);
     syncScrollState(scrollTop, limit);
   }, [syncScrollState]);
-
-  const getSectionOffset = useCallback(() => {
-    if (typeof window === 'undefined') return -88;
-    const navHeightToken = getComputedStyle(document.documentElement)
-      .getPropertyValue('--nav-height')
-      .trim();
-    const navHeight = Number.parseFloat(navHeightToken);
-
-    if (!Number.isFinite(navHeight)) return -88;
-    return -(navHeight + 16);
-  }, []);
 
   const setActiveChapter = useCallback((chapter: ChapterId) => {
     activeChapterRef.current = chapter;
@@ -144,7 +253,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
       tryScroll(0);
     },
-    [getSectionOffset, reducedMotion, warnDev]
+    [reducedMotion, warnDev]
   );
 
   useEffect(() => {
@@ -229,6 +338,23 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    if (!pluginRegisteredRef.current) {
+      try {
+        gsap.registerPlugin(ScrollTrigger);
+        pluginRegisteredRef.current = true;
+      } catch (error) {
+        warnDev('GSAP ScrollTrigger registration failed. Falling back to static scrolling.', error);
+      }
+    }
+
+    const safeRefresh = (force = false) => {
+      try {
+        ScrollTrigger.refresh(force);
+      } catch (error) {
+        warnDev('ScrollTrigger refresh failed.', error);
+      }
+    };
+
     const setupNativeScrollProgress = () => {
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'native';
@@ -261,7 +387,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         lenisRef.current = null;
       }
       const cleanupNative = setupNativeScrollProgress();
-      ScrollTrigger.refresh(true);
+      safeRefresh(true);
       return () => {
         cleanupNative();
       };
@@ -289,16 +415,21 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       cleanupNative = setupNativeScrollProgress();
     }
 
-    // FIX ENHANCEMENT 8: removed the `ScrollTrigger.update()` call from
-    // this handler. GSAP's ticker.add(raf) already drives ScrollTrigger
-    // internally — calling update() here caused double-processing per frame
-    // and introduced subtle animation stutter on pinned sections.
     const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
       syncScrollState(scroll, limit);
     };
 
+    const syncScrollTrigger = () => {
+      try {
+        ScrollTrigger.update();
+      } catch (error) {
+        warnDev('ScrollTrigger update failed after Lenis scroll tick.', error);
+      }
+    };
+
     if (lenis) {
       lenis.on('scroll', onScroll);
+      lenis.on('scroll', syncScrollTrigger);
       syncNativeScrollProgress();
     }
 
@@ -313,7 +444,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }
 
     const refresh = () => {
-      ScrollTrigger.refresh();
+      safeRefresh();
       syncNativeScrollProgress();
     };
 
@@ -322,7 +453,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {
-        ScrollTrigger.refresh(true);
+        safeRefresh(true);
         syncNativeScrollProgress();
       }
     };
@@ -332,7 +463,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const fontsReady = document.fonts?.ready;
     if (fontsReady) {
       void fontsReady.then(() => {
-        ScrollTrigger.refresh(true);
+        safeRefresh(true);
         syncNativeScrollProgress();
       });
     }
@@ -343,6 +474,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       }
       if (lenis) {
         lenis.off('scroll', onScroll);
+        lenis.off('scroll', syncScrollTrigger);
         try {
           lenis.destroy();
         } catch (error) {
@@ -364,6 +496,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       reducedMotion,
       activeChapter,
       activeChapterRef,
+      lenisRef,
       scrollYRef,
       scrollProgressRef,
       setActiveChapter,

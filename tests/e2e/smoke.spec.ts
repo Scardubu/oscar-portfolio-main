@@ -69,7 +69,8 @@ test.skip('nav links scroll to matching sections', async ({ page }) => {
 
 test('all target blank links include noopener noreferrer', async ({ page }) => {
   await page.goto('/');
-  await page.waitForLoadState('networkidle');
+  // Live metrics/activity requests keep the page busy beyond initial readiness.
+  await page.waitForLoadState('load');
 
   const relValues = await page
     .locator('a[target="_blank"]')

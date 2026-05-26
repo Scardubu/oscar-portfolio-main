@@ -1458,30 +1458,38 @@ h3,
 /* ════ CONVICTION STAT STRIP v18 - Per-metric colors ════ */
 .conviction-stat-strip {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.875rem 1.25rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--color-border-subtle);
-  border-bottom: 1px solid var(--color-border-subtle);
-  margin-block: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+  padding: 0;
+  border: 0;
+  margin-block: 1.5rem;
 }
 @media (min-width: 480px) {
   .conviction-stat-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 2rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.875rem;
   }
 }
 .conviction-stat {
+  position: relative;
   display: flex;
+  min-height: 5.75rem;
   flex-direction: column;
-  gap: 0.2rem;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1rem 1rem 1rem 1.125rem;
+  border: 1px solid var(--glass-border);
+  border-left: 2px solid var(--chapter-accent);
+  border-radius: var(--radius-lg);
+  background: oklch(100% 0 0 / 0.04);
+  box-shadow: 0 16px 40px -30px color-mix(in oklch, var(--chapter-accent) 26%, transparent);
 }
 .conviction-stat-value {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  line-height: 0.95;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: -0.04em;
   white-space: nowrap;
   color: var(--color-stat-uptime);
   font-variant-numeric: tabular-nums;
@@ -1500,7 +1508,8 @@ h3,
 }
 .conviction-stat-label {
   font-family: var(--font-mono);
-  font-size: 0.5625rem;
+  font-size: 0.625rem;
+  line-height: 1.5;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
@@ -1740,6 +1749,25 @@ h3,
   transition:
     border-color var(--dur-base) var(--ease-out),
     box-shadow var(--dur-base) var(--ease-out);
+}
+
+.project-card-glow {
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    filter var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-card-glow:hover,
+  .project-card-glow:focus-within {
+    border-color: color-mix(in oklch, var(--chapter-accent) 46%, var(--glass-border));
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--chapter-accent) 22%, transparent),
+      0 22px 54px -28px color-mix(in oklch, var(--chapter-accent) 40%, transparent),
+      0 18px 40px -24px oklch(0% 0 0 / 0.58);
+    filter: drop-shadow(0 0 16px color-mix(in oklch, var(--chapter-accent) 20%, transparent));
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -2878,9 +2906,7 @@ section.border-t + section.border-t {
 /* ── v20: Wider stat strip gap — more scannable at small widths ───────── */
 @media (min-width: 380px) {
   .conviction-stat-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 2rem;
+    gap: 0.875rem;
   }
 }
 
@@ -3031,11 +3057,15 @@ section.border-t + section.border-t {
 @media (max-width: 479px) {
   .conviction-stat-strip {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .conviction-stat {
+    min-height: 5.25rem;
+    padding: 0.875rem 0.875rem 0.875rem 1rem;
   }
   .conviction-stat-value {
-    font-size: 0.75rem;
+    font-size: clamp(1.35rem, 7vw, 1.75rem);
     font-variant-numeric: tabular-nums;
   }
 }

@@ -27,7 +27,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import dynamic from 'next/dynamic';
-import type { CSSProperties } from 'react';
+import { DM_Sans, JetBrains_Mono, Playfair_Display, Syne } from 'next/font/google';
 
 import { Providers } from '@/app/providers';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -49,16 +49,37 @@ const ThreeBrushField = dynamic(
   }
 );
 
-// Local-first font strategy to avoid build-time network dependency on
-// Google Fonts while preserving brand-consistent fallbacks.
+const syne = Syne({
+  subsets: ['latin'],
+  variable: '--font-syne',
+  display: 'swap',
+  preload: true,
+  fallback: ['Avenir Next', 'Segoe UI', 'Inter', 'system-ui', 'sans-serif'],
+});
 
-const localFontVariables: CSSProperties = {
-  '--font-syne': '"Avenir Next", "Segoe UI", "Inter", system-ui, sans-serif',
-  '--font-dm-sans': '"Inter", "Avenir Next", "Segoe UI", system-ui, sans-serif',
-  '--font-jetbrains-mono':
-    '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace',
-  '--font-didone': '"Playfair Display", "Iowan Old Style", "Times New Roman", serif',
-} as CSSProperties;
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+  preload: true,
+  fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+  preload: true,
+  fallback: ['SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-didone-var',
+  display: 'swap',
+  preload: true,
+  fallback: ['Iowan Old Style', 'Times New Roman', 'serif'],
+});
 
 const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
@@ -194,8 +215,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      // eslint-disable-next-line no-restricted-syntax
-      style={localFontVariables}
+      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
       suppressHydrationWarning
     >
       <head>

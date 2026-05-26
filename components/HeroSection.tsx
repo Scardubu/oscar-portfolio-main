@@ -404,7 +404,7 @@ function ConvictionStat({
   }, [value, shouldAnimate, reducedMotion]);
 
   return (
-    <div className="conviction-stat" data-stat={stat} role="listitem">
+    <div className="conviction-stat glass-light" data-stat={stat} role="listitem">
       <span className="conviction-stat-value">{displayed}</span>
       <span className="conviction-stat-label">{label}</span>
     </div>

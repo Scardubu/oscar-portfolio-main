@@ -12,7 +12,9 @@
 
 import { ChevronRight, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useLenisScroll } from '@/hooks/useLenisScroll';
 
 type RelatedPost = {
   title: string;
@@ -31,28 +33,25 @@ export function BlogProgressWidget({ relatedPosts, currentSlug }: BlogProgressWi
   const [showSuggestions, setShowSuggestions] = useState(false);
   const rafRef = useRef<number | null>(null);
 
+  const handleScroll = useCallback(() => {
+    // Defer to rAF to keep scroll handler < 1ms
+    if (rafRef.current !== null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const winH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+      const top = window.scrollY;
+      const progress = Math.min((top / (docH - winH)) * 100, 100);
+
+      setScrollProgress(progress);
+      if (progress >= 70) setShowSuggestions(true);
+    });
+  }, []);
+
+  useLenisScroll(handleScroll, [handleScroll]);
+
   useEffect(() => {
-    const handleScroll = () => {
-      // Defer to rAF to keep scroll handler < 1ms
-      if (rafRef.current !== null) return;
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = null;
-        const winH = window.innerHeight;
-        const docH = document.documentElement.scrollHeight;
-        const top = window.scrollY;
-        const progress = Math.min((top / (docH - winH)) * 100, 100);
-
-        setScrollProgress(progress);
-        if (progress >= 70) setShowSuggestions(true);
-      });
-    };
-
-    // FIX: passive:true — eliminates scroll jank, required by Lighthouse
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
   }, []);

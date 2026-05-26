@@ -67,8 +67,10 @@ const config: Config = {
 
       // ── Typography ────────────────────────────────────────────────────────
       fontFamily: {
-        display: ['var(--font-display)', 'Syne', 'Arial Black', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-syne)', 'Syne', 'Arial Black', 'sans-serif'],
         mono: [
+          'var(--font-mono)',
+          'var(--font-jetbrains-mono)',
           'JetBrains Mono',
           'Fira Code',
           'ui-monospace',
@@ -77,6 +79,8 @@ const config: Config = {
           'monospace',
         ],
         sans: [
+          'var(--font-body)',
+          'var(--font-dm-sans)',
           'DM Sans',
           'ui-sans-serif',
           'system-ui',
@@ -84,7 +88,13 @@ const config: Config = {
           'BlinkMacSystemFont',
           'sans-serif',
         ],
-        didone: ['Playfair Display', 'Georgia', 'serif'],
+        didone: [
+          'var(--font-didone)',
+          'var(--font-didone-var)',
+          'Playfair Display',
+          'Georgia',
+          'serif',
+        ],
       },
 
       fontSize: {

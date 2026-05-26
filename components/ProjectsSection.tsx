@@ -84,7 +84,7 @@ function FeaturedProjectCard({
   return (
     <m.article
       variants={FEATURED_PRIMARY_VARIANT}
-      className="glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
+      className="project-card-glow glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="proof"
       data-project-id={featured.slug}
     >
@@ -234,7 +234,7 @@ function SecondaryFeaturedCard({
   return (
     <m.article
       variants={FEATURED_SECONDARY_VARIANT}
-      className="glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
+      className="project-card-glow glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="card"
       data-project-id={project.slug}
       whileHover={reducedMotion ? undefined : hoverLift(-3)}
@@ -359,7 +359,7 @@ function ProjectCard({
   return (
     <m.article
       variants={variant}
-      className="glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
+      className="project-card-glow glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
       data-cinematic="card"
       data-project-id={project.slug}
       whileHover={reducedMotion ? undefined : hoverLift(-4)}

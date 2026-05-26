@@ -3,7 +3,11 @@
 import { MotionConfig } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-import { ScrollCinemaProvider } from '@/components/cinematic/ScrollCinemaProvider';
+import {
+  ScrollCinemaProvider,
+  ScrollCinemaStaticProvider,
+} from '@/components/cinematic/ScrollCinemaProvider';
+import { CinematicErrorBoundary } from '@/components/CinematicErrorBoundary';
 import { MotionProvider } from '@/components/MotionProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
@@ -21,7 +25,11 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
         }}
       >
         <MotionProvider>
-          <ScrollCinemaProvider>{children}</ScrollCinemaProvider>
+          <CinematicErrorBoundary
+            fallback={<ScrollCinemaStaticProvider>{children}</ScrollCinemaStaticProvider>}
+          >
+            <ScrollCinemaProvider>{children}</ScrollCinemaProvider>
+          </CinematicErrorBoundary>
         </MotionProvider>
       </MotionConfig>
     </ThemeProvider>
