@@ -4768,6 +4768,96 @@ section[data-chapter] {
     background 0.24s ease;
 }
 
+/* ══ MOBILE RECOVERY PATCH v2026.7 ═══════════════════════════════════════
+   Three independent mobile regressions are resolved here.
+
+   [1] SCROLL TRAP + ABSOLUTELY-POSITIONED DESCENDANTS
+   Root cause: `overflow-x: hidden` on html / body creates a new Block
+   Formatting Context. On iOS Safari this can (a) trap vertical scroll inside
+   the BFC and (b) cause absolutely-positioned children — including Next.js
+   `fill` images, which generate a `position: absolute` span — to render
+   incorrectly or remain invisible.
+
+   `overflow-x: clip` is visually identical — content is clipped at the
+   element's overflow-clip-edge — but does NOT create a scroll container or
+   a new BFC. Native scroll, Lenis scroll, anchor jumps, and scroll-behavior
+   smooth all continue to work unchanged.
+
+   These rules sit at the end of the cascade so they win over every prior
+   `overflow-x: hidden` declaration in this file (lines 475, 510, 3887, 3959)
+   AND neutralise the reversed `import './fixes.css'; import './globals.css'`
+   order in app/layout.tsx. The codebase already uses `overflow-x-clip` on
+   three other sections (Projects, OpenSource, Testimonials) — this aligns
+   html/body/#hero with that established pattern.
+
+   [2] iOS SAFARI preserve-3d OVERFLOW-HIDDEN BUG (WebKit #178420 family)
+   The IdentityCard figure declares `transform-style: preserve-3d` (via the
+   `[transform-style:preserve-3d]` Tailwind arbitrary-value class) so its
+   hover tilt — rotateX:-2deg, rotateY:2deg — can render with subtle depth.
+   On iOS Safari, however, `preserve-3d` on an ancestor silently disables
+   `overflow: hidden` clipping on every descendant. The portrait's inner
+   `aspect-[4/5] overflow-hidden rounded-[36px]` frame depends on that
+   clipping to mask the headshot to a rounded card — without it, the
+   `fill` image escapes the rounded-corner mask and the card renders as
+   either a hard rectangle or, depending on layer order, no visible image.
+
+   The hover tilt is desktop-only (`isDesktop && !shouldReduceMotion`) and
+   the mobile IdentityCard variant has `lg:hidden`. Scoping the fix to
+   `<1024px` therefore preserves the desktop 3D depth while restoring
+   correct clipping on every iOS Safari surface where the portrait actually
+   renders. At the desktop rotation amplitude (±2deg) the visual difference
+   between preserve-3d and flat is imperceptible regardless, so this is a
+   net-positive correction.
+
+   [3] HERO SECTION overflow-y AUTO COERCION
+   The hero <m.section> previously used `overflow-x-hidden overflow-y-visible`.
+   Per CSS spec (CSS Overflow Module Level 3 §3), when one axis is set to a
+   non-visible value, the other axis is computed as `auto`. The hero was
+   therefore being upgraded to `overflow-y: auto`, becoming a potential
+   inner scroll container at exactly the same height as the viewport.
+   HeroSection.tsx is now `overflow-x-clip`; this rule reinforces it.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* [1] Document-root horizontal clipping — clip, not hidden ───────────────── */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Mobile defensive width guard — survives intrinsic-width regressions from
+   any future widget that forgets `min-width: 0` on a flex/grid child.       */
+@media (max-width: 639px) {
+  html,
+  body {
+    max-width: 100%;
+  }
+}
+
+/* [2] iOS Safari preserve-3d → overflow-hidden clipping restoration ─────── */
+@media (max-width: 1023px) {
+  figure[aria-label='Luxury operating-system identity card portrait'] {
+    /* Specificity 0,1,1 beats the Tailwind `[transform-style:preserve-3d]`
+       arbitrary class at 0,1,0 — overrides cleanly without !important.     */
+    transform-style: flat;
+  }
+}
+
+/* [3] Hero section: no axis coercion, no BFC ─────────────────────────────── */
+#hero {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+/* ── Dead-code audit notice (no code change) ───────────────────────────────
+   The `.hero-headshot-shell` (l. 4058) and `.hero-headshot-frame` (l. 4077)
+   rules are now orphaned. The portrait migrated to IdentityCard.tsx, which
+   uses Tailwind utilities exclusively (no `hero-headshot-*` class consumer
+   remains in any .tsx file — verified via grep on 2026-05-26). These rules
+   are inert and add ~38 lines of CSS to every page load. Safe to remove in
+   a future pass; not removed here to respect append-only surgical scope.   */
+
 /* ═══════════════════════════════════════════════════════════════════════════
-   END HERO REFINEMENT v2026.4
+   END MOBILE RECOVERY PATCH v2026.7
+   Supersedes: v2026.4 HERO REFINEMENT (which closed at the carousel-dot
+   compound-selector belt-and-suspenders rules above — those remain active).
    ═══════════════════════════════════════════════════════════════════════════ */
