@@ -43,7 +43,7 @@ export function IdentityCard({ variant, className, reducedMotion }: Readonly<Ide
       }
       aria-label="Luxury operating-system identity card portrait"
       className={cn(
-        'relative isolate transform-gpu overflow-visible [transform-style:preserve-3d] will-change-transform',
+        'relative isolate transform-gpu overflow-visible will-change-transform [transform-style:preserve-3d]',
         isDesktop
           ? 'w-full max-w-[17rem] min-w-[14rem] self-center xl:max-w-[18rem]'
           : 'w-full max-w-52 min-w-40 self-center sm:max-w-56 md:max-w-60 lg:hidden',
