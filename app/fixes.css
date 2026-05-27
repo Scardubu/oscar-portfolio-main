@@ -72,3 +72,144 @@ body {
     max-width: 100%;
   }
 }
+
+/* ══ AUDIT PATCH v2026.9 ══════════════════════════════════════════════════
+   1. Carousel card bleed fix: ensure proof cards don't peek past viewport
+      right edge on 320–375px. The mobile-carousel uses flex with snap and
+      the last card was partially visible. Enforce consistent snap padding.
+   2. Mobile proof-card width cap: prevent individual cards exceeding 88vw
+      which was causing horizontal scroll artefacts on ultra-narrow screens.
+   3. Command palette touch hint: on touch devices the ⌘K button is hidden,
+      but the CommandPalette's own FAB handles mobile access, so no gap.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Proof carousel right-edge containment on all mobile sizes */
+@media (max-width: 639px) {
+  #hero .mobile-carousel {
+    /* Ensure snap scroll area is tight to viewport, no right bleed */
+    padding-right: 0;
+  }
+
+  #hero .mobile-carousel-item {
+    /* Cap card at safe width to avoid any right overflow */
+    max-width: min(88vw, 22rem);
+  }
+
+  /* Fade affordance: override right position to be within safe area */
+  #hero .mobile-carousel ~ div[aria-hidden="true"] {
+    right: 0;
+  }
+}
+
+/* Hero support grid: collapse single-column on very small screens cleanly */
+@media (max-width: 389px) {
+  .hero-support-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+}
+
+/* ══ AUDIT PATCH v2026.9.1 (creative refinements) ════════════════════════════
+   1. Hero mobile portrait shell: enforce aspect-[4/5] guarantee so the card
+      reserves stable space even before the image loads — eliminates CLS.
+   2. Identity card animated edge highlight on idle (mobile only) — a subtle
+      shimmer suggesting the card is "alive" without distracting from copy.
+   3. Hero metrics grid: tighter mobile gap + ensure 2-column stays clean
+      down to 320px.
+   4. Defensive: ensure body never gets stuck with overflow:hidden after
+      mobile menu close. Cascade-only reinforcement of the JS cleanup.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Reserve stable mobile portrait geometry — prevents CLS during image fetch */
+.hero-mobile-portrait-shell {
+  width: 100%;
+  max-width: 17.5rem;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  contain: layout paint;
+}
+
+@media (max-width: 389px) {
+  .hero-mobile-portrait-shell {
+    max-width: 15.5rem;
+  }
+}
+
+/* Subtle "alive" edge highlight — mobile portrait card */
+@media (max-width: 1023px) {
+  @keyframes hero-portrait-edge-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.62; }
+  }
+
+  .hero-mobile-portrait-shell::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 38px;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--chapter-accent) 28%, transparent),
+      transparent 35%,
+      transparent 65%,
+      color-mix(in oklch, var(--chapter-accent) 18%, transparent)
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    opacity: 0.4;
+    animation: hero-portrait-edge-pulse 4.2s ease-in-out infinite;
+    will-change: opacity;
+    z-index: 5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-mobile-portrait-shell::after {
+      animation: none;
+      opacity: 0.45;
+    }
+  }
+}
+
+/* Tighter metrics grid at small breakpoints */
+@media (max-width: 389px) {
+  #hero .hero-metrics-grid {
+    gap: 0.625rem;
+  }
+
+  #hero .hero-metric-card {
+    padding: 0.875rem 0.875rem 1rem;
+  }
+}
+
+/* Belt-and-suspenders: ensure body overflow lock never escapes its scope.
+   Only the navbar mobile drawer should lock body scroll, and it must release
+   on close. If somehow the JS cleanup misses (React 19 concurrent unmount
+   edge case), `:not([data-nav-open="true"])` here forcibly clears it. */
+html:not([data-nav-open="true"]) body {
+  overflow-y: auto !important;
+  overflow-x: clip !important;
+}
+
+/* CTA group on very small screens — stack vertically with proper touch sizing */
+@media (max-width: 389px) {
+  .cta-hero-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .cta-hero-group .cta-primary,
+  .cta-hero-group .cta-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+}
