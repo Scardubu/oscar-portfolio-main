@@ -281,11 +281,20 @@ html[data-reduced-motion='true'] [data-cinematic] {
     transition:
       transform 0.28s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
       border-color 0.28s ease,
-      box-shadow 0.28s ease;
+      box-shadow 0.28s ease,
+      background 0.32s ease;
   }
   #hero .hero-metric-card:hover {
-    border-color: color-mix(in oklch, var(--chapter-accent) 28%, oklch(100% 0 0 / 0.08));
-    box-shadow: 0 18px 48px -32px color-mix(in oklch, var(--chapter-accent) 45%, transparent);
+    border-color: color-mix(in oklch, var(--chapter-accent) 42%, oklch(100% 0 0 / 0.08));
+    box-shadow:
+      0 24px 60px -36px color-mix(in oklch, var(--chapter-accent) 48%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--chapter-accent) 22%, oklch(100% 0 0 / 0.1)),
+      inset 1px 0 0 color-mix(in oklch, var(--chapter-accent) 10%, transparent);
+    background: linear-gradient(
+      175deg,
+      color-mix(in oklch, var(--chapter-accent) 7%, oklch(100% 0 0 / 0.055)),
+      oklch(100% 0 0 / 0.025) 60%
+    );
   }
 }
 
@@ -300,5 +309,48 @@ html[data-reduced-motion='true'] [data-cinematic] {
 @supports (padding: max(0px)) {
   .glass-nav {
     padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+/* ══ PREMIUM CINEMATIC POLISH v2026.11 ══════════════════════════════════════
+   Targeted visual enhancements: CTA glow ring, conviction stat left-accent,
+   hero visual panel depth, and glass surface cohesion.
+   Loads after globals.css so rules here win the cascade cleanly.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Hero primary CTA — richer glow halo on hover */
+@media (hover: hover) and (pointer: fine) {
+  .cta-primary--lg:hover {
+    box-shadow:
+      0 0 0 2px oklch(70% 0.21 188 / 0.28),
+      0 8px 32px -4px var(--color-film-teal-glow, oklch(70% 0.21 188 / 0.55)),
+      0 2px 8px oklch(0% 0 0 / 0.28);
+  }
+}
+
+/* Conviction stat left-accent — color cross-fades with chapter changes via
+   the registered @property on --chapter-accent (already 0.65s transition). */
+#hero .conviction-stat {
+  border-left-color: var(--chapter-accent);
+  transition:
+    border-left-color 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background 320ms ease;
+}
+
+/* Hero visual dashboard panels — ensure they never override glass-medium's
+   own box-shadow; append the fresnel line as an additional layer. */
+#hero .hero-visual-panel {
+  box-shadow:
+    0 1px 0 0 oklch(100% 0 0 / 0.14) inset,
+    0 8px 28px -6px oklch(0% 0 0 / 0.38);
+}
+
+/* Conviction stat values — ensure the container-query rule in globals.css
+   isn't accidentally overridden by any later text-size utility. */
+@container (max-width: 14rem) {
+  #hero .conviction-stat .conviction-stat-value {
+    font-size: clamp(0.875rem, 12cqi, 1.5rem);
   }
 }

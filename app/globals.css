@@ -1495,13 +1495,16 @@ h3,
   border-radius: var(--radius-lg);
   background: oklch(100% 0 0 / 0.04);
   box-shadow: 0 16px 40px -30px color-mix(in oklch, var(--chapter-accent) 26%, transparent);
+  /* Container queries scale the value font when card tracks are narrow (4-col, wide viewports) */
+  container-type: inline-size;
+  overflow: hidden;
 }
 .conviction-stat-value {
   font-family: var(--font-mono);
-  font-size: clamp(1.5rem, 3.5vw, 2rem);
-  line-height: 0.95;
+  font-size: clamp(1.35rem, 3vw, 1.875rem);
+  line-height: 0.97;
   font-weight: var(--weight-semibold);
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
   white-space: nowrap;
   color: var(--color-stat-uptime);
   font-variant-numeric: tabular-nums;
@@ -1537,6 +1540,17 @@ h3,
   }
   .conviction-stat:hover .conviction-stat-value {
     text-shadow: 0 0 10px currentColor;
+  }
+}
+
+/* ── Conviction stat container-query font scaling ───────────────────────────
+   When each card track is ≤14rem wide (as happens in the 4-column desktop
+   layout), scale the value font via cqi so "4h → 15min" / "sub-150ms" never
+   bleed past the card boundary regardless of viewport size.
+   cqi = 1% of the container inline size (the card width established above).  */
+@container (max-width: 14rem) {
+  .conviction-stat-value {
+    font-size: clamp(0.875rem, 12cqi, 1.5rem);
   }
 }
 
@@ -4078,6 +4092,13 @@ select {
 
 .hero-visual-panel {
   container-type: inline-size;
+  /* Richer depth cue: top fresnel line + ambient drop shadow */
+  box-shadow:
+    0 1px 0 0 oklch(100% 0 0 / 0.14) inset,
+    0 8px 28px -6px oklch(0% 0 0 / 0.4);
+  transition:
+    border-color 200ms ease,
+    box-shadow 260ms ease;
 }
 
 .hero-headshot-shell {
@@ -5025,7 +5046,7 @@ body {
   min-height: 8.75rem;
   padding: 1rem 1rem 1rem 1.125rem;
   border-color: oklch(100% 0 0 / 0.08);
-  border-left-width: 1px;
+  border-left-width: 2px;
   background:
     linear-gradient(180deg, oklch(100% 0 0 / 0.055), oklch(100% 0 0 / 0.02)),
     linear-gradient(
@@ -5033,11 +5054,14 @@ body {
       color-mix(in oklch, var(--chapter-accent) 10%, transparent),
       transparent 58%
     );
-  box-shadow: 0 22px 54px -38px color-mix(in oklch, var(--chapter-accent) 28%, transparent);
+  /* Fresnel top-edge highlight — depth cue without extra markup */
+  box-shadow:
+    0 22px 54px -38px color-mix(in oklch, var(--chapter-accent) 28%, transparent),
+    inset 0 1px 0 oklch(100% 0 0 / 0.1);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 220ms ease,
-    box-shadow 220ms ease,
+    box-shadow 260ms ease,
     background 320ms ease;
 }
 
@@ -5130,8 +5154,16 @@ body {
 
 @media (hover: hover) and (pointer: fine) {
   #hero .hero-metric-card:hover {
-    border-color: color-mix(in oklch, var(--chapter-accent) 40%, oklch(100% 0 0 / 0.08));
-    box-shadow: 0 28px 70px -40px color-mix(in oklch, var(--chapter-accent) 40%, transparent);
+    border-color: color-mix(in oklch, var(--chapter-accent) 42%, oklch(100% 0 0 / 0.08));
+    box-shadow:
+      0 28px 70px -40px color-mix(in oklch, var(--chapter-accent) 42%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--chapter-accent) 22%, oklch(100% 0 0 / 0.1)),
+      inset 1px 0 0 color-mix(in oklch, var(--chapter-accent) 10%, transparent);
+    background: linear-gradient(
+      175deg,
+      color-mix(in oklch, var(--chapter-accent) 7%, oklch(100% 0 0 / 0.055)),
+      oklch(100% 0 0 / 0.028) 55%
+    );
   }
 
   #hero .hero-metric-card:hover::after {
@@ -5139,7 +5171,16 @@ body {
   }
 
   #hero .hero-trust-chip:hover {
-    border-color: color-mix(in oklch, var(--chapter-accent) 26%, oklch(100% 0 0 / 0.08));
+    border-color: color-mix(in oklch, var(--chapter-accent) 28%, oklch(100% 0 0 / 0.08));
+    background: color-mix(in oklch, var(--chapter-accent) 5%, oklch(100% 0 0 / 0.04));
+  }
+
+  /* Hero visual dashboard panels — subtle lift + inner highlight on hover */
+  #hero .hero-visual-panel:hover {
+    border-color: oklch(100% 0 0 / 0.11);
+    box-shadow:
+      0 1px 0 0 oklch(100% 0 0 / 0.22) inset,
+      0 22px 64px -12px oklch(0% 0 0 / 0.52);
   }
 }
 
@@ -5235,6 +5276,10 @@ body {
 @media (min-width: 1536px) {
   #hero .hero-metrics-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* Wider cap so 4-column cards get ≥12rem each on 2K+ displays.
+       At this breakpoint the left col is ~712px so max-width 56rem
+       only bites at 1920px+ where the container grows to 1680px. */
+    max-width: 56rem;
   }
 }
 
