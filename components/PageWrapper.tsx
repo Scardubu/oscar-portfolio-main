@@ -30,12 +30,9 @@ export function PageWrapper({ children }: PageWrapperProps) {
 
   useEffect(() => {
     const root = document.documentElement;
-    const previousOverscrollBehaviorY = root.style.overscrollBehaviorY;
-
-    // iOS Safari: prevent elastic overscroll from exposing raw background
-    root.style.overscrollBehaviorY = 'none';
-
     // Apply reduced-motion class for CSS fallbacks
+    // Note: overscroll-behavior-y: none is already declared in globals.css on body,
+    // so we do not mutate it here to avoid unnecessary style recalculations.
     if (reducedMotion) {
       root.setAttribute('data-reduced-motion', 'true');
     } else {
@@ -43,7 +40,6 @@ export function PageWrapper({ children }: PageWrapperProps) {
     }
 
     return () => {
-      root.style.overscrollBehaviorY = previousOverscrollBehaviorY;
       if (!reducedMotion) {
         root.removeAttribute('data-reduced-motion');
       }

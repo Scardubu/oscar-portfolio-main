@@ -135,13 +135,10 @@ body {
   }
 }
 
-/* Subtle "alive" edge highlight — mobile portrait card */
+/* Subtle "alive" edge highlight — mobile portrait card.
+   Consolidated inside prefers-reduced-motion: no-preference so the animation
+   keyframe and will-change are never registered for users who prefer no motion. */
 @media (max-width: 1023px) {
-  @keyframes hero-portrait-edge-pulse {
-    0%, 100% { opacity: 0.35; }
-    50% { opacity: 0.62; }
-  }
-
   .hero-mobile-portrait-shell::after {
     content: '';
     position: absolute;
@@ -164,17 +161,21 @@ body {
       linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     padding: 1px;
+    opacity: 0.45;
+    z-index: 5;
+  }
+}
+
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  @keyframes hero-portrait-edge-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.62; }
+  }
+
+  .hero-mobile-portrait-shell::after {
     opacity: 0.4;
     animation: hero-portrait-edge-pulse 4.2s ease-in-out infinite;
     will-change: opacity;
-    z-index: 5;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-mobile-portrait-shell::after {
-      animation: none;
-      opacity: 0.45;
-    }
   }
 }
 
@@ -189,11 +190,28 @@ body {
   }
 }
 
+/* Class-based scroll lock: position:fixed prevents iOS jump and avoids the
+   BFC conflict that overflow:hidden causes with overflow-x:clip on html.
+   top is set inline by Navbar.tsx to preserve the scroll position.
+   overflow-y:scroll keeps the scrollbar gutter visible to prevent layout shift. */
+body.nav-open {
+  position: fixed;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+/* [data-lenis-prevent]: tell Lenis to yield scroll control on horizontally
+   snapping containers (e.g. ProofCarousel). The element handles its own
+   scroll internally; Lenis must not intercept touch/wheel events on it. */
+[data-lenis-prevent] {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Belt-and-suspenders: ensure body overflow lock never escapes its scope.
-   Only the navbar mobile drawer should lock body scroll, and it must release
-   on close. If somehow the JS cleanup misses (React 19 concurrent unmount
-   edge case), `:not([data-nav-open="true"])` here forcibly clears it. */
-html:not([data-nav-open="true"]) body {
+   Updated to also exclude the class-based lock path so the two mechanisms
+   don't fight each other. */
+html:not([data-nav-open="true"]):not(.nav-open) body {
   overflow-y: auto !important;
   overflow-x: clip !important;
 }

@@ -150,10 +150,7 @@ const METRIC_DETAILS: Record<
 // Per-stat visual accent — left border + subtle background tint.
 // Mirrors the data-stat color tokens from globals.css so each card has
 // a visually distinct identity beyond value colour alone.
-const STAT_STYLES: Record<
-  HeroMetricKey,
-  { borderColor: string; background: string }
-> = {
+const STAT_STYLES: Record<HeroMetricKey, { borderColor: string; background: string }> = {
   filing: {
     borderColor: 'var(--color-stat-filing)',
     background: 'linear-gradient(180deg, oklch(73% 0.17 65 / 0.055), oklch(73% 0.17 65 / 0.015))',
@@ -326,6 +323,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
         <div
           ref={scrollRef}
           className="mobile-carousel snap-x snap-mandatory scroll-smooth"
+          data-lenis-prevent
           role="region"
           aria-roledescription="carousel"
           aria-describedby="hero-proof-help hero-proof-status"
@@ -398,6 +396,7 @@ function ConvictionStat({
   status,
   reducedMotion,
   shouldAnimate,
+  isDesktopViewport,
 }: {
   value: string;
   label: string;
@@ -407,6 +406,7 @@ function ConvictionStat({
   status: string;
   reducedMotion: boolean;
   shouldAnimate: boolean;
+  isDesktopViewport: boolean;
 }) {
   const [displayed, setDisplayed] = useState(value);
   const frameRef = useRef<number | null>(null);
@@ -460,7 +460,7 @@ function ConvictionStat({
       data-stat={stat}
       role="listitem"
       aria-label={`${value} ${label}. ${detail}`}
-      whileHover={reducedMotion ? undefined : hoverLift(-4)}
+      whileHover={reducedMotion || !isDesktopViewport ? undefined : hoverLift(-4)}
       // eslint-disable-next-line no-restricted-syntax
       style={{
         borderLeftColor: STAT_STYLES[stat].borderColor,
@@ -484,7 +484,7 @@ function ConvictionStat({
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
   const { scrollToSection, setActiveChapter, scrollYRef } = useScrollCinema();
-  const primaryMagnetic = useMagnetic<HTMLDivElement>({ strength: 0.2, radius: 144 });
+  const primaryMagnetic = useMagnetic<HTMLDivElement>({ strength: 0.16, radius: 108 });
   const secondaryMagnetic = useMagnetic<HTMLDivElement>({ strength: 0.18, radius: 120 });
   const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   const [showHeroVisual, setShowHeroVisual] = useState(false);
@@ -503,6 +503,7 @@ export function HeroSection() {
   });
 
   const previousHeroProgressRef = useRef(0);
+  const previousScrollYRef = useRef(0);
   const heroScrollStartRef = useRef(0);
   const heroScrollRangeRef = useRef(1);
 
@@ -591,7 +592,10 @@ export function HeroSection() {
 
   useAnimationFrame(() => {
     if (reducedMotion) return;
-    const localScroll = Math.max(0, scrollYRef.current - heroScrollStartRef.current);
+    const currentScrollY = scrollYRef.current;
+    if (currentScrollY === previousScrollYRef.current) return;
+    previousScrollYRef.current = currentScrollY;
+    const localScroll = Math.max(0, currentScrollY - heroScrollStartRef.current);
     const progress = Math.min(1, localScroll / heroScrollRangeRef.current);
     if (Math.abs(progress - previousHeroProgressRef.current) < 0.0015) return;
     previousHeroProgressRef.current = progress;
@@ -600,9 +604,9 @@ export function HeroSection() {
 
   // FIX 4 (v2026.4): proofContainer removed — was causing double-animation with heroContainer.
   // All carousel children now animate at their stagger position within heroContainer via `child`.
-  const heroContainer = staggerContainer(0.055, 0.05);
+  const heroContainer = staggerContainer(0.042, 0.04);
   const child = reducedMotion ? noMotion : fadeRise;
-  const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.055, 0.08);
+  const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.042, 0.08);
   const heroRightRailStyle = reducedMotion
     ? undefined
     : { y: rightRailY, opacity: rightRailOpacity };
@@ -670,7 +674,7 @@ export function HeroSection() {
       ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100dvh] min-h-[100svh] flex-col justify-start overflow-x-clip pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
+      className="relative flex min-h-[100svh] flex-col justify-start overflow-x-clip pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
@@ -748,7 +752,7 @@ export function HeroSection() {
                   </m.span>
                 </h1>
 
-                <p className="text-didone-sub max-w-[30ch]" aria-hidden="true">
+                <p className="text-didone-sub max-w-[28ch]" aria-hidden="true">
                   {HERO.subHeadline}
                 </p>
 
@@ -804,6 +808,7 @@ export function HeroSection() {
                         status={detail.status}
                         reducedMotion={Boolean(reducedMotion)}
                         shouldAnimate={statsVisible}
+                        isDesktopViewport={isDesktopViewport}
                       />
                     );
                   })}
@@ -886,13 +891,13 @@ export function HeroSection() {
                 <Link
                   href={anchorUrl('section-writing')}
                   onClick={(event) => handleAnchorJump(event, 'section-writing', 'writing')}
-                  className="group text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors"
+                  className="group text-color-text-secondary hover:text-color-text-primary font-mono text-[12px] transition-colors hover:underline hover:underline-offset-[3px]"
                   aria-label="Read how the 2am constraint became the design system"
                 >
                   Or read how the 2am constraint became the design system{' '}
                   <span
                     aria-hidden="true"
-                    className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+                    className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-1"
                   >
                     →
                   </span>

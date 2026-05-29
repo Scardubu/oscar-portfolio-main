@@ -179,7 +179,7 @@ export function IdentityCard({
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
           ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
-          : 'w-full max-w-[15.5rem] min-w-[13rem] self-center sm:max-w-[17.5rem] md:max-w-[18.5rem] lg:hidden',
+          : 'aspect-[4/5] w-full max-w-[15.5rem] min-w-[13rem] self-center sm:max-w-[17.5rem] md:max-w-[18.5rem] lg:hidden',
         className
       )}
       // eslint-disable-next-line no-restricted-syntax

@@ -148,11 +148,11 @@ html {
   background: var(--color-space-black);
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in oklch, var(--chapter-accent) 25%, transparent);
+  background: color-mix(in oklch, var(--chapter-accent) 35%, transparent);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklch, var(--chapter-accent) 50%, transparent);
+  background: color-mix(in oklch, var(--chapter-accent) 55%, transparent);
 }
 
 /* ── Chapter accent cross-fade ──────────────────────────────────────────────
@@ -472,7 +472,7 @@ html[data-active-chapter='epilogue'] {
 
 html {
   background: var(--color-bg);
-  overflow-x: hidden;
+  overflow-x: clip;
   font-size: 16px;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
@@ -507,7 +507,7 @@ body {
   color: var(--color-text-primary);
   background: var(--color-bg);
   min-height: 100svh; /* svh = small viewport height — matches iOS Safari visible area, prevents 100vh blank-space bleed */
-  overflow-x: hidden;
+  overflow-x: clip;
   /* Contain scroll momentum within the page — prevents browser overscroll effects from bleeding */
   overscroll-behavior-y: none;
   /* padding-bottom: removed — no BottomNav component rendered; phantom gap eliminated */
@@ -641,7 +641,7 @@ h3,
   font-weight: 400;
   font-size: clamp(1.0625rem, 2vw + 0.65rem, 1.75rem);
   color: var(--color-text-secondary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   line-height: var(--leading-snug);
 }
 @media (min-width: 768px) {
@@ -712,7 +712,7 @@ h3,
   contain: paint;
   isolation: isolate;
   border: 1px solid oklch(100% 0 0 / 0.12);
-  will-change: transform;
+  will-change: auto;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -739,7 +739,7 @@ h3,
     0 2px 6px -1px oklch(0% 0 0 / 0.3);
   contain: paint;
   isolation: isolate;
-  will-change: transform;
+  will-change: auto;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -755,7 +755,7 @@ h3,
   box-shadow: var(--glass-shadow);
   contain: paint;
   isolation: isolate;
-  will-change: transform;
+  will-change: auto;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -780,7 +780,7 @@ h3,
     0 8px 32px -6px oklch(0% 0 0 / 0.32);
   contain: paint;
   isolation: isolate;
-  will-change: transform;
+  will-change: auto;
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out),
@@ -794,6 +794,18 @@ h3,
     0 1px 0 0 oklch(100% 0 0 / 0.3) inset,
     0 16px 48px -8px oklch(0% 0 0 / 0.45);
 }
+
+/* Promote glass cards to compositor layer on hover only — fine pointer devices.
+   Static will-change on every card wastes GPU memory; hover-only is free. */
+@media (hover: hover) and (pointer: fine) {
+  .glass-chromatic:hover,
+  .glass-elevated:hover,
+  .glass-full:hover,
+  .glass-medium:hover {
+    will-change: transform;
+  }
+}
+
 .glass-medium::before {
   content: '';
   position: absolute;
@@ -2085,7 +2097,7 @@ h3,
 
 @media (max-width: 480px) {
   .nav-tagline {
-    max-width: min(64vw, 250px);
+    max-width: min(72vw, 250px);
   }
 }
 
@@ -2356,6 +2368,25 @@ h3,
   }
 }
 
+/* Coarse pointer (touch devices): reduce orb sizes for lower GPU cost */
+@media (pointer: coarse) {
+  .gradient-mesh-orb--indigo {
+    width: 180px;
+    height: 180px;
+    filter: blur(40px);
+  }
+  .gradient-mesh-orb--green {
+    width: 160px;
+    height: 160px;
+    filter: blur(40px);
+  }
+  .gradient-mesh-orb--amber {
+    width: 140px;
+    height: 140px;
+    filter: blur(40px);
+  }
+}
+
 /* Disable all mesh orb transforms under reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .gradient-mesh-orb {
@@ -2370,16 +2401,11 @@ h3,
    Pointer-events: none — transparent to interaction.
 */
 .filter-chip-fade-right {
-  display: none; /* hidden at mobile: flex-wrap means no overflow scroll, no fade needed */
+  display: none;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .filter-chip-fade-right {
-    display: block; /* visible at sm+ where chips can overflow-scroll on narrow sm */
-  }
-}
-@media (min-width: 1024px) {
-  .filter-chip-fade-right {
-    display: none;
+    display: block;
   }
 }
 
@@ -3629,7 +3655,7 @@ section,
   }
 
   .container {
-    padding-inline: clamp(1.5rem, 2.8vw, 3.5rem);
+    padding-inline: clamp(1.5rem, 2.8vw, 4rem);
   }
 
   section[id] {
@@ -3887,7 +3913,7 @@ section,
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ==========================================================================
@@ -3957,7 +3983,7 @@ body {
 
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -4044,7 +4070,6 @@ select {
 
 #hero {
   min-height: 100svh;
-  min-height: 100dvh;
 }
 
 .hero-visual-dashboard .terminal-ambient-glow {
@@ -4297,36 +4322,34 @@ select {
   initial-value: 0;
 }
 
+/* chapter-dot-breathe: opacity on ::after (compositor-only) instead of
+   box-shadow (triggers layer compositing). The ::after ring is always rendered;
+   its opacity pulses. This eliminates box-shadow GPU cost per frame. */
 @keyframes chapter-dot-breathe {
-  0% {
-    box-shadow:
-      0 0 0 0 color-mix(in oklch, var(--chapter-accent) 55%, transparent),
-      0 0 12px color-mix(in oklch, var(--chapter-accent) 35%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 0 4px color-mix(in oklch, var(--chapter-accent) 22%, transparent),
-      0 0 20px color-mix(in oklch, var(--chapter-accent) 20%, transparent);
-  }
-  100% {
-    box-shadow:
-      0 0 0 0 color-mix(in oklch, var(--chapter-accent) 55%, transparent),
-      0 0 12px color-mix(in oklch, var(--chapter-accent) 35%, transparent);
-  }
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.22; }
 }
 
 /* Applied via JS className in ScrollProgress — keeps CSS fully declarative */
 .chapter-dot-active {
   background: var(--chapter-accent) !important;
-  animation: chapter-dot-breathe 2.4s ease-in-out infinite;
   transition:
     background 0.65s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .chapter-dot-active {
-    animation: none;
+.chapter-dot-active::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklch, var(--chapter-accent) 55%, transparent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chapter-dot-active::after {
+    animation: chapter-dot-breathe 2.4s ease-in-out infinite;
   }
 }
 
@@ -4700,7 +4723,7 @@ section[data-chapter] {
   position: absolute;
   inset: 0;
   background: linear-gradient(105deg, transparent 38%, oklch(100% 0 0 / 0.22) 50%, transparent 62%);
-  transform: translateX(-110%) skewX(-12deg);
+  transform: translateX(-110%) skewX(-12deg) translateZ(0);
   pointer-events: none;
 }
 
@@ -4836,9 +4859,9 @@ body {
 /* [2] iOS Safari preserve-3d → overflow-hidden clipping restoration ─────── */
 @media (max-width: 1023px) {
   figure[aria-label='Luxury operating-system identity card portrait'] {
-    /* Specificity 0,1,1 beats the Tailwind `[transform-style:preserve-3d]`
-       arbitrary class at 0,1,0 — overrides cleanly without !important.     */
-    transform-style: flat;
+    /* Framer Motion sets transformStyle via inline style (highest priority).
+       !important is required to override the inline style on mobile.        */
+    transform-style: flat !important;
   }
 }
 
@@ -4976,17 +4999,26 @@ body {
 #hero .hero-trust-chip::before {
   content: '';
   display: block;
+  flex-shrink: 0;
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 999px;
   background: color-mix(in oklch, var(--chapter-accent) 78%, white 22%);
   box-shadow: 0 0 12px color-mix(in oklch, var(--chapter-accent) 42%, transparent);
+  transition: background 0.65s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-wrap: break-word;
 }
 
 #hero .hero-metrics-grid {
   margin-top: 1.5rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #hero .hero-metrics-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 #hero .hero-metric-card {

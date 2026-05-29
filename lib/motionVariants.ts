@@ -70,12 +70,6 @@ const SPRING_DRAMATIC_REVEAL: Transition = {
   mass: 1.2,
 };
 
-const SPRING_WORD_REVEAL: Transition = {
-  type: 'spring',
-  stiffness: 190,
-  damping: 22,
-  mass: 1.05,
-};
 
 const SPRING_LETTER_REVEAL: Transition = {
   type: 'spring',
@@ -334,7 +328,7 @@ export const liquidCard: Variants = {
  */
 export const wordReveal: Variants = {
   hidden: { y: '110%' },
-  visible: { y: '0%', transition: SPRING_WORD_REVEAL },
+  visible: { y: '0%', transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] } },
 };
 
 export const wordRevealContainer = (stagger = 0.065, delay = 0.1): Variants => ({

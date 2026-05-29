@@ -413,6 +413,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         // momentum boost for swipe-heavy mobile navigation.
         wheelMultiplier: 1,
         touchMultiplier: 1.1,
+        // prevent: data-lenis-prevent elements (e.g. horizontal carousels) stop
+        // Lenis from intercepting their internal scroll events. The callback
+        // also auto-detects horizontally-scrollable containers so new components
+        // don't need manual attribute management.
+        prevent: (node: HTMLElement) => {
+          return (
+            node.hasAttribute('data-lenis-prevent') ||
+            (node.scrollWidth > node.clientWidth + 4 &&
+              ['auto', 'scroll'].includes(getComputedStyle(node).overflowX))
+          );
+        },
         // autoRaf: false — we drive the RAF via gsap.ticker below for
         // frame-perfect sync with GSAP ScrollTrigger. Double-RAF would
         // cause double updates and potential jank.
@@ -421,6 +432,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       lenisRef.current = lenis;
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
+        // Lenis v1 sets `overflow: hidden` inline on documentElement in its constructor,
+        // which overrides the CSS `overflow-x: clip` that prevents BFC creation on iOS.
+        // Re-assert clip after init so horizontal overflow is clipped without a scroll container.
+        document.documentElement.style.overflowX = 'clip';
       }
     } catch (error) {
       usingLenis = false;
@@ -462,17 +477,37 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       syncNativeScrollProgress();
     };
 
-    window.addEventListener('resize', refresh, { passive: true });
-    window.addEventListener('orientationchange', refresh, { passive: true });
+    // Debounce resize/orientationchange refresh to avoid firing Lenis.resize()
+    // on every pixel of a drag-resize or for each orientationchange event pulse.
+    // 150ms is imperceptible to the user but prevents cascading layout reads.
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+    const debouncedRefresh = () => {
+      if (refreshTimer !== null) clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        refreshTimer = null;
+        refresh();
+      }, 150);
+    };
+
+    window.addEventListener('resize', debouncedRefresh, { passive: true });
+    window.addEventListener('orientationchange', debouncedRefresh, { passive: true });
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {
-        // Resume Lenis when tab becomes active again
         if (lenis) lenis.start();
         safeRefresh(true);
         syncNativeScrollProgress();
+        // Emergency recovery: React 19 concurrent unmount can race with the Navbar
+        // scroll-lock cleanup and leave body.overflow stuck as 'hidden'.
+        // Only clear if neither the attribute-based nor class-based lock is active.
+        if (
+          !document.documentElement.hasAttribute('data-nav-open') &&
+          !document.body.classList.contains('nav-open') &&
+          document.body.style.overflow === 'hidden'
+        ) {
+          document.body.style.overflow = '';
+        }
       } else {
-        // Pause Lenis when tab is hidden — saves GPU/CPU on background tabs
         if (lenis) lenis.stop();
       }
     };
@@ -504,8 +539,9 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       if (usingLenis) {
         gsap.ticker.remove(raf);
       }
-      window.removeEventListener('resize', refresh);
-      window.removeEventListener('orientationchange', refresh);
+      window.removeEventListener('resize', debouncedRefresh);
+      window.removeEventListener('orientationchange', debouncedRefresh);
+      if (refreshTimer !== null) clearTimeout(refreshTimer);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [reducedMotion, syncNativeScrollProgress, syncScrollState, warnDev]);

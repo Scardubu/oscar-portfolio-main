@@ -77,7 +77,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = useRef(false);
   const reducedMotion = useReducedMotion();
-  const { activeChapter, scrollToSection, scrollYRef } = useScrollCinema();
+  const { activeChapter, scrollToSection, scrollYRef, lenisRef } = useScrollCinema();
   const pathname = usePathname();
 
   // SAFETY: close mobile menu and release body lock on route change.
@@ -87,13 +87,15 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
-  // SAFETY: defensive cleanup — ensure body.overflow is reset on unmount,
+  // SAFETY: defensive cleanup — ensure scroll lock is fully released on unmount,
   // covering edge cases where the cleanup in the lock effect didn't fire
   // (e.g. React 19 concurrent unmount during animation).
   useEffect(() => {
     return () => {
       if (typeof document !== 'undefined') {
-        document.body.style.overflow = '';
+        document.body.classList.remove('nav-open');
+        document.body.style.top = '';
+        document.documentElement.removeAttribute('data-nav-open');
       }
     };
   }, []);
@@ -109,23 +111,27 @@ export default function Navbar() {
     setScrolled(nextScrolled);
   });
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll and pause Lenis when mobile menu is open.
+  // Uses position:fixed + scroll save/restore to prevent iOS jump and avoid
+  // the BFC conflict that overflow:hidden causes with overflow-x:clip on html.
   useEffect(() => {
     if (!mobileOpen) {
-      // Ensure the html attribute clears so fallback CSS guard re-enables scroll
-      if (typeof document !== 'undefined') {
-        document.documentElement.removeAttribute('data-nav-open');
-      }
+      document.documentElement.removeAttribute('data-nav-open');
       return;
     }
-    const orig = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const scrollY = window.scrollY;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('nav-open');
     document.documentElement.setAttribute('data-nav-open', 'true');
+    lenisRef.current?.stop();
     return () => {
-      document.body.style.overflow = orig;
+      document.body.classList.remove('nav-open');
+      document.body.style.top = '';
       document.documentElement.removeAttribute('data-nav-open');
+      window.scrollTo(0, scrollY);
+      lenisRef.current?.start();
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, lenisRef]);
 
   // Close mobile menu on desktop breakpoint
   useEffect(() => {
