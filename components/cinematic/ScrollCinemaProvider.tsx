@@ -432,10 +432,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       lenisRef.current = lenis;
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
-        // Lenis v1 sets `overflow: hidden` inline on documentElement in its constructor,
-        // which overrides the CSS `overflow-x: clip` that prevents BFC creation on iOS.
-        // Re-assert clip after init so horizontal overflow is clipped without a scroll container.
-        document.documentElement.style.overflowX = 'clip';
       }
     } catch (error) {
       usingLenis = false;

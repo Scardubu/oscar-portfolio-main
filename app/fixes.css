@@ -202,9 +202,11 @@ body.nav-open {
 
 /* [data-lenis-prevent]: tell Lenis to yield scroll control on horizontally
    snapping containers (e.g. ProofCarousel). The element handles its own
-   scroll internally; Lenis must not intercept touch/wheel events on it. */
+   scroll internally; Lenis must not intercept touch/wheel events on it.
+   overscroll-behavior-x only — the shorthand `contain` also sets the y-axis,
+   which blocks vertical page scroll when a touch gesture starts on the carousel. */
 [data-lenis-prevent] {
-  overscroll-behavior: contain;
+  overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }
 
