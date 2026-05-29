@@ -213,3 +213,72 @@ html:not([data-nav-open="true"]) body {
     min-height: 48px;
   }
 }
+
+/* ══ AUDIT PATCH v2026.10 ════════════════════════════════════════════════════
+   Companion to the useChapterTimeline pin-removal fix (eliminates the desktop
+   blank-section void) plus WCAG 2.5.5 touch-target compliance and final polish.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* WCAG 2.5.5 (Target Size): carousel dots need a ≥44px hit area. The visible
+   pill stays small (6px → 20px) but the tappable button expands to 44px square
+   via a transparent hit zone. Visual layout unchanged; only the touch target
+   grows. The dots remain centered in their row. */
+.carousel-dot {
+  width: 44px;
+  height: 44px;
+  margin: -10px 0; /* absorb the extra height so the row keeps its rhythm */
+}
+
+/* Chapter rail buttons (desktop right rail): ensure comfortable hit area.
+   The visible dot is 10px; the button hit zone grows to 32px (rail is desktop-
+   only with a fine pointer, so 32px exceeds the 24px AA minimum comfortably). */
+@media (min-width: 1024px) {
+  .hero-chapter-button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+/* FAILSAFE (CSS-level): if JS fails entirely and GSAP never reveals a chapter,
+   this guarantees content is visible after first paint. data-cinematic elements
+   default to opacity:0 ONLY when the timeline has armed (it adds visibility via
+   GSAP autoAlpha). When the no-JS / reduced-motion path runs, nothing should be
+   hidden. This rule ensures sections are visible whenever the scroll engine is
+   static or reduced-motion — the exact conditions where GSAP reveals don't run. */
+html[data-scroll-engine='static'] [data-cinematic],
+html[data-scroll-engine='native'] [data-cinematic],
+html[data-reduced-motion='true'] [data-cinematic] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* Premium polish: hero metric cards lift slightly on hover with a chapter-accent
+   tinted glow edge — reinforces the "live mission-control" feel. Desktop/fine-
+   pointer only so it never interferes with mobile tap. */
+@media (hover: hover) and (pointer: fine) {
+  #hero .hero-metric-card {
+    transition:
+      transform 0.28s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+      border-color 0.28s ease,
+      box-shadow 0.28s ease;
+  }
+  #hero .hero-metric-card:hover {
+    border-color: color-mix(in oklch, var(--chapter-accent) 28%, oklch(100% 0 0 / 0.08));
+    box-shadow: 0 18px 48px -32px color-mix(in oklch, var(--chapter-accent) 45%, transparent);
+  }
+}
+
+/* Smooth, jank-free section reveal baseline: keep transformed cinematic targets
+   on the compositor while GSAP animates them. Cleared by GSAP's clearProps. */
+[data-cinematic] {
+  backface-visibility: hidden;
+}
+
+/* iOS safe-area: ensure the fixed navbar and bottom interactive zones respect
+   the notch / home indicator. Reinforces existing env() handling. */
+@supports (padding: max(0px)) {
+  .glass-nav {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
