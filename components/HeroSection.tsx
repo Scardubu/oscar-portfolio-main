@@ -147,6 +147,31 @@ const METRIC_DETAILS: Record<
   },
 };
 
+// Per-stat visual accent — left border + subtle background tint.
+// Mirrors the data-stat color tokens from globals.css so each card has
+// a visually distinct identity beyond value colour alone.
+const STAT_STYLES: Record<
+  HeroMetricKey,
+  { borderColor: string; background: string }
+> = {
+  filing: {
+    borderColor: 'var(--color-stat-filing)',
+    background: 'linear-gradient(180deg, oklch(73% 0.17 65 / 0.055), oklch(73% 0.17 65 / 0.015))',
+  },
+  uptime: {
+    borderColor: 'var(--color-stat-uptime)',
+    background: 'linear-gradient(180deg, oklch(65% 0.18 155 / 0.055), oklch(65% 0.18 155 / 0.015))',
+  },
+  latency: {
+    borderColor: 'var(--color-stat-latency)',
+    background: 'linear-gradient(180deg, oklch(70% 0.21 188 / 0.055), oklch(70% 0.21 188 / 0.015))',
+  },
+  mttd: {
+    borderColor: 'var(--color-stat-mttd)',
+    background: 'linear-gradient(180deg, oklch(65% 0.23 290 / 0.055), oklch(65% 0.23 290 / 0.015))',
+  },
+};
+
 type HeroPortraitVariant = IdentityCardVariant;
 
 function HeroPortrait({
@@ -436,6 +461,12 @@ function ConvictionStat({
       role="listitem"
       aria-label={`${value} ${label}. ${detail}`}
       whileHover={reducedMotion ? undefined : hoverLift(-4)}
+      // eslint-disable-next-line no-restricted-syntax
+      style={{
+        borderLeftColor: STAT_STYLES[stat].borderColor,
+        borderLeftWidth: '2px',
+        background: STAT_STYLES[stat].background,
+      }}
     >
       <div className="hero-metric-head">
         <span className="hero-metric-source">{source}</span>
