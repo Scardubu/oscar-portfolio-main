@@ -1,0 +1,284 @@
+/* app/fixes.css
+   Load after globals.css to neutralize the last mobile overflow source and
+   keep the live activity landmark available during initial render.
+*/
+
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body {
+  width: 100%;
+}
+
+/* Neutralize the hero proof carousel's mobile bleed.
+   The original negative margins made the document scrollWidth exceed the
+   viewport on 320px–375px screens, which triggered the smoke tests.
+*/
+#hero .mobile-carousel {
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+  scroll-padding-inline: 0.875rem;
+  overscroll-behavior-x: contain;
+}
+
+@media (max-width: 389px) {
+  #hero .mobile-carousel {
+    scroll-padding-inline: 0.875rem;
+  }
+
+  #hero .mobile-carousel-item {
+    flex-basis: min(90vw, 16.5rem);
+  }
+}
+
+@media (min-width: 390px) and (max-width: 639px) {
+  #hero .mobile-carousel {
+    scroll-padding-inline: 1rem;
+  }
+
+  #hero .mobile-carousel-item {
+    flex-basis: min(86vw, 18.5rem);
+  }
+}
+
+/* Safety rail: make the hero grid itself respect narrow viewports even if
+   future content adds wider intrinsic widths.
+*/
+#hero .hero-grid-shell,
+#hero .hero-grid-child {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Defensive viewport clamp for mobile smoke checks.
+   Keeps intrinsic-width regressions from widening document scrollWidth.
+   v2026.8: overflow-x: hidden → clip (aligns with globals.css v2026.7 patch) */
+@media (max-width: 639px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  #hero,
+  #hero > *,
+  #hero .container,
+  #hero .hero-grid-shell,
+  #hero .hero-grid-child {
+    max-width: 100%;
+  }
+}
+
+/* ══ AUDIT PATCH v2026.9 ══════════════════════════════════════════════════
+   1. Carousel card bleed fix: ensure proof cards don't peek past viewport
+      right edge on 320–375px. The mobile-carousel uses flex with snap and
+      the last card was partially visible. Enforce consistent snap padding.
+   2. Mobile proof-card width cap: prevent individual cards exceeding 88vw
+      which was causing horizontal scroll artefacts on ultra-narrow screens.
+   3. Command palette touch hint: on touch devices the ⌘K button is hidden,
+      but the CommandPalette's own FAB handles mobile access, so no gap.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Proof carousel right-edge containment on all mobile sizes */
+@media (max-width: 639px) {
+  #hero .mobile-carousel {
+    /* Ensure snap scroll area is tight to viewport, no right bleed */
+    padding-right: 0;
+  }
+
+  #hero .mobile-carousel-item {
+    /* Cap card at safe width to avoid any right overflow */
+    max-width: min(88vw, 22rem);
+  }
+
+  /* Fade affordance: override right position to be within safe area */
+  #hero .mobile-carousel ~ div[aria-hidden="true"] {
+    right: 0;
+  }
+}
+
+/* Hero support grid: collapse single-column on very small screens cleanly */
+@media (max-width: 389px) {
+  .hero-support-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+}
+
+/* ══ AUDIT PATCH v2026.9.1 (creative refinements) ════════════════════════════
+   1. Hero mobile portrait shell: enforce aspect-[4/5] guarantee so the card
+      reserves stable space even before the image loads — eliminates CLS.
+   2. Identity card animated edge highlight on idle (mobile only) — a subtle
+      shimmer suggesting the card is "alive" without distracting from copy.
+   3. Hero metrics grid: tighter mobile gap + ensure 2-column stays clean
+      down to 320px.
+   4. Defensive: ensure body never gets stuck with overflow:hidden after
+      mobile menu close. Cascade-only reinforcement of the JS cleanup.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Reserve stable mobile portrait geometry — prevents CLS during image fetch */
+.hero-mobile-portrait-shell {
+  width: 100%;
+  max-width: 17.5rem;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  contain: layout paint;
+}
+
+@media (max-width: 389px) {
+  .hero-mobile-portrait-shell {
+    max-width: 15.5rem;
+  }
+}
+
+/* Subtle "alive" edge highlight — mobile portrait card */
+@media (max-width: 1023px) {
+  @keyframes hero-portrait-edge-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.62; }
+  }
+
+  .hero-mobile-portrait-shell::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 38px;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--chapter-accent) 28%, transparent),
+      transparent 35%,
+      transparent 65%,
+      color-mix(in oklch, var(--chapter-accent) 18%, transparent)
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    opacity: 0.4;
+    animation: hero-portrait-edge-pulse 4.2s ease-in-out infinite;
+    will-change: opacity;
+    z-index: 5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-mobile-portrait-shell::after {
+      animation: none;
+      opacity: 0.45;
+    }
+  }
+}
+
+/* Tighter metrics grid at small breakpoints */
+@media (max-width: 389px) {
+  #hero .hero-metrics-grid {
+    gap: 0.625rem;
+  }
+
+  #hero .hero-metric-card {
+    padding: 0.875rem 0.875rem 1rem;
+  }
+}
+
+/* Belt-and-suspenders: ensure body overflow lock never escapes its scope.
+   Only the navbar mobile drawer should lock body scroll, and it must release
+   on close. If somehow the JS cleanup misses (React 19 concurrent unmount
+   edge case), `:not([data-nav-open="true"])` here forcibly clears it. */
+html:not([data-nav-open="true"]) body {
+  overflow-y: auto !important;
+  overflow-x: clip !important;
+}
+
+/* CTA group on very small screens — stack vertically with proper touch sizing */
+@media (max-width: 389px) {
+  .cta-hero-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .cta-hero-group .cta-primary,
+  .cta-hero-group .cta-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+}
+
+/* ══ AUDIT PATCH v2026.10 ════════════════════════════════════════════════════
+   Companion to the useChapterTimeline pin-removal fix (eliminates the desktop
+   blank-section void) plus WCAG 2.5.5 touch-target compliance and final polish.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* WCAG 2.5.5 (Target Size): carousel dots need a ≥44px hit area. The visible
+   pill stays small (6px → 20px) but the tappable button expands to 44px square
+   via a transparent hit zone. Visual layout unchanged; only the touch target
+   grows. The dots remain centered in their row. */
+.carousel-dot {
+  width: 44px;
+  height: 44px;
+  margin: -10px 0; /* absorb the extra height so the row keeps its rhythm */
+}
+
+/* Chapter rail buttons (desktop right rail): ensure comfortable hit area.
+   The visible dot is 10px; the button hit zone grows to 32px (rail is desktop-
+   only with a fine pointer, so 32px exceeds the 24px AA minimum comfortably). */
+@media (min-width: 1024px) {
+  .hero-chapter-button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+/* FAILSAFE (CSS-level): if JS fails entirely and GSAP never reveals a chapter,
+   this guarantees content is visible after first paint. data-cinematic elements
+   default to opacity:0 ONLY when the timeline has armed (it adds visibility via
+   GSAP autoAlpha). When the no-JS / reduced-motion path runs, nothing should be
+   hidden. This rule ensures sections are visible whenever the scroll engine is
+   static or reduced-motion — the exact conditions where GSAP reveals don't run. */
+html[data-scroll-engine='static'] [data-cinematic],
+html[data-scroll-engine='native'] [data-cinematic],
+html[data-reduced-motion='true'] [data-cinematic] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* Premium polish: hero metric cards lift slightly on hover with a chapter-accent
+   tinted glow edge — reinforces the "live mission-control" feel. Desktop/fine-
+   pointer only so it never interferes with mobile tap. */
+@media (hover: hover) and (pointer: fine) {
+  #hero .hero-metric-card {
+    transition:
+      transform 0.28s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+      border-color 0.28s ease,
+      box-shadow 0.28s ease;
+  }
+  #hero .hero-metric-card:hover {
+    border-color: color-mix(in oklch, var(--chapter-accent) 28%, oklch(100% 0 0 / 0.08));
+    box-shadow: 0 18px 48px -32px color-mix(in oklch, var(--chapter-accent) 45%, transparent);
+  }
+}
+
+/* Smooth, jank-free section reveal baseline: keep transformed cinematic targets
+   on the compositor while GSAP animates them. Cleared by GSAP's clearProps. */
+[data-cinematic] {
+  backface-visibility: hidden;
+}
+
+/* iOS safe-area: ensure the fixed navbar and bottom interactive zones respect
+   the notch / home indicator. Reinforces existing env() handling. */
+@supports (padding: max(0px)) {
+  .glass-nav {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
