@@ -25,16 +25,20 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
     if (!root) return;
 
     const mm = window.matchMedia('(min-width: 1024px)');
-    const canPin = Boolean(chapter.pin && mm.matches && !reducedMotion);
-    const start = canPin
-      ? 'top top'
-      : chapter.id === 'epilogue'
+    // Pinning is intentionally disabled for reveal timelines (see the
+    // ScrollTrigger config below). `mm` is retained only to keep the start
+    // position slightly later on large viewports where sections are taller.
+    const start =
+      chapter.id === 'epilogue'
         ? 'top bottom'
         : reducedMotion
           ? 'top 85%'
-          : 'top 72%';
+          : mm.matches
+            ? 'top 78%'
+            : 'top 85%';
 
     let ctx: gsap.Context | null = null;
+    const cleanupFns: Array<() => void> = [];
 
     try {
       ctx = gsap.context(() => {
@@ -51,6 +55,18 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
         const cta = select('[data-cinematic="cta"]');
 
         const textTargets = [...eyebrow, ...title, ...lede, ...panel, ...card, ...proof, ...cta];
+        const allTargets = [...textTargets, ...media];
+
+        // FAILSAFE: force every cinematic target fully visible. Called if the
+        // ScrollTrigger never fires (Lenis/ScrollTrigger desync, refresh race,
+        // or pin spacer created before the timeline plays). Without this, a
+        // pinned section can sit at autoAlpha:0 permanently — rendering a tall
+        // empty void exactly the height of the pin distance (the desktop blank-
+        // section bug). Cheap, idempotent, and safe to call repeatedly.
+        const revealAll = () => {
+          if (allTargets.length === 0) return;
+          gsap.set(allTargets, { autoAlpha: 1, y: 0, scale: 1, clearProps: 'transform' });
+        };
 
         if (textTargets.length > 0) {
           gsap.set(textTargets, {
@@ -67,23 +83,48 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
           });
         }
 
+        // FAILSAFE 1: if the section is already within (or above) the viewport
+        // at mount — common for the first section below the hero, or after a
+        // hash-jump / reload mid-page — reveal immediately. ScrollTrigger's
+        // onEnter won't fire for elements that start already in view.
+        const initialRect = root.getBoundingClientRect();
+        if (initialRect.top < window.innerHeight * 0.92) {
+          revealAll();
+        }
+
+        // ARCHITECTURE FIX: reveal timelines must NOT pin.
+        //
+        // Pinning a content section to drive a scrub-reveal creates a tall
+        // scroll spacer (the pin distance). If the timeline doesn't play to
+        // completion — which happens when Lenis drives scroll through
+        // gsap.ticker and ScrollTrigger's pin spacer is measured before the
+        // first refresh settles — the section's content stays at autoAlpha:0
+        // while the spacer remains, producing a viewport-tall empty void
+        // (the desktop blank-section bug seen on Projects + Skills).
+        //
+        // A reveal animation has no need to pin. We use a simple non-pinned
+        // trigger with toggleActions so the content fades in once on enter and
+        // reverses on scroll-up. Parallax / scrub atmospherics are owned by the
+        // ThreeBrushField + Framer hero, not by these section reveals.
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: root,
             start,
-            end: canPin
-              ? () => `+=${Math.max(root.offsetHeight * 1.15, window.innerHeight)}`
-              : reducedMotion
-                ? 'bottom 65%'
-                : 'bottom 45%',
-            scrub: canPin && !reducedMotion ? chapter.motion.scrub : false,
-            pin: canPin,
-            anticipatePin: 1,
+            end: reducedMotion ? 'bottom 65%' : 'bottom 45%',
+            scrub: false,
+            pin: false,
             invalidateOnRefresh: true,
             fastScrollEnd: true,
-            toggleActions: canPin || reducedMotion ? undefined : 'play none none reverse',
+            toggleActions: reducedMotion ? 'play none none none' : 'play none none reverse',
             onEnter: () => setActiveChapter(chapter.id),
             onEnterBack: () => setActiveChapter(chapter.id),
+            // FAILSAFE 2: on every ScrollTrigger refresh (resize, font load,
+            // layout shift), if this section is already in view, force-reveal.
+            // Guards against a refresh that recalculates the trigger to a point
+            // already passed, which would otherwise leave content hidden.
+            onRefresh: (self) => {
+              if (self.isActive || self.progress > 0) revealAll();
+            },
           },
           defaults: {
             ease: 'power3.out',
@@ -116,6 +157,21 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
         if (cta.length > 0) {
           tl.to(cta, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.34);
         }
+
+        // FAILSAFE 3 (timed safety net): if, 1200ms after setup, the timeline
+        // still hasn't progressed (ScrollTrigger never armed, or scroll engine
+        // didn't tick), force the section visible. This guarantees content is
+        // NEVER permanently hidden, regardless of scroll-engine state. The
+        // delay is long enough that a normal in-view reveal will have already
+        // played, so this only fires in genuine failure cases.
+        const safetyTimer = window.setTimeout(() => {
+          if (tl.progress() === 0 && !tl.isActive()) {
+            revealAll();
+          }
+        }, 1200);
+
+        // Register the timer for cleanup via the gsap context's own teardown.
+        cleanupFns.push(() => window.clearTimeout(safetyTimer));
       }, root);
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
@@ -124,10 +180,21 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
           error
         );
       }
+      // On any failure, ensure content is visible rather than stuck hidden.
+      const root = rootRef.current;
+      if (root) {
+        gsap.set(root.querySelectorAll('[data-cinematic]'), {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          clearProps: 'transform',
+        });
+      }
       return;
     }
 
     return () => {
+      cleanupFns.forEach((fn) => fn());
       ctx?.revert();
     };
   }, [chapter, reducedMotion, rootRef, setActiveChapter]);
