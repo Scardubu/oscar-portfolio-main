@@ -166,34 +166,34 @@ export function IdentityCard({
           mount wins; subsequent renders are no-ops for the SVG element itself.    */}
       <SquircleDefs />
       <m.figure
-      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
-      animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
-      whileHover={
-        isDesktop && !shouldReduceMotion
-          ? {
-              scale: 1.014,
-              y: -2,
-              transition: { type: 'spring', stiffness: 240, damping: 22 },
-            }
-          : undefined
-      }
-      transition={
-        shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
-      }
-      aria-label="Luxury operating-system identity card portrait"
-      className={cn(
-        // FIX 10: removed [transform-style:preserve-3d] — inline style is SoT
-        'relative isolate transform-gpu overflow-visible will-change-transform',
-        isDesktop
-          ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
-          : 'aspect-[4/5] w-full max-w-[16.25rem] min-w-[13.25rem] self-center sm:max-w-[17.75rem] md:max-w-[18.75rem] lg:hidden',
-        className
-      )}
-      // eslint-disable-next-line no-restricted-syntax
-      style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat', rotateX, rotateY }}
-      onMouseMove={handlePointerMove}
-      onMouseLeave={resetPointerTilt}
-    >
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
+        animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
+        whileHover={
+          isDesktop && !shouldReduceMotion
+            ? {
+                scale: 1.014,
+                y: -2,
+                transition: { type: 'spring', stiffness: 240, damping: 22 },
+              }
+            : undefined
+        }
+        transition={
+          shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+        }
+        aria-label="Luxury operating-system identity card portrait"
+        className={cn(
+          // FIX 10: removed [transform-style:preserve-3d] — inline style is SoT
+          'relative isolate transform-gpu overflow-visible will-change-transform',
+          isDesktop
+            ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
+            : 'aspect-[4/5] w-full max-w-[16.25rem] min-w-[13.25rem] self-center sm:max-w-[17.75rem] md:max-w-[18.75rem] lg:hidden',
+          className
+        )}
+        // eslint-disable-next-line no-restricted-syntax
+        style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat', rotateX, rotateY }}
+        onMouseMove={handlePointerMove}
+        onMouseLeave={resetPointerTilt}
+      >
       {/* Ambient glow behind the card */}
       <div
         aria-hidden="true"
@@ -388,7 +388,7 @@ export function IdentityCard({
           </span>
         </div>
       </div>
-    </m.figure>
+      </m.figure>
     </>
   );
 }
