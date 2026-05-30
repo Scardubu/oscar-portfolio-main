@@ -354,3 +354,29 @@ html[data-reduced-motion='true'] [data-cinematic] {
     font-size: clamp(0.875rem, 12cqi, 1.5rem);
   }
 }
+
+/* ══ MOBILE SCROLL RECOVERY v2026.12 ════════════════════════════════════════
+   Belt-and-suspenders: guarantee vertical scrollability on all touch/coarse-
+   pointer devices (phones, tablets, stylus devices). Lenis is bypassed on
+   these devices (see ScrollCinemaProvider.tsx isTouchDevice guard), so these
+   rules ensure no residual overflow lock can trap the page.
+
+   overscroll-behavior-y: auto restores native iOS rubber-band bounce — safe
+   and expected on mobile. The desktop value (none, set via pointer:fine in
+   globals.css) still prevents unwanted overscroll on trackpad/mouse.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  html,
+  body {
+    /* Force vertical scroll to be always available on touch devices */
+    overflow-y: auto !important;
+  }
+
+  body {
+    /* Restore native rubber-band / momentum on iOS Safari and Android Chrome.
+       overscroll-behavior-y: none (set in globals.css body rule) is correct
+       for desktop but undesirable on touch where it suppresses native bounce
+       and can interact badly with any remaining Lenis event listener residue. */
+    overscroll-behavior-y: auto;
+  }
+}
