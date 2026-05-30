@@ -377,23 +377,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
-    // FIX: mobile scroll trap — bypass Lenis entirely on touch/coarse-pointer
-    // devices (all phones and tablets). Lenis v1.3 with syncTouch:true and a
-    // GSAP-ticker-driven RAF loop injects `html { overflow: hidden }` on init,
-    // which on iOS Safari 17+ conflicts with the existing `overflow-x: clip` on
-    // <html>, creating a compositing-level scroll lock. On touch devices, Lenis
-    // provides zero perceptible benefit (native touch momentum is superior) and
-    // carries concrete breakage risk. Native scroll path is fully capable:
-    // GSAP ScrollTrigger, Framer Motion, and chapter tracking all continue
-    // unaffected — this mirrors the pattern used by DeferredThreeBrushField.
-    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
-
-    if (reducedMotion || isTouchDevice) {
+        // FIX: Lenis now runs on all pointer types with mobile-safe settings.
+    // Reduced-motion users still get native scrolling. For everyone else, we
+    // keep Lenis active on iOS Safari / Android Chrome with autoRaf enabled,
+    // syncTouch disabled, and a conservative touchMultiplier so mobile swipes
+    // feel stable instead of over-processed.
+    if (reducedMotion) {
       if (lenisRef.current) {
         try {
           lenisRef.current.destroy();
         } catch (error) {
-          warnDev('Lenis destroy failed while entering reduced-motion / touch mode.', error);
+          warnDev('Lenis destroy failed while entering reduced-motion mode.', error);
         }
         lenisRef.current = null;
       }
@@ -406,29 +400,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }
 
     let lenis: Lenis | null = null;
-    let usingLenis = true;
     let cleanupNative: (() => void) | null = null;
 
     try {
       lenis = new Lenis({
-        // 2026 best practice: lerp 0.08 gives cinematic glide without
-        // feeling sluggish on flagship devices. Lower values feel syrupy
-        // on mid-range hardware.
+        // Gentle cinematic glide without over-smoothing wheel or touch input.
         lerp: 0.08,
         smoothWheel: true,
-        // syncTouch: syncs lerp to touch velocity so scroll feels physical
-        // on mobile Safari / Android Chrome. Without it, touch scroll has
-        // the same artificial smoothing as wheel, which feels wrong.
-        syncTouch: true,
-        // Multipliers tuned for comfortable reading across device types.
-        // wheelMultiplier 1 = native-feeling; touchMultiplier 1.1 = slight
-        // momentum boost for swipe-heavy mobile navigation.
+        syncTouch: false,
         wheelMultiplier: 1,
-        touchMultiplier: 1.1,
-        // prevent: data-lenis-prevent elements (e.g. horizontal carousels) stop
-        // Lenis from intercepting their internal scroll events. The callback
-        // also auto-detects horizontally-scrollable containers so new components
-        // don't need manual attribute management.
+        touchMultiplier: 1.15,
+        anchors: true,
         prevent: (node: HTMLElement) => {
           return (
             node.hasAttribute('data-lenis-prevent') ||
@@ -436,17 +418,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
               ['auto', 'scroll'].includes(getComputedStyle(node).overflowX))
           );
         },
-        // autoRaf: false — we drive the RAF via gsap.ticker below for
-        // frame-perfect sync with GSAP ScrollTrigger. Double-RAF would
-        // cause double updates and potential jank.
-        autoRaf: false,
+        autoRaf: true,
       });
       lenisRef.current = lenis;
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
       }
     } catch (error) {
-      usingLenis = false;
       lenisRef.current = null;
       warnDev('Lenis initialization failed. Falling back to native scrolling.', error);
       cleanupNative = setupNativeScrollProgress();
@@ -470,23 +448,12 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       syncNativeScrollProgress();
     }
 
-    const raf = (time: number) => {
-      if (!usingLenis || !lenis) return;
-      lenis.raf(time * 1000);
-    };
-
-    if (usingLenis) {
-      gsap.ticker.add(raf);
-      // FIX: restore lag smoothing to protect against large-delta frames on
-      // mobile tab switches and background/foreground cycles. lagSmoothing(0)
-      // disables ALL protection — when the ticker fires after backgrounding,
-      // Lenis receives an inflated time delta and jumps position, leaving the
-      // page scroll stuck until the next RAF cycle. 500ms threshold + 33ms
-      // max delta (one dropped frame) is the standard production config.
-      gsap.ticker.lagSmoothing(500, 33);
-    }
-
     const refresh = () => {
+      try {
+        lenis?.resize();
+      } catch (error) {
+        warnDev('Lenis resize failed during refresh.', error);
+      }
       safeRefresh();
       syncNativeScrollProgress();
     };
@@ -550,9 +517,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
       }
       lenisRef.current = null;
-      if (usingLenis) {
-        gsap.ticker.remove(raf);
-      }
       window.removeEventListener('resize', debouncedRefresh);
       window.removeEventListener('orientationchange', debouncedRefresh);
       if (refreshTimer !== null) clearTimeout(refreshTimer);
