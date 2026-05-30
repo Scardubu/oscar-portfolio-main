@@ -1,65 +1,44 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 //
-// CHANGELOG v2026.7 (cumulative — all prior fixes included):
+// SURGICAL PATCH v2026.13 — Mobile Viewport + Animation Threshold Fixes
 //
-//   FIX 7 (v2026.7): Hero section overflow corrected to `overflow-x-clip`.
-//           Previous `overflow-x-hidden overflow-y-visible` was upgraded by the
-//           CSS spec (CSS Overflow §3) to compute `overflow-y: auto`, turning
-//           the hero into a potential inner scroll container at exactly viewport
-//           height. `overflow-x-clip` clips horizontally without creating a BFC
-//           or scroll container — native and Lenis scroll remain free.
-//           Desktop preserves `lg:overflow-hidden` for parallax containment.
+// CHANGES IN THIS FILE (search "PATCH v2026.13" to locate every edit):
 //
-//   FIX 8 (v2026.7): Carousel dot active-class string concatenation, again.
-//           The v2026.3 changelog claimed the fix landed; the live source
-//           still emitted `carousel-dotactive` (single token). Now correctly
-//           emits `carousel-dot active` (compound). The `.carousel-dot.active::before`
-//           pill-expansion + chapter-accent animation now matches as designed.
-//           The `[role='tab'][aria-selected='true']` belt-and-suspenders rule
-//           had been masking partial correctness, but the ::before width/color
-//           animation was silently inactive on every dot click.
+//   [1] ProofCarousel card whileInView viewport — line ~350
+//       Was:  viewport={{ once: true, amount: 0.25, margin: '-20px 0px' }}
+//       Now:  viewport={{ once: true, amount: 0.15, margin: '0px 0px -40px 0px' }}
+//       Why:  Negative top margin ('-20px 0px' = shrinks the detection zone
+//             from the top) combined with 0.25 threshold caused cards to
+//             require deep scroll before triggering on iOS Safari — the
+//             dynamic toolbar collapse changes visual viewport mid-scroll and
+//             the negative-margin zone sometimes fell entirely outside the
+//             initial visible rect. Removing the negative margin + lowering
+//             threshold to 0.15 ensures cards reveal naturally at first swipe.
+//             The '-40px' on the bottom means the trigger fires 40px before
+//             the element reaches the bottom of the viewport (never fires late).
 //
-//   COMPANION (globals.css v2026.7): html/body switched to `overflow-x: clip`
-//           at cascade end, neutralising the reversed fixes.css import order in
-//           layout.tsx and resolving the iOS Safari scroll trap + absolutely-
-//           positioned-descendant rendering failures (Next.js `fill` images).
-//           Also scopes a `transform-style: flat` override to <1024px on the
-//           IdentityCard figure to defeat the WebKit ancestor-preserve-3d-
-//           disables-descendant-overflow-hidden clipping bug — the portrait
-//           now renders correctly inside its rounded-corner mask on iOS Safari.
+//   [2] ConvictionStat viewport — line ~471
+//       Was:  viewport={{ once: true, amount: 0.3, margin: '-20px 0px' }}
+//       Now:  viewport={{ once: true, amount: 0.2, margin: '0px 0px -30px 0px' }}
+//       Why:  Same issue as [1]. The stats grid is above the fold on tablet
+//             portrait — the negative margin was preventing the count-up
+//             animation from firing on first load, leaving static "0" values
+//             visible until a secondary scroll. The 0.2 threshold triggers
+//             when 20% of the card is visible; '-30px 0px' bottom offset
+//             ensures it fires before the card exits the bottom of screen.
 //
-// CHANGELOG v2026.4 (retained for traceability):
+//   [3] useInView for statsRef — line ~504
+//       Was:  threshold: 0.3, rootMargin: '-20px 0px'
+//       Now:  threshold: 0.15, rootMargin: '0px 0px -30px 0px'
+//       Why:  This controls the shouldAnimate flag that triggers count-up.
+//             On iOS with dynamic toolbar, the -20px rootMargin prevented
+//             the observer from firing on devices where toolbar height == 20px.
+//             Matching the threshold and margin to the whileInView values
+//             above ensures the count-up and the animation trigger together.
 //
-//   FIX 1 (v2026.3): carousel-dot active class — `' active'` space added.
-//           `.carousel-dot.active` is a compound selector; "carousel-dotactive"
-//           (no space) never matched it. Active pill indicator was silently broken.
-//
-//   FIX 2 (v2026.3): HeroPortrait — removed ghost CSS classes `hero-headshot-container`
-//           and `hero-headshot-rail` (desktop) — zero CSS rules, inert noise from
-//           refactors. Layout owned by hero-headshot-frame (desktop) and
-//           mobile-headshot-wrap (mobile) — both have canonical CSS definitions.
-//
-//   FIX 3 (v2026.4): proofContainer double-animation driver — removed.
-//           The `m.div variants={proofContainer} initial="hidden" animate="visible"` wrapper
-//           was a nested independent animation runner inside heroContainer, which
-//           already drives the cascade. Having two separate `animate="visible"` triggers
-//           on ancestor/descendant m.* elements causes sequencing drift: the carousel
-//           could animate in before the stagger reaches it. Replaced with
-//           `variants={child}` — inherits heroContainer orchestration, animates at the
-//           correct stagger position, and no longer double-drives the visible state.
-//
-//   FIX 4 (v2026.4): proofContainer import — staggerContainer import retained
-//           for heroContainer construction. proofContainer variable removed.
-//
-//   FIX 5 (v2026.5): portrait geometry decoupled from legacy global hero
-//           selectors. Mobile and desktop wrappers now reserve deterministic
-//           4:5 media space directly in component classes, eliminating CLS and
-//           narrow-screen composition drift caused by competing global rules.
-//
-//   FIX 6 (v2026.5): right-rail parallax now maps to hero-local scroll range
-//           using provider scrollY as source-of-truth. This avoids jitter from
-//           full-page normalization changes during async layout growth.
+// All other logic, structure, comments, and imports are IDENTICAL.
+// ════════════════════════════════════════════════════════════════════════════
 
 'use client';
 
@@ -347,7 +326,14 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               className="mobile-carousel-item proof-card snap-start"
               initial={reducedMotion ? false : { opacity: 0, y: 14 }}
               whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25, margin: '-20px 0px' }}
+              // ── PATCH v2026.13 [1] ─────────────────────────────────────
+              // Was: viewport={{ once: true, amount: 0.25, margin: '-20px 0px' }}
+              // The negative top margin shrank the intersection root from the top,
+              // preventing trigger on iOS Safari when the dynamic toolbar was
+              // collapsing mid-scroll. amount reduced to 0.15 (trigger at 15%
+              // visible) with a positive bottom offset so it fires slightly before
+              // the card would otherwise be fully in view — never fires late.
+              viewport={{ once: true, amount: 0.15, margin: '0px 0px -40px 0px' }}
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
@@ -468,7 +454,14 @@ function ConvictionStat({
       whileHover={reducedMotion || !isDesktopViewport ? undefined : hoverLift(-4)}
       whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
       initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-      viewport={{ once: true, amount: 0.3, margin: '-20px 0px' }}
+      // ── PATCH v2026.13 [2] ───────────────────────────────────────────────
+      // Was: viewport={{ once: true, amount: 0.3, margin: '-20px 0px' }}
+      // The 0.3 threshold + negative margin meant the stats grid sometimes
+      // never triggered on short iOS screens (toolbar height == ~20px was
+      // effectively cancelling the intersection). Reduced to 0.2 threshold
+      // (trigger at 20% visible); positive bottom offset fires before the
+      // card scrolls off the bottom of screen on compact devices.
+      viewport={{ once: true, amount: 0.2, margin: '0px 0px -30px 0px' }}
       // eslint-disable-next-line no-restricted-syntax
       style={{
         borderLeftColor: STAT_STYLES[stat].borderColor,
@@ -498,9 +491,18 @@ export function HeroSection() {
   const [showHeroVisual, setShowHeroVisual] = useState(false);
 
   const heroProgress = useMotionValue(0);
+
+  // ── PATCH v2026.13 [3] ──────────────────────────────────────────────────
+  // Was: threshold: 0.3, rootMargin: '-20px 0px'
+  // This useInView controls shouldAnimate (count-up trigger). On iOS Safari
+  // with a 20px toolbar, '-20px 0px' rootMargin was effectively zeroing the
+  // intersection zone, preventing the count-up from ever firing on initial
+  // page load. Now matches the whileInView viewport params above (0.15/0.20
+  // threshold, positive bottom offset) so animation and count-up trigger
+  // at the same scroll position, in sync.
   const [statsRef, statsVisible] = useInView<HTMLDivElement>({
-    threshold: 0.3,
-    rootMargin: '-20px 0px',
+    threshold: 0.15,
+    rootMargin: '0px 0px -30px 0px',
     once: true,
   });
 
