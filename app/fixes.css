@@ -135,10 +135,16 @@ body {
   }
 }
 
-/* Subtle "alive" edge highlight — mobile portrait card.
-   Consolidated inside prefers-reduced-motion: no-preference so the animation
-   keyframe and will-change are never registered for users who prefer no motion. */
-@media (max-width: 1023px) {
+/* Identity card "alive" edge highlight — mobile portrait card.
+   The entire pseudo-element (including content:'') lives inside the compound
+   query so neither its paint cost nor the keyframe is ever registered for
+   users who prefer reduced motion. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  @keyframes hero-portrait-edge-pulse {
+    0%, 100% { opacity: 0.35; }
+    50%       { opacity: 0.62; }
+  }
+
   .hero-mobile-portrait-shell::after {
     content: '';
     position: absolute;
@@ -161,21 +167,10 @@ body {
       linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     padding: 1px;
-    opacity: 0.45;
-    z-index: 5;
-  }
-}
-
-@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
-  @keyframes hero-portrait-edge-pulse {
-    0%, 100% { opacity: 0.35; }
-    50% { opacity: 0.62; }
-  }
-
-  .hero-mobile-portrait-shell::after {
     opacity: 0.4;
     animation: hero-portrait-edge-pulse 4.2s ease-in-out infinite;
     will-change: opacity;
+    z-index: 5;
   }
 }
 

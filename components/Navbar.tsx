@@ -18,7 +18,7 @@ import { AnimatePresence, m, useAnimationFrame, useReducedMotion } from 'framer-
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { anchorUrl } from '@/lib/config';
@@ -100,7 +100,6 @@ export default function Navbar() {
     };
   }, []);
 
-  const navItems = useMemo(() => NAV_ITEMS, []);
   const activeSectionId = getActiveIdFromChapter(activeChapter);
 
   useAnimationFrame(() => {
@@ -123,13 +122,16 @@ export default function Navbar() {
     document.body.style.top = `-${scrollY}px`;
     document.body.classList.add('nav-open');
     document.documentElement.setAttribute('data-nav-open', 'true');
-    lenisRef.current?.stop();
+    // Capture the Lenis instance at the time the menu opens — the ref may
+    // point to a different (or null) instance by the time cleanup runs.
+    const lenis = lenisRef.current;
+    lenis?.stop();
     return () => {
       document.body.classList.remove('nav-open');
       document.body.style.top = '';
       document.documentElement.removeAttribute('data-nav-open');
       window.scrollTo(0, scrollY);
-      lenisRef.current?.start();
+      lenis?.start();
     };
   }, [mobileOpen, lenisRef]);
 
@@ -200,7 +202,7 @@ export default function Navbar() {
 
           {/* ── Desktop nav ────────────────────────────────────────────── */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-            {navItems.map((item) => {
+            {NAV_ITEMS.map((item) => {
               const active = activeSectionId === item.id;
               return (
                 <a
@@ -290,7 +292,7 @@ export default function Navbar() {
             className="hero-mobile-nav-panel fixed inset-x-0 top-16 z-50 px-4 py-4 lg:hidden"
           >
             <div className="flex flex-col gap-2">
-              {navItems.map((item) => {
+              {NAV_ITEMS.map((item) => {
                 const active = activeSectionId === item.id;
                 return (
                   <m.div key={item.id} variants={mobileItemVariants}>

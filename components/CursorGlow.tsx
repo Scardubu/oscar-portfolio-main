@@ -44,16 +44,9 @@ export default function CursorGlow() {
 
     syncPointerCapability();
 
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', syncPointerCapability);
-      return () => {
-        mediaQuery.removeEventListener('change', syncPointerCapability);
-      };
-    }
-
-    mediaQuery.addListener(syncPointerCapability);
+    mediaQuery.addEventListener('change', syncPointerCapability);
     return () => {
-      mediaQuery.removeListener(syncPointerCapability);
+      mediaQuery.removeEventListener('change', syncPointerCapability);
     };
   }, []);
 

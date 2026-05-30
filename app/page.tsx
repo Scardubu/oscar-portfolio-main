@@ -72,7 +72,7 @@ function ConvictionRecap() {
   ] as const;
 
   return (
-    <div id="section-recap" aria-label="Portfolio conviction summary">
+    <div id="section-recap" role="region" aria-label="Portfolio conviction summary">
       <div className="container">
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-y border-white/8 py-6">
           {PROOF_ITEMS.map((item) => (
