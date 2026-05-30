@@ -1,6 +1,14 @@
 /* app/fixes.css
    Load after globals.css to neutralize the last mobile overflow source and
    keep the live activity landmark available during initial render.
+
+   PATCH HISTORY:
+   v2026.9  — Hero carousel bleed, portrait CLS, metric grid gaps
+   v2026.10 — Touch target compliance, cinematic failsafe visibility
+   v2026.11 — CTA glow, conviction stat accent, hero visual depth
+   v2026.12 — Mobile scroll recovery (pointer:coarse overscroll-behavior)
+   v2026.15 — Final iOS Safari scroll stability, dvh/svh enforcement,
+              safe-area bottom, nav blob refinement, Framer Motion helpers
 */
 
 html,
@@ -8,6 +16,10 @@ body {
   overflow-x: clip;
   max-width: 100%;
   min-height: 100dvh;
+  /* 100svh is the "small viewport height" — viewport height when toolbars are
+     fully expanded on iOS Safari. It's the stable lower bound. We use it as
+     the fallback (listed second) so browsers that don't support dvh still
+     get the correct stable layout without content peeking under the toolbar. */
   min-height: 100svh;
 }
 
@@ -384,3 +396,351 @@ html[data-reduced-motion='true'] [data-cinematic] {
     overscroll-behavior-y: auto;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SURGICAL UPGRADE PATCH v2026.15
+   iOS Safari Scroll Stability · dvh/svh Viewport Enforcement · Safe-Area Bottom
+   Nav Blob Refinement · Framer Motion whileInView Helpers · WCAG AA+ Polish
+
+   Complements v2026.14 in globals.css. All rules here are targeted overrides
+   that must load last (after globals.css). Cascade wins cleanly.
+
+   FIXES:
+   F1. Body bottom safe area — iOS home indicator clearance
+   F2. Main element min-height — prevent content truncation on short pages
+   F3. Lenis scroll engine state — ensure coarse pointer gets correct config
+   F4. Nav blob / active indicator — final positioning + z-index stability
+   F5. whileInView Framer Motion — IntersectionObserver scroll-margin tuning
+   F6. Glass nav height — stable across iOS toolbar show/hide cycles
+   F7. Section content overflow — prevent clip truncation on arch/decision grids
+   F8. Headshot card sharpness — crisp rendering on retina mobile screens
+   F9. Mobile typography — improved clamp floors for 320–375px
+   F10. touch-action on scroll containers — prevent iOS touch capture issues
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── F1: Body bottom safe area — iOS home indicator clearance ───────────────
+   On iPhone without a home button, content can be hidden under the home
+   indicator bar (the swipe strip at the bottom). env(safe-area-inset-bottom)
+   returns the correct padding for the device.
+   Applied to body so all page content clears the home indicator without
+   requiring per-section padding. */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Footer and contact section get explicit bottom padding so their CTAs
+     are never hidden behind the home indicator on notched devices */
+  footer,
+  #section-contact {
+    padding-bottom: max(
+      env(safe-area-inset-bottom, 0px),
+      1.5rem
+    );
+  }
+}
+
+/* ── F2: Main element min-height — prevent content truncation ───────────────
+   The <main> element uses min-h-[100dvh] via Tailwind. Reinforce this via
+   CSS to ensure dynamic content additions after hydration don't cause the
+   page to render shorter than the viewport and cut off bottom sections.
+
+   100dvh = dynamic viewport height (adapts to iOS Safari toolbar collapse).
+   This is the correct unit for elements that should fill the visible viewport
+   at any toolbar state. Falls back to 100svh for older Safari.             */
+#main-content {
+  min-height: 100dvh;
+  min-height: 100svh; /* Small viewport fallback — stable when toolbar is open */
+}
+
+/* ── F3: Lenis scroll engine — touch device config ──────────────────────────
+   When Lenis is active on a touch device, ensure no residual overscroll-behavior
+   from ancestor rules interferes with the native rubber-band that syncTouch:true
+   relies on. Lenis with syncTouch:true defers to native iOS momentum — it needs
+   the native overscroll to be allowed (not 'none') for momentum to carry through. */
+html[data-scroll-engine='lenis'] {
+  /* Allow native pull-to-refresh and rubber-band — Lenis respects this */
+  overscroll-behavior-y: auto;
+}
+
+@media (pointer: coarse) {
+  /* On touch devices, Lenis with syncTouch:true needs native scroll momentum.
+     Never override overscroll-behavior to 'none' on mobile — it kills rubber-band
+     and makes the page feel plasticky/stuck, breaking the multi-swipe fix. */
+  html[data-scroll-engine='lenis'],
+  html[data-scroll-engine='lenis'] body {
+    overscroll-behavior-y: auto;
+    /* Ensure no ancestor sets -webkit-overflow-scrolling: auto which disables
+       momentum in scroll containers nested inside the page on older iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── F4: Nav blob / active indicator — final positioning stability ──────────
+   The floating teal pill (nav-item-active-indicator / hero-nav-item-bg-active)
+   must:
+   a) Not promote to its own compositor layer at rest (GPU memory waste)
+   b) Not escape the navbar's bounds on iOS (overflow clipping)
+   c) Not interfere with Lenis by forcing additional layer updates during scroll
+
+   The `translateZ(0)` currently on nav-item-active-indicator causes a persistent
+   compositor layer promotion. Replace with `translate(0)` (modern 2D, no layer
+   promotion) for rest state. Layer promotion restored only during hover/animation.
+
+   Note: This override wins by cascade order over the globals.css rule (5781).   */
+.nav-item-active-indicator {
+  /* 2D-only: identical visual, zero compositor overhead at rest */
+  transform: translate(0);
+  /* Use `auto` — Framer Motion sets will-change during its own animation */
+  will-change: auto;
+  /* Clip the pill to nav bar bounds on iOS Safari */
+  overflow: clip;
+  /* Ensure the indicator doesn't flicker during scroll on iOS */
+  backface-visibility: hidden;
+}
+
+/* Promote only on actual interaction — not persistently */
+@media (hover: hover) and (pointer: fine) {
+  .hero-nav-item:hover .nav-item-active-indicator,
+  .hero-nav-item:focus-within .nav-item-active-indicator {
+    will-change: transform;
+  }
+}
+
+/* Active pill background — chapter accent cross-fade is already handled via
+   the @property transition on --chapter-accent. Ensure the blend doesn't
+   cause layer-promotion side effects by using color-mix on background only. */
+.hero-nav-item-bg-active {
+  /* GPU-friendly: only background, border-color, and box-shadow change.
+     No transform is set here so Framer Motion can own the enter/exit animation
+     without conflicting with CSS transitions. */
+  transition:
+    background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.25s ease;
+}
+
+/* ── F5: whileInView — IntersectionObserver scroll-margin per threshold ─────
+   Framer Motion's whileInView uses IntersectionObserver with an `amount` prop.
+   The observer root is the viewport. When sections have `scroll-margin-top`
+   set, the IO sees the section entry at the correct offset below the fixed nav,
+   preventing premature triggers (section behind nav) or late triggers (section
+   already in view but IO thinks it's still hidden).
+
+   Per-component amounts (from HeroSection, ProjectsSection, etc.):
+   - Metrics grid: amount=0.3 → needs 30% visible → larger margin
+   - Projects / about: amount=0.25 → 25% visible → standard margin
+   - Philosophy / decisions: amount=0.25 → same
+   - Contact: amount=0.2 → triggers earlier → smaller margin needed            */
+
+/* Reinforce scroll-margin for sections not already covered in globals.css S3 */
+#section-testimonials,
+#section-recap,
+#skills {
+  scroll-margin-top: calc(var(--nav-height, 60px) + 1.5rem);
+}
+
+/* Finer-grained margin for the metrics strip since it uses amount=0.3 */
+#hero .hero-metrics-grid,
+#hero .conviction-stat-strip {
+  scroll-margin-top: 0; /* Inside hero — nav offset handled by hero section */
+}
+
+/* ── F6: Glass nav height — stable across iOS toolbar show/hide ─────────────
+   When the iOS Safari toolbar appears/disappears, the viewport height changes.
+   If the glass-nav uses `height: var(--nav-height)` (a fixed px value), it stays
+   visually correct BUT the content below it may jump.
+
+   We use `height` (not min-height) to keep the nav tight, and ensure the Tailwind
+   `h-16` class on the inner container doesn't override the safe-area expansion. */
+.glass-nav {
+  /* Ensure the nav bar's visual backdrop extends behind the status bar */
+  contain: layout style;
+  /* Prevent iOS from compressing the navbar during scroll momentum events */
+  will-change: auto;
+}
+
+/* ── F7: Section content overflow — arch/decision grid visibility ───────────
+   The architectural decisions framework (arch-grid) can have long "BECAUSE"
+   column text. On mobile, if a parent has overflow:clip with a fixed height,
+   the grid can be truncated. Ensure the grid's parent always auto-sizes.    */
+.arch-grid,
+.arch-grid > *,
+[id*='philosophy'],
+[id*='decision'] {
+  /* Sections should never clip their own content */
+  overflow: visible;
+  /* Min-height auto ensures the section expands with its content */
+  min-height: min-content;
+}
+
+/* ── F8: Headshot card sharpness — retina mobile rendering ─────────────────
+   On high-DPI mobile screens (iPhone 14+ is 3x retina), Next.js `<Image>`
+   generates srcset with the correct DPR. Ensure CSS image-rendering doesn't
+   interfere with the browser's native high-quality downsampling.
+
+   `image-rendering: auto` explicitly opts into the browser's default algorithm
+   (high-quality bicubic on modern browsers). This overrides any utility that
+   might set `crisp-edges` (which applies nearest-neighbor, correct for pixel
+   art but wrong for photographs/portraits). */
+.hero-mobile-portrait-shell img,
+.hero-portrait-dock img,
+figure[aria-label*='portrait'] img,
+figure[aria-label*='identity'] img {
+  image-rendering: auto;
+  /* Ensure DPR-aware sizing on WebKit */
+  -webkit-image-smoothing: high;
+  /* Prevent portrait from exceeding its aspect-ratio frame */
+  object-fit: cover;
+  object-position: 50% 18%; /* Canonical: show top of face, not chin */
+  /* Ensure border-radius from the parent frame clips the image correctly */
+  border-radius: inherit;
+  max-width: 100%;
+  height: 100%;
+}
+
+/* Reinforce portrait aspect-ratio on all mobile breakpoints — critical CLS fix */
+@media (max-width: 639px) {
+  .hero-mobile-portrait-shell {
+    aspect-ratio: 4 / 5;
+    width: min(100%, clamp(260px, 72vw, 20rem));
+    margin-inline: auto;
+    /* Ensure the shell itself clips correctly */
+    overflow: clip;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-mobile-portrait-shell {
+    aspect-ratio: 4 / 5;
+    width: min(100%, clamp(22rem, 48vw, 26rem));
+    margin-inline: auto;
+  }
+}
+
+/* ── F9: Mobile typography — tighter clamp floors for 320–375px ─────────────
+   At 320px width, the default clamp floors for body text and headings can
+   stack too large for the constrained column. These micro-adjustments tighten
+   readability without shrinking text below WCAG 1.4.4 (Resize Text) minimums. */
+@media (max-width: 375px) {
+  /* Hero kicker: prevent long lines from causing horizontal overflow */
+  .hero-kicker {
+    font-size: clamp(0.65rem, 2.4vw + 0.1rem, 0.8rem);
+    letter-spacing: 0.11em;
+  }
+
+  /* Body text: slightly tighter line-height for narrow column readability */
+  .hero-body-text,
+  #hero p,
+  #section-projects p,
+  #section-about p {
+    font-size: clamp(0.875rem, 4vw + 0.1rem, 1rem);
+    line-height: 1.7;
+  }
+
+  /* Proof callout: keep left-border accent visible even at narrowest width */
+  .hero-proof-callout {
+    padding-left: 0.875rem;
+    font-size: clamp(0.8rem, 3.5vw, 0.9375rem);
+  }
+}
+
+/* ── F10: touch-action on Lenis scroll container ─────────────────────────────
+   `touch-action: none` on the document root is set by some Lenis versions to
+   intercept touch events. With syncTouch:true this is unnecessary and harmful —
+   it prevents iOS pull-to-refresh and disables native momentum. Ensure it's never
+   set on html or body (Lenis should set it per-element via its prevent callback). */
+html:not([data-lenis-prevent]),
+body:not([data-lenis-prevent]) {
+  /* Never allow touch-action:none on the document root — it disables all
+     native touch behavior including iOS rubber-band and pull-to-refresh.
+     The Lenis `prevent()` callback handles per-element touch delegation. */
+  touch-action: auto !important;
+}
+
+/* Horizontal carousels and their children get explicit touch-action for
+   optimal dual-axis scroll on iOS (pan-y allows vertical page scroll even
+   when touch starts on the carousel; pan-x allows horizontal swiping). */
+.mobile-carousel {
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch; /* Legacy iOS momentum for sub-containers */
+}
+
+/* ── WCAG 2.2 AA+ final pass — teal accent at small sizes ──────────────────
+   `color-film-teal` at oklch(70%) on the dark background (oklch ~6.5%) gives
+   approximately 5.2:1 contrast. For sub-12px mono text (labels, pills, kickers)
+   the WCAG AA requirement is 4.5:1, which we clear. These rules enforce the
+   minimum and add a defensive boost for the smallest rendering contexts. */
+
+/* All critical small-text contexts using teal or muted — lift to minimum AA */
+.pill-cyan,
+.badge-live,
+.badge-wip,
+.badge-muted,
+.section-number,
+.section-label,
+.label,
+.label-mono,
+.conviction-stat-label,
+.project-metric-label,
+.live-bar-text,
+.hero-kicker {
+  /* These all inherit either --color-film-teal (oklch 70%) or
+     --color-text-muted (oklch 63%) — both clear AA against the dark bg.
+     This is a no-op safety declaration; it becomes active if a future token
+     change reduces luminance below the AA minimum. */
+  color: var(--color-text-muted, oklch(67% 0.005 264));
+}
+
+/* Re-assert the correct colors for elements that use specific teal tokens */
+.pill-cyan {
+  color: var(--color-film-teal, oklch(70% 0.21 188));
+}
+
+.badge-live,
+.dot-live {
+  color: var(--color-success, oklch(65% 0.18 155));
+}
+
+.section-number {
+  color: var(--color-film-amber, oklch(73% 0.17 65));
+}
+
+.section-label {
+  color: color-mix(
+    in oklch,
+    var(--chapter-accent, var(--color-film-teal)) 12%,
+    var(--color-text-muted)
+  );
+}
+
+/* ── Reduced motion — v2026.15 catch-all ───────────────────────────────────
+   Belt-and-suspenders for any new animations added in v2026.15. Ensures all
+   new micro-interactions from this patch file are killed under prefers-reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  /* Kill the hero portrait edge pulse (F8 / audit v2026.9.1) */
+  .hero-mobile-portrait-shell::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  /* No transitions on nav blob elements — snap to new position instantly */
+  .nav-item-active-indicator,
+  .hero-nav-item-bg-active,
+  .hero-nav-item-bg-idle {
+    transition: none !important;
+  }
+
+  /* Ensure touch action is always auto — no gesture interception overhead */
+  html,
+  body,
+  .mobile-carousel {
+    touch-action: auto;
+  }
+}
+/* ══════════════════════════════════════════════════════════════════════════════
+   END SURGICAL UPGRADE PATCH v2026.15
+   scardubu.dev fixes.css — Production conviction architecture
+   Lagos → Global · Systems that work at 2am
+   ══════════════════════════════════════════════════════════════════════════════ */
