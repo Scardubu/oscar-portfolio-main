@@ -77,7 +77,10 @@ const PROOF_CARDS = [
 export function TestimonialsSection() {
   const reducedMotion = useReducedMotion();
   const chapter = getChapterBySectionId('section-testimonials');
-  const container = staggerContainer(0.08, 0.05);
+  // Tightened from staggerContainer(0.08, 0.05) — at 4 cards the original
+  // 0.08s per-child stagger totalled ~0.37s, which felt slow on desktop
+  // where all cards are visible simultaneously. 0.055s stagger = ~0.26s total.
+  const container = staggerContainer(0.055, 0.04);
   const itemVariant = reducedMotion ? noMotion : fadeRise;
   const headVariant = reducedMotion ? noMotion : clipReveal;
 
@@ -107,14 +110,21 @@ export function TestimonialsSection() {
           />
         </m.div>
 
-        {/* ── 2-col grid (mobile: 1-col) ──────────────────────────────── */}
-        <m.div variants={container} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {/* ── Proof grid: 1-col → 2-col (sm) → 4-col (xl) ──────────────
+             metrics-grid applies the CSS-level ultrawide max-width cap (≥1536px).
+             xl:[grid-template-columns:...] caps each card at 320px on ultrawide
+             so cards don't stretch beyond comfortable reading width at 1680px+
+             container. The grid stays left-aligned within the container naturally. */}
+        <m.div
+          variants={container}
+          className="metrics-grid grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:[grid-template-columns:repeat(4,minmax(0,320px))]"
+        >
           {PROOF_CARDS.map((card, i) => (
             <m.article
               key={card.id}
               variants={reducedMotion ? noMotion : cardReveal(i % 2 === 0 ? 20 : 28)}
               data-cinematic="proof"
-              className="glass-medium flex min-w-0 flex-col gap-3 rounded-[var(--radius-xl)] p-6"
+              className="proof-card-item glass-medium flex min-w-0 flex-col gap-3 rounded-[var(--radius-xl)] p-6"
               // eslint-disable-next-line no-restricted-syntax
               style={{ borderLeft: `3px solid ${card.accent}` }}
               aria-label={`${card.type}: ${card.headline}`}
