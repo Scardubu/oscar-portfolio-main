@@ -29,6 +29,8 @@ const FEATURED_SECONDARY_VARIANT = cardReveal(20);
 const GRID_VARIANT_A = cardReveal(24);
 const GRID_VARIANT_B = cardReveal(-20);
 
+const SECTION_VIEWPORT = { once: true, amount: 0.25, margin: '-20px 0px' } as const;
+
 function trackProjectClick(projectSlug: string, target: 'case-study' | 'demo' | 'source') {
   trackEvent('Portfolio', 'ProjectClick', projectSlug, undefined, {
     project_slug: projectSlug,
@@ -84,6 +86,9 @@ function FeaturedProjectCard({
   return (
     <m.article
       variants={FEATURED_PRIMARY_VARIANT}
+      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="proof"
       data-project-id={featured.slug}
@@ -234,6 +239,9 @@ function SecondaryFeaturedCard({
   return (
     <m.article
       variants={FEATURED_SECONDARY_VARIANT}
+      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="card"
       data-project-id={project.slug}
@@ -359,6 +367,9 @@ function ProjectCard({
   return (
     <m.article
       variants={variant}
+      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
       data-cinematic="card"
       data-project-id={project.slug}
@@ -463,7 +474,13 @@ export function ProjectsSection() {
       noBorderTop
     >
       <m.div>
-        <m.div variants={child} className="mb-10 sm:mb-14">
+        <m.div
+          variants={child}
+          className="mb-10 sm:mb-14"
+          initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+          whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={SECTION_VIEWPORT}
+        >
           <SectionIntro
             eyebrowNumber="01"
             eyebrowLabel="Projects"
