@@ -130,9 +130,9 @@ export const hoverNudgeX = (x = 2) => ({ x, transition: springs.layout });
 
 /* ═══════════ VIEWPORT CONFIG ════════════════════════════════════════════ */
 
-export const viewportOnce = { once: true, margin: '-80px' } as const;
-export const viewportRelaxed = { once: true, margin: '-40px' } as const;
-export const viewportTight = { once: true, margin: '-120px' } as const;
+export const viewportOnce = { once: true, amount: 0.3, margin: '-20px 0px' } as const;
+export const viewportRelaxed = { once: true, amount: 0.25, margin: '-20px 0px' } as const;
+export const viewportTight = { once: true, amount: 0.35, margin: '-20px 0px' } as const;
 /** Backward-compat alias — prefer viewportOnce in new code */
 export const viewportOnceDefault = viewportOnce;
 
