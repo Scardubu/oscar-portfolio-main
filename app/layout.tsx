@@ -221,7 +221,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body className="relative overflow-x-clip">
+      <body className="relative min-h-[100dvh] overflow-x-clip">
         {/* ── Skip navigation — WCAG 2.2 §2.4.1 ──────────────────────── */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
