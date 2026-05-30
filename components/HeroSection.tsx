@@ -83,6 +83,8 @@ import {
   useState,
 } from 'react';
 
+import { useInView } from '@/hooks/useInView';
+
 import { trackEvent } from '@/app/lib/analytics';
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { LiveActivityBar } from '@/components/Liveactivitybar';
@@ -322,7 +324,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="mobile-carousel snap-x snap-mandatory scroll-smooth"
+          className="mobile-carousel snap-x snap-proximity scroll-smooth"
           data-lenis-prevent
           role="region"
           aria-roledescription="carousel"
@@ -342,7 +344,10 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
               aria-labelledby={`hero-proof-tab-${index}`}
               aria-hidden={!isDesktop && index !== activeIndex}
               variants={cardVariants}
-              className="mobile-carousel-item proof-card snap-center"
+              className="mobile-carousel-item proof-card snap-start"
+              initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25, margin: '-20px 0px' }}
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
               aria-label={`${index + 1} of ${PROOF_COLUMNS.length}: ${col.label}`}
             >
@@ -461,6 +466,9 @@ function ConvictionStat({
       role="listitem"
       aria-label={`${value} ${label}. ${detail}`}
       whileHover={reducedMotion || !isDesktopViewport ? undefined : hoverLift(-4)}
+      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+      viewport={{ once: true, amount: 0.3, margin: '-20px 0px' }}
       // eslint-disable-next-line no-restricted-syntax
       style={{
         borderLeftColor: STAT_STYLES[stat].borderColor,
@@ -490,6 +498,11 @@ export function HeroSection() {
   const [showHeroVisual, setShowHeroVisual] = useState(false);
 
   const heroProgress = useMotionValue(0);
+  const [statsRef, statsVisible] = useInView<HTMLDivElement>({
+    threshold: 0.3,
+    rootMargin: '-20px 0px',
+    once: true,
+  });
 
   const rightRailY = useSpring(useTransform(heroProgress, [0, 1], [0, -18]), {
     stiffness: 170,
@@ -634,25 +647,9 @@ export function HeroSection() {
     return () => window.clearTimeout(timer);
   }, [isDesktopViewport]);
 
-  // V1.0 Change 7: IntersectionObserver for count-up — fires once on first viewport entry
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [statsVisible, setStatsVisible] = useState(false);
-
-  useEffect(() => {
-    const el = statsRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStatsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  // V1.0 Change 7: count-up now uses a shared in-view hook with a tighter
+  // mobile-friendly threshold so metrics reveal naturally instead of waiting
+  // for a deeper scroll position on iOS Safari.
 
   const handleAnchorJump = useCallback(
     (event: MouseEvent<HTMLAnchorElement>, sectionId: string, ctaLabel: string) => {
@@ -674,7 +671,7 @@ export function HeroSection() {
       ref={heroRef}
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-[100svh] flex-col justify-start overflow-x-clip pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
+      className="relative flex min-h-[100dvh] flex-col justify-start overflow-x-clip pt-[var(--hero-pad-top)] pb-[var(--hero-pad-bottom)] sm:justify-center lg:overflow-hidden"
     >
       <div className="work-surface-glow" aria-hidden="true" />
 
