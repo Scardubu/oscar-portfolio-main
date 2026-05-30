@@ -7,6 +7,8 @@ html,
 body {
   overflow-x: clip;
   max-width: 100%;
+  min-height: 100dvh;
+  min-height: 100svh;
 }
 
 body {
@@ -19,9 +21,10 @@ body {
 */
 #hero .mobile-carousel {
   margin-inline: 0 !important;
-  padding-inline: 0 !important;
-  scroll-padding-inline: 0.875rem;
+  padding-inline: clamp(0.875rem, 4vw, 1.125rem) !important;
+  scroll-padding-inline: clamp(0.875rem, 4vw, 1.125rem);
   overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity !important;
 }
 
 @media (max-width: 389px) {
@@ -30,7 +33,8 @@ body {
   }
 
   #hero .mobile-carousel-item {
-    flex-basis: min(90vw, 16.5rem);
+    flex-basis: 100% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -40,7 +44,8 @@ body {
   }
 
   #hero .mobile-carousel-item {
-    flex-basis: min(86vw, 18.5rem);
+    flex-basis: min(92vw, 22rem) !important;
+    max-width: min(92vw, 22rem) !important;
   }
 }
 
@@ -92,7 +97,7 @@ body {
 
   #hero .mobile-carousel-item {
     /* Cap card at safe width to avoid any right overflow */
-    max-width: min(88vw, 22rem);
+    max-width: min(92vw, 22rem) !important;
   }
 
   /* Fade affordance: override right position to be within safe area */
@@ -105,6 +110,10 @@ body {
 @media (max-width: 389px) {
   .hero-support-grid {
     grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  #hero .hero-metrics-grid {
     gap: 0.75rem;
   }
 }
@@ -123,7 +132,7 @@ body {
 /* Reserve stable mobile portrait geometry — prevents CLS during image fetch */
 .hero-mobile-portrait-shell {
   width: 100%;
-  max-width: 17.5rem;
+  max-width: 18rem;
   aspect-ratio: 4 / 5;
   position: relative;
   contain: layout paint;
@@ -131,7 +140,7 @@ body {
 
 @media (max-width: 389px) {
   .hero-mobile-portrait-shell {
-    max-width: 15.5rem;
+    max-width: 16.25rem;
   }
 }
 
@@ -352,9 +361,9 @@ html[data-reduced-motion='true'] [data-cinematic] {
 
 /* ══ MOBILE SCROLL RECOVERY v2026.12 ════════════════════════════════════════
    Belt-and-suspenders: guarantee vertical scrollability on all touch/coarse-
-   pointer devices (phones, tablets, stylus devices). Lenis is bypassed on
-   these devices (see ScrollCinemaProvider.tsx isTouchDevice guard), so these
-   rules ensure no residual overflow lock can trap the page.
+   pointer devices (phones, tablets, stylus devices). These rules ensure no
+   residual overflow lock can trap the page if a browser or extension leaves
+   the document in a constrained state.
 
    overscroll-behavior-y: auto restores native iOS rubber-band bounce — safe
    and expected on mobile. The desktop value (none, set via pointer:fine in
