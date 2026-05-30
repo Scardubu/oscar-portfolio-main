@@ -508,11 +508,20 @@ body {
   background: var(--color-bg);
   min-height: 100svh; /* svh = small viewport height — matches iOS Safari visible area, prevents 100vh blank-space bleed */
   overflow-x: clip;
-  /* Contain scroll momentum within the page — prevents browser overscroll effects from bleeding */
-  overscroll-behavior-y: none;
-  /* padding-bottom: removed — no BottomNav component rendered; phantom gap eliminated */
+  /* overscroll-behavior-y moved to pointer:fine below — touch devices need
+     native rubber-band bounce; applying none globally was a mobile scroll trap
+     when combined with Lenis's html overflow injection on iOS Safari 17+. */
   position: relative;
 }
+
+/* Contain scroll momentum within the page on desktop (mouse/track pad only).
+   Touch devices (pointer: coarse) use native overscroll — see fixes.css. */
+@media (pointer: fine) {
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
 @media (min-width: 769px) {
   body {
     padding-bottom: 0;
@@ -5480,5 +5489,35 @@ body {
   .hero-chapter-dot,
   .hero-chapter-tooltip {
     transition: none !important;
+  }
+}
+
+/* Proof cards grid — cap inner width at 1280px on 2xl+ viewports where the
+   section container expands to 1480–1680px. Cards at 320px max feel dense and
+   premium; wider cards at ultra-wide feel sparse and un-designed. */
+@media (min-width: 1536px) {
+  .metrics-grid {
+    max-width: 1280px;
+    margin-inline: 0; /* left-align within section container, not centred */
+  }
+}
+
+/* Proof card hover lift + chapter-accent glow — extend the hero metric card
+   pattern to the TestimonialsSection proof cards. */
+@media (hover: hover) and (pointer: fine) {
+  .proof-card-item {
+    transition:
+      transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.26s ease,
+      box-shadow 0.26s ease,
+      background 0.30s ease;
+  }
+
+  .proof-card-item:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklch, var(--chapter-accent) 38%, oklch(100% 0 0 / 0.08));
+    box-shadow:
+      0 20px 52px -28px color-mix(in oklch, var(--chapter-accent) 42%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--chapter-accent) 18%, oklch(100% 0 0 / 0.1));
   }
 }
