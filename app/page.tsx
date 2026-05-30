@@ -112,7 +112,7 @@ export default async function Home() {
 
   return (
     <>
-      <main id="main-content" tabIndex={-1}>
+      <main id="main-content" tabIndex={-1} className="min-h-[100dvh]">
         {/* 00 — Hero: first paint, zero deferred loading */}
         <HeroSection />
 
