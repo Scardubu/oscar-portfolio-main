@@ -67,7 +67,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
   return (
     <div
       id="page-wrapper"
-      className="relative flex min-h-[100svh] flex-col overflow-x-clip"
+      className="relative flex min-h-[100dvh] flex-col overflow-x-clip"
       data-page-transitioning={isPending ? 'true' : 'false'}
     >
       <AnimatePresence mode="wait" initial={false}>
