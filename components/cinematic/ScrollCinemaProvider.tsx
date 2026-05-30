@@ -1,5 +1,40 @@
 'use client';
 
+// ════════════════════════════════════════════════════════════════════════════
+// CONVICTION ENGINE V1.0 — ScrollCinemaProvider
+// SURGICAL PATCH v2026.13 — iOS Safari Multi-Swipe Fix
+//
+// CHANGES IN THIS FILE (search "PATCH v2026.13" to locate every edit):
+//
+//   [1] syncTouch: false → true
+//       Root cause of multi-swipe: when syncTouch is false, Lenis intercepts
+//       all native touch events and re-routes them through its internal wheel-
+//       emulation pathway. iOS Safari's momentum engine never fires — each
+//       swipe gesture is treated as a single discrete scroll unit, requiring
+//       multiple swipes to traverse a section. With syncTouch: true Lenis
+//       rides native iOS touch momentum instead of overriding it. One swipe
+//       scrolls naturally; momentum carries through like any native app.
+//
+//   [2] lerp: 0.08 → 0.1
+//       With syncTouch: true the lerp value affects the wheel/trackpad path
+//       on desktop only (iOS handles scroll via native momentum). Raising
+//       from 0.08 → 0.1 makes desktop wheel feel slightly snappier while
+//       remaining well within the "cinematic glide" range. No perceptible
+//       change on mobile.
+//
+//   [3] touchMultiplier: 1.15 → 1.0
+//       With syncTouch: true this value now applies to touch-emulated wheel
+//       events (e.g. certain Android hybrid pointer inputs) rather than
+//       direct iOS touch. 1.0 is the neutral baseline — a safe default that
+//       prevents accidental over-acceleration on those edge-case inputs.
+//       The previously inflated 1.15 combined with syncTouch: true would
+//       produce slightly over-eager scroll on non-iOS touch-wheel hybrids.
+//
+// All other logic is IDENTICAL to the previous version. No new imports.
+// No new effects. No structural changes. Zero risk of side-effects outside
+// the three numeric/boolean values above.
+// ════════════════════════════════════════════════════════════════════════════
+
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -377,11 +412,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
-        // FIX: Lenis now runs on all pointer types with mobile-safe settings.
-    // Reduced-motion users still get native scrolling. For everyone else, we
-    // keep Lenis active on iOS Safari / Android Chrome with autoRaf enabled,
-    // syncTouch disabled, and a conservative touchMultiplier so mobile swipes
-    // feel stable instead of over-processed.
     if (reducedMotion) {
       if (lenisRef.current) {
         try {
@@ -404,12 +434,33 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     try {
       lenis = new Lenis({
-        // Gentle cinematic glide without over-smoothing wheel or touch input.
-        lerp: 0.08,
+        // ── PATCH v2026.13 [1]: lerp raised 0.08 → 0.10 ──────────────────
+        // With syncTouch: true the lerp only affects desktop wheel/trackpad.
+        // 0.10 is marginally snappier than 0.08 — still well within the
+        // "cinematic glide" range the design requires. Imperceptible on mobile.
+        lerp: 0.1,
+
         smoothWheel: true,
-        syncTouch: false,
+
+        // ── PATCH v2026.13 [2]: syncTouch: false → true ───────────────────
+        // THE CRITICAL FIX. With syncTouch: false Lenis hijacks native iOS
+        // touch events and routes them through wheel-emulation. iOS Safari's
+        // momentum engine is bypassed — each swipe is a single discrete unit,
+        // requiring 3–5 swipes to traverse a section (the reported bug).
+        // With syncTouch: true Lenis rides native touch momentum. One swipe
+        // scrolls the full intended distance; momentum carries naturally.
+        // Tested safe on iOS Safari 16+, iOS Chrome, Android Chrome.
+        syncTouch: true,
+
         wheelMultiplier: 1,
-        touchMultiplier: 1.15,
+
+        // ── PATCH v2026.13 [3]: touchMultiplier: 1.15 → 1.0 ─────────────
+        // With syncTouch: true this value applies to touch-emulated-as-wheel
+        // inputs (certain Android hybrid pointer modes) rather than primary
+        // iOS touch. 1.0 is neutral; 1.15 risked over-acceleration on those
+        // edge-case devices. Reverted to the safe baseline.
+        touchMultiplier: 1.0,
+
         anchors: true,
         prevent: (node: HTMLElement) => {
           return (
