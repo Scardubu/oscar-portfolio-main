@@ -179,7 +179,7 @@ export function IdentityCard({
         'relative isolate transform-gpu overflow-visible will-change-transform',
         isDesktop
           ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
-          : 'aspect-[4/5] w-full max-w-[15.5rem] min-w-[13rem] self-center sm:max-w-[17.5rem] md:max-w-[18.5rem] lg:hidden',
+          : 'aspect-[4/5] w-full max-w-[16.25rem] min-w-[13.25rem] self-center sm:max-w-[17.75rem] md:max-w-[18.75rem] lg:hidden',
         className
       )}
       // eslint-disable-next-line no-restricted-syntax
@@ -262,7 +262,7 @@ export function IdentityCard({
             className={cn(
               'absolute inset-0 h-full w-full scale-[1.02] object-cover transition-opacity duration-500 ease-out',
               portraitReady ? 'opacity-100' : 'opacity-0',
-              isDesktop ? 'object-[50%_12%]' : 'object-[50%_15%]'
+              isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
             )}
             // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
           />
