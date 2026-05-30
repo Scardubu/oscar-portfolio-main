@@ -1,5 +1,30 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
+//
+// SURGICAL PATCH v2026.13 — Mobile Animation Threshold Fix
+//
+// CHANGES IN THIS FILE (search "PATCH v2026.13" to locate every edit):
+//
+//   [1] SECTION_VIEWPORT constant — line ~32
+//       Was:  { once: true, amount: 0.25, margin: '-20px 0px' }
+//       Now:  { once: true, amount: 0.15, margin: '0px 0px -50px 0px' }
+//       Why:  This single constant controls every whileInView threshold in this
+//             file (FeaturedProjectCard, SecondaryFeaturedCard, ProjectCard,
+//             and the section intro wrapper). The prior '-20px 0px' negative
+//             top margin was shrinking the intersection detection zone from
+//             the top of the viewport. On iOS Safari with a 50px address bar,
+//             this created a window where cards that were visually in-frame
+//             weren't registering as intersecting — the animated initial state
+//             (opacity:0, y:12) was visible until a second scroll gesture.
+//             Fix: remove the negative top margin entirely; add '-50px' on the
+//             bottom so cards trigger 50px before reaching the viewport bottom
+//             edge (fires early, never fires late). Amount reduced 0.25 → 0.15
+//             to lower the required visible fraction — cards with tall content
+//             may only show 15% on first viewport entry on compact screens.
+//
+// All other logic, structure, comments, and imports are IDENTICAL.
+// ════════════════════════════════════════════════════════════════════════════
+
 'use client';
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
@@ -29,7 +54,25 @@ const FEATURED_SECONDARY_VARIANT = cardReveal(20);
 const GRID_VARIANT_A = cardReveal(24);
 const GRID_VARIANT_B = cardReveal(-20);
 
-const SECTION_VIEWPORT = { once: true, amount: 0.25, margin: '-20px 0px' } as const;
+// ── PATCH v2026.13 [1] ──────────────────────────────────────────────────────
+// Was: { once: true, amount: 0.25, margin: '-20px 0px' }
+//
+// The negative top margin in rootMargin shrinks the intersection viewport
+// from the top. On iOS Safari (50px address bar + 44px toolbar = 94px chrome),
+// '-20px 0px' was small enough that tall project cards on compact screens
+// required the element to be 20px past the chrome before triggering — causing
+// the opacity:0/y:12 initial state to be briefly visible on scroll-in.
+//
+// New config:
+//   amount: 0.15  — trigger when 15% of the card is in view (was 25%)
+//   margin: '0px 0px -50px 0px'
+//     ↑ top: no shrinkage (was -20px — removed)
+//     ↑ bottom: fire 50px before the card hits the bottom edge (early trigger)
+//
+// Result: cards animate in the moment they become visible, with a 50px
+// "preview" window so the animation is already in progress when users look at
+// the card. Never fires late. Zero risk of invisible content.
+const SECTION_VIEWPORT = { once: true, amount: 0.15, margin: '0px 0px -50px 0px' } as const;
 
 function trackProjectClick(projectSlug: string, target: 'case-study' | 'demo' | 'source') {
   trackEvent('Portfolio', 'ProjectClick', projectSlug, undefined, {
