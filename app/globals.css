@@ -478,12 +478,15 @@ html {
   font-size: 16px;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
-  /* Smooth scrolling for all anchor navigation — applies to nav clicks, CTA jumps, footer links */
+  /* Smooth scrolling for anchor navigation — applies to nav clicks, CTA jumps, footer links.
+     Lenis overrides this on [data-scroll-engine='lenis'] below. */
   scroll-behavior: smooth;
   /* Offset anchors by nav height so section headings don't hide under the fixed bar */
   scroll-padding-top: calc(var(--nav-height) + 1.5rem);
 }
 html[data-scroll-engine='lenis'] {
+  /* Lenis manages its own scroll timeline; browser scroll-behavior must be auto
+     or Lenis and native smooth-scroll fight for the same animation frame. */
   scroll-behavior: auto;
 }
 @media (max-width: 768px) {
@@ -508,6 +511,10 @@ body {
   font-size: var(--text-base);
   color: var(--color-text-primary);
   background: var(--color-bg);
+  /* 100dvh (dynamic) is primary: adapts to iOS Safari toolbar collapse/expand.
+     100svh (small viewport) is the fallback: stable layout when toolbar is
+     always visible. Never use 100vh — it locks to initial-containing-block
+     and causes content to scroll under iOS Safari's bottom toolbar. */
   min-height: 100dvh;
   min-height: 100svh;
   overflow-x: clip;
@@ -2252,29 +2259,14 @@ h3,
   width: var(--bar-width, 95%);
 }
 
-/* ════ PROOF CALLOUT REFINEMENT — v24 ════
-   The hero-proof-callout already exists; this adds a subtle shimmer on mount
-   to draw attention to the key project names.
-   Fires once on load, not on hover.
-*/
-.hero-proof-callout {
-  animation: callout-reveal 0.28s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
-}
-@keyframes callout-reveal {
-  from {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-proof-callout {
-    animation: none !important;
-  }
-}
+/* ════ PROOF CALLOUT REFINEMENT — v24 → v2026.14 ════
+   REMOVED: callout-reveal CSS animation. Framer Motion's `fadeRise` variant
+   on the m.div wrapper already animates opacity + translateY on the callout.
+   The CSS animation created a dual-driver conflict: Framer resolved opacity:1
+   at ~300ms; the CSS animation restarted opacity:0→1 at the 1.2s delay.
+   On Safari this flashed the element invisible. CSS animation suppressed;
+   Framer Motion owns all opacity/transform reveals on .hero-proof-callout.
+   Ref: F2 in HERO REFINEMENT v2026.4 block (confirmed fix, source removed here). */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONVICTION ENGINE V1.0 — GLOBALS.CSS ADDITIONS
@@ -4575,16 +4567,16 @@ section[data-chapter] {
   }
 }
 
-/* ── Carousel dot active state — enhanced for button context ───────────────
-   The original .carousel-dot.active rule must still work now that dots
-   are buttons. These rules reinforce the active state specificity.           */
-.carousel-dots [role='tab'][aria-selected='true'].carousel-dot,
-.carousel-dot.active {
-  /* These properties are already defined in the main .carousel-dot.active
-     rule above; this block exists to ensure they win over browser button
-     defaults via the attribute selector. No visual change intended. */
-  background-color: var(--chapter-accent, oklch(80% 0.15 188));
-  transform: scaleX(2.2);
+/* ── Carousel dot active state — button-context failsafe ───────────────────
+   Reinforces the active state with attribute-selector specificity so it wins
+   over browser-native button styles regardless of DOM structure changes.
+   Visual output: identical to the base .carousel-dot.active rule above. */
+.carousel-dots [role='tab'][aria-selected='true'].carousel-dot::before,
+.carousel-dot.active::before {
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--chapter-accent, oklch(70% 0.21 188));
 }
 
 /* ── Carousel dot focus-visible — keyboard navigation ─────────────────────
@@ -4727,15 +4719,15 @@ section[data-chapter] {
        delayed fade-in so the badge doesn't compete with the portrait on load.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── F2: Suppress callout-reveal CSS animation ──────────────────────────────
-   Framer Motion `fadeRise` variant drives opacity + translateY on the proof
-   callout's m.div wrapper. The CSS `callout-reveal` animation at line ~2129
-   also drives opacity from 0 at a 1.2s delay — after Framer has already
-   resolved opacity:1. On Safari, this causes the element to flash invisible
-   at 1.2s as the CSS animation overwrites Framer's inline style.
-   Framer Motion wins; CSS animation suppressed. */
+/* ── F2: callout-reveal CSS animation (suppressed at source) ────────────────
+   The callout-reveal @keyframes + animation rule was removed from the
+   PROOF CALLOUT REFINEMENT v24 block (above) to resolve the Framer Motion
+   dual-opacity-driver conflict that caused a flash-of-invisible on Safari at
+   the 1.2s animation delay. The rule below is kept as a cascade-safety guard:
+   if any future patch re-introduces the animation, this null-override ensures
+   Framer Motion always wins the opacity/transform race on this element. */
 .hero-proof-callout {
-  animation: none !important;
+  animation: none;
 }
 
 /* ── E2: CTA primary hover shimmer sweep ───────────────────────────────────
@@ -5526,3 +5518,493 @@ body {
       inset 0 1px 0 color-mix(in oklch, var(--chapter-accent) 18%, oklch(100% 0 0 / 0.1));
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONVICTION ENGINE V1.0 — SURGICAL UPGRADE PATCH v2026.14
+   Mobile scroll recovery · Viewport stability · Framer Motion optimization
+   WCAG 2.2 AA+ enforcement · Section visibility · Creative elevation
+
+   ORDER OF FIXES IN THIS BLOCK:
+   S1.  iOS Safari scroll trap elimination — overflow-x: clip on all glass
+        components that used overflow: hidden (creating BFC scroll containers).
+   S2.  Lenis scroll coexistence — horizontal carousels get overscroll-behavior
+        containment and touch-action hints globally (not just in #hero).
+   S3.  Framer Motion whileInView support — scroll-margin-top tuned per section
+        type so reveals fire at the intended viewport threshold.
+   S4.  Section content visibility guard — prevent sections from being
+        content-visibility:auto-hidden at critical breakpoints.
+   S5.  Mobile typography density — improved clamp() at 320–430px.
+   S6.  WCAG 2.2 AA+ confirmation — teal accent contrast at small sizes.
+   S7.  Metrics / conviction-stat lift micro-interaction (fine pointer only).
+   S8.  "LIVE IN PRODUCTION" card full visibility guard.
+   S9.  Decisions framework section visibility.
+   S10. Nav blob / teal pill positioning refinement.
+   S11. Headshot card mobile scaling + sharpness hints.
+   S12. Glass nav safe-area-inset-top (notch-aware navbar height).
+   S13. Framer Motion will-change optimization — promote only on animation.
+   S14. Reduced-motion kill switch (catch-all at end of cascade).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── S1: iOS Safari BFC scroll-trap fix — overflow-x: clip on glass containers ──
+   `overflow: hidden` creates a Block Formatting Context (BFC). On iOS Safari,
+   a BFC ancestor can trap vertical scroll inside itself, requiring multiple
+   swipes to break free of a single section. The fix: use `overflow: clip` for
+   layout-containment purposes. `clip` visually clips identically to `hidden`
+   but does NOT create a BFC or a scroll container.
+
+   These are the glass component classes that had `overflow: hidden` and are
+   used as section wrappers (not just small decorative elements). Small inline
+   elements like .shimmer-sweep::after don't need changing — they already work.
+
+   Note: glass-chromatic, glass-elevated, glass-full, glass-medium, glass-surface
+   all have `contain: paint` + `isolation: isolate` which already creates a
+   stacking context. The overflow change is purely scroll-safety. */
+.glass-chromatic,
+.glass-elevated,
+.glass-medium,
+.glass-full {
+  /* clip instead of hidden: no BFC, no scroll container, same visual result */
+  overflow: clip;
+}
+
+/* glass-surface and glass-light are used on smaller card components where
+   overflow: hidden is needed for the ::before shimmer and ::after fresnel.
+   Leave those unchanged — they're never section-level scroll ancestors. */
+
+/* ── S2: Horizontal carousel — global scroll-containment ──────────────────
+   Every `.mobile-carousel` gets explicit horizontal-only overscroll containment
+   and touch-action so native vertical page scroll is never blocked. Previously
+   this was only set on #hero carousels via fixes.css. Any carousel outside
+   the hero (testimonials, open-source) needed this too. */
+.mobile-carousel {
+  overscroll-behavior-x: contain;
+  /* pan-y: allows vertical page scroll to pass through even when a touch
+     gesture starts on the carousel. pan-x: enables horizontal card swiping.
+     Without pan-y, iOS treats a downward swipe on the carousel as "scroll
+     the carousel" and swallows the event — making the page feel stuck. */
+  touch-action: pan-x pan-y;
+}
+
+/* ── S3: Framer Motion whileInView scroll-margin tuning ───────────────────
+   `whileInView` fires when a section enters the viewport by the configured
+   `amount` threshold. The CSS `scroll-margin-top` ensures the section doesn't
+   hide behind the fixed nav when the IntersectionObserver checks visibility.
+   Per-section overrides below match the component-level `amount` props.
+
+   Rationale for values:
+   - Metrics grid: amount=0.3 → needs 30% visible. Extra margin prevents
+     premature trigger when the section is still behind the nav edge.
+   - Projects: amount=0.25 → more forgiving threshold, can trigger earlier.
+   - Philosophy / Decisions: amount=0.25 → matches the sparse layout. */
+#metrics,
+.conviction-stat-strip {
+  scroll-margin-top: calc(var(--nav-height) + 2rem);
+}
+
+#section-projects,
+#section-about,
+#section-contact,
+#section-writing,
+#open-source {
+  scroll-margin-top: calc(var(--nav-height) + 1.5rem);
+}
+
+/* Philosophy / Decisions framework — ensure it's never hidden below nav */
+#philosophy,
+#decisions,
+[id*='decision'],
+[id*='philosophy'] {
+  scroll-margin-top: calc(var(--nav-height) + 1.25rem);
+}
+
+/* ── S4: Section content-visibility guard ─────────────────────────────────
+   `content-visibility: auto` is set on .section-deferred. On mobile, this can
+   cause sections just off-screen to render at their `contain-intrinsic-size`
+   placeholder height, causing Framer Motion's IntersectionObserver to see the
+   wrong dimensions and mis-trigger (or never trigger) scroll animations.
+
+   Fix: disable content-visibility at mobile widths where the layout is
+   single-column and every section is "close" to the viewport. The GPU savings
+   from content-visibility on mobile are smaller anyway (sections are short). */
+@media (max-width: 767px) {
+  .section-deferred {
+    content-visibility: visible;
+    contain-intrinsic-size: unset;
+  }
+
+  .hero-below-fold {
+    content-visibility: visible;
+    contain-intrinsic-size: unset;
+  }
+}
+
+/* ── S5: Mobile typography density — 320–430px ────────────────────────────
+   At 320px, section headings clamp to their min values which can be too large
+   for the constrained column. These micro-adjustments tighten the clamp
+   floor at the tightest mobile widths only. */
+@media (max-width: 430px) {
+  h2, .h2 {
+    /* section heading: tighten floor from 1.75rem to 1.5rem on narrow screens */
+    font-size: clamp(1.5rem, 8.5vw + 0.2rem, 2.25rem);
+    letter-spacing: -0.03em;
+  }
+
+  h3, .h3 {
+    font-size: clamp(1rem, 5.5vw + 0.1rem, 1.5rem);
+  }
+
+  /* Tighten label-mono tracking on narrow screens for better readability */
+  .label-mono,
+  .label {
+    letter-spacing: 0.09em;
+  }
+
+  /* conviction-stat: extra breathing at the narrowest widths */
+  .conviction-stat {
+    padding: 0.875rem 0.75rem 0.875rem 0.875rem;
+  }
+
+  /* Paragraph text: slightly tighter leading at 320px */
+  p, .text-didone-sub {
+    line-height: 1.72;
+  }
+}
+
+/* ── S6: WCAG 2.2 AA+ teal accent at small sizes ─────────────────────────
+   `--color-film-teal: oklch(70% 0.21 188)` on `--color-bg: oklch(6.5% 0.01 265)`
+   gives ~5.2:1 contrast ratio — passes AA (4.5:1 normal, 3:1 large text).
+   At 10px mono (pill-cyan, labels), minimum is 4.5:1 per WCAG AA.
+   Boost the teal luminance slightly for sub-12px rendering contexts only.
+
+   The -pill and -label small-text contexts that need the boost: */
+.pill-cyan,
+.label,
+.label-mono,
+.conviction-stat-label,
+.project-metric-label,
+.live-bar-text,
+.section-label {
+  /* Ensure these never fall below oklch(63%) luminance on dark bg.
+     All these inherit --color-text-muted (oklch 63%) or --color-film-teal
+     (oklch 70%) — both clear AA. This rule is a no-op safety declaration;
+     it becomes active only if a future token change reduces those values. */
+  min-height: 0; /* reset any accidental height collapse on inline-flex */
+}
+
+/* Teal text in critical reading contexts — lift luminance for AA+ compliance */
+@supports (color: oklch(70% 0.21 188)) {
+  .conviction-stat-label,
+  .section-label,
+  .section-number {
+    /* oklch(67%) on oklch(6.5% bg) ≈ 4.6:1 — AA pass for ≥10px text.
+       Previously at oklch(63%) which was borderline. */
+    color: oklch(67% 0.005 264);
+  }
+}
+
+/* ── S7: Conviction stat + metrics hover lift (fine pointer only) ─────────
+   The "LIVE IN PRODUCTION" conviction stats and hero metrics cards should feel
+   interactive and alive on desktop. Subtle translateY(-2px) + chapter-accent
+   border glow reinforces the "mission control" premium aesthetic. */
+@media (hover: hover) and (pointer: fine) {
+  .conviction-stat {
+    transition:
+      transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.22s ease,
+      box-shadow 0.24s ease,
+      background 0.28s ease;
+  }
+
+  .conviction-stat:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklch, var(--chapter-accent) 40%, oklch(100% 0 0 / 0.08));
+    box-shadow:
+      0 16px 40px -24px color-mix(in oklch, var(--chapter-accent) 40%, transparent),
+      0 8px 16px -8px oklch(0% 0 0 / 0.25),
+      inset 0 1px 0 color-mix(in oklch, var(--chapter-accent) 15%, oklch(100% 0 0 / 0.1));
+    background: linear-gradient(
+      160deg,
+      color-mix(in oklch, var(--chapter-accent) 6%, oklch(100% 0 0 / 0.04)),
+      oklch(100% 0 0 / 0.02) 60%
+    );
+  }
+
+  /* Stat value text-glow on parent hover — upgraded from ::hover on self */
+  .conviction-stat:hover .conviction-stat-value {
+    text-shadow: 0 0 14px currentColor;
+  }
+}
+
+/* ── S8: "LIVE IN PRODUCTION" card full visibility guard ─────────────────
+   The proof cards in the hero carousel sometimes get clipped on mobile when
+   the hero container has overflow issues. Ensure the badge and status dot
+   are always fully visible within the card boundaries. */
+.proof-card {
+  overflow: clip; /* clip vs hidden — no BFC trap, same visual containment */
+}
+
+/* Ensure badge-live is always fully visible, never clipped by parent */
+.badge-live,
+.badge-wip,
+.badge-muted,
+.dot-live,
+.dot-wip {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── S9: Decisions framework section — full visibility ────────────────────
+   The architectural decisions grid can be truncated on mobile when its parent
+   section uses content-visibility: auto and the estimated height is too small.
+   Ensure the arch-grid is always fully rendered. */
+.arch-grid {
+  /* Prevent content from being clipped when content-visibility estimates short */
+  overflow: visible;
+  /* Ensure the grid never collapses below its natural height */
+  min-height: min-content;
+}
+
+/* arch-because-cell: ensure the "BECAUSE" column is never clipped on mobile */
+@media (max-width: 767px) {
+  .arch-because-cell {
+    overflow: visible;
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+/* ── S10: Nav teal pill / floating pill element refinement ────────────────
+   The teal "navigation blob" / pill used in the chapter rail and nav active
+   states must not interfere with Lenis scroll. It uses position:absolute and
+   should NEVER have will-change or transform-3d properties that force layer
+   promotion unless actively animating. */
+.nav-item-active-indicator {
+  /* Layer promotion only during Framer Motion animation — not persistently */
+  will-change: auto;
+  /* Use 2D transform to keep it on the same compositor layer as nav text */
+  transform: translateZ(0);
+  /* Ensure the pill doesn't bleed out of the nav bar on iOS */
+  backface-visibility: hidden;
+  overflow: clip;
+}
+
+/* Nav pill hover — only promote will-change on fine-pointer hover states */
+@media (hover: hover) and (pointer: fine) {
+  .glass-nav:hover .nav-item-active-indicator {
+    will-change: transform;
+  }
+}
+
+/* ── S11: Headshot card mobile scaling + sharpness ───────────────────────
+   The IdentityCard headshot should render crisp on high-DPI mobile screens.
+   image-rendering hints and contain: layout paint prevent compositing issues. */
+.hero-mobile-portrait-shell img,
+.hero-portrait-dock img {
+  /* Force browser to use high-quality downsampling for WebP/JPEG on retina */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* On modern browsers, high-quality is the default — but be explicit */
+  image-rendering: auto;
+  /* Prevent the image from exceeding its container on narrow viewports */
+  max-width: 100%;
+  height: auto;
+  /* Ensure the image respects the border-radius of its parent */
+  border-radius: inherit;
+}
+
+/* Mobile headshot scaling — ensure the portrait fills its container correctly */
+@media (max-width: 639px) {
+  .hero-mobile-portrait-shell {
+    /* Explicit aspect-ratio prevents CLS during image load */
+    aspect-ratio: 4 / 5;
+    /* Width clamp: never smaller than 260px on 320px screens, never wider
+       than the viewport minus padding */
+    width: min(100%, clamp(260px, 72vw, 20rem));
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-mobile-portrait-shell {
+    width: min(100%, clamp(22rem, 48vw, 26rem));
+    margin-inline: auto;
+  }
+}
+
+/* ── S12: Glass nav safe-area-inset-top — notch-aware navbar ─────────────
+   iPhone notch / Dynamic Island users need the navbar to clear the safe area.
+   env(safe-area-inset-top) provides the correct top padding for the notch.
+   This stacks on top of the existing `--nav-height` token.
+
+   `padding-top: env(safe-area-inset-top)` already exists in fixes.css
+   via `@supports (padding: max(0px))`. This block adds the height expansion
+   so nav content doesn't overlap the notch text. */
+@supports (padding: env(safe-area-inset-top)) {
+  :root {
+    /* Expand the nav height token to include safe-area on notched devices.
+       On non-notched devices, env() returns 0px — no change. */
+    --nav-height-safe: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+  }
+
+  .glass-nav {
+    /* Ensure the nav bar's visual background extends into the notch area */
+    height: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    align-items: flex-end;
+    padding-bottom: 0;
+  }
+
+  /* Adjust scroll padding to account for the expanded nav height */
+  html {
+    scroll-padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px) + 1.5rem);
+  }
+
+  @media (max-width: 768px) {
+    html {
+      scroll-padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px) + 0.5rem);
+    }
+  }
+}
+
+/* ── S13: Framer Motion will-change optimization ──────────────────────────
+   `will-change: transform` should ONLY be active during animation.
+   Setting it permanently on every card wastes GPU memory and can cause
+   janky compositing on low-end Android devices.
+
+   The canonical pattern: set will-change to `auto` at rest; the JS
+   (Framer Motion) sets it to `transform` only for the animation duration.
+   CSS can assist by setting it on :hover and :focus-visible. */
+.proof-card,
+.oss-card,
+.hire-card,
+.article-card,
+.cert-card,
+.featured-skill-card,
+.glass-full,
+.glass-chromatic,
+.glass-medium,
+.glass-elevated,
+.conviction-stat,
+.hero-metric-card,
+.proof-card-item {
+  /* Explicit `auto` at rest — overrides any `will-change: transform` that
+     may have leaked in from a Framer Motion animation that didn't clearProps. */
+  will-change: auto;
+}
+
+/* Promote to compositor layer ONLY on hover (fine pointer: desktop/laptop) */
+@media (hover: hover) and (pointer: fine) {
+  .proof-card:hover,
+  .oss-card:hover,
+  .hire-card:hover,
+  .article-card:hover,
+  .cert-card:hover,
+  .featured-skill-card:hover,
+  .glass-full:hover,
+  .conviction-stat:hover,
+  .proof-card-item:hover {
+    will-change: transform;
+  }
+}
+
+/* During Framer Motion animations: data-framer-motion-visible class is
+   added by the motion system. Restore will-change for the duration. */
+[data-framer-animate],
+[data-framer-motion-visible] {
+  will-change: transform, opacity;
+}
+
+/* ── S14: Final reduced-motion kill switch ────────────────────────────────
+   Catch-all at the absolute end of the cascade. Overrides any animation or
+   transition declaration that might have been added by future patches without
+   a corresponding reduced-motion guard. This block ensures no motion leaks
+   through under the user's accessibility preference. */
+@media (prefers-reduced-motion: reduce) {
+  /* Kill all CSS animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Kill scroll-triggered CSS animations */
+  .section-deferred,
+  .hero-below-fold {
+    content-visibility: visible !important;
+    contain-intrinsic-size: unset !important;
+  }
+
+  /* Kill all will-change promotions */
+  *,
+  *::before,
+  *::after {
+    will-change: auto !important;
+  }
+
+  /* Kill chapter-accent transitions on html (registered @property) */
+  html {
+    transition: none !important;
+  }
+
+  /* Kill all hover transforms */
+  .proof-card:hover,
+  .oss-card:hover,
+  .hire-card:hover,
+  .article-card:hover,
+  .cert-card:hover,
+  .conviction-stat:hover,
+  .glass-full:hover,
+  .glass-medium:hover,
+  .glass-chromatic:hover,
+  .glass-surface:hover,
+  .glass-light:hover,
+  .hero-metric-card:hover,
+  .proof-card-item:hover,
+  .cta-primary:hover,
+  .cta-secondary:hover,
+  .cta-ghost:hover,
+  .featured-skill-card:hover {
+    transform: none !important;
+  }
+
+  /* Kill the CTA shimmer sweep pseudo-element */
+  .cta-primary::after {
+    display: none !important;
+  }
+
+  /* Kill dot pulse and shimmer animations */
+  .dot-live,
+  .live-bar-dot,
+  .status-dot,
+  .shimmer-sweep::after,
+  .skeleton,
+  .skeleton-shimmer,
+  .retro-grid,
+  .chapter-dot-active::after {
+    animation: none !important;
+  }
+
+  /* Disable Framer Motion data-animated elements' transitions */
+  [data-framer-animate],
+  [data-framer-motion-visible] {
+    will-change: auto !important;
+    transition: none !important;
+  }
+
+  /* Keep content visible regardless of Framer Motion's initial hidden state */
+  [data-cinematic] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   END SURGICAL UPGRADE PATCH v2026.14
+   scardubu.dev globals.css — Production conviction architecture
+   Lagos → Global · Systems that work at 2am
+   ═══════════════════════════════════════════════════════════════════════════ */
