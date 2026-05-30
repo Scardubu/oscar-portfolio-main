@@ -363,11 +363,8 @@ function ContactForm() {
           value={values.message}
           onChange={handleChange}
           onBlur={handleBlur}
-          {/* V1.2: 'constraint' + 'risk' → plain English without losing the telegraphic 3-noun rhythm.
-              'The problem, the deadline, and what's at stake.' — universally clear to both
-              technical engineers and non-technical founders. The word 'constraint' works at
-              headline level as brand positioning; as a form instruction it creates friction
-              for visitors unfamiliar with engineering-insider vocabulary. */}
+          // V1.2: 'constraint' → 'problem', 'risk' → "what's at stake"
+          // Plain-English without sacrificing the telegraphic 3-noun voice.
           placeholder="The problem, the deadline, and what's at stake."
           className="contact-field-input contact-field-textarea"
           disabled={state === 'loading'}
