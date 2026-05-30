@@ -69,6 +69,20 @@ export const HERO = {
   subHeadline:  "That's not a slogan. It's a design constraint.",
   body:         'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
   availability: 'AVAILABLE · OPEN TO WORK',           // was 'AVAILABLE · STAFF+ ROLES' — "STAFF+" pre-filtered founders/consultants before they reached the contact section's engagement menu
+  // V1.3: SYNC PROTOCOL — update this date whenever availability status changes.
+  //
+  // Format: 'YYYY-MM-DD' (ISO 8601) — formatMonthYear() in lib/utils.ts renders it
+  // as 'Month YYYY' (e.g. '2026-05-19' → 'May 2026') in the hero badge.
+  //
+  // UPDATE THIS DATE WHEN:
+  //   1. Availability status changes (hired, unavailable, re-available)
+  //   2. Engagement type focus changes (e.g. shifting to consulting-only)
+  //   3. At minimum: every 90 days if still actively available — a stale date
+  //      signals inactivity to the very audience the badge is designed to attract.
+  //
+  // STALENESS THRESHOLD: 90 days. After 90 days without an update, the badge
+  // reads as abandoned rather than active. The CI does not currently check this —
+  // add a Vercel cron or GitHub Actions check if manual discipline is insufficient.
   availabilityLastUpdated: '2026-05-19',
   location:     'Lagos, Nigeria 🇳🇬',
   trustStrip:   'Shipped in Lagos · Running globally · Battle-tested in audit season',
