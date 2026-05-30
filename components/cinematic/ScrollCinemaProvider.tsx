@@ -377,15 +377,27 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
-    if (reducedMotion) {
+    // FIX: mobile scroll trap — bypass Lenis entirely on touch/coarse-pointer
+    // devices (all phones and tablets). Lenis v1.3 with syncTouch:true and a
+    // GSAP-ticker-driven RAF loop injects `html { overflow: hidden }` on init,
+    // which on iOS Safari 17+ conflicts with the existing `overflow-x: clip` on
+    // <html>, creating a compositing-level scroll lock. On touch devices, Lenis
+    // provides zero perceptible benefit (native touch momentum is superior) and
+    // carries concrete breakage risk. Native scroll path is fully capable:
+    // GSAP ScrollTrigger, Framer Motion, and chapter tracking all continue
+    // unaffected — this mirrors the pattern used by DeferredThreeBrushField.
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+    if (reducedMotion || isTouchDevice) {
       if (lenisRef.current) {
         try {
           lenisRef.current.destroy();
         } catch (error) {
-          warnDev('Lenis destroy failed while entering reduced-motion mode.', error);
+          warnDev('Lenis destroy failed while entering reduced-motion / touch mode.', error);
         }
         lenisRef.current = null;
       }
+      document.documentElement.dataset.scrollEngine = 'native';
       const cleanupNative = setupNativeScrollProgress();
       safeRefresh(true);
       return () => {
@@ -465,7 +477,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     if (usingLenis) {
       gsap.ticker.add(raf);
-      gsap.ticker.lagSmoothing(0);
+      // FIX: restore lag smoothing to protect against large-delta frames on
+      // mobile tab switches and background/foreground cycles. lagSmoothing(0)
+      // disables ALL protection — when the ticker fires after backgrounding,
+      // Lenis receives an inflated time delta and jumps position, leaving the
+      // page scroll stuck until the next RAF cycle. 500ms threshold + 33ms
+      // max delta (one dropped frame) is the standard production config.
+      gsap.ticker.lagSmoothing(500, 33);
     }
 
     const refresh = () => {
