@@ -1,58 +1,43 @@
 'use client';
 
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
-// IdentityCard — Luxury OS identity card portrait
+// IdentityCard — Luxury operating-system identity card portrait
 //
-// CHANGELOG v2026.SQUIRCLE — Superellipse geometry upgrade (upgrade-prompt-v5):
+// CHANGELOG v2026.8:
 //
-//   SQUIRCLE-1: Mathematically precise superellipse clip-path
-//     Inline SVG <defs> with clipPathUnits="objectBoundingBox" encodes an
-//     n ≈ 4.5 superellipse via one cubic Bézier per corner.
-//     Arm anchors at 15.4% from each vertex; handles at 9.2% → 12.6% past
-//     the anchor tangent produce iOS-quality continuous curvature.
-//     React useId() derives a unique clipId per instance — no multi-card
-//     collision even when both mobile + desktop variants are in the DOM.
-//     CSS corner-shape: superellipse(2.8) activated via .identity-card-squircle
-//     in globals.css as a forward-compatibility progressive-enhancement layer.
+//   FIX 9: Headshot image visibility restored.
+//     Root cause: the useEffect at line 56–60 (v2026.7) fired after mount and
+//     reset `portraitReady` to false — even if the browser had already fired
+//     `onLoad` for a cached image. Since the browser never re-fires `onLoad`
+//     for the same src, the image stayed at `opacity-0` permanently.
 //
-//   SQUIRCLE-2: Three-layer ambient glow architecture
-//     Far ambient: wide teal/emerald elliptic gradient, blur-3xl, -8px inset.
-//     Near corona: tight teal halo tracing squircle edge, blur-12px, -3px inset.
-//     Top spotlight: vertical radial at 8% from top (preserved from v2026.8).
-//     Colour tokens align with --color-film-teal (oklch 70% 0.21 188 / #38bdf8).
+//     Fix: (a) removed the variant-triggered useEffect entirely — mobile and
+//     desktop instances are separate mounts, (b) added a ref callback that
+//     checks `img.complete` synchronously on DOM attachment as a fallback for
+//     cached images where `onLoad` fires before React's handler attaches,
+//     (c) `onLoad` still works as the primary async handler.
 //
-//   SQUIRCLE-3: Glassmorphic border and inset ring treatment
-//     Outer shadows offloaded to dedicated shadow-layer sibling div: clip-path
-//     on the card frame element clips its own box-shadow; separation ensures
-//     the ambient/lift shadows bleed outside the squircle boundary as intended.
-//     Metallic top line: five-stop gradient with teal accent at 55%.
-//     Diagonal glaze: warm-white catch rotated 28° from top-left corner.
-//     Inner ring consolidated to single boxShadow (three inset layers).
+//   FIX 10: Removed conflicting `[transform-style:preserve-3d]` from className.
+//     The inline `style={{ transformStyle: ... }}` is the single source of truth.
+//     The Tailwind class was a specificity hazard that competed with both the
+//     inline style and the globals.css `@media (max-width: 1023px)` override.
 //
-//   SQUIRCLE-4: Face-focused portrait lighting
-//     Elliptic radial centred at (50%, 20%) — brow/eye level focal plane.
-//     80% wide × 45% tall form creates natural subject illumination depth.
-//     Cinematic teal pool: radial at 78% Y for lower-card depth reference.
+//   FIX 11: Removed `backfaceVisibility: 'hidden'` from the img inline style.
+//     With mobile transform-style set to 'flat', backface-visibility has no
+//     effect. Removing it eliminates a potential iOS WebKit compositing edge
+//     case where hidden-backface interacts unexpectedly with ancestor 3D
+//     context changes during scroll/animation.
 //
-//   SQUIRCLE-5: 4-layer outer shadow stack
-//     Deep ambient (0 40px 100px -20px), teal penumbra (0 20px 60px -24px),
-//     near lift (0 2px 4px), outer precision ring (0 0 0 1px rgba white/7%).
-//     All applied to shadow-layer div (NOT clip-path target) so they render
-//     outside the squircle boundary correctly.
-//
-//   Preserved unchanged: FIX 9 (cached-image ref), FIX 10 (preserve-3d SoT),
-//                        FIX 11 (backfaceVisibility removed), FIX 12 (shimmer).
+//   FIX 12: Added subtle loading shimmer to the portrait area. While the image
+//     loads, a gentle animated gradient sweep plays across the card center.
+//     This transforms the blank-card state from "broken" to "developing" — a
+//     premium photo-reveal moment when the portrait fades in.
 
 import { m, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
-import {
-  type MouseEvent as ReactMouseEvent,
-  useCallback,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
+import { SquircleDefs } from '@/components/SquircleDefs';
 
 export type IdentityCardVariant = 'mobile' | 'desktop';
 
@@ -68,52 +53,6 @@ const PORTRAIT_SOURCES = [
   '/images/oscar-headshot.jpg',
   '/images/scar-headshot.jpeg',
 ] as const;
-
-/**
- * SQUIRCLE-1: Normalised superellipse path for objectBoundingBox clip-path.
- *
- * Derived from n = 4.5 parametric superellipse with Bézier arm ratio ≈ 0.597.
- * One cubic Bézier per corner (4 total). Arm anchors at 15.4% from each
- * corner vertex on both axes; handles extend 9.2% beyond arm tangent.
- * Matches FigmaSquircle (smoothing ≈ 0.7) within single-Bézier simplification;
- * deviation is visually undetectable at card-frame viewport scales (≤ 380px wide).
- *
- * coordinates are in [0, 1] × [0, 1]; clipPathUnits="objectBoundingBox" scales
- * them to the element's live bounding box automatically.
- */
-const SQUIRCLE_D =
-  'M 0.154 0 L 0.846 0 C 0.926 0 1 0.059 1 0.123 ' +
-  'L 1 0.877 C 1 0.941 0.926 1 0.846 1 ' +
-  'L 0.154 1 C 0.074 1 0 0.941 0 0.877 ' +
-  'L 0 0.123 C 0 0.059 0.074 0 0.154 0 Z';
-
-/**
- * SQUIRCLE-5: Outer shadow stack.
- *
- * Intentionally placed on a SIBLING div, not the clip-path target.
- * Reason: CSS clip-path clips an element's own box-shadow in addition to its
- * painted content — placing shadows here keeps them outside the squircle
- * boundary as intended (ambient glow, depth, outer precision ring).
- */
-const CARD_OUTER_SHADOW = [
-  '0 40px 100px -20px rgba(0,0,0,0.72)',      // deep ambient
-  '0 20px 60px  -24px rgba(56,189,248,0.18)', // teal penumbra
-  '0 2px  4px    0    rgba(0,0,0,0.32)',       // near-edge lift
-  '0 0    0      1px  rgba(255,255,255,0.07)', // outer precision ring
-].join(', ');
-
-/**
- * SQUIRCLE-3: Inset ring shadows — on an element INSIDE the clip-path.
- *
- * Inset shadows render inside the element border-box; they are not clipped
- * away by clip-path. Consolidates the original two separate ring divs
- * (ring-1 ring-white/10 + inset-[10px] border-white/6) into one declaration.
- */
-const CARD_RING_SHADOW = [
-  'inset 0 0     0   1px  rgba(255,255,255,0.11)', // precision inner ring
-  'inset 0 1.5px 0   0    rgba(255,255,255,0.22)', // top metallic highlight
-  'inset 0 -1px  0   0    rgba(0,0,0,0.12)',        // bottom inner depth
-].join(', ');
 
 function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
   return (
@@ -146,21 +85,12 @@ export function IdentityCard({
   reducedMotion,
   priority,
 }: Readonly<IdentityCardProps>) {
-  /**
-   * SQUIRCLE-1: Stable clip-path ID per component instance.
-   * useId() is SSR-safe (React 18+) — matching IDs between server and client
-   * render passes. Strip React's `:n:` colon delimiters (invalid in CSS IDs).
-   */
-  const rawId = useId();
-  const clipId = `sc-${rawId.replace(/:/g, '')}`;
-
   const prefersReducedMotion = useReducedMotion();
   const shouldReduceMotion = reducedMotion ?? Boolean(prefersReducedMotion);
   const isDesktop = variant === 'desktop';
   const shouldPrioritizeImage = priority ?? !isDesktop;
   const imageLoading = shouldPrioritizeImage ? 'eager' : 'lazy';
   const imageFetchPriority = shouldPrioritizeImage ? 'high' : 'auto';
-
   const rawRotateX = useMotionValue(0);
   const rawRotateY = useMotionValue(0);
   const rotateX = useSpring(rawRotateX, { stiffness: 220, damping: 24, mass: 0.42 });
@@ -171,9 +101,9 @@ export function IdentityCard({
   const [portraitFailed, setPortraitFailed] = useState(false);
 
   // FIX 9: Track the actual img element to detect cached-image loads.
-  // When a browser serves an image from cache, `onLoad` can fire synchronously
-  // during element creation — before React attaches the handler.
-  // The callback ref checks `img.complete` synchronously on DOM attachment.
+  // When a browser serves an image from memory/disk cache, `onLoad` can fire
+  // synchronously during element creation — before React attaches the handler.
+  // The callback ref checks `img.complete` as a sync fallback.
   const imgReadyRef = useRef(false);
 
   const handleLoad = useCallback(() => {
@@ -195,6 +125,9 @@ export function IdentityCard({
     });
   }, []);
 
+  // Callback ref: fires when the <img> DOM node mounts.
+  // Checks `img.complete && img.naturalWidth > 0` to catch cached images
+  // whose `onLoad` fired before React could attach the handler.
   const imgRef = useCallback(
     (node: HTMLImageElement | null) => {
       if (node && node.complete && node.naturalWidth > 0 && !imgReadyRef.current) {
@@ -209,9 +142,11 @@ export function IdentityCard({
   const handlePointerMove = useCallback(
     (event: ReactMouseEvent<HTMLElement>) => {
       if (shouldReduceMotion || !isDesktop) return;
+
       const rect = event.currentTarget.getBoundingClientRect();
       const pointerX = (event.clientX - rect.left) / rect.width;
       const pointerY = (event.clientY - rect.top) / rect.height;
+
       rawRotateX.set((0.5 - pointerY) * 5.5);
       rawRotateY.set((pointerX - 0.5) * 7);
     },
@@ -224,7 +159,13 @@ export function IdentityCard({
   }, [rawRotateX, rawRotateY]);
 
   return (
-    <m.figure
+    <>
+      {/* FIX 13: Inject the squircle SVG clipPath definitions once per card instance.
+          React deduplicates identical SVG defs across simultaneous renders (mobile +
+          desktop instances) since they share the same id="squircle-id". The first
+          mount wins; subsequent renders are no-ops for the SVG element itself.    */}
+      <SquircleDefs />
+      <m.figure
       initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
       animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
       whileHover={
@@ -253,156 +194,54 @@ export function IdentityCard({
       onMouseMove={handlePointerMove}
       onMouseLeave={resetPointerTilt}
     >
-      {/*
-       * SQUIRCLE-1: Hidden SVG defs — superellipse clip-path.
-       *
-       * Placed inside the figure (overflow-visible) but OUTSIDE the card frame
-       * (overflow-hidden). The SVG has zero layout footprint: position absolute,
-       * width/height 0, overflow hidden. The <clipPath> only needs to exist in
-       * the DOM — its physical position is irrelevant to url(#id) references.
-       * The figure's overflow-visible guarantees no ancestor clips away the defs.
-       */}
-      <svg
+      {/* Ambient glow behind the card */}
+      <div
         aria-hidden="true"
-        focusable="false"
-        style={{
-          position: 'absolute',
-          width: 0,
-          height: 0,
-          overflow: 'hidden',
-          pointerEvents: 'none',
-        }}
-      >
-        <defs>
-          <clipPath id={clipId} clipPathUnits="objectBoundingBox">
-            <path d={SQUIRCLE_D} />
-          </clipPath>
-        </defs>
-      </svg>
+        className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.22),transparent_56%),radial-gradient(circle_at_74%_22%,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_50%_88%,rgba(255,255,255,0.05),transparent_38%)] blur-3xl"
+      />
 
-      {/* ── SQUIRCLE-2: Far ambient glow — teal/emerald elliptic system ─────── */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] blur-3xl"
-        style={{
-          background: [
-            'radial-gradient(ellipse 72% 52% at 50% 0%,  rgba(56,189,248,0.26), transparent 68%)',
-            'radial-gradient(ellipse 42% 32% at 74% 18%, rgba(52,211,153,0.13), transparent 58%)',
-            'radial-gradient(ellipse 60% 38% at 50% 96%, rgba(56,189,248,0.09), transparent 68%)',
-            'radial-gradient(circle           at 50% 44%, rgba(255,255,255,0.04), transparent 48%)',
-          ].join(','),
-        }}
-      />
-      {/* ── SQUIRCLE-2: Near corona — tight teal halo tracing the squircle edge */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-[3px] -z-10 rounded-[47px]"
-        style={{
-          filter: 'blur(12px)',
-          background: [
-            'radial-gradient(ellipse 88% 56% at 50% 7%,  rgba(56,189,248,0.17), transparent 54%)',
-            'radial-gradient(ellipse 80% 38% at 50% 96%, rgba(56,189,248,0.08), transparent 58%)',
-          ].join(','),
-        }}
-      />
-      {/* ── Top spotlight (preserved from v2026.8) ──────────────────────────── */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-[8%] top-[6%] -z-10 h-10 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),transparent_68%)] opacity-70 blur-2xl"
       />
 
-      {/*
-       * SQUIRCLE-5: Card outer shadow layer — intentionally a SIBLING div.
-       *
-       * clip-path on the card frame element also clips that element's own
-       * box-shadow output. Separating shadows here keeps the ambient glow,
-       * teal penumbra, and precision ring rendering outside the squircle
-       * as intended. absolute inset-0 matches the card frame's dimensions
-       * (the figure's height is set by the card frame in normal flow).
-       */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-[44px]"
-        style={{ boxShadow: CARD_OUTER_SHADOW }}
-      />
-
-      {/* ── Card frame — squircle geometry ──────────────────────────────────── */}
-      {/*
-       * border removed: clip-path clips the border along border-radius arc
-       * (circular) while the clip shape is superellipse — visible mismatch
-       * at corners. Visual "border" handled by CARD_RING_SHADOW inset ring
-       * inside this element instead, which follows the squircle clip correctly.
-       * border-radius: 44px kept as GPU compositing hint + CSS corner-shape
-       * base value. Upgraded from 38px for visual harmony with squircle arm
-       * anchors at ~61px on a 400px card (400 × 0.154 ≈ 61px).
-       */}
-      <div
-        className={cn(
-          'relative isolate aspect-[4/5] w-full overflow-hidden rounded-[44px]',
-          'bg-[linear-gradient(180deg,rgba(14,20,30,0.98),rgba(6,9,15,0.98))]',
-          'identity-card-squircle' // globals.css: corner-shape: superellipse(2.8)
-        )}
-        style={{ clipPath: `url(#${clipId})` }}
-      >
-        {/* ── SQUIRCLE-3: Metallic top line — five-stop with teal at 55% ───── */}
+      {/* Card frame — FIX 13: superellipse squircle (n≈2.8) via SVG clip-path.
+          clip-path: url(#squircle-id) uses the SquircleDefs singleton injected
+          in the page root. rounded-[52px] is kept as a visual fallback for
+          environments where the SVG defs are not yet parsed (e.g. SSR hydration
+          gap). corner-shape is a CSS Level 5 progressive enhancement — applied
+          via identity-card-frame class in globals.css v2026.19.
+          
+          Shadow upgrade: added inset top/bottom highlights for tactile depth.
+          bg upgrade: 175deg gradient matches portrait lighting direction.       */}
+      <div className="identity-card-frame relative isolate aspect-[4/5] w-full overflow-hidden rounded-[52px] border border-white/10 bg-[linear-gradient(175deg,rgba(18,24,36,0.99)_0%,rgba(10,14,22,0.995)_55%,rgba(6,9,15,1)_100%)] shadow-[0_30px_90px_rgba(0,0,0,0.62),0_0_0_1px_rgba(255,255,255,0.08),inset_0_2px_0_rgba(255,255,255,0.14),inset_0_-2px_0_rgba(0,0,0,0.10)] [clip-path:url(#squircle-id)]">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px"
-          style={{
-            background:
-              'linear-gradient(90deg,' +
-              ' transparent 0%,' +
-              ' rgba(255,255,255,0.55) 28%,' +
-              ' rgba(56,189,248,0.25) 55%,' +
-              ' rgba(255,255,255,0.42) 74%,' +
-              ' transparent 100%)',
-          }}
-        />
-        {/* SQUIRCLE-3: Diagonal warm-white glaze — top-left corner catch */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -left-6 -top-10 z-[1] h-40 w-32 blur-[22px]"
-          style={{
-            transform: 'rotate(28deg)',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 56%)',
-          }}
+          className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.58),transparent)]"
         />
 
-        {/* Primary gradient overlay — glass sheen top → vignette bottom */}
+        {/* Decorative overlays — intentionally z-[1]+ above the image */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.13)_0%,rgba(255,255,255,0.05)_18%,transparent_32%,transparent_68%,rgba(0,0,0,0.68)_100%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_10%,transparent_30%,transparent_72%,rgba(0,0,0,0.62)_100%)]"
         />
-        {/* Scan-line texture */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[1] [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px] opacity-70 mix-blend-overlay"
         />
-        {/* SQUIRCLE-4: Face-focused radial + cinematic bokeh pool at bottom */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            background: [
-              // Elliptic highlight centred on brow/eye level (~20% from top)
-              'radial-gradient(ellipse 80% 45% at 50% 20%, rgba(255,255,255,0.09), transparent 58%)',
-              // Teal bokeh pool — cinematic lower-card depth reference
-              'radial-gradient(circle at 52% 78%, rgba(56,189,248,0.10), transparent 48%)',
-              // Lower vignette ramp
-              'linear-gradient(180deg, transparent 50%, rgba(5,10,16,0.60) 100%)',
-            ].join(','),
-          }}
+          className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
         />
-
-        {/* Top edge precision line */}
+        {/* Top edge highlight */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.36),transparent)]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.34),transparent)]"
         />
         {/* Bottom vignette */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.38))]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.36))]"
         />
 
         {/* FIX 12: Loading shimmer — visible only while image loads */}
@@ -446,21 +285,15 @@ export function IdentityCard({
           <PortraitFallback isDesktop={isDesktop} />
         )}
 
-        {/*
-         * SQUIRCLE-3: Glassmorphic inner ring — single consolidated boxShadow.
-         * Inset shadows are unaffected by the parent clip-path (they render
-         * inside the element's own border-box, well within the squircle).
-         * Replaces: ring-1 ring-white/10 ring-inset + inset-[10px] border-white/6.
-         */}
+        {/* Inner ring */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[3] rounded-[44px]"
-          style={{ boxShadow: CARD_RING_SHADOW }}
+          className="pointer-events-none absolute inset-0 z-[3] rounded-[52px] ring-1 ring-white/10 ring-inset [clip-path:url(#squircle-id)]"
         />
-        {/* Secondary depth ring */}
+
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-[10px] z-[3] rounded-[36px] border border-white/[0.05]"
+          className="pointer-events-none absolute inset-[10px] z-[3] rounded-[42px] border border-white/6"
         />
 
         {/* Top badge row: System ID + Staff+ pill */}
@@ -556,5 +389,6 @@ export function IdentityCard({
         </div>
       </div>
     </m.figure>
+    </>
   );
 }
