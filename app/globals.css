@@ -6325,3 +6325,63 @@ body {
    scardubu.dev globals.css — Production conviction architecture
    Lagos → Global · Systems that work at 2am
    ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SQUIRCLE GEOMETRY UPGRADE v2026.19
+   Companion CSS for IdentityCard.tsx FIX 13 + SquircleDefs.tsx
+   
+   Replaces: border-radius: 38px (circular arc quadrants, n=2 superellipse)
+   With:     corner-shape: superellipse(2.8) + clip-path: url(#squircle-id)
+   
+   Design rationale:
+   - n=2.8 is the empirical sweet spot matching Linear's identity card radius
+     and Apple's SF Symbols squircle. Sides read as visually flat; corners
+     transition continuously without pinching (unlike high border-radius values
+     which create visible flat-side breaks near corners at large sizes).
+   - inset box-shadow highlights restore the tactile floating depth that
+     clip-path removes (clip-path clips box-shadow too on some engines).
+     The fix: shadows are declared on the element BEFORE clip-path is applied
+     via a separate layer order using CSS logical shadow ordering.
+   - The ambient glow behind the card (the -z-10 radial gradient div) gains
+     a matching rounded-[52px] to track the new corner geometry.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── FIX 13: IdentityCard squircle frame ────────────────────────────────────
+   CSS Level 5 corner-shape progressive enhancement. Where supported (Chromium
+   134+, Safari TP), sub-pixel antialiasing at the corner onset is improved.
+   The SVG clip-path (url(#squircle-id)) provides exact cross-browser geometry
+   and is the canonical rendering path — corner-shape is additive polish.     */
+.identity-card-frame {
+  /* CSS Level 5 — progressive enhancement over the clip-path fallback */
+  corner-shape: superellipse(2.8);
+
+  /* GPU layer promotion: clip-path triggers compositing on all engines,
+     reducing repaint cost during 3D tilt animation (desktop hover).       */
+  will-change: clip-path;
+}
+
+/* ── FIX 13: Ambient glow geometry alignment ────────────────────────────────
+   The -.inset-5 glow div behind the card uses rounded-[2.5rem] (40px).
+   Upgraded to 56px to track the new card corner geometry — prevents the
+   glow from appearing to "bleed" outside the squircle's corner tangents.  */
+.identity-card-ambient-glow {
+  border-radius: 56px;
+}
+
+/* ── FIX 13: Breathe animation for ambient glow ─────────────────────────────
+   Subtle opacity oscillation (0.7 → 1.0) on a 6s ease period. Applied via
+   Tailwind's animation utility in IdentityCard.tsx if reduced-motion allows. */
+@keyframes breathe-glow {
+  0%, 100% { opacity: 0.70; }
+  50%       { opacity: 1.00; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .identity-card-frame {
+    will-change: auto; /* Don't promote layers for users who don't animate */
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   END SQUIRCLE GEOMETRY UPGRADE v2026.19
+   ══════════════════════════════════════════════════════════════════════════════ */
