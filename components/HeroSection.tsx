@@ -72,7 +72,6 @@ import { CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 import { trackMetricView } from '@/lib/metrics/analytics';
 import {
   cardReveal,
-  fadeRise,
   hoverLift,
   magneticButton,
   noMotion,
@@ -112,9 +111,9 @@ const METRIC_DETAILS: Record<
     status: 'Audit live',
   },
   uptime: {
-    source: 'Prometheus · 90d',
-    detail: 'Observed in production over time, not reconstructed from staging.',
-    status: 'Healthy',
+    source: 'Fault Tolerance · Architecture',
+    detail: 'Self-healing queues and idempotent processing. Designed for zero data-loss.',
+    status: 'Verified',
   },
   latency: {
     source: 'API surface · p99',
@@ -185,7 +184,7 @@ const PROOF_COLUMNS = [
     // Technical detail preserved: three named models, 45%, ensemble, faster-than-baseline.
     // Non-technical consequence added: 'before users notice anything is wrong'.
     // 'Production reality, not staging theater.' kept — it's the strongest close on the page.
-    body: 'SabiScore holds 99.9%+ uptime across a 90-day production window. Three ML models working in ensemble catch system problems 45% faster than traditional alerting — before users notice anything is wrong. Production reality, not staging theater.',
+    body: 'Three ML models working in ensemble catch system problems 45% faster than traditional alerting — before users notice anything is wrong. Production reality, not staging theater.',
   },
   {
     // V1.2: Active voice. 'DECISIONS DOCUMENTED' implied archiving (passive).
@@ -377,7 +376,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -630,8 +629,23 @@ export function HeroSection() {
 
   // FIX 4 (v2026.4): proofContainer removed — was causing double-animation with heroContainer.
   // All carousel children now animate at their stagger position within heroContainer via `child`.
-  const heroContainer = staggerContainer(0.042, 0.04);
-  const child = reducedMotion ? noMotion : fadeRise;
+  // v2026.20 CINEMATIC UPGRADE: staggerChildren bumped to 0.2 for deliberate A24-style cascade.
+  // child variant replaced with a 0.8s slow-ease-out + blur settle — removes snappy bounce.
+  const heroContainer = staggerContainer(0.2, 0.04);
+  const child = reducedMotion
+    ? noMotion
+    : ({
+        hidden: { opacity: 0, y: 15, filter: 'blur(4px)' },
+        visible: {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          transition: {
+            duration: 0.8,
+            ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Cinematic slow-ease
+          },
+        },
+      } as const);
   const wordContainer = reducedMotion ? noMotion : wordRevealContainer(0.042, 0.08);
   const heroRightRailStyle = reducedMotion
     ? undefined
@@ -776,7 +790,7 @@ export function HeroSection() {
 
               <m.div
                 variants={child}
-                className="hero-mobile-portrait-wrap mt-2 flex w-full justify-center overflow-hidden lg:hidden"
+                className="hero-mobile-portrait-wrap mt-10 flex w-full justify-center overflow-hidden lg:hidden"
               >
                 <div className="hero-mobile-portrait-shell">
                   <HeroPortrait
@@ -788,7 +802,7 @@ export function HeroSection() {
                 </div>
               </m.div>
 
-              <m.div variants={child} className="hero-trust-strip mt-4" aria-label="Trust signals">
+              <m.div variants={child} className="hero-trust-strip mt-8" aria-label="Trust signals">
                 {TRUST_STRIP_ITEMS.map((item) => (
                   <span key={item} className="hero-trust-chip">
                     {item}
@@ -801,7 +815,7 @@ export function HeroSection() {
                 data-cinematic="proof"
                 aria-label="Performance metrics"
                 ref={statsRef}
-                className="w-full"
+                className="mt-6 w-full"
               >
                 <div className="conviction-stat-strip hero-metrics-grid" role="list">
                   {CONVICTION_STATS.map(({ value, label, stat }) => {
@@ -956,7 +970,8 @@ export function HeroSection() {
                     TaxBridge: 4h → 15min filing · NRS compliance · zero data-loss record.
                   </span>
                   <span className="block">
-                    SabiScore: 99.9%+ uptime · 45% MTTD improvement · ensemble ML inference.
+                    SabiScore: ensemble ML inference · 45% MTTD improvement · zero-drop queue
+                    design.
                   </span>
                   <span className="block">
                     SwarmXQ: self-improving agent fleet · checkpoint recovery · zero manual tuning.
