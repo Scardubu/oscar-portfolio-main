@@ -3,37 +3,28 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // IdentityCard — Luxury operating-system identity card portrait
 //
-// CHANGELOG v2026.8:
+// CHANGELOG v2026.9:
 //
-//   FIX 9: Headshot image visibility restored.
-//     Root cause: the useEffect at line 56–60 (v2026.7) fired after mount and
-//     reset `portraitReady` to false — even if the browser had already fired
-//     `onLoad` for a cached image. Since the browser never re-fires `onLoad`
-//     for the same src, the image stayed at `opacity-0` permanently.
+//   FIX 9–13: Maintained all previous core stability enhancements (cached image 
+//     callbacks, inline transform-style single source of truth, superellipse 
+//     squircle clip-paths, and loading shimmer state).
 //
-//     Fix: (a) removed the variant-triggered useEffect entirely — mobile and
-//     desktop instances are separate mounts, (b) added a ref callback that
-//     checks `img.complete` synchronously on DOM attachment as a fallback for
-//     cached images where `onLoad` fires before React's handler attaches,
-//     (c) `onLoad` still works as the primary async handler.
+//   FIX 14: SVG Duotone Cinema Mapping Filter.
+//     Embedded a hardware-accelerated SVG filter (#luxury-duotone-cinema) directly 
+//     into the component tree. It non-destructively maps image luminance to deep 
+//     cinematic teal shadows (#031c24) and vibrant amber-orange highlights (#ff9540), 
+//     blending back 15% of the original graphic to retain raw micro-details.
 //
-//   FIX 10: Removed conflicting `[transform-style:preserve-3d]` from className.
-//     The inline `style={{ transformStyle: ... }}` is the single source of truth.
-//     The Tailwind class was a specificity hazard that competed with both the
-//     inline style and the globals.css `@media (max-width: 1023px)` override.
+//   FIX 15: Dynamic Interactive Glare Sheen.
+//     Connected pointer coordinates to spring-damped MotionValues (glareX, glareY). 
+//     A custom useMotionTemplate linear glare flare dynamically sweeps across the 
+//     glass surface relative to cursor position on desktop frames.
 //
-//   FIX 11: Removed `backfaceVisibility: 'hidden'` from the img inline style.
-//     With mobile transform-style set to 'flat', backface-visibility has no
-//     effect. Removing it eliminates a potential iOS WebKit compositing edge
-//     case where hidden-backface interacts unexpectedly with ancestor 3D
-//     context changes during scroll/animation.
-//
-//   FIX 12: Added subtle loading shimmer to the portrait area. While the image
-//     loads, a gentle animated gradient sweep plays across the card center.
-//     This transforms the blank-card state from "broken" to "developing" — a
-//     premium photo-reveal moment when the portrait fades in.
+//   FIX 16: Micro-contrast typography and operational pulse upgrades.
+//     Sharpened letter-tracking, normalized layout boundaries for subpixel alignment, 
+//     and elevated text element weights for high-DPI panels.
 
-import { m, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
+import { m, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -91,19 +82,23 @@ export function IdentityCard({
   const shouldPrioritizeImage = priority ?? !isDesktop;
   const imageLoading = shouldPrioritizeImage ? 'eager' : 'lazy';
   const imageFetchPriority = shouldPrioritizeImage ? 'high' : 'auto';
+  
+  // Card Tilt physics
   const rawRotateX = useMotionValue(0);
   const rawRotateY = useMotionValue(0);
   const rotateX = useSpring(rawRotateX, { stiffness: 220, damping: 24, mass: 0.42 });
   const rotateY = useSpring(rawRotateY, { stiffness: 220, damping: 24, mass: 0.42 });
 
+  // Glare Physics tracking
+  const rawGlareX = useMotionValue(50);
+  const rawGlareY = useMotionValue(50);
+  const glareX = useSpring(rawGlareX, { stiffness: 200, damping: 26 });
+  const glareY = useSpring(rawGlareY, { stiffness: 200, damping: 26 });
+
   const [portraitIndex, setPortraitIndex] = useState(0);
   const [portraitReady, setPortraitReady] = useState(false);
   const [portraitFailed, setPortraitFailed] = useState(false);
 
-  // FIX 9: Track the actual img element to detect cached-image loads.
-  // When a browser serves an image from memory/disk cache, `onLoad` can fire
-  // synchronously during element creation — before React attaches the handler.
-  // The callback ref checks `img.complete` as a sync fallback.
   const imgReadyRef = useRef(false);
 
   const handleLoad = useCallback(() => {
@@ -125,9 +120,6 @@ export function IdentityCard({
     });
   }, []);
 
-  // Callback ref: fires when the <img> DOM node mounts.
-  // Checks `img.complete && img.naturalWidth > 0` to catch cached images
-  // whose `onLoad` fired before React could attach the handler.
   const imgRef = useCallback(
     (node: HTMLImageElement | null) => {
       if (node && node.complete && node.naturalWidth > 0 && !imgReadyRef.current) {
@@ -149,22 +141,54 @@ export function IdentityCard({
 
       rawRotateX.set((0.5 - pointerY) * 5.5);
       rawRotateY.set((pointerX - 0.5) * 7);
+      
+      // Update interactive glare layout coords (mapped to percentage space)
+      rawGlareX.set(pointerX * 100);
+      rawGlareY.set(pointerY * 100);
     },
-    [isDesktop, rawRotateX, rawRotateY, shouldReduceMotion]
+    [isDesktop, rawRotateX, rawRotateY, rawGlareX, rawGlareY, shouldReduceMotion]
   );
 
   const resetPointerTilt = useCallback(() => {
     rawRotateX.set(0);
     rawRotateY.set(0);
-  }, [rawRotateX, rawRotateY]);
+    rawGlareX.set(50);
+    rawGlareY.set(50);
+  }, [rawRotateX, rawRotateY, rawGlareX, rawGlareY]);
+
+  // Motion string composition for high-performance GPU-bound layer blending
+  const glareStyle = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.14) 0%, rgba(56, 189, 248, 0.04) 30%, transparent 65%)`;
 
   return (
     <>
-      {/* FIX 13: Inject the squircle SVG clipPath definitions once per card instance.
-          React deduplicates identical SVG defs across simultaneous renders (mobile +
-          desktop instances) since they share the same id="squircle-id". The first
-          mount wins; subsequent renders are no-ops for the SVG element itself.    */}
+      {/* SVG Duotone Cinema Lookup Filter */}
+      <svg className="absolute h-0 w-0 invisible pointer-events-none select-none" aria-hidden="true">
+        <defs>
+          <filter id="luxury-duotone-cinema" colorInterpolationFilters="sRGB">
+            {/* Step 1: Accurate high-fidelity luminance grayscale extraction */}
+            <feColorMatrix
+              type="matrix"
+              values="0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0.2126 0.7152 0.0722 0 0
+                      0      0      0      1 0"
+              result="grayscale"
+            />
+            {/* Step 2: Component Transfer Map — Shadows (Teal #031c24) to Highlights (Amber Orange #ff9540) */}
+            <feComponentTransfer in="grayscale" result="duotone">
+              <feFuncR type="table" tableValues="0.0118 1.0000" />
+              <feFuncG type="table" tableValues="0.1098 0.5843" />
+              <feFuncB type="table" tableValues="0.1412 0.2510" />
+              <feFuncA type="table" tableValues="0.0000 1.0000" />
+            </feComponentTransfer>
+            {/* Step 3: Normal blend overlay at 85% opacity to keep organic structural sub-details clean */}
+            <feBlend mode="normal" in="SourceGraphic" in2="duotone" opacity="0.85" />
+          </filter>
+        </defs>
+      </svg>
+
       <SquircleDefs />
+      
       <m.figure
         initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
         animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
@@ -182,14 +206,12 @@ export function IdentityCard({
         }
         aria-label="Luxury operating-system identity card portrait"
         className={cn(
-          // FIX 10: removed [transform-style:preserve-3d] — inline style is SoT
           'relative isolate transform-gpu overflow-visible will-change-transform',
           isDesktop
             ? 'w-full max-w-[21rem] min-w-[17rem] self-center xl:max-w-[22rem]'
             : 'aspect-[4/5] w-full max-w-[16.25rem] min-w-[13.25rem] self-center sm:max-w-[17.75rem] md:max-w-[18.75rem] lg:hidden',
           className
         )}
-        // eslint-disable-next-line no-restricted-syntax
         style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat', rotateX, rotateY }}
         onMouseMove={handlePointerMove}
         onMouseLeave={resetPointerTilt}
@@ -205,22 +227,14 @@ export function IdentityCard({
           className="pointer-events-none absolute inset-x-[8%] top-[6%] -z-10 h-10 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),transparent_68%)] opacity-70 blur-2xl"
         />
 
-        {/* Card frame — FIX 13: superellipse squircle (n≈2.8) via SVG clip-path.
-          clip-path: url(#squircle-id) uses the SquircleDefs singleton injected
-          in the page root. rounded-[52px] is kept as a visual fallback for
-          environments where the SVG defs are not yet parsed (e.g. SSR hydration
-          gap). corner-shape is a CSS Level 5 progressive enhancement — applied
-          via identity-card-frame class in globals.css v2026.19.
-          
-          Shadow upgrade: added inset top/bottom highlights for tactile depth.
-          bg upgrade: 175deg gradient matches portrait lighting direction.       */}
+        {/* Card Frame Context Container */}
         <div className="identity-card-frame relative isolate aspect-[4/5] w-full overflow-hidden rounded-[52px] border border-white/10 bg-[linear-gradient(175deg,rgba(18,24,36,0.99)_0%,rgba(10,14,22,0.995)_55%,rgba(6,9,15,1)_100%)] shadow-[0_30px_90px_rgba(0,0,0,0.62),0_0_0_1px_rgba(255,255,255,0.08),inset_0_2px_0_rgba(255,255,255,0.14),inset_0_-2px_0_rgba(0,0,0,0.10)] [clip-path:url(#squircle-id)]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.58),transparent)]"
           />
 
-          {/* Decorative overlays — intentionally z-[1]+ above the image */}
+          {/* Decorative premium glass overlays */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_10%,transparent_30%,transparent_72%,rgba(0,0,0,0.62)_100%)]"
@@ -233,6 +247,16 @@ export function IdentityCard({
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
           />
+          
+          {/* Real-time pointer reflection shine layer */}
+          {isDesktop && !shouldReduceMotion && (
+            <m.div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-[2] mix-blend-screen transition-opacity duration-300"
+              style={{ backgroundImage: glareStyle }}
+            />
+          )}
+
           {/* Top edge highlight */}
           <div
             aria-hidden="true"
@@ -244,7 +268,7 @@ export function IdentityCard({
             className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-[linear-gradient(180deg,transparent_15%,rgba(0,0,0,0.85)_100%)]"
           />
 
-          {/* FIX 12: Loading shimmer — visible only while image loads */}
+          {/* Loading shimmer fallback */}
           {!portraitReady && !portraitFailed && (
             <div
               aria-hidden="true"
@@ -252,7 +276,6 @@ export function IdentityCard({
             >
               <div
                 className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
-                // eslint-disable-next-line no-restricted-syntax
                 style={{
                   backgroundImage:
                     'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
@@ -261,13 +284,13 @@ export function IdentityCard({
             </div>
           )}
 
-          {/* Portrait image */}
+          {/* Core Graphic Portrait Image Layer */}
           {!portraitFailed ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               ref={imgRef}
               src={portraitSrc}
-              alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+              alt="Oscar Ndugbu — Principal Fintech Systems Architect & Backend Engineer"
               loading={imageLoading}
               fetchPriority={imageFetchPriority}
               decoding="async"
@@ -275,28 +298,27 @@ export function IdentityCard({
               onLoad={handleLoad}
               onError={handleError}
               className={cn(
-                'absolute inset-0 h-full w-full scale-100 object-cover transition-opacity duration-500 ease-out',
+                'absolute inset-0 h-full w-full scale-100 object-cover transition-opacity duration-700 ease-out select-none pointer-events-none',
                 portraitReady ? 'opacity-100' : 'opacity-0',
                 isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
               )}
-              // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
+              style={{ filter: 'url(#luxury-duotone-cinema)' }}
             />
           ) : (
             <PortraitFallback isDesktop={isDesktop} />
           )}
 
-          {/* Inner ring */}
+          {/* Precision inner metal border rings */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[3] rounded-[52px] ring-1 ring-white/10 [clip-path:url(#squircle-id)] ring-inset"
           />
-
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-[10px] z-[3] rounded-[42px] border border-white/6"
           />
 
-          {/* Top badge row: System ID + Staff+ pill */}
+          {/* Top Metadata Row: System ID + Status Pill */}
           <div
             className={cn(
               'absolute z-[4] flex items-start justify-between',
@@ -308,20 +330,20 @@ export function IdentityCard({
             <div className="min-w-0">
               <span
                 className={cn(
-                  'block font-mono text-white/54 uppercase',
+                  'block font-mono text-white/50 uppercase font-semibold',
                   isDesktop
-                    ? 'text-[9px] tracking-[0.28em]'
-                    : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
+                    ? 'text-[9px] tracking-[0.32em]'
+                    : 'text-[8px] tracking-[0.24em] sm:text-[9px] sm:tracking-[0.32em]'
                 )}
               >
                 System ID
               </span>
               <span
                 className={cn(
-                  'mt-1 block truncate text-white/90 uppercase',
+                  'mt-1 block truncate text-white/95 uppercase font-medium font-mono',
                   isDesktop
-                    ? 'text-[11px] tracking-[0.24em]'
-                    : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
+                    ? 'text-[11px] tracking-[0.26em]'
+                    : 'text-[10px] tracking-[0.20em] sm:text-[11px] sm:tracking-[0.26em]'
                 )}
               >
                 Oscar Ndugbu
@@ -330,48 +352,48 @@ export function IdentityCard({
 
             <span
               className={cn(
-                'shrink-0 rounded-full border border-emerald-400/18 bg-black/46 font-mono text-white/84 uppercase backdrop-blur-md',
+                'shrink-0 rounded-full border border-emerald-400/20 bg-black/50 font-mono text-white/90 uppercase backdrop-blur-md font-semibold select-none',
                 isDesktop
-                  ? 'px-2.5 py-1 text-[9px] tracking-[0.2em]'
-                  : 'px-2 py-1 text-[8px] tracking-[0.18em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.2em]'
+                  ? 'px-2.5 py-1 text-[9px] tracking-[0.22em]'
+                  : 'px-2 py-1 text-[8px] tracking-[0.20em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.22em]'
               )}
             >
               <span
-                className="mr-1.5 inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+                className="mr-1.5 inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.85)]"
                 aria-hidden="true"
               />
               Staff+
             </span>
           </div>
 
-          {/* Bottom badge row: Engineering Access + Location */}
+          {/* Bottom Metadata Row: Engineering Access Stack + Location Core */}
           <div
             className={cn(
-              'absolute z-[4] flex justify-between',
+              'absolute z-[4] flex justify-between items-end',
               isDesktop
-                ? 'inset-x-5 bottom-5 items-end gap-3'
-                : 'inset-x-4 bottom-4 items-end gap-3 sm:inset-x-5 sm:bottom-5 sm:gap-3'
+                ? 'inset-x-5 bottom-5 gap-3'
+                : 'inset-x-4 bottom-4 gap-3 sm:inset-x-5 sm:bottom-5 sm:gap-3'
             )}
           >
             <div
-              className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}
+              className={cn('min-w-0', isDesktop ? 'max-w-[72%]' : 'max-w-[64%] sm:max-w-[72%]' ?? '')}
             >
               <span
                 className={cn(
-                  'block font-mono text-white/54 uppercase',
+                  'block font-mono text-white/50 uppercase font-semibold',
                   isDesktop
-                    ? 'text-[9px] tracking-[0.26em]'
-                    : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
+                    ? 'text-[9px] tracking-[0.30em]'
+                    : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.30em]'
                 )}
               >
                 Engineering Access
               </span>
               <span
                 className={cn(
-                  'mt-1 block font-mono text-white/82 uppercase',
+                  'mt-1 block font-mono text-white/85 uppercase font-medium tracking-[0.16em]',
                   isDesktop
-                    ? 'truncate text-[10px] tracking-[0.18em]'
-                    : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
+                    ? 'truncate text-[10px]'
+                    : 'text-[9px] leading-tight break-words whitespace-normal sm:text-[10px]'
                 )}
               >
                 Full-Stack · Java · Next.js 15
@@ -380,10 +402,10 @@ export function IdentityCard({
 
             <span
               className={cn(
-                'shrink-0 font-mono text-white/60 uppercase',
+                'shrink-0 font-mono text-white/55 uppercase font-semibold select-none',
                 isDesktop
-                  ? 'text-[9px] tracking-[0.22em]'
-                  : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
+                  ? 'text-[9px] tracking-[0.24em]'
+                  : 'text-[8px] tracking-[0.20em] sm:text-[9px] sm:tracking-[0.24em]'
               )}
             >
               Lagos · UTC+1
