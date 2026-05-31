@@ -222,6 +222,24 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="relative min-h-[100dvh] overflow-x-clip">
+        {/* ── Cinematic grain noise overlay — pure-black premium base ────
+          SVG fractalNoise at 0.03 opacity. pointer-events-none + fixed so it
+          sits behind every layer (z-0). Paired with tailwind.config `background:
+          #000000` override to eliminate any gray base-color residue.           */}
+        <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]" aria-hidden="true">
+          <svg className="absolute h-full w-full" xmlns="http://www.w3.org/2000/svg">
+            <filter id="noiseFilter">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.8"
+                numOctaves="3"
+                stitchTiles="stitch"
+              />
+            </filter>
+            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+          </svg>
+        </div>
+
         {/* ── Skip navigation — WCAG 2.2 §2.4.1 ──────────────────────── */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
