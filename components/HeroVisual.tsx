@@ -29,9 +29,9 @@ import { cardReveal } from '@/lib/motionVariants';
 
 // ── System status ────────────────────────────────────────────────────────────
 const SYSTEMS = [
-  { name: 'sabiscore', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
-  { name: 'taxbridge', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
-  { name: 'swarmxq', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
+  { name: 'sabiscore', uptimeStr: 'ACTIVE', healthy: true },
+  { name: 'taxbridge', uptimeStr: 'ACTIVE', healthy: true },
+  { name: 'swarmxq', uptimeStr: 'ACTIVE', healthy: true },
 ] as const;
 
 // ── API latency bars ─────────────────────────────────────────────────────────
@@ -75,9 +75,9 @@ const RECENT_DEPLOYS = [
 
 // ── Triadic model routing ────────────────────────────────────────────────────
 const MODEL_ROUTES = [
-  { id: 'phi4', label: 'phi4\u2011fast', task: 'Reasoning', color: 'var(--color-film-teal)' },
-  { id: 'deepseek', label: 'deepseek\u2011r1', task: 'Planning', color: 'var(--color-accent)' },
-  { id: 'qwen', label: 'qwen\u2011worker', task: 'Execution', color: 'var(--color-film-amber)' },
+  { id: 'phi4', label: 'phi4-fast', task: 'Reasoning', color: 'var(--color-film-teal)' },
+  { id: 'deepseek', label: 'deepseek-r1', task: 'Planning', color: 'var(--color-accent)' },
+  { id: 'qwen', label: 'qwen-worker', task: 'Execution', color: 'var(--color-film-amber)' },
 ] as const;
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -117,10 +117,9 @@ function HealthRing({ healthy }: Readonly<{ healthy: boolean }>) {
 // ────────────────────────────────────────────────────────────────────────────
 function SystemStatusRow({
   name,
-  uptime,
   uptimeStr,
   healthy,
-}: Readonly<{ name: string; uptime: number; uptimeStr: string; healthy: boolean }>) {
+}: Readonly<{ name: string; uptimeStr: string; healthy: boolean }>) {
   const color = healthy ? 'var(--color-success)' : 'var(--color-danger)';
 
   return (
