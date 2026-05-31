@@ -12,6 +12,13 @@
  *   - Color mappings updated to match canonical :root token names
  *   - All color values reference var(--token) from globals.css :root
  *
+ * PATCH — portrait-shimmer (merged):
+ *   - content[] expanded: pages/**, src/** added; existing globs upgraded to
+ *     {js,ts,jsx,tsx,mdx} for full JS/JSX/MDX coverage
+ *   - fontFamily.display: system-ui + -apple-system spliced before terminal sans-serif
+ *   - fontFamily.mono: Consolas spliced between SFMono-Regular and Menlo (Windows coverage)
+ *   - keyframes.portrait-shimmer + animation.portrait-shimmer added (net-new, no conflicts)
+ *
  * Rule: This file is for Tailwind utility generation only. Design token
  * values live in globals.css :root. Never hardcode hex/oklch here.
  */
@@ -20,8 +27,13 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
+    // Covers Pages Router, App Router, and src/ layout variants.
+    // Globs upgraded to {js,ts,jsx,tsx,mdx} for full JS/JSX/MDX coverage.
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
+    // Utility and content layers — kept narrow intentionally.
     './lib/**/*.{ts,tsx}',
     './content/**/*.{md,mdx}',
   ],
@@ -71,7 +83,19 @@ const config: Config = {
 
       // ── Typography ────────────────────────────────────────────────────────
       fontFamily: {
-        display: ['var(--font-display)', 'var(--font-syne)', 'Syne', 'Arial Black', 'sans-serif'],
+        // PATCH: system-ui + -apple-system spliced before terminal sans-serif
+        // for better native rendering on macOS/iOS without the Syne variable present.
+        display: [
+          'var(--font-display)',
+          'var(--font-syne)',
+          'Syne',
+          'Arial Black',
+          'system-ui',
+          '-apple-system',
+          'sans-serif',
+        ],
+        // PATCH: Consolas added between SFMono-Regular and Menlo for Windows
+        // system-mono coverage (VS Code default, broadly installed on Win 10/11).
         mono: [
           'var(--font-mono)',
           'var(--font-jetbrains-mono)',
@@ -79,6 +103,7 @@ const config: Config = {
           'Fira Code',
           'ui-monospace',
           'SFMono-Regular',
+          'Consolas',
           'Menlo',
           'monospace',
         ],
@@ -109,15 +134,15 @@ const config: Config = {
         ],
         // Sub-xs sizes used throughout mono labels, badge caps, and status pills.
         // These fill the gap below Tailwind's default text-xs (12px).
-        '2xs': ['0.625rem', { lineHeight: '1.5' }], // 10px — primary mono label size
-        '3xs': ['0.5625rem', { lineHeight: '1.4' }], // 9px  — condensed metric labels
+        '2xs': ['0.625rem', { lineHeight: '1.5' }],   // 10px — primary mono label size
+        '3xs': ['0.5625rem', { lineHeight: '1.4' }],  // 9px  — condensed metric labels
       },
 
       // ── Spacing — only custom named values, not scale overrides ──────────
       // Tailwind defaults (4px base) are kept. Only add named semantic values.
       spacing: {
-        section: '6rem', // var(--section-py) for section padding shortcuts
-        nav: '60px', // var(--nav-height)
+        section: '6rem',       // var(--section-py) for section padding shortcuts
+        nav: '60px',           // var(--nav-height)
         'bottom-nav': '68px', // var(--bottom-nav-height)
       },
 
@@ -156,6 +181,13 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-6px)' },
         },
+        // PATCH: Portrait skeleton / loading shimmer.
+        // Driven by a 200% wide gradient so the sweep is visible across
+        // any portrait container width without extra CSS.
+        'portrait-shimmer': {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.45s cubic-bezier(0.16,1,0.3,1) forwards',
@@ -163,6 +195,8 @@ const config: Config = {
         'pulse-dot': 'pulse-dot 2s ease-in-out infinite',
         'kinetic-in': 'kinetic-in 0.55s cubic-bezier(0.16,1,0.3,1) both',
         'liquid-float': 'liquid-float 4s ease-in-out infinite',
+        // PATCH: 2.4s matches the intended cinematic cadence from the patch spec.
+        'portrait-shimmer': 'portrait-shimmer 2.4s ease-in-out infinite',
       },
 
       // ── Box shadow ────────────────────────────────────────────────────────
