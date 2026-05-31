@@ -41,16 +41,16 @@ import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 // G.7 Location rule: PROFILE.locationDisplay must be "Lagos, Nigeria 🇳🇬"
 
 export const PROFILE = {
-  name:            'Oscar Ndugbu',
-  handle:          'Scardubu',
+  name: 'Oscar Ndugbu',
+  handle: 'Scardubu',
   locationDisplay: 'Lagos, Nigeria 🇳🇬',
-  locationShort:   'Lagos',
-  role:            'Staff+ Full-Stack · Infra · ML Engineer',
-  email:           CONTACT_EMAIL,
-  github:          'https://github.com/Scardubu',
-  linkedin:        'https://linkedin.com/in/oscardubu',
-  site:            'https://scardubu.dev',
-  cvPath:          CV_ASSET_PATH,
+  locationShort: 'Lagos',
+  role: 'Staff+ Full-Stack · Infra · ML Engineer',
+  email: CONTACT_EMAIL,
+  github: 'https://github.com/Scardubu',
+  linkedin: 'https://linkedin.com/in/oscardubu',
+  site: 'https://scardubu.dev',
+  cvPath: CV_ASSET_PATH,
 } as const;
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
@@ -62,13 +62,13 @@ export const PROFILE = {
 // If you change this mirror, update HeroSection.tsx to match.
 
 export const HERO = {
-  name:         'Oscar Ndugbu',
-  title:        'Staff+ Full-Stack · Infra · ML',
-  kicker:       'Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech',
-  h1:           'The system has to work at 2am.',
-  subHeadline:  "That's not a slogan. It's a design constraint.",
-  body:         'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
-  availability: 'AVAILABLE · OPEN TO WORK',           // was 'AVAILABLE · STAFF+ ROLES' — "STAFF+" pre-filtered founders/consultants before they reached the contact section's engagement menu
+  name: 'Oscar Ndugbu',
+  title: 'Staff+ Full-Stack · Infra · ML',
+  kicker: 'Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech',
+  h1: 'The system has to work at 2am.',
+  subHeadline: "That's not a slogan. It's a design constraint.",
+  body: 'Production systems that stay alive when it matters most — compliant, fast, and relentlessly reliable. Built under Lagos constraints. Deployed to global standards.',
+  availability: 'AVAILABLE · OPEN TO WORK', // was 'AVAILABLE · STAFF+ ROLES' — "STAFF+" pre-filtered founders/consultants before they reached the contact section's engagement menu
   // V1.3: SYNC PROTOCOL — update this date whenever availability status changes.
   //
   // Format: 'YYYY-MM-DD' (ISO 8601) — formatMonthYear() in lib/utils.ts renders it
@@ -84,14 +84,14 @@ export const HERO = {
   // reads as abandoned rather than active. The CI does not currently check this —
   // add a Vercel cron or GitHub Actions check if manual discipline is insufficient.
   availabilityLastUpdated: '2026-05-19',
-  location:     'Lagos, Nigeria 🇳🇬',
-  trustStrip:   'Shipped in Lagos · Running globally · Battle-tested in audit season',
+  location: 'Lagos, Nigeria 🇳🇬',
+  trustStrip: 'Shipped in Lagos · Running globally · Battle-tested in audit season',
   cta: {
     // anchorUrl() returns root-relative '/#section-contact' — correct for Next.js
     // <Link> same-page navigation. mailto: bypasses the contact form and was removed.
-    primary:   { label: 'Tell me your constraints', href: anchorUrl('section-contact') },
-    secondary: { label: 'See what shipped',          href: anchorUrl('section-projects') }, // was 'See the work' — past tense implies real, production-shipped; echoes "Shipped in Lagos" trust chip
-    cv:        { label: 'Download CV',              href: CV_ASSET_PATH },
+    primary: { label: 'Tell me your constraints', href: anchorUrl('section-contact') },
+    secondary: { label: 'See what shipped', href: anchorUrl('section-projects') }, // was 'See the work' — past tense implies real, production-shipped; echoes "Shipped in Lagos" trust chip
+    cv: { label: 'Download CV', href: CV_ASSET_PATH },
   },
 } as const;
 
@@ -109,10 +109,10 @@ export const HERO = {
 // Non-technical evaluators read the LABEL ('Incident detection', 'API response').
 // stat keys (filing/uptime/latency/mttd) unchanged — used in METRIC_DETAILS + CSS data-stat.
 export const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Tax filing time',    stat: 'filing'  }, // was 'Filing time' — adds domain context ('tax', not legal)
-  { value: '99.9%+',     label: 'Production uptime',  stat: 'uptime'  }, // was '90-day uptime' — '90-day' detail lives in METRIC_DETAILS.source
-  { value: 'sub-150ms',  label: 'API response',       stat: 'latency' }, // was 'API p99' — replaces pure jargon; 'p99' preserved in METRIC_DETAILS.source
-  { value: '45% MTTD',   label: 'Incident detection', stat: 'mttd'    }, // was 'Improvement' — gives the % an object; non-tech founders now read "45% faster detection"
+  { value: '4h → 15min', label: 'Tax filing time', stat: 'filing' }, // was 'Filing time' — adds domain context ('tax', not legal)
+  { value: 'Zero-Drop', label: 'System Resiliency', stat: 'uptime' }, // v2026.20: architecture claim replaces unverifiable SLA %
+  { value: 'sub-150ms', label: 'API response', stat: 'latency' }, // was 'API p99' — replaces pure jargon; 'p99' preserved in METRIC_DETAILS.source
+  { value: '45% MTTD', label: 'Incident detection', stat: 'mttd' }, // was 'Improvement' — gives the % an object; non-tech founders now read "45% faster detection"
 ] as const;
 
 // ── Testimonials ──────────────────────────────────────────────────────────────
@@ -135,10 +135,10 @@ export const CONVICTION_STATS = [
 // Update after each deploy or retraining cycle.
 
 export const LIVE_METRICS = {
-  uptime:       '99.9%+',
+  uptime: '99.9%+',
   uptimeTarget: '≥99.9%',
-  p99Latency:   'sub-150ms',
-  mttdImprove:  '45%',
+  p99Latency: 'sub-150ms',
+  mttdImprove: '45%',
   testCoverage: '95%',
   bundleTarget: '< 300 KB',
 } as const;
@@ -158,8 +158,8 @@ export const LIVE_METRICS = {
 // ── Social Links ──────────────────────────────────────────────────────────────
 
 export const SOCIAL = {
-  github:   'https://github.com/Scardubu',
+  github: 'https://github.com/Scardubu',
   linkedin: 'https://linkedin.com/in/oscardubu',
-  email:    `mailto:${CONTACT_EMAIL}`,
-  site:     'https://scardubu.dev',
+  email: `mailto:${CONTACT_EMAIL}`,
+  site: 'https://scardubu.dev',
 } as const;
