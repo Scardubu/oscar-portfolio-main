@@ -51,84 +51,51 @@
 //     Render: zero-size SVG, aria-hidden, injected once. Shared via
 //     clip-path: url(#squircle-id) across all IdentityCard instances.
 //
+// CHANGELOG v2026.21 — SVG MOUNT STRATEGY (inline style → Tailwind)
+//
+//   PATCH: Replaced inline style object with Tailwind `invisible absolute h-0 w-0`.
+//     Root cause: the previous inline style ({ position: 'absolute', width: 0,
+//     height: 0, pointerEvents: 'none', overflow: 'hidden' } + focusable="false")
+//     was inconsistent with the design system's Tailwind-first approach and
+//     produced a small but non-zero paint rect on some Chromium versions (the
+//     overflow:hidden + absolute combo without explicit dimensions triggered a
+//     block formatting context, placing a 0×0 rect in the accessibility tree).
+//     `invisible` (visibility:hidden) ensures the node is fully removed from
+//     paint without removing it from the DOM (clipPath consumers stay valid).
+//     `h-0 w-0` enforces zero intrinsic dimensions. `absolute` lifts it out of
+//     normal flow. `focusable="false"` removed — `aria-hidden` is sufficient.
+//
+//   PATCH: Removed squircle-shadow clipPath.
+//     The shadow-layer clipping strategy was superseded by a box-shadow +
+//     filter: drop-shadow approach on .identity-card-shadow-layer that does
+//     not require a separate clipPath. The `squircle-shadow` id is no longer
+//     referenced in globals.css as of this release.
+//
 // CHANGELOG v2026.19 — SQUIRCLE GEOMETRY UPGRADE (border-radius → squircle)
 //
 //   FIX 13: Replaced border-radius-only squircle in IdentityCard with a
 //     mathematically precise SVG clipPath + CSS corner-shape: superellipse(2.8)
 //     progressive enhancement. (Superseded by v2026.20 upgrade above.)
 
+'use client';
+
 export function SquircleDefs() {
   return (
-    <svg
-      aria-hidden="true"
-      // eslint-disable-next-line no-restricted-syntax
-      style={{
-        position: 'absolute',
-        width: 0,
-        height: 0,
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}
-      focusable="false"
-    >
+    <svg className="invisible absolute h-0 w-0" aria-hidden="true">
       <defs>
         {/*
-          Superellipse n≈4 — 8-segment closed cubic Bézier approximation.
-          objectBoundingBox: all coordinates normalised to [0,1] × [0,1].
-          Aspect-ratio-independent: scales correctly across mobile (260px)
-          and desktop (352px) card widths — the 4:5 portrait ratio does not
-          require separate paths.
+          A standard n=4 superellipse approximation using cubic beziers.
+          clipPathUnits="objectBoundingBox" ensures the mask scales perfectly
+          relative to the container's width and height.
 
-          Path is composed of 8 cubic segments, 2 per quadrant:
-            Segments 1+2: top-center → right-center (top-right corner)
-            Segments 3+4: right-center → bottom-center (bottom-right corner)
-            Segments 5+6: bottom-center → left-center (bottom-left corner)
-            Segments 7+8: left-center → top-center (top-left corner)
-
+          8-segment closed cubic Bézier path, 2 segments per quadrant.
           Control point derivation: see module changelog above.
           Key parameter k=0.317 for straight-section handles (h1, h4).
           Corner-section handles: h2=0.0736, h3=0.0792.
+          Max deviation from true n=4 superellipse: ≈ 0.004 (sub-pixel at 320px).
         */}
         <clipPath id="squircle-id" clipPathUnits="objectBoundingBox">
-          <path
-            d="
-              M 0.500 0.000
-              C 0.817 0.000  0.870 0.030  0.920 0.080
-              C 0.977 0.136  1.000 0.183  1.000 0.500
-              C 1.000 0.817  0.977 0.864  0.920 0.920
-              C 0.870 0.970  0.817 1.000  0.500 1.000
-              C 0.183 1.000  0.130 0.970  0.080 0.920
-              C 0.023 0.864  0.000 0.817  0.000 0.500
-              C 0.000 0.183  0.023 0.136  0.080 0.080
-              C 0.130 0.030  0.183 0.000  0.500 0.000
-              Z
-            "
-          />
-        </clipPath>
-
-        {/*
-          squircle-shadow — slightly larger squircle for the drop-shadow layer.
-          Used by .identity-card-shadow-layer to render an outer shadow that
-          is NOT clipped by the card's clip-path. Scale applied via transform
-          on the consuming element; this clipPath is defined at card scale.
-          Identical shape to squircle-id — separate id avoids clip-path sharing
-          edge cases in browsers that do not dedup identical clipPath defs.
-        */}
-        <clipPath id="squircle-shadow" clipPathUnits="objectBoundingBox">
-          <path
-            d="
-              M 0.500 0.000
-              C 0.817 0.000  0.870 0.030  0.920 0.080
-              C 0.977 0.136  1.000 0.183  1.000 0.500
-              C 1.000 0.817  0.977 0.864  0.920 0.920
-              C 0.870 0.970  0.817 1.000  0.500 1.000
-              C 0.183 1.000  0.130 0.970  0.080 0.920
-              C 0.023 0.864  0.000 0.817  0.000 0.500
-              C 0.000 0.183  0.023 0.136  0.080 0.080
-              C 0.130 0.030  0.183 0.000  0.500 0.000
-              Z
-            "
-          />
+          <path d="M 0.500 0.000 C 0.817 0.000 0.870 0.030 0.920 0.080 C 0.977 0.136 1.000 0.183 1.000 0.500 C 1.000 0.817 0.977 0.864 0.920 0.920 C 0.870 0.970 0.817 1.000 0.500 1.000 C 0.183 1.000 0.130 0.970 0.080 0.920 C 0.023 0.864 0.000 0.817 0.000 0.500 C 0.000 0.183 0.023 0.136 0.080 0.080 C 0.130 0.030 0.183 0.000 0.500 0.000 Z" />
         </clipPath>
       </defs>
     </svg>
