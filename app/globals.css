@@ -1528,6 +1528,9 @@ h3,
   white-space: nowrap;
   color: var(--color-stat-uptime);
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: flex-end;
+  min-height: 1.2em;
 }
 .conviction-stat[data-stat='filing'] .conviction-stat-value {
   color: var(--color-stat-filing);
