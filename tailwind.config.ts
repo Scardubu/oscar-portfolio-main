@@ -31,6 +31,10 @@ const config: Config = {
       // ── Colors (all reference CSS custom properties from :root) ───────────
       // Token names match the canonical --color-* names in globals.css :root
       colors: {
+        // Pure black — overrides any dark-gray base on light-mode fallbacks.
+        // Paired with the SVG noise overlay in layout.tsx for the premium matte finish.
+        background: '#000000',
+
         // Backgrounds
         'color-bg': 'var(--color-bg)',
         'color-surface': 'var(--color-surface)',
