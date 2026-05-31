@@ -728,10 +728,11 @@ export function HeroSection() {
                 </div>
               </m.div>
 
+              {/* UPGRADE: Increased font weight to semibold and boosted text color to white/90 for legibility */}
               <m.p
                 variants={child}
                 data-cinematic="eyebrow"
-                className="hero-kicker text-color-film-teal mt-4 max-w-[42ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase"
+                className="hero-kicker mt-4 max-w-[42ch] font-mono text-[11px] font-semibold leading-relaxed tracking-[0.14em] text-white/90 uppercase"
               >
                 {HERO.kicker}
               </m.p>
@@ -803,7 +804,8 @@ export function HeroSection() {
                 </div>
               </m.div>
 
-              <m.div variants={child} className="hero-trust-strip mt-8" aria-label="Trust signals">
+              {/* UPGRADE: Changed mt-8 to mt-12 for breathing room below the portrait */}
+              <m.div variants={child} className="hero-trust-strip mt-12" aria-label="Trust signals">
                 {TRUST_STRIP_ITEMS.map((item) => (
                   <span key={item} className="hero-trust-chip">
                     {item}
@@ -811,12 +813,13 @@ export function HeroSection() {
                 ))}
               </m.div>
 
+              {/* UPGRADE: Changed mt-6 to mt-10 for separation from the trust strip */}
               <m.div
                 variants={child}
                 data-cinematic="proof"
                 aria-label="Performance metrics"
                 ref={statsRef}
-                className="mt-6 w-full"
+                className="mt-10 w-full"
               >
                 <div className="conviction-stat-strip hero-metrics-grid" role="list">
                   {CONVICTION_STATS.map(({ value, label, stat }) => {
