@@ -128,8 +128,13 @@ const jetbrainsMono = JetBrains_Mono({
   fallback: ['Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', 'monospace'],
 });
 
-const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+// ── Site URL Configuration ─────────────────────────────────────────────────────
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ?? (process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : 'http://localhost:3000');
 
+const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 const isPreviewDeployment = process.env.NEXT_PUBLIC_VERCEL_URL?.includes('vercel.app') ?? false;
 
 const shouldLoadVercelInsights = isVercelProduction && !isPreviewDeployment;
@@ -139,13 +144,10 @@ export const metadata: Metadata = {
     default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     template: '%s · Oscar Ndugbu',
   },
-  // CE spec §P3-G: ≤160 chars, outcome-focused (155 chars)
   description:
     'Staff+ Full-Stack Engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference + zero-drop queues. SwarmXQ: self-improving agents. Systems that hold at 2am.',
-  metadataBase: new URL('https://www.scardubu.dev'),
-  // v13.0: authors + creator — parsed by Google rich-result extractor and
-  // LinkedIn/Slack unfurl renderers for authorship attribution.
-  authors: [{ name: 'Oscar Ndugbu', url: 'https://www.scardubu.dev' }],
+  metadataBase: new URL(siteUrl),
+  authors: [{ name: 'Oscar Ndugbu', url: siteUrl }],
   creator: 'Oscar Ndugbu',
   keywords: [
     'Full-Stack Engineer',
@@ -186,16 +188,12 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: 'website',
-    // v13.0: locale — without it some crawlers emit og:locale="und" (undetermined).
     locale: 'en_US',
-    url: 'https://www.scardubu.dev',
+    url: siteUrl,
     siteName: 'Oscar Ndugbu',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
-    // CE spec §P3-G og:description exact wording
     description:
       'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
-    // v14.0: alt upgraded — accessibility crawlers and screen-reader unfurls
-    // use this as the image caption; generic 'portfolio' is insufficient.
     images: [
       {
         url: '/api/og',
@@ -208,15 +206,12 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
-    // v14.0: description added — was the only OG-parity field absent from the
-    // twitter card; LinkedIn unfurl and iMessage both read twitter:description.
     description:
       'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
     images: ['/api/og'],
-    // creator: '@scardubu', // add once X/Twitter handle is confirmed
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: 'https://www.scardubu.dev' },
+  alternates: { canonical: siteUrl },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -252,23 +247,19 @@ const schemaGraph = {
   '@graph': [
     {
       '@type': 'Person',
-      '@id': 'https://www.scardubu.dev/#person',
+      '@id': `${siteUrl}/#person`,
       name: 'Oscar Ndugbu',
-      url: 'https://www.scardubu.dev',
+      url: siteUrl,
       jobTitle: 'Principal Full-Stack Engineer',
       description:
         'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, SwarmXQ.',
-      // v14.0: mainEntityOfPage — signals this URL as the canonical web presence
-      // for the Person entity; required for Google to emit a Knowledge Panel sitelink.
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': 'https://www.scardubu.dev',
+        '@id': siteUrl,
       },
-      // v14.0: image — used by Google for Knowledge Panel profile photo.
-      // Replace with headshot URL (400×400, square crop) when available.
       image: {
         '@type': 'ImageObject',
-        url: 'https://www.scardubu.dev/api/og',
+        url: `${siteUrl}/api/og`,
         width: 1200,
         height: 630,
       },
