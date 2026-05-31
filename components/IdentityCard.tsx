@@ -204,7 +204,7 @@ export function IdentityCard({
         transition={
           shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
         }
-        aria-label="Luxury operating-system identity card portrait"
+        aria-label="Oscar Ndugbu — Principal Backend & ML Infrastructure Engineer — interactive profile card"
         className={cn(
           'relative isolate transform-gpu overflow-visible will-change-transform',
           isDesktop
@@ -212,6 +212,7 @@ export function IdentityCard({
             : 'aspect-[4/5] w-full max-w-[16.25rem] min-w-[13.25rem] self-center sm:max-w-[17.75rem] md:max-w-[18.75rem] lg:hidden',
           className
         )}
+        // eslint-disable-next-line no-restricted-syntax
         style={{ transformStyle: isDesktop ? 'preserve-3d' : 'flat', rotateX, rotateY }}
         onMouseMove={handlePointerMove}
         onMouseLeave={resetPointerTilt}
@@ -253,6 +254,7 @@ export function IdentityCard({
             <m.div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 z-[2] mix-blend-screen transition-opacity duration-300"
+              // eslint-disable-next-line no-restricted-syntax
               style={{ backgroundImage: glareStyle }}
             />
           )}
@@ -276,6 +278,7 @@ export function IdentityCard({
             >
               <div
                 className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
+                // eslint-disable-next-line no-restricted-syntax
                 style={{
                   backgroundImage:
                     'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
@@ -302,6 +305,7 @@ export function IdentityCard({
                 portraitReady ? 'opacity-100' : 'opacity-0',
                 isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
               )}
+              // eslint-disable-next-line no-restricted-syntax
               style={{ filter: 'url(#luxury-duotone-cinema)' }}
             />
           ) : (
@@ -366,7 +370,7 @@ export function IdentityCard({
             </span>
           </div>
 
-          {/* Bottom Metadata Row: Engineering Access Stack + Location Core */}
+          {/* Bottom Metadata Row: Architecture Stack + Location Core */}
           <div
             className={cn(
               'absolute z-[4] flex justify-between items-end',
@@ -376,7 +380,7 @@ export function IdentityCard({
             )}
           >
             <div
-              className={cn('min-w-0', isDesktop ? 'max-w-[72%]' : 'max-w-[64%] sm:max-w-[72%]' ?? '')}
+              className={cn('min-w-0', isDesktop ? 'max-w-[72%]' : 'max-w-[64%] sm:max-w-[72%]')}
             >
               <span
                 className={cn(
@@ -386,7 +390,7 @@ export function IdentityCard({
                     : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.30em]'
                 )}
               >
-                Engineering Access
+                Architecture Stack
               </span>
               <span
                 className={cn(
@@ -396,7 +400,7 @@ export function IdentityCard({
                     : 'text-[9px] leading-tight break-words whitespace-normal sm:text-[10px]'
                 )}
               >
-                Full-Stack · Java · Next.js 15
+                Node.js · Java · ML Infra · Next.js 15
               </span>
             </div>
 
