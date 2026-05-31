@@ -42,6 +42,37 @@
   initial-value: #06070a;
 }
 
+@layer base {
+  :root {
+    /* Fallback high-fidelity type stacks mapped directly to CSS configuration variables */
+    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+  }
+  body {
+    @apply bg-black text-white antialiased;
+    background-color: #000000;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Unlocks high-performance open-type legibility tunings on the browser canvas */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+  }
+}
+@layer components {
+  /* Cinematic Text-Sharpness Optimization Layer */
+  [data-cinematic="eyebrow"],
+  [data-cinematic="proof"] {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  /* Structural Global Layout Rhythm Adjustments */
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    background-color: #000000;
+  }
+}
+
 @theme {
   /* ── Font family ──────────────────────────────────────────────────────── */
   --font-display: var(--font-syne), 'Syne', sans-serif;
@@ -228,9 +259,9 @@ html[data-active-chapter='epilogue'] {
 /* ════ :root DESIGN TOKENS — v18 ════ */
 :root {
   color-scheme: dark;
-  --font-display: var(--font-syne), 'Arial Black', sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-body: var(--font-dm-sans), 'Arial', sans-serif;
-  --font-mono: var(--font-jetbrains-mono), 'Courier New', monospace;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
   --font-didone: var(--font-didone-var, 'Playfair Display'), Georgia, serif;
 
   --color-bg: oklch(6.5% 0.01 265);
@@ -473,7 +504,7 @@ html[data-active-chapter='epilogue'] {
 }
 
 html {
-  background: var(--color-bg);
+  background: #000000;
   overflow-x: clip;
   font-size: 16px;
   text-size-adjust: none;
@@ -507,10 +538,17 @@ section[id] {
 }
 
 body {
+  @apply bg-black text-white antialiased;
   font-family: var(--font-body);
   font-size: var(--text-base);
-  color: var(--color-text-primary);
-  background: var(--color-bg);
+  color: #ffffff;
+  background: #000000;
+  background-color: #000000;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Unlocks high-performance open-type legibility tunings on the browser canvas */
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   /* 100dvh (dynamic) is primary: adapts to iOS Safari toolbar collapse/expand.
      100svh (small viewport) is the fallback: stable layout when toolbar is
      always visible. Never use 100vh — it locks to initial-containing-block
