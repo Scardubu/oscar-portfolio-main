@@ -194,18 +194,18 @@ export function IdentityCard({
         onMouseMove={handlePointerMove}
         onMouseLeave={resetPointerTilt}
       >
-      {/* Ambient glow behind the card */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.22),transparent_56%),radial-gradient(circle_at_74%_22%,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_50%_88%,rgba(255,255,255,0.05),transparent_38%)] blur-3xl"
-      />
+        {/* Ambient glow behind the card */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-[radial-gradient(circle_at_50%_38%,rgba(56,189,248,0.22),transparent_56%),radial-gradient(circle_at_74%_22%,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_50%_88%,rgba(255,255,255,0.05),transparent_38%)] blur-3xl"
+        />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-[8%] top-[6%] -z-10 h-10 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),transparent_68%)] opacity-70 blur-2xl"
-      />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-[8%] top-[6%] -z-10 h-10 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.18),transparent_68%)] opacity-70 blur-2xl"
+        />
 
-      {/* Card frame — FIX 13: superellipse squircle (n≈2.8) via SVG clip-path.
+        {/* Card frame — FIX 13: superellipse squircle (n≈2.8) via SVG clip-path.
           clip-path: url(#squircle-id) uses the SquircleDefs singleton injected
           in the page root. rounded-[52px] is kept as a visual fallback for
           environments where the SVG defs are not yet parsed (e.g. SSR hydration
@@ -214,180 +214,182 @@ export function IdentityCard({
           
           Shadow upgrade: added inset top/bottom highlights for tactile depth.
           bg upgrade: 175deg gradient matches portrait lighting direction.       */}
-      <div className="identity-card-frame relative isolate aspect-[4/5] w-full overflow-hidden rounded-[52px] border border-white/10 bg-[linear-gradient(175deg,rgba(18,24,36,0.99)_0%,rgba(10,14,22,0.995)_55%,rgba(6,9,15,1)_100%)] shadow-[0_30px_90px_rgba(0,0,0,0.62),0_0_0_1px_rgba(255,255,255,0.08),inset_0_2px_0_rgba(255,255,255,0.14),inset_0_-2px_0_rgba(0,0,0,0.10)] [clip-path:url(#squircle-id)]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.58),transparent)]"
-        />
-
-        {/* Decorative overlays — intentionally z-[1]+ above the image */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_10%,transparent_30%,transparent_72%,rgba(0,0,0,0.62)_100%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px] opacity-70 mix-blend-overlay"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
-        />
-        {/* Top edge highlight */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.34),transparent)]"
-        />
-        {/* Bottom vignette */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-16 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.36))]"
-        />
-
-        {/* FIX 12: Loading shimmer — visible only while image loads */}
-        {!portraitReady && !portraitFailed && (
+        <div className="identity-card-frame relative isolate aspect-[4/5] w-full overflow-hidden rounded-[52px] border border-white/10 bg-[linear-gradient(175deg,rgba(18,24,36,0.99)_0%,rgba(10,14,22,0.995)_55%,rgba(6,9,15,1)_100%)] shadow-[0_30px_90px_rgba(0,0,0,0.62),0_0_0_1px_rgba(255,255,255,0.08),inset_0_2px_0_rgba(255,255,255,0.14),inset_0_-2px_0_rgba(0,0,0,0.10)] [clip-path:url(#squircle-id)]">
           <div
             aria-hidden="true"
-            className={cn('absolute inset-0 overflow-hidden', shouldReduceMotion && 'hidden')}
+            className="pointer-events-none absolute inset-x-5 top-3 z-[1] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.58),transparent)]"
+          />
+
+          {/* Decorative overlays — intentionally z-[1]+ above the image */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.08)_10%,transparent_30%,transparent_72%,rgba(0,0,0,0.62)_100%)]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] [background-image:linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:100%_3px] opacity-70 mix-blend-overlay"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
+          />
+          {/* Top edge highlight */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.34),transparent)]"
+          />
+          {/* Bottom vignette */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-[linear-gradient(180deg,transparent_15%,rgba(0,0,0,0.85)_100%)]"
+          />
+
+          {/* FIX 12: Loading shimmer — visible only while image loads */}
+          {!portraitReady && !portraitFailed && (
+            <div
+              aria-hidden="true"
+              className={cn('absolute inset-0 overflow-hidden', shouldReduceMotion && 'hidden')}
+            >
+              <div
+                className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
+                // eslint-disable-next-line no-restricted-syntax
+                style={{
+                  backgroundImage:
+                    'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Portrait image */}
+          {!portraitFailed ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              ref={imgRef}
+              src={portraitSrc}
+              alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
+              loading={imageLoading}
+              fetchPriority={imageFetchPriority}
+              decoding="async"
+              draggable={false}
+              onLoad={handleLoad}
+              onError={handleError}
+              className={cn(
+                'absolute inset-0 h-full w-full scale-100 object-cover transition-opacity duration-500 ease-out',
+                portraitReady ? 'opacity-100' : 'opacity-0',
+                isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
+              )}
+              // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
+            />
+          ) : (
+            <PortraitFallback isDesktop={isDesktop} />
+          )}
+
+          {/* Inner ring */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[3] rounded-[52px] ring-1 ring-white/10 [clip-path:url(#squircle-id)] ring-inset"
+          />
+
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-[10px] z-[3] rounded-[42px] border border-white/6"
+          />
+
+          {/* Top badge row: System ID + Staff+ pill */}
+          <div
+            className={cn(
+              'absolute z-[4] flex items-start justify-between',
+              isDesktop
+                ? 'inset-x-5 top-5 gap-3'
+                : 'inset-x-4 top-4 gap-3 sm:inset-x-5 sm:top-5 sm:gap-3'
+            )}
+          >
+            <div className="min-w-0">
+              <span
+                className={cn(
+                  'block font-mono text-white/54 uppercase',
+                  isDesktop
+                    ? 'text-[9px] tracking-[0.28em]'
+                    : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
+                )}
+              >
+                System ID
+              </span>
+              <span
+                className={cn(
+                  'mt-1 block truncate text-white/90 uppercase',
+                  isDesktop
+                    ? 'text-[11px] tracking-[0.24em]'
+                    : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
+                )}
+              >
+                Oscar Ndugbu
+              </span>
+            </div>
+
+            <span
+              className={cn(
+                'shrink-0 rounded-full border border-emerald-400/18 bg-black/46 font-mono text-white/84 uppercase backdrop-blur-md',
+                isDesktop
+                  ? 'px-2.5 py-1 text-[9px] tracking-[0.2em]'
+                  : 'px-2 py-1 text-[8px] tracking-[0.18em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.2em]'
+              )}
+            >
+              <span
+                className="mr-1.5 inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+                aria-hidden="true"
+              />
+              Staff+
+            </span>
+          </div>
+
+          {/* Bottom badge row: Engineering Access + Location */}
+          <div
+            className={cn(
+              'absolute z-[4] flex justify-between',
+              isDesktop
+                ? 'inset-x-5 bottom-5 items-end gap-3'
+                : 'inset-x-4 bottom-4 items-end gap-3 sm:inset-x-5 sm:bottom-5 sm:gap-3'
+            )}
           >
             <div
-              className="absolute inset-0 animate-[portrait-shimmer_2.4s_ease-in-out_infinite] bg-[length:200%_100%]"
-              // eslint-disable-next-line no-restricted-syntax
-              style={{
-                backgroundImage:
-                  'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.04) 37%, rgba(56,189,248,0.06) 50%, rgba(255,255,255,0.04) 63%, transparent 75%)',
-              }}
-            />
-          </div>
-        )}
+              className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}
+            >
+              <span
+                className={cn(
+                  'block font-mono text-white/54 uppercase',
+                  isDesktop
+                    ? 'text-[9px] tracking-[0.26em]'
+                    : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
+                )}
+              >
+                Engineering Access
+              </span>
+              <span
+                className={cn(
+                  'mt-1 block font-mono text-white/82 uppercase',
+                  isDesktop
+                    ? 'truncate text-[10px] tracking-[0.18em]'
+                    : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
+                )}
+              >
+                Full-Stack · Java · Next.js 15
+              </span>
+            </div>
 
-        {/* Portrait image */}
-        {!portraitFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            ref={imgRef}
-            src={portraitSrc}
-            alt="Oscar Ndugbu — Staff+ Full-Stack Engineer, Lagos"
-            loading={imageLoading}
-            fetchPriority={imageFetchPriority}
-            decoding="async"
-            draggable={false}
-            onLoad={handleLoad}
-            onError={handleError}
-            className={cn(
-              'absolute inset-0 h-full w-full scale-[1.02] object-cover transition-opacity duration-500 ease-out',
-              portraitReady ? 'opacity-100' : 'opacity-0',
-              isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
-            )}
-            // FIX 11: backfaceVisibility removed — no purpose with flat transform-style
-          />
-        ) : (
-          <PortraitFallback isDesktop={isDesktop} />
-        )}
-
-        {/* Inner ring */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[3] rounded-[52px] ring-1 ring-white/10 ring-inset [clip-path:url(#squircle-id)]"
-        />
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-[10px] z-[3] rounded-[42px] border border-white/6"
-        />
-
-        {/* Top badge row: System ID + Staff+ pill */}
-        <div
-          className={cn(
-            'absolute z-[4] flex items-start justify-between',
-            isDesktop
-              ? 'inset-x-4 top-4 gap-3'
-              : 'inset-x-3.5 top-3.5 gap-2.5 sm:inset-x-4 sm:top-4 sm:gap-3'
-          )}
-        >
-          <div className="min-w-0">
             <span
               className={cn(
-                'block font-mono text-white/54 uppercase',
+                'shrink-0 font-mono text-white/60 uppercase',
                 isDesktop
-                  ? 'text-[9px] tracking-[0.28em]'
-                  : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.28em]'
+                  ? 'text-[9px] tracking-[0.22em]'
+                  : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
               )}
             >
-              System ID
-            </span>
-            <span
-              className={cn(
-                'mt-1 block truncate text-white/90 uppercase',
-                isDesktop
-                  ? 'text-[11px] tracking-[0.24em]'
-                  : 'text-[10px] tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]'
-              )}
-            >
-              Oscar Ndugbu
+              Lagos · UTC+1
             </span>
           </div>
-
-          <span
-            className={cn(
-              'shrink-0 rounded-full border border-emerald-400/18 bg-black/46 font-mono text-white/84 uppercase backdrop-blur-md',
-              isDesktop
-                ? 'px-2.5 py-1 text-[9px] tracking-[0.2em]'
-                : 'px-2 py-1 text-[8px] tracking-[0.18em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.2em]'
-            )}
-          >
-            <span
-              className="mr-1.5 inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
-              aria-hidden="true"
-            />
-            Staff+
-          </span>
         </div>
-
-        {/* Bottom badge row: Engineering Access + Location */}
-        <div
-          className={cn(
-            'absolute z-[4] flex justify-between',
-            isDesktop
-              ? 'inset-x-4 bottom-4 items-end gap-3'
-              : 'inset-x-3.5 bottom-3 items-end gap-2.5 sm:inset-x-4 sm:bottom-4 sm:gap-3'
-          )}
-        >
-          <div className={cn('min-w-0', isDesktop ? 'max-w-[70%]' : 'max-w-[64%] sm:max-w-[70%]')}>
-            <span
-              className={cn(
-                'block font-mono text-white/54 uppercase',
-                isDesktop
-                  ? 'text-[9px] tracking-[0.26em]'
-                  : 'text-[8px] tracking-[0.2em] sm:text-[9px] sm:tracking-[0.26em]'
-              )}
-            >
-              Engineering Access
-            </span>
-            <span
-              className={cn(
-                'mt-1 block font-mono text-white/82 uppercase',
-                isDesktop
-                  ? 'truncate text-[10px] tracking-[0.18em]'
-                  : 'text-[9px] leading-tight tracking-[0.14em] break-words whitespace-normal sm:text-[10px] sm:tracking-[0.18em]'
-              )}
-            >
-              Full-Stack · Java · Next.js 15
-            </span>
-          </div>
-
-          <span
-            className={cn(
-              'shrink-0 font-mono text-white/60 uppercase',
-              isDesktop
-                ? 'text-[9px] tracking-[0.22em]'
-                : 'text-[8px] tracking-[0.18em] sm:text-[9px] sm:tracking-[0.22em]'
-            )}
-          >
-            Lagos · UTC+1
-          </span>
-        </div>
-      </div>
       </m.figure>
     </>
   );
