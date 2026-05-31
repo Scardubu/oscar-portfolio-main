@@ -1,45 +1,86 @@
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
 //
-// CHANGELOG from v13.0 (surgical patch merge):
+// ─────────────────────────────────────────────────────────────────────────────
+// CHANGELOG v14.0 (final corrections, refinements, creative enhancements)
+// ─────────────────────────────────────────────────────────────────────────────
 //
-//   ADD: JetBrains_Mono — `--font-mono` CSS variable for code/terminal surfaces.
-//     Patch supplied this; absent from v12.0. Resolves the gap where code blocks
-//     and inline monospace fell back to system-ui mono (Courier New on Windows).
-//     Exposed via html className alongside --font-syne and --font-dm-sans so
-//     tailwind `font-mono` utility works immediately without config changes.
+//   FIX: `twitter.description` absent — added, parity-matched to og:description.
+//     LinkedIn unfurl, iMessage link preview, and Slack both read twitter:description
+//     as fallback when og:description is unavailable or truncated. This was the
+//     only OG-equivalent field missing from the twitter card across v1–v13.
 //
-//   ADD: `cn()` utility for body className — replaces raw string concatenation.
-//     Defensive against future conditional class additions (e.g. debug overlays,
-//     reduced-motion variants, OS-level font-smoothing overrides).
+//   FIX: SVG filter ID `noiseFilter` → `scar-grain-noise` — scoped to prevent
+//     collision with third-party component SVG filters injected at runtime (e.g.
+//     animation libraries, icon kits). Both `<filter id>` and `filter="url(#...)"
+//     updated in the same self-contained block.
+//     NOTE: `glass-refraction` deliberately left as-is — it is consumed by
+//     LiquidGlassRefractionSVG which cannot be patched here. Coordinated rename
+//     deferred: rename both this definition and the component's url(#...) reference
+//     to `scar-glass-refraction` in the same commit.
 //
-//   ADD: `maximumScale: 1` in viewport — prevents iOS auto-zoom on input focus
-//     which breaks the command palette UX on iPhones. minimumScale: 1 was
-//     already present; this closes the max-side gap.
+//   FIX: OG image `alt` upgraded from generic `'Oscar Ndugbu portfolio'` to a
+//     full descriptive string matching the Person schema jobTitle. Accessibility
+//     crawlers and screen-reader unfurl renderers use this as the image caption.
 //
-//   ADD: `authors` + `creator` to metadata — both fields are parsed by Google's
-//     rich-result extractor and by LinkedIn/Slack unfurl renderers. Omitting them
-//     degrades authorship attribution in search previews.
+//   FIX: `cn()` comment corrected — v13.0 comment claimed active dynamic behavior
+//     on a static string; now accurately documents the composition utility's
+//     present scope (single static class string) and its forward-use contract.
 //
-//   ADD: `locale: 'en_US'` in openGraph — OG locale signals the primary content
-//     language to Facebook/LinkedIn crawlers and social graph APIs. Without it
-//     some crawlers fall back to 'und' (undetermined), reducing distribution.
+//   REFACTOR: `<html>` className now uses `cn()` — replaces template-literal
+//     interpolation; consistent with the cn() adoption in the body className and
+//     resilient to future conditional font-variable additions (e.g. RTL locale
+//     switching, A/B font experiments).
 //
-//   REJECT: Inter → keep Syne + DM_Sans. Syne is a deliberate brand signal for
-//     a principal-level portfolio; Inter is the default AI-generated aesthetic.
+//   REFACTOR: JSON-LD consolidated from a single Person `<script>` into a unified
+//     `@graph` block (single `<script id="json-ld-schema">`). Two separate
+//     `@context` script tags is valid but suboptimal — `@graph` is the W3C/
+//     Google-recommended pattern for multi-entity pages; it lets the Knowledge
+//     Graph extractor resolve `@id` cross-references between Person and WebSite
+//     in one parse pass rather than two, and eliminates duplicate `@context`
+//     overhead in the HTML payload.
 //
-//   REJECT: Naive body className replacement. Existing `relative`, `min-h-[100dvh]`,
-//     and `overflow-x-clip` are load-bearing: relative is positioning context for
-//     the fixed noise overlay; 100dvh accounts for mobile browser chrome; clip
-//     (not hidden) prevents horizontal scroll without blocking scroll events.
+//   ADD: `@id` anchor on Person — `https://www.scardubu.dev/#person`. Without
+//     an @id, Google cannot link this entity to co-references on other pages
+//     (e.g. blog posts, press mentions). The anchor is the stable identifier.
 //
-//   REJECT: Stripping Providers, Analytics, JSON-LD, noise overlay, skip-nav,
-//     glass refraction, and command palette. These are production infrastructure,
-//     not boilerplate.
+//   ADD: `mainEntityOfPage` on Person — signals this URL as the canonical web
+//     presence for the entity. Required for Google to emit a Knowledge Panel
+//     sitelink pointing to the portfolio.
 //
-//   KEEP: LazyMotion + domAnimation in MotionProvider (providers.tsx).
-//     useScroll / useTransform are hooks, domMax is not needed.
+//   ADD: `image` on Person — Google uses this for Knowledge Panel profile photo.
+//     Currently points to /api/og (1200×630 banner) as a fallback. Replace with
+//     a dedicated 400×400 headshot endpoint when available; aspect ratio matters
+//     for the circular crop in search cards.
 //
+//   ADD: `worksFor` on Person — disambiguates employment status in structured
+//     data; important for recruiter-facing rich results that display company
+//     affiliation. Without it the field is empty in some crawlers' person cards.
+//
+//   ADD: `'Systems Architecture'` + `'Distributed Systems'` to `knowsAbout` —
+//     v13.0 added `'Systems Architect'` to metadata keywords but the corresponding
+//     structured-data field was not updated. This closes that content/schema drift.
+//
+//   ADD: WebSite schema in `@graph` — `@type: 'WebSite'` with `@id` anchor,
+//     `inLanguage`, `copyrightYear`, `alternateName`. Cross-references Person via
+//     `@id` in `author` and `copyrightHolder`. Enables Google Sitelinks eligibility.
+//
+//   ENHANCE: Command palette script now dispatches `CustomEvent('command-palette:open')`
+//     alongside the existing global flag. React components can subscribe via
+//     `document.addEventListener('command-palette:open', handler)` instead of
+//     polling `window.__commandPaletteRequested` at mount time, which is racy if
+//     the keydown fires between module evaluation and the first useEffect run.
+//     The global flag is kept for backward compatibility with existing consumers.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// KEEP (unchanged from v13.0):
+//   LazyMotion + domAnimation in MotionProvider (providers.tsx).
+//   JetBrains_Mono + --font-mono variable.
+//   maximumScale: 1 in viewport.
+//   authors + creator in metadata.
+//   locale: 'en_US' in openGraph.
+//   Syne + DM_Sans — deliberate brand fonts, not Inter.
+// ─────────────────────────────────────────────────────────────────────────────
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
@@ -52,7 +93,6 @@ import CursorGlow from '@/components/CursorGlow';
 import { DeferredCommandPalette } from '@/components/DeferredCommandPalette';
 import { Footer } from '@/components/Footer';
 import { PageWrapper } from '@/components/PageWrapper';
-
 import Navbar from '@/components/Navbar';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
@@ -77,13 +117,14 @@ const dmSans = DM_Sans({
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
 });
 
-// v13.0: Added — explicit mono font for code/terminal surfaces.
+// v13.0: Explicit mono font for code/terminal surfaces.
 // Resolves system-mono fallback regression on Windows (Courier New).
+// preload: false — non-critical path, loads after Syne + DM_Sans.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
-  preload: false, // non-critical path — load after Syne + DM_Sans
+  preload: false,
   fallback: ['Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', 'monospace'],
 });
 
@@ -98,12 +139,12 @@ export const metadata: Metadata = {
     default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
     template: '%s · Oscar Ndugbu',
   },
-  // CE spec §P3-G: ≤160 chars, outcome-focused (this is 155 chars)
+  // CE spec §P3-G: ≤160 chars, outcome-focused (155 chars)
   description:
     'Staff+ Full-Stack Engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference + zero-drop queues. SwarmXQ: self-improving agents. Systems that hold at 2am.',
   metadataBase: new URL('https://www.scardubu.dev'),
-  // v13.0: Added authors + creator — parsed by Google rich-result extractor
-  // and LinkedIn/Slack unfurl renderers for authorship attribution.
+  // v13.0: authors + creator — parsed by Google rich-result extractor and
+  // LinkedIn/Slack unfurl renderers for authorship attribution.
   authors: [{ name: 'Oscar Ndugbu', url: 'https://www.scardubu.dev' }],
   creator: 'Oscar Ndugbu',
   keywords: [
@@ -145,8 +186,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: 'website',
-    // v13.0: Added locale — signals primary content language to FB/LinkedIn
-    // crawlers; without it some crawlers fall back to 'und' (undetermined).
+    // v13.0: locale — without it some crawlers emit og:locale="und" (undetermined).
     locale: 'en_US',
     url: 'https://www.scardubu.dev',
     siteName: 'Oscar Ndugbu',
@@ -154,12 +194,26 @@ export const metadata: Metadata = {
     // CE spec §P3-G og:description exact wording
     description:
       'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Oscar Ndugbu portfolio' }],
+    // v14.0: alt upgraded — accessibility crawlers and screen-reader unfurls
+    // use this as the image caption; generic 'portfolio' is insufficient.
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Oscar Ndugbu — Principal Full-Stack Engineer, AI Infrastructure & Fintech Systems',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
+    // v14.0: description added — was the only OG-parity field absent from the
+    // twitter card; LinkedIn unfurl and iMessage both read twitter:description.
+    description:
+      'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
     images: ['/api/og'],
+    // creator: '@scardubu', // add once X/Twitter handle is confirmed
   },
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://www.scardubu.dev' },
@@ -175,66 +229,124 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
-  // v13.0: Added maximumScale — prevents iOS auto-zoom on input focus,
-  // which breaks command palette UX on iPhones.
+  // v13.0: maximumScale — prevents iOS auto-zoom on input focus,
+  // which snaps the layout and breaks command palette UX on iPhones.
   maximumScale: 1,
   viewportFit: 'cover',
   themeColor: '#000000',
   colorScheme: 'dark',
 };
 
-// ── Schema.org Person — location-explicit for accurate rich-result extraction ──
-const personJsonLd = {
+// ── Schema.org @graph ─────────────────────────────────────────────────────────
+// v14.0: Consolidated Person + WebSite into a single @graph block.
+// @graph is the W3C/Google-recommended pattern for multi-entity structured data.
+// @id anchors allow the Knowledge Graph extractor to resolve cross-references
+// between entities in a single parse pass (vs two separate @context blocks).
+//
+// NOTE: Replace `image.url` with a dedicated 400×400 headshot endpoint when
+// available — the OG banner (1200×630) is a functional fallback but Google's
+// Knowledge Panel crops profile images to a circle; aspect ratio matters.
+// ─────────────────────────────────────────────────────────────────────────────
+const schemaGraph = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Oscar Ndugbu',
-  url: 'https://www.scardubu.dev',
-  jobTitle: 'Principal Full-Stack Engineer',
-  description:
-    'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, SwarmXQ.',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Lagos',
-    addressCountry: 'NG',
-  },
-  knowsAbout: [
-    'Next.js',
-    'React Native',
-    'Expo',
-    'TypeScript',
-    'Java',
-    'AI Agent Orchestration',
-    'LLM Routing',
-    'SwarmXQ',
-    'Spring Boot',
-    'FastAPI',
-    'Python',
-    'Effect-TS',
-    'Turborepo',
-    'PostgreSQL',
-    'Redis',
-    'Machine Learning',
-    'Fintech',
-    'SRE',
-    'AI Infrastructure',
-  ],
-  alumniOf: [
+  '@graph': [
     {
-      '@type': 'Organization',
-      name: 'Universal Basic Education Commission (UBEC)',
-      url: 'https://ubec.gov.ng',
+      '@type': 'Person',
+      '@id': 'https://www.scardubu.dev/#person',
+      name: 'Oscar Ndugbu',
+      url: 'https://www.scardubu.dev',
+      jobTitle: 'Principal Full-Stack Engineer',
+      description:
+        'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, SwarmXQ.',
+      // v14.0: mainEntityOfPage — signals this URL as the canonical web presence
+      // for the Person entity; required for Google to emit a Knowledge Panel sitelink.
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': 'https://www.scardubu.dev',
+      },
+      // v14.0: image — used by Google for Knowledge Panel profile photo.
+      // Replace with headshot URL (400×400, square crop) when available.
+      image: {
+        '@type': 'ImageObject',
+        url: 'https://www.scardubu.dev/api/og',
+        width: 1200,
+        height: 630,
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Lagos',
+        addressCountry: 'NG',
+      },
+      // v14.0: worksFor — disambiguates employment status in recruiter-facing
+      // rich results; without it the field is empty in some crawlers' person cards.
+      worksFor: {
+        '@type': 'Organization',
+        name: 'Independent Engineering & Consulting',
+      },
+      // v14.0: Added 'Systems Architecture' + 'Distributed Systems' —
+      // aligns with v13.0 keyword additions; closes the keyword/schema drift.
+      knowsAbout: [
+        'Next.js',
+        'React Native',
+        'Expo',
+        'TypeScript',
+        'Java',
+        'AI Agent Orchestration',
+        'LLM Routing',
+        'SwarmXQ',
+        'Spring Boot',
+        'FastAPI',
+        'Python',
+        'Effect-TS',
+        'Turborepo',
+        'PostgreSQL',
+        'Redis',
+        'Machine Learning',
+        'Fintech',
+        'SRE',
+        'AI Infrastructure',
+        'Systems Architecture',
+        'Distributed Systems',
+      ],
+      alumniOf: [
+        {
+          '@type': 'Organization',
+          name: 'Universal Basic Education Commission (UBEC)',
+          url: 'https://ubec.gov.ng',
+        },
+      ],
+      sameAs: [
+        'https://github.com/Scardubu',
+        'https://linkedin.com/in/oscardubu',
+        'https://www.scardubu.dev',
+      ],
+    },
+    {
+      // v14.0: WebSite entity — enables Google Sitelinks eligibility.
+      // Cross-references Person via @id so Google resolves authorship in one pass.
+      '@type': 'WebSite',
+      '@id': 'https://www.scardubu.dev/#website',
+      name: 'Oscar Ndugbu',
+      alternateName: 'scardubu.dev',
+      url: 'https://www.scardubu.dev',
+      description:
+        'Portfolio and operational registry for Oscar Ndugbu — principal full-stack engineer specialising in AI infrastructure, fintech systems, and React Native.',
+      inLanguage: 'en-US',
+      author: { '@id': 'https://www.scardubu.dev/#person' },
+      copyrightHolder: { '@id': 'https://www.scardubu.dev/#person' },
+      copyrightYear: new Date().getFullYear(),
     },
   ],
-  sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu'],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // v13.0: Added jetbrainsMono.variable — exposes --font-mono to Tailwind
-    // and all downstream code/terminal surfaces.
+    // v14.0: cn() replaces template-literal interpolation — consistent with
+    // the cn() adoption on body, and resilient to future conditional font-variable
+    // additions (e.g. RTL locale switching, A/B font experiments).
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      className={cn(syne.variable, dmSans.variable, jetbrainsMono.variable)}
       suppressHydrationWarning
     >
       <head>
@@ -242,7 +354,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {/*
           ── Command palette: intercept Cmd+K before React hydrates ─────────
-          This runs synchronously inline to capture early keydown events.
+          Runs synchronously inline to capture early keydown events.
+
+          v14.0: Also dispatches CustomEvent('command-palette:open') alongside
+          the global flag. React components can now subscribe via addEventListener
+          instead of polling window.__commandPaletteRequested at mount time —
+          the polling pattern is racy if the keydown fires between module
+          evaluation and the first useEffect run.
+          The global flag is preserved for backward compatibility.
         */}
         <script
           dangerouslySetInnerHTML={{
@@ -252,32 +371,45 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
                   event.preventDefault();
                   window.__commandPaletteRequested = true;
+                  document.dispatchEvent(
+                    new CustomEvent('command-palette:open', { bubbles: true })
+                  );
                 }
               }, { capture: true });
             })();`,
           }}
         />
 
-        {/* ── Structured data ─────────────────────────────────────────── */}
+        {/*
+          ── Structured data (@graph) ─────────────────────────────────────────
+          v14.0: Single @graph block replaces the previous single-entity script.
+          Contains Person (#person) + WebSite (#website) with @id cross-references.
+        */}
         <script
-          id="json-ld-person"
+          id="json-ld-schema"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
         />
       </head>
       {/*
-        v13.0: cn() replaces raw string — antialiased added for sub-pixel
-        font rendering. `relative` + `min-h-[100dvh]` + `overflow-x-clip`
-        are load-bearing; see CHANGELOG above for rationale on each.
+        cn() wraps a static string here — zero dynamic behavior currently.
+        Its value is compositional: any future conditional class (reduced-motion
+        override, debug-layout flag, OS font-smoothing variant) slots in cleanly
+        without converting a string to a cn() call under pressure.
       */}
       <body className={cn('relative min-h-[100dvh] overflow-x-clip antialiased')}>
-        {/* ── Cinematic grain noise overlay — pure-black premium base ────
+        {/*
+          ── Cinematic grain noise overlay — pure-black premium base ──────────
           SVG fractalNoise at 0.03 opacity. pointer-events-none + fixed so it
           sits behind every layer (z-0). Paired with tailwind.config `background:
-          #000000` override to eliminate any gray base-color residue.           */}
+          #000000` override to eliminate any gray base-color residue.
+
+          v14.0: filter ID scoped to `scar-grain-noise` — prevents collision with
+          third-party SVG filters injected at runtime (animation libs, icon kits).
+        */}
         <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]" aria-hidden="true">
           <svg className="absolute h-full w-full" xmlns="http://www.w3.org/2000/svg">
-            <filter id="noiseFilter">
+            <filter id="scar-grain-noise">
               <feTurbulence
                 type="fractalNoise"
                 baseFrequency="0.8"
@@ -285,7 +417,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 stitchTiles="stitch"
               />
             </filter>
-            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+            <rect width="100%" height="100%" filter="url(#scar-grain-noise)" />
           </svg>
         </div>
 
@@ -294,9 +426,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
 
-        {/* ── SVG Glass Refraction filter ────────────────────────────────
+        {/*
+          ── SVG Glass Refraction filter ────────────────────────────────────
           Inline SVG filter used by LiquidGlassRefractionSVG component.
           Zero layout impact — display:none SVG with filter defs only.
+
+          NOTE (v14.0): `glass-refraction` ID intentionally not renamed here —
+          LiquidGlassRefractionSVG references url(#glass-refraction) and cannot
+          be patched in this file alone. Coordinated rename to `scar-glass-refraction`
+          must update both this definition and that component's url() reference
+          in the same commit.
         */}
         <svg width="0" height="0" aria-hidden="true" className="absolute">
           <defs>
