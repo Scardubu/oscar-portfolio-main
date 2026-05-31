@@ -29,17 +29,17 @@ import { cardReveal } from '@/lib/motionVariants';
 
 // ── System status ────────────────────────────────────────────────────────────
 const SYSTEMS = [
-  { name: 'sabiscore', uptime: 99.94, uptimeStr: '99.94%', healthy: true },
-  { name: 'taxbridge', uptime: 99.91, uptimeStr: '99.91%', healthy: true },
-  { name: 'swarmxq',  uptime: 99.82, uptimeStr: '99.82%', healthy: true },
+  { name: 'sabiscore', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
+  { name: 'taxbridge', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
+  { name: 'swarmxq', uptime: 100, uptimeStr: 'ACTIVE', healthy: true },
 ] as const;
 
 // ── API latency bars ─────────────────────────────────────────────────────────
 const LATENCY_BARS = [
-  { label: 'inference',  ms: 48,  maxMs: 200 },
-  { label: 'tax calc',   ms: 87,  maxMs: 200 },
+  { label: 'inference', ms: 48, maxMs: 200 },
+  { label: 'tax calc', ms: 87, maxMs: 200 },
   { label: 'filing job', ms: 124, maxMs: 200 },
-  { label: 'agent route',ms: 31,  maxMs: 200 },
+  { label: 'agent route', ms: 31, maxMs: 200 },
 ] as const;
 
 // ── Sparkline: 7-day normalised latency trend (0–1) ──────────────────────────
@@ -75,18 +75,15 @@ const RECENT_DEPLOYS = [
 
 // ── Triadic model routing ────────────────────────────────────────────────────
 const MODEL_ROUTES = [
-  { id: 'phi4',     label: 'phi4\u2011fast',  task: 'Reasoning', color: 'var(--color-film-teal)' },
-  { id: 'deepseek', label: 'deepseek\u2011r1', task: 'Planning',  color: 'var(--color-accent)' },
-  { id: 'qwen',     label: 'qwen\u2011worker', task: 'Execution', color: 'var(--color-film-amber)' },
+  { id: 'phi4', label: 'phi4\u2011fast', task: 'Reasoning', color: 'var(--color-film-teal)' },
+  { id: 'deepseek', label: 'deepseek\u2011r1', task: 'Planning', color: 'var(--color-accent)' },
+  { id: 'qwen', label: 'qwen\u2011worker', task: 'Execution', color: 'var(--color-film-amber)' },
 ] as const;
 
 // ────────────────────────────────────────────────────────────────────────────
 // UptimeRing — circular SVG progress arc
 // ────────────────────────────────────────────────────────────────────────────
-function UptimeRing({
-  uptime,
-  healthy,
-}: Readonly<{ uptime: number; healthy: boolean }>) {
+function UptimeRing({ uptime, healthy }: Readonly<{ uptime: number; healthy: boolean }>) {
   const r = 9;
   const circ = 2 * Math.PI * r;
   const pct = Math.min(Math.max(uptime, 0), 100);
@@ -95,22 +92,9 @@ function UptimeRing({
   const color = healthy ? 'var(--color-success)' : 'var(--color-danger)';
 
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
-      aria-hidden="true"
-      className="shrink-0"
-    >
+    <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true" className="shrink-0">
       {/* Track */}
-      <circle
-        cx="11"
-        cy="11"
-        r={r}
-        fill="none"
-        stroke="oklch(100% 0 0 / 0.07)"
-        strokeWidth="2"
-      />
+      <circle cx="11" cy="11" r={r} fill="none" stroke="oklch(100% 0 0 / 0.07)" strokeWidth="2" />
       {/* Fill arc */}
       <circle
         cx="11"
@@ -187,11 +171,7 @@ function LatencyBar({
 }>) {
   const pct = (ms / maxMs) * 100;
   const color =
-    ms < 60
-      ? 'var(--color-success)'
-      : ms < 120
-        ? 'var(--color-cyan)'
-        : 'var(--color-accent)';
+    ms < 60 ? 'var(--color-success)' : ms < 120 ? 'var(--color-cyan)' : 'var(--color-accent)';
   const gradientColor =
     ms < 60
       ? 'oklch(65% 0.18 155 / 0.35)'
@@ -216,9 +196,7 @@ function LatencyBar({
           initial={{ scaleX: 0 }}
           animate={{ scaleX: reducedMotion ? 1 : pct / 100 }}
           transition={
-            reducedMotion
-              ? { duration: 0 }
-              : { type: 'spring', stiffness: 80, damping: 18, delay }
+            reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 80, damping: 18, delay }
           }
           // eslint-disable-next-line no-restricted-syntax
           style={{
@@ -230,7 +208,7 @@ function LatencyBar({
         />
       </div>
 
-      <span className="hero-latency-value w-[44px] shrink-0 text-right font-mono text-[10px] tabular-nums text-[oklch(93%_0.006_264_/_0.42)]">
+      <span className="hero-latency-value w-[44px] shrink-0 text-right font-mono text-[10px] text-[oklch(93%_0.006_264_/_0.42)] tabular-nums">
         {ms}ms
       </span>
     </div>
@@ -366,7 +344,7 @@ function ModelRouteFlow() {
         {/* Connector */}
         <div className="relative flex-1" aria-hidden="true">
           <div className="h-px bg-[oklch(100%_0_0_/_0.1)]" />
-          <span className="absolute -right-0.5 -top-[5px] font-mono text-[8px] text-[oklch(93%_0.006_264_/_0.2)]">
+          <span className="absolute -top-[5px] -right-0.5 font-mono text-[8px] text-[oklch(93%_0.006_264_/_0.2)]">
             ▶
           </span>
         </div>
@@ -400,9 +378,7 @@ function ModelRouteFlow() {
 // ────────────────────────────────────────────────────────────────────────────
 // DeployRow — enhanced with SHA badge + branch chip
 // ────────────────────────────────────────────────────────────────────────────
-function DeployRow({
-  deploy,
-}: Readonly<{ deploy: (typeof RECENT_DEPLOYS)[number] }>) {
+function DeployRow({ deploy }: Readonly<{ deploy: (typeof RECENT_DEPLOYS)[number] }>) {
   const okColor = deploy.ok ? 'var(--color-success)' : 'var(--color-danger)';
 
   return (
@@ -431,7 +407,7 @@ function DeployRow({
       <div className="min-w-0 flex-1">
         {/* SHA + branch row */}
         <div className="mb-1 flex items-center gap-1.5">
-          <span className="shrink-0 rounded border border-[oklch(100%_0_0_/_0.08)] bg-[oklch(100%_0_0_/_0.04)] px-1.5 py-px font-mono text-[9px] tabular-nums text-[oklch(93%_0.006_264_/_0.38)]">
+          <span className="shrink-0 rounded border border-[oklch(100%_0_0_/_0.08)] bg-[oklch(100%_0_0_/_0.04)] px-1.5 py-px font-mono text-[9px] text-[oklch(93%_0.006_264_/_0.38)] tabular-nums">
             {deploy.sha}
           </span>
           <span
@@ -461,11 +437,11 @@ function DeployRow({
 
       {/* Time + perf column */}
       <div className="flex shrink-0 flex-col items-end gap-1">
-        <span className="whitespace-nowrap font-mono text-[9px] tabular-nums text-[oklch(93%_0.006_264_/_0.28)]">
+        <span className="font-mono text-[9px] whitespace-nowrap text-[oklch(93%_0.006_264_/_0.28)] tabular-nums">
           {deploy.time}
         </span>
         {deploy.perf && (
-          <span className="shrink-0 rounded border border-[oklch(65%_0.18_155_/_0.2)] bg-[oklch(65%_0.18_155_/_0.1)] px-1.5 py-0.5 font-mono text-[9px] tabular-nums text-[var(--color-success)]">
+          <span className="shrink-0 rounded border border-[oklch(65%_0.18_155_/_0.2)] bg-[oklch(65%_0.18_155_/_0.1)] px-1.5 py-0.5 font-mono text-[9px] text-[var(--color-success)] tabular-nums">
             {deploy.perf}
           </span>
         )}
@@ -496,16 +472,16 @@ export function HeroVisual() {
         className="hero-visual-panel glass-medium overflow-hidden rounded-[var(--radius-xl)]"
       >
         <div className="hero-panel-head flex items-center justify-between border-b border-[oklch(100%_0_0_/_0.06)] px-4 py-3">
-          <span className="hero-panel-title label-mono">System Status · 90-day Prometheus</span>
+          <span className="hero-panel-title label-mono">
+            System Health · High-Availability Architecture
+          </span>
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
               <span className="dot-live" aria-hidden="true" />
               <span className="label-mono text-color-success">All nominal</span>
             </div>
-            <span
-              className="rounded-full border border-[oklch(100%_0_0_/_0.06)] bg-[oklch(100%_0_0_/_0.04)] px-1.5 py-0.5 font-mono text-[9px] tabular-nums text-[oklch(93%_0.006_264_/_0.3)]"
-            >
+            <span className="rounded-full border border-[oklch(100%_0_0_/_0.06)] bg-[oklch(100%_0_0_/_0.04)] px-1.5 py-0.5 font-mono text-[9px] text-[oklch(93%_0.006_264_/_0.3)] tabular-nums">
               0 incidents / 24h
             </span>
           </div>
@@ -579,15 +555,12 @@ export function HeroVisual() {
             </div>
           </div>
 
-          <div className="arch-because-cell border-t border-[oklch(100%_0_0_/_0.05)] pl-3 pt-2">
-            <div
-              className="label-mono mb-1 text-[var(--color-accent)]"
-              data-label="BECAUSE"
-            >
+          <div className="arch-because-cell border-t border-[oklch(100%_0_0_/_0.05)] pt-2 pl-3">
+            <div className="label-mono mb-1 text-[var(--color-accent)]" data-label="BECAUSE">
               BECAUSE
             </div>
             <div
-              className="text-[12px] font-medium leading-6 text-[oklch(93%_0.006_264_/_0.82)]"
+              className="text-[12px] leading-6 font-medium text-[oklch(93%_0.006_264_/_0.82)]"
               data-label="BECAUSE"
             >
               Specialist small models routed by task class beat one large model on latency, cost,
