@@ -49,13 +49,34 @@ const navbarVariants = {
 };
 
 const mobileMenuVariants = {
-  hidden: { opacity: 0, y: -12, transition: { duration: 0.18 } },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.24, staggerChildren: 0.04 } },
+  hidden: {
+    opacity: 0,
+    y: -8,
+    transition: {
+      duration: 0.16,
+      ease: [0.16, 1, 0.3, 1],
+      // Children exit in reverse order, finishing before the panel fades
+      staggerChildren: 0.03,
+      staggerDirection: -1,
+      when: 'afterChildren',
+    },
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.22,
+      ease: [0.16, 1, 0.3, 1],
+      staggerChildren: 0.04,
+      delayChildren: 0.04,
+      when: 'beforeChildren',
+    },
+  },
 };
 
 const mobileItemVariants = {
-  hidden: { opacity: 0, x: -12 },
-  visible: { opacity: 1, x: 0 },
+  hidden: { opacity: 0, x: -10, transition: { duration: 0.1 } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] } },
 };
 
 function getActiveIdFromChapter(activeChapter: string) {
@@ -258,10 +279,7 @@ export default function Navbar() {
             className="nav-availability-cta hidden lg:inline-flex"
             aria-label="Contact Oscar — available for Staff+ roles and consulting"
           >
-            <span
-              className="nav-availability-dot"
-              aria-hidden="true"
-            />
+            <span className="nav-availability-dot" aria-hidden="true" />
             Available
           </a>
 
@@ -274,35 +292,51 @@ export default function Navbar() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {mobileOpen ? (
-                <m.span
-                  key="close"
-                  initial={{ rotate: -45, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 45, opacity: 0 }}
-                  transition={{ duration: 0.14 }}
-                >
-                  <X className="h-5 w-5" />
-                </m.span>
-              ) : (
-                <m.span
-                  key="open"
-                  initial={{ rotate: 45, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -45, opacity: 0 }}
-                  transition={{ duration: 0.14 }}
-                >
-                  <Menu className="h-5 w-5" />
-                </m.span>
-              )}
-            </AnimatePresence>
+            {/*
+              FLICKER FIX v2026.21:
+              Replaced `AnimatePresence mode="wait"` (sequential exit → enter) with a
+              dual-overlay pattern. Both icons live in the DOM simultaneously — their
+              opacity and rotation animate in PARALLEL so there is never a frame where
+              neither icon is visible. Eliminates the ~140ms empty-button flash that
+              appeared on iOS when tapping the hamburger, and makes the interaction
+              immune to parent re-renders triggered by useScrollCinema / useAnimationFrame.
+            */}
+            <span className="relative flex h-5 w-5 items-center justify-center">
+              {/* Hamburger — fades + rotates out when menu opens */}
+              <m.span
+                className="absolute flex items-center justify-center"
+                initial={false}
+                animate={{
+                  opacity: mobileOpen ? 0 : 1,
+                  rotate: mobileOpen ? -90 : 0,
+                  scale: mobileOpen ? 0.5 : 1,
+                }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                aria-hidden="true"
+              >
+                <Menu className="h-5 w-5" />
+              </m.span>
+              {/* Close — fades + rotates in when menu opens */}
+              <m.span
+                className="absolute flex items-center justify-center"
+                initial={false}
+                animate={{
+                  opacity: mobileOpen ? 1 : 0,
+                  rotate: mobileOpen ? 0 : 90,
+                  scale: mobileOpen ? 1 : 0.5,
+                }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                aria-hidden="true"
+              >
+                <X className="h-5 w-5" />
+              </m.span>
+            </span>
           </button>
         </div>
       </m.header>
 
       {/* ── Mobile menu ─────────────────────────────────────────────────── */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {mobileOpen && (
           <m.div
             id="mobile-navigation"
