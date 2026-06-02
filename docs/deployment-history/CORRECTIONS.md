@@ -2,6 +2,26 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-06-02 — Scroll-engine hardening + availability surface integration pass
+
+- Hardened `components/cinematic/ScrollCinemaProvider.tsx` so coarse-pointer devices and reduced-motion sessions now bypass Lenis entirely, fall back to the native scroll engine on boot, and still preserve cinematic chapter tracking through the existing native scroll progress path.
+- Added GSAP ticker lag smoothing in `components/cinematic/ScrollCinemaProvider.tsx` to guard against large accumulated frame deltas after browser background/foreground transitions, reducing the risk of stuck mid-scroll positions on mobile browsers.
+- Tightened availability-surface semantics across `components/Navbar.tsx`, `components/HeroSection.tsx`, and `components/AboutSection.tsx`:
+  - Hero and About now expose explicit availability test hooks.
+  - The About chip now uses the canonical `HERO.availability` string instead of a stale hardcoded variant.
+  - The desktop navbar CTA keeps its compact visual copy but now exposes an action-focused accessibility label, preventing it from colliding with status-surface selectors.
+- Improved mobile menu accessibility in `components/Navbar.tsx` by expanding the toggle label from generic “Open menu” / “Close menu” wording to explicit “Open navigation menu” / “Close navigation menu”.
+- Refreshed Playwright coverage to target current UI contracts in `e2e/smoke.spec.ts`, `tests/e2e/smoke.spec.ts`, and `tests/portfolio.spec.ts`, replacing stale assumptions about generic availability selectors, legacy kicker DOM structure, class-based fixed-nav checks, old skills-filter controls, and retired live-activity fallback copy.
+
+Validation after the June 2 integration pass:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run lint` passed with zero lint errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --project=mobile-chrome --workers=1` passed with 35 tests passed and 5 expected skips.
+- `pnpm exec playwright test tests/e2e/smoke.spec.ts --project=chromium --project=mobile-chrome --workers=1` passed with 8 tests passed and 2 expected skips.
+- `pnpm exec playwright test tests/portfolio.spec.ts --project=chromium --workers=1` passed with 64 tests passed and 1 expected skip.
+
 ## 2026-05-26 — Navbar + chapter rail harmonization and Lighthouse-focused perf pass
 
 - Tightened the global chrome to match the upgraded hero by refactoring `components/Navbar.tsx` and `components/ScrollProgress.tsx` to use dedicated visual-system classes (hero-nav shell, active nav background states, mobile nav panel/item states, chapter rail shell/dot/tooltip states) instead of scattered inline styles.

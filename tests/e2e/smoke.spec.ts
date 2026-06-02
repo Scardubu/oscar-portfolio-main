@@ -14,9 +14,7 @@ test('hero is visible above the fold', async ({ page }) => {
       name: /The system has to work at 2am/i,
     })
   ).toBeVisible();
-  await expect(page.locator('[aria-label*="available for Staff"]').first()).toContainText(
-    /Updated \w+ \d{4}/
-  );
+  await expect(page.getByTestId('hero-availability-pill')).toContainText(/Updated \w+ \d{4}/);
 });
 
 test('mobile viewport has no horizontal overflow', async ({ page, browserName }) => {

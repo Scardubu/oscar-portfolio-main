@@ -204,6 +204,7 @@ export function ScrollCinemaStaticProvider({ children }: Readonly<{ children: Re
 
 export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [activeChapter, setActiveChapterState] = useState<ChapterId>('prologue');
 
   const activeChapterRef = useRef<ChapterId>('prologue');
@@ -343,17 +344,25 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const pointerMedia = window.matchMedia('(pointer: fine)');
+    const pointerFineMedia = window.matchMedia('(pointer: fine)');
+    const pointerCoarseMedia = window.matchMedia('(pointer: coarse)');
 
     const syncPointer = () => {
-      document.documentElement.dataset.pointerFine = pointerMedia.matches ? 'true' : 'false';
+      const isFinePointer = pointerFineMedia.matches;
+      const isCoarsePointer = pointerCoarseMedia.matches;
+
+      setIsTouchDevice(isCoarsePointer);
+      document.documentElement.dataset.pointerFine = isFinePointer ? 'true' : 'false';
+      document.documentElement.dataset.pointerCoarse = isCoarsePointer ? 'true' : 'false';
     };
 
     syncPointer();
-    pointerMedia.addEventListener('change', syncPointer);
+    pointerFineMedia.addEventListener('change', syncPointer);
+    pointerCoarseMedia.addEventListener('change', syncPointer);
 
     return () => {
-      pointerMedia.removeEventListener('change', syncPointer);
+      pointerFineMedia.removeEventListener('change', syncPointer);
+      pointerCoarseMedia.removeEventListener('change', syncPointer);
     };
   }, []);
 
@@ -386,6 +395,9 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       }
     }
 
+    // Guard against large accumulated frame deltas after tab background/foreground.
+    gsap.ticker.lagSmoothing(500, 33);
+
     const safeRefresh = (force = false) => {
       try {
         ScrollTrigger.refresh(force);
@@ -416,7 +428,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
-    if (reducedMotion) {
+    if (reducedMotion || isTouchDevice) {
       if (lenisRef.current) {
         try {
           lenisRef.current.destroy();
@@ -500,8 +512,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
           // elements with 1px rounding from sub-pixel layout calculations.
           const style = getComputedStyle(node);
           const hasHorizontalScroll =
-            node.scrollWidth > node.clientWidth + 4 &&
-            ['auto', 'scroll'].includes(style.overflowX);
+            node.scrollWidth > node.clientWidth + 4 && ['auto', 'scroll'].includes(style.overflowX);
 
           return hasHorizontalScroll;
         },
@@ -662,7 +673,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       if (refreshTimer !== null) clearTimeout(refreshTimer);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [reducedMotion, syncNativeScrollProgress, syncScrollState, warnDev]);
+  }, [isTouchDevice, reducedMotion, syncNativeScrollProgress, syncScrollState, warnDev]);
 
   const value = useMemo<ScrollCinemaContextValue>(
     () => ({

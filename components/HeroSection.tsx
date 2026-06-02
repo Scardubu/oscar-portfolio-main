@@ -376,7 +376,7 @@ function ProofCarousel({ reducedMotion }: { reducedMotion: boolean }) {
             tabIndex={i === activeIndex ? 0 : -1}
             aria-label={`Go to ${col.label}`}
             onClick={() => scrollToIndex(i)}
-            className={`carousel-dot${i === activeIndex ? ' active' : ''}`}
+            className={`carousel-dot${i === activeIndex ? 'active' : ''}`}
           />
         ))}
       </div>
@@ -716,6 +716,7 @@ export function HeroSection() {
               <m.div variants={child} data-cinematic="panel">
                 <div
                   className="hero-availability-pill inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2"
+                  data-testid="hero-availability-pill"
                   aria-label="Currently available for Staff+ roles"
                 >
                   <span className="dot-live" aria-hidden="true" />
@@ -732,7 +733,7 @@ export function HeroSection() {
               <m.p
                 variants={child}
                 data-cinematic="eyebrow"
-                className="hero-kicker mt-4 max-w-[42ch] font-mono text-[11px] font-semibold leading-relaxed tracking-[0.14em] text-white/90 uppercase"
+                className="hero-kicker mt-4 max-w-[42ch] font-mono text-[11px] leading-relaxed font-semibold tracking-[0.14em] text-white/90 uppercase"
               >
                 {HERO.kicker}
               </m.p>

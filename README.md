@@ -14,12 +14,12 @@ A proof system, not a brag sheet. Four production case studies, four open-source
 
 ## Current release status
 
-As of 2026-05-26, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run build`, and the primary Playwright smoke suite on both `chromium` and `mobile-chrome` after the mobile hero recovery and final integration cleanup pass.
+As of 2026-06-02, the homepage production surface has passed a fresh `pnpm run type-check`, `pnpm run lint`, `pnpm run build`, the primary Playwright smoke suite on both `chromium` and `mobile-chrome`, the secondary smoke suite on both `chromium` and `mobile-chrome`, and the broader `tests/portfolio.spec.ts` regression suite on `chromium`.
 
-- The mobile luxury identity card now renders reliably from `/public/headshot.webp`, keeps its telemetry badge inside the portrait frame on 320px-768px layouts, and no longer crops the hero headline beneath it.
-- Hero gesture behavior has been normalized so swipes starting over the proof carousel no longer trap vertical page scroll on mobile while preserving the horizontal carousel interaction.
-- Writing-route progress surfaces continue to share the centralized Lenis-aware scroll source, and the remaining `useLenisScroll` dependency warning has been removed by simplifying the hook subscription model.
-- The live activity row keeps its existing motion and semantics but now uses a valid truncation utility, tightening the shipped UI surface without changing content or behavior.
+- Touch and coarse-pointer devices now bypass Lenis at boot and stay on the native scroll engine, while desktop keeps the cinematic Lenis path; GSAP ticker lag smoothing is also restored to prevent large-delta jumps after tab visibility changes.
+- Availability surfaces are now semantically separated and more maintainable: hero and about keep the recency-bearing status treatment, the desktop navbar CTA stays compact and action-oriented, and the about chip now shares the canonical `HERO.availability` copy instead of a divergent hardcoded string.
+- The mobile navigation toggle now uses explicit “Open navigation menu” / “Close navigation menu” accessibility labels, tightening screen-reader clarity without changing visual behavior.
+- Playwright availability assertions now target explicit hero/about surfaces instead of generic substring matches, removing selector collisions introduced by the desktop nav CTA while preserving the current UI.
 
 ---
 

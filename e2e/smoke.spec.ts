@@ -75,9 +75,7 @@ test.describe('Portfolio smoke tests', () => {
 
     await expect(page.locator('#hero')).toBeVisible();
     await expect(page.locator('h1')).toHaveAttribute('aria-label', /The system has to work at 2am/);
-    await expect(page.locator('[aria-label*="available for Staff"]').first()).toContainText(
-      /Updated \w+ \d{4}/
-    );
+    await expect(page.getByTestId('hero-availability-pill')).toContainText(/Updated \w+ \d{4}/);
   });
 
   test('root theme defaults to dark semantics', async ({ page }) => {

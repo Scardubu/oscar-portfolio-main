@@ -7,8 +7,8 @@
  *       and motion/layout contracts.
  * Run: pnpm test (all browsers) | pnpm test:e2e (Chromium only)
  */
-import { test, expect, type Page } from '@playwright/test';
 import { CONTACT_EMAIL } from '@/lib/config';
+import { expect, test, type Page } from '@playwright/test';
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 
@@ -26,8 +26,8 @@ test.describe('Nav', () => {
   });
 
   test('kicker contains correct stack identifiers', async ({ page }) => {
-    await expect(page.locator('.hero-kicker .hidden.sm\\:inline')).toContainText(
-      'Full-Stack · React Native · Next.js 15 · AI Systems · Lagos → Global'
+    await expect(page.locator('.hero-kicker')).toContainText(
+      'Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech'
     );
   });
 
@@ -52,7 +52,9 @@ test.describe('Nav', () => {
     await page.waitForTimeout(300);
 
     await expect(header).toBeVisible();
-    await expect(header).toHaveClass(/fixed/);
+
+    const position = await header.evaluate((element) => window.getComputedStyle(element).position);
+    expect(position).toBe('fixed');
   });
 });
 
@@ -130,11 +132,11 @@ test.describe('Hero', () => {
 
   // V1.0 Phase 3 — Availability recency
   test('availability pill is present and contains "AVAILABLE"', async ({ page }) => {
-    await expect(page.locator('[aria-label*="available for Staff"]').first()).toBeVisible();
+    await expect(page.getByTestId('hero-availability-pill')).toBeVisible();
   });
 
   test('availability pill includes dynamic "Updated" recency text', async ({ page }) => {
-    const pill = page.locator('[aria-label*="available for Staff"]').first();
+    const pill = page.getByTestId('hero-availability-pill');
     await expect(pill).toContainText(/AVAILABLE/i);
     // Dynamic month-year rendered via formatAvailabilityMonthYear()
     await expect(pill).toContainText(/Updated \w+ \d{4}/);
@@ -223,12 +225,19 @@ test.describe('Skills — V1.0 flow mechanics', () => {
     await expect(flowHook).toHaveAttribute('href', /#section-about/);
   });
 
-  test('skills section exposes pillar filter buttons', async ({ page }) => {
+  test('skills explorer exposes list and radar tabs after opening', async ({ page }) => {
     await page.locator('#skills').scrollIntoViewIfNeeded();
-    const filterGroup = page.getByRole('group', { name: /filter skills by category/i });
-    const buttons = filterGroup.getByRole('button');
-    const count = await buttons.count();
-    expect(count).toBeGreaterThanOrEqual(4);
+
+    const openExplorer = page.getByRole('button', {
+      name: /open full engineering stack — 62 tools across 8 pillars/i,
+    });
+    await expect(openExplorer).toBeVisible();
+    await openExplorer.click();
+
+    const viewTabs = page.getByRole('tablist', { name: /skills explorer view/i });
+    await expect(viewTabs).toBeVisible();
+    await expect(viewTabs.getByRole('tab', { name: /list view/i })).toBeVisible();
+    await expect(viewTabs.getByRole('tab', { name: /radar view/i })).toBeVisible();
   });
 });
 
@@ -253,7 +262,7 @@ test.describe('About', () => {
   // V1.0 Phase 3 — About availability chip also has dynamic date
   test('about availability chip has Updated recency text', async ({ page }) => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
-    const chip = page.locator('#section-about').locator('[aria-label*="available for Staff"]');
+    const chip = page.getByTestId('about-availability-chip');
     await expect(chip).toBeVisible();
     await expect(chip).toContainText(/Updated \w+ \d{4}/);
   });
@@ -492,7 +501,7 @@ test.describe('Live Activity Bar', () => {
     await expect(bar).toBeAttached();
   });
 
-  // V1.0 Phase 3 — fallback copy is "Building in production"
+  // Current fallback copy surfaces an explicit availability fault state.
   test('live activity fallback copy if API unavailable', async ({ page }) => {
     // Mock the /api/activity endpoint to return an error, triggering fallback
     await page.route('/api/activity', async (route) => {
@@ -500,9 +509,9 @@ test.describe('Live Activity Bar', () => {
     });
     await page.reload();
     await page.locator('h1').waitFor();
-    // After abort, component uses FALLBACK: { message: 'Building in production' }
+    // After abort, component uses FALLBACK_UNAVAILABLE.message.
     const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
-    await expect(bar).toContainText('Building in production');
+    await expect(bar).toContainText('Activity feed temporarily unavailable');
   });
 });
 

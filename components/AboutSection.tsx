@@ -293,11 +293,12 @@ export function AboutSection() {
               <a
                 href={anchorUrl('section-contact')}
                 className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
+                data-testid="about-availability-chip"
                 aria-label="Currently available for Staff+ roles — contact Oscar"
               >
                 <span className="dot-live" aria-hidden="true" />
                 <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
-                  AVAILABLE · STAFF+ ROLES
+                  {HERO.availability}
                   <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
                     · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
                   </span>

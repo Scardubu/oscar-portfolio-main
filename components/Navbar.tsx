@@ -277,7 +277,8 @@ export default function Navbar() {
             href={anchorUrl('section-contact')}
             onClick={(e) => handleNavClick(e, 'section-contact')}
             className="nav-availability-cta hidden lg:inline-flex"
-            aria-label="Contact Oscar — available for Staff+ roles and consulting"
+            data-testid="nav-availability-cta"
+            aria-label="Contact Oscar about current availability, Staff+ roles, and consulting"
           >
             <span className="nav-availability-dot" aria-hidden="true" />
             Available
@@ -288,7 +289,7 @@ export default function Navbar() {
             type="button"
             className="hero-nav-menu-button inline-flex h-10 w-10 items-center justify-center rounded-full lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
           >
