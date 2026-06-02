@@ -28,14 +28,14 @@ import { Providers } from '@/app/providers';
 import CursorGlow from '@/components/CursorGlow';
 import { DeferredCommandPalette } from '@/components/DeferredCommandPalette';
 import { Footer } from '@/components/Footer';
-import { PageWrapper } from '@/components/PageWrapper';
 import Navbar from '@/components/Navbar';
+import { PageWrapper } from '@/components/PageWrapper';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
 
 // v2026.9: import order corrected — globals.css first, fixes.css second (overrides)
-import './globals.css';
 import './fixes.css';
+import './globals.css';
 
 const syne = Syne({
   subsets: ['latin'],
@@ -64,10 +64,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 // ── Site URL Configuration (Production Grade) ────────────────────────────────
 // Priority: NEXT_PUBLIC_SITE_URL → Vercel URL → localhost fallback
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ?? (process.env.NEXT_PUBLIC_VERCEL_URL
-      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-      : 'http://localhost:3000');
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : 'http://localhost:3000');
 
 const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 const isPreviewDeployment = process.env.NEXT_PUBLIC_VERCEL_URL?.includes('vercel.app') ?? false;
@@ -81,19 +82,42 @@ export const metadata: Metadata = {
   // CE spec §P3-G: ≤160 chars, outcome-focused
   description:
     'Staff+ Full-Stack Engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference + zero-drop queues. SwarmXQ: self-improving agents. Systems that hold at 2am.',
-  
+
   metadataBase: new URL(siteUrl),
 
   authors: [{ name: 'Oscar Ndugbu', url: siteUrl }],
   creator: 'Oscar Ndugbu',
 
   keywords: [
-    'Full-Stack Engineer', 'Backend Engineer', 'Systems Architect', 'AI Infrastructure',
-    'SRE', 'Principal Engineer', 'Next.js 15', 'React Native', 'Expo SDK 54',
-    'TypeScript', 'Java', 'Spring Boot', 'FastAPI', 'Python', 'Effect-TS',
-    'Turborepo', 'PostgreSQL', 'Redis', 'Fintech', 'Nigerian fintech',
-    'Lagos Engineer', 'Lagos Nigeria', 'TaxBridge', 'SabiScore', 'SwarmXQ',
-    'AI Agent Orchestration', 'Ollama', 'LLM Routing', 'Staff+ Engineer',
+    'Full-Stack Engineer',
+    'Backend Engineer',
+    'Systems Architect',
+    'AI Infrastructure',
+    'SRE',
+    'Principal Engineer',
+    'Next.js 15',
+    'React Native',
+    'Expo SDK 54',
+    'TypeScript',
+    'Java',
+    'Spring Boot',
+    'FastAPI',
+    'Python',
+    'Effect-TS',
+    'Turborepo',
+    'PostgreSQL',
+    'Redis',
+    'Fintech',
+    'Nigerian fintech',
+    'Lagos Engineer',
+    'Lagos Nigeria',
+    'TaxBridge',
+    'SabiScore',
+    'SwarmXQ',
+    'AI Agent Orchestration',
+    'Ollama',
+    'LLM Routing',
+    'Staff+ Engineer',
   ],
 
   openGraph: {
@@ -175,11 +199,27 @@ const schemaGraph = {
         name: 'Independent Engineering & Consulting',
       },
       knowsAbout: [
-        'Next.js', 'React Native', 'Expo', 'TypeScript', 'Java',
-        'AI Agent Orchestration', 'LLM Routing', 'SwarmXQ', 'Spring Boot',
-        'FastAPI', 'Python', 'Effect-TS', 'Turborepo', 'PostgreSQL', 'Redis',
-        'Machine Learning', 'Fintech', 'SRE', 'AI Infrastructure',
-        'Systems Architecture', 'Distributed Systems',
+        'Next.js',
+        'React Native',
+        'Expo',
+        'TypeScript',
+        'Java',
+        'AI Agent Orchestration',
+        'LLM Routing',
+        'SwarmXQ',
+        'Spring Boot',
+        'FastAPI',
+        'Python',
+        'Effect-TS',
+        'Turborepo',
+        'PostgreSQL',
+        'Redis',
+        'Machine Learning',
+        'Fintech',
+        'SRE',
+        'AI Infrastructure',
+        'Systems Architecture',
+        'Distributed Systems',
       ],
       alumniOf: [
         {
@@ -188,11 +228,7 @@ const schemaGraph = {
           url: 'https://ubec.gov.ng',
         },
       ],
-      sameAs: [
-        'https://github.com/Scardubu',
-        'https://linkedin.com/in/oscardubu',
-        siteUrl,
-      ],
+      sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu', siteUrl],
     },
     {
       '@type': 'WebSite',
@@ -267,9 +303,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
 
-        {/* Glass Refraction Filter */}
+        {/* Global SVG Defs — glass refraction, squircle clip path, cinematic portrait filter */}
         <svg width="0" height="0" aria-hidden="true" className="absolute">
           <defs>
+            {/* Glass refraction for LiquidGlassRefractionSVG */}
             <filter id="glass-refraction">
               <feTurbulence
                 type="fractalNoise"
@@ -285,6 +322,46 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 xChannelSelector="R"
                 yChannelSelector="G"
               />
+            </filter>
+            {/* Squircle (n≈4 superellipse) clip path shared by all IdentityCard instances */}
+            <clipPath id="squircle-id" clipPathUnits="objectBoundingBox">
+              <path d="M 0.500 0.000 C 0.817 0.000 0.870 0.030 0.920 0.080 C 0.977 0.136 1.000 0.183 1.000 0.500 C 1.000 0.817 0.977 0.864 0.920 0.920 C 0.870 0.970 0.817 1.000 0.500 1.000 C 0.183 1.000 0.130 0.970 0.080 0.920 C 0.023 0.864 0.000 0.817 0.000 0.500 C 0.000 0.183 0.023 0.136 0.080 0.080 C 0.130 0.030 0.183 0.000 0.500 0.000 Z" />
+            </clipPath>
+            {/*
+              Cinematic duotone portrait filter — IdentityCard headshot
+              Maps luminance to teal shadows (#031c24) / amber highlights (#ff9540),
+              then composites 15% of the original image back for texture retention.
+              Correction from inline version:
+                - feBlend mode="normal" in="SourceGraphic" over duotone was a no-op
+                  (opaque SourceGraphic fully covered the duotone layer).
+                - opacity="0.85" on feBlend is not a valid SVG filter attribute.
+              Fixed approach: feComposite operator="over" places a 15%-opacity
+              SourceGraphic over the duotone, yielding 85% duotone + 15% original.
+            */}
+            <filter id="luxury-duotone-cinema" colorInterpolationFilters="sRGB">
+              <feColorMatrix
+                type="matrix"
+                values="0.2126 0.7152 0.0722 0 0
+                        0.2126 0.7152 0.0722 0 0
+                        0.2126 0.7152 0.0722 0 0
+                        0      0      0      1 0"
+                result="grayscale"
+              />
+              <feComponentTransfer in="grayscale" result="duotone">
+                <feFuncR type="table" tableValues="0.0118 1.0000" />
+                <feFuncG type="table" tableValues="0.1098 0.5843" />
+                <feFuncB type="table" tableValues="0.1412 0.2510" />
+              </feComponentTransfer>
+              <feColorMatrix
+                type="matrix"
+                values="1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        0 0 0 0.15 0"
+                in="SourceGraphic"
+                result="faint-original"
+              />
+              <feComposite operator="over" in="faint-original" in2="duotone" />
             </filter>
           </defs>
         </svg>

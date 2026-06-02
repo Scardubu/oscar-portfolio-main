@@ -793,7 +793,7 @@ export function HeroSection() {
 
               <m.div
                 variants={child}
-                className="hero-mobile-portrait-wrap mt-10 flex w-full justify-center overflow-hidden lg:hidden"
+                className="hero-mobile-portrait-wrap mt-10 flex w-full justify-center pb-4 lg:hidden"
               >
                 <div className="hero-mobile-portrait-shell">
                   <HeroPortrait

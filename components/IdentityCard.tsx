@@ -5,30 +5,29 @@
 //
 // CHANGELOG v2026.9:
 //
-//   FIX 9–13: Maintained all previous core stability enhancements (cached image 
-//     callbacks, inline transform-style single source of truth, superellipse 
+//   FIX 9–13: Maintained all previous core stability enhancements (cached image
+//     callbacks, inline transform-style single source of truth, superellipse
 //     squircle clip-paths, and loading shimmer state).
 //
 //   FIX 14: SVG Duotone Cinema Mapping Filter.
-//     Embedded a hardware-accelerated SVG filter (#luxury-duotone-cinema) directly 
-//     into the component tree. It non-destructively maps image luminance to deep 
-//     cinematic teal shadows (#031c24) and vibrant amber-orange highlights (#ff9540), 
+//     Embedded a hardware-accelerated SVG filter (#luxury-duotone-cinema) directly
+//     into the component tree. It non-destructively maps image luminance to deep
+//     cinematic teal shadows (#031c24) and vibrant amber-orange highlights (#ff9540),
 //     blending back 15% of the original graphic to retain raw micro-details.
 //
 //   FIX 15: Dynamic Interactive Glare Sheen.
-//     Connected pointer coordinates to spring-damped MotionValues (glareX, glareY). 
-//     A custom useMotionTemplate linear glare flare dynamically sweeps across the 
+//     Connected pointer coordinates to spring-damped MotionValues (glareX, glareY).
+//     A custom useMotionTemplate linear glare flare dynamically sweeps across the
 //     glass surface relative to cursor position on desktop frames.
 //
 //   FIX 16: Micro-contrast typography and operational pulse upgrades.
-//     Sharpened letter-tracking, normalized layout boundaries for subpixel alignment, 
+//     Sharpened letter-tracking, normalized layout boundaries for subpixel alignment,
 //     and elevated text element weights for high-DPI panels.
 
 import { m, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
-import { SquircleDefs } from '@/components/SquircleDefs';
 
 export type IdentityCardVariant = 'mobile' | 'desktop';
 
@@ -39,11 +38,7 @@ interface IdentityCardProps {
   priority?: boolean;
 }
 
-const PORTRAIT_SOURCES = [
-  '/headshot.webp',
-  '/images/oscar-headshot.jpg',
-  '/images/scar-headshot.jpeg',
-] as const;
+const PORTRAIT_SOURCES = ['/headshot.webp', '/oscar-headshot.jpg', '/scar-headshot.jpeg'] as const;
 
 function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
   return (
@@ -82,7 +77,7 @@ export function IdentityCard({
   const shouldPrioritizeImage = priority ?? !isDesktop;
   const imageLoading = shouldPrioritizeImage ? 'eager' : 'lazy';
   const imageFetchPriority = shouldPrioritizeImage ? 'high' : 'auto';
-  
+
   // Card Tilt physics
   const rawRotateX = useMotionValue(0);
   const rawRotateY = useMotionValue(0);
@@ -141,7 +136,7 @@ export function IdentityCard({
 
       rawRotateX.set((0.5 - pointerY) * 5.5);
       rawRotateY.set((pointerX - 0.5) * 7);
-      
+
       // Update interactive glare layout coords (mapped to percentage space)
       rawGlareX.set(pointerX * 100);
       rawGlareY.set(pointerY * 100);
@@ -161,34 +156,6 @@ export function IdentityCard({
 
   return (
     <>
-      {/* SVG Duotone Cinema Lookup Filter */}
-      <svg className="absolute h-0 w-0 invisible pointer-events-none select-none" aria-hidden="true">
-        <defs>
-          <filter id="luxury-duotone-cinema" colorInterpolationFilters="sRGB">
-            {/* Step 1: Accurate high-fidelity luminance grayscale extraction */}
-            <feColorMatrix
-              type="matrix"
-              values="0.2126 0.7152 0.0722 0 0
-                      0.2126 0.7152 0.0722 0 0
-                      0.2126 0.7152 0.0722 0 0
-                      0      0      0      1 0"
-              result="grayscale"
-            />
-            {/* Step 2: Component Transfer Map — Shadows (Teal #031c24) to Highlights (Amber Orange #ff9540) */}
-            <feComponentTransfer in="grayscale" result="duotone">
-              <feFuncR type="table" tableValues="0.0118 1.0000" />
-              <feFuncG type="table" tableValues="0.1098 0.5843" />
-              <feFuncB type="table" tableValues="0.1412 0.2510" />
-              <feFuncA type="table" tableValues="0.0000 1.0000" />
-            </feComponentTransfer>
-            {/* Step 3: Normal blend overlay at 85% opacity to keep organic structural sub-details clean */}
-            <feBlend mode="normal" in="SourceGraphic" in2="duotone" opacity="0.85" />
-          </filter>
-        </defs>
-      </svg>
-
-      <SquircleDefs />
-      
       <m.figure
         initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.985 }}
         animate={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
@@ -248,7 +215,7 @@ export function IdentityCard({
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.14),transparent_28%),radial-gradient(circle_at_52%_82%,rgba(56,189,248,0.12),transparent_56%),linear-gradient(180deg,transparent_54%,rgba(5,10,16,0.54)_100%)]"
           />
-          
+
           {/* Real-time pointer reflection shine layer */}
           {isDesktop && !shouldReduceMotion && (
             <m.div
@@ -301,7 +268,7 @@ export function IdentityCard({
               onLoad={handleLoad}
               onError={handleError}
               className={cn(
-                'absolute inset-0 h-full w-full scale-100 object-cover transition-opacity duration-700 ease-out select-none pointer-events-none',
+                'pointer-events-none absolute inset-0 h-full w-full scale-100 object-cover transition-opacity duration-700 ease-out select-none',
                 portraitReady ? 'opacity-100' : 'opacity-0',
                 isDesktop ? 'object-[50%_12%]' : 'object-[50%_14%]'
               )}
@@ -334,7 +301,7 @@ export function IdentityCard({
             <div className="min-w-0">
               <span
                 className={cn(
-                  'block font-mono text-white/50 uppercase font-semibold',
+                  'block font-mono font-semibold text-white/50 uppercase',
                   isDesktop
                     ? 'text-[9px] tracking-[0.32em]'
                     : 'text-[8px] tracking-[0.24em] sm:text-[9px] sm:tracking-[0.32em]'
@@ -344,7 +311,7 @@ export function IdentityCard({
               </span>
               <span
                 className={cn(
-                  'mt-1 block truncate text-white/95 uppercase font-medium font-mono',
+                  'mt-1 block truncate font-mono font-medium text-white/95 uppercase',
                   isDesktop
                     ? 'text-[11px] tracking-[0.26em]'
                     : 'text-[10px] tracking-[0.20em] sm:text-[11px] sm:tracking-[0.26em]'
@@ -356,7 +323,7 @@ export function IdentityCard({
 
             <span
               className={cn(
-                'shrink-0 rounded-full border border-emerald-400/20 bg-black/50 font-mono text-white/90 uppercase backdrop-blur-md font-semibold select-none',
+                'shrink-0 rounded-full border border-emerald-400/20 bg-black/50 font-mono font-semibold text-white/90 uppercase backdrop-blur-md select-none',
                 isDesktop
                   ? 'px-2.5 py-1 text-[9px] tracking-[0.22em]'
                   : 'px-2 py-1 text-[8px] tracking-[0.20em] sm:px-2.5 sm:text-[9px] sm:tracking-[0.22em]'
@@ -373,7 +340,7 @@ export function IdentityCard({
           {/* Bottom Metadata Row: Architecture Stack + Location Core */}
           <div
             className={cn(
-              'absolute z-[4] flex justify-between items-end',
+              'absolute z-[4] flex items-end justify-between',
               isDesktop
                 ? 'inset-x-5 bottom-5 gap-3'
                 : 'inset-x-4 bottom-4 gap-3 sm:inset-x-5 sm:bottom-5 sm:gap-3'
@@ -384,7 +351,7 @@ export function IdentityCard({
             >
               <span
                 className={cn(
-                  'block font-mono text-white/50 uppercase font-semibold',
+                  'block font-mono font-semibold text-white/50 uppercase',
                   isDesktop
                     ? 'text-[9px] tracking-[0.30em]'
                     : 'text-[8px] tracking-[0.22em] sm:text-[9px] sm:tracking-[0.30em]'
@@ -394,7 +361,7 @@ export function IdentityCard({
               </span>
               <span
                 className={cn(
-                  'mt-1 block font-mono text-white/85 uppercase font-medium tracking-[0.16em]',
+                  'mt-1 block font-mono font-medium tracking-[0.16em] text-white/85 uppercase',
                   isDesktop
                     ? 'truncate text-[10px]'
                     : 'text-[9px] leading-tight break-words whitespace-normal sm:text-[10px]'
@@ -406,7 +373,7 @@ export function IdentityCard({
 
             <span
               className={cn(
-                'shrink-0 font-mono text-white/55 uppercase font-semibold select-none',
+                'shrink-0 font-mono font-semibold text-white/55 uppercase select-none',
                 isDesktop
                   ? 'text-[9px] tracking-[0.24em]'
                   : 'text-[8px] tracking-[0.20em] sm:text-[9px] sm:tracking-[0.24em]'
