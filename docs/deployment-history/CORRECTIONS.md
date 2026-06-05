@@ -2,6 +2,33 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-06-05 — API hardening: query bounds, analytics sanitisation, rate-limit map pruning + formatter pass
+
+**Full codebase audit findings (all non-functional issues confirmed clean):**
+- TypeScript strict-mode: zero errors. ESLint: zero errors. No `as any`, no `@ts-ignore`.
+- All `target="_blank"` links confirmed with `rel="noopener noreferrer"`.
+- No draft-gated content leaking to production (draft filter in `lib/blog.ts` line 75 guards `NODE_ENV`).
+- All referenced public assets (`/headshot.webp`, `/images/oscar-headshot.jpg`, `/images/scar-headshot.jpeg`, `/cv/oscar-ndugbu-resume.pdf`) confirmed present.
+- Security headers verified: CSP, HSTS (63072000s + preload), `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Permissions-Policy`, `Referrer-Policy`.
+- Deprecated `app/actions/contact.ts` confirmed unused (zero imports). Live path: `ContactSection.tsx → /api/contact → app/api/contact/route.ts`.
+
+**Changes applied:**
+
+- `app/api/blog/search/route.ts` — Added `.slice(0, 200)` on the query string after trim. Prevents runaway OpenAI token spend if a client sends an arbitrarily large search query; the semantic search path only calls the embeddings API when `queryWords.length >= 2 && OPENAI_API_KEY` is set.
+
+- `app/api/blog/analytics/route.ts` — Added `sanitizeRecord()` function that truncates `path` (500), `query` (200), `slug` (200), `tag` (100), `userAgent` (500), and `referrer` (500) before forwarding to the webhook. Prevents oversized payloads reaching the external analytics sink.
+
+- `app/api/contact/route.ts` — Added `pruneRateLimitMap()` that sweeps expired entries (older than `RATE_LIMIT_WINDOW_MS`) from the in-memory map on every `isRateLimited()` call. Prevents the map from growing unbounded in long-lived warm serverless instances.
+
+- `README.md` — Prettier reformatted Markdown tables (column-padding alignment). No content changes.
+
+- `app/globals.css` — Prettier normalised CSS string quotes (`"…"` → `'…'`) and removed trailing whitespace on two blank lines. No functional change.
+
+Validation after the June 5 hardening pass:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm exec eslint app/api/blog/search/route.ts app/api/blog/analytics/route.ts app/api/contact/route.ts` passed with zero errors.
+
 ## 2026-06-05 — Scroll-engine boot-path lock + proof-grid centering + regression test coverage
 
 - Added a synchronous `coarsePointerAtBoot` guard in `components/cinematic/ScrollCinemaProvider.tsx` to eliminate the first-render race where touch/coarse-pointer devices could briefly initialise Lenis before the pointer-state `useEffect` had fired. The `window.matchMedia('(pointer: coarse)').matches` check runs synchronously at the top of the Lenis init effect alongside the existing `isTouchDevice` state guard.

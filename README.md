@@ -317,43 +317,43 @@ Eight-file surgical pass across mobile scroll stability, motion refinement, and 
 
 #### Mobile scroll — critical iOS fixes
 
-| File | Change | Impact |
-| --- | --- | --- |
-| `ScrollCinemaProvider.tsx` | Re-asserts `document.documentElement.style.overflowX = 'clip'` after Lenis v1 init | Lenis v1 constructor sets `overflow: hidden` inline, overriding the CSS `overflow-x: clip` and creating a conflicting BFC on iOS Safari. This restores horizontal clipping without a scroll container |
-| `ScrollCinemaProvider.tsx` | Emergency scroll recovery in `onVisibility`: clears stuck `body.overflow = 'hidden'` on tab-visible when neither lock is active | Covers React 19 concurrent unmount races where the Navbar cleanup fires late |
-| `Navbar.tsx` | Replaced `overflow: hidden` scroll lock with `position: fixed` + `body.nav-open` class + scroll save/restore | `overflow: hidden` on `body` causes content jump and BFC conflict with `overflow-x: clip` on `html`. The fixed pattern saves `window.scrollY`, applies `body.style.top = -scrollY`, and restores on close |
-| `Navbar.tsx` | Unmount cleanup removes `nav-open` class and clears `body.style.top` | Defensive guard for React 19 concurrent unmount during menu animation |
-| `app/fixes.css` | `body.nav-open { position: fixed; width: 100%; overflow-y: scroll }` | CSS side of the scroll lock — keeps scrollbar gutter stable |
-| `app/fixes.css` | `[data-lenis-prevent] { overscroll-behavior: contain; -webkit-overflow-scrolling: touch }` | Tells Lenis to yield to horizontally snapping containers (ProofCarousel) |
-| `app/fixes.css` | Updated `html:not([data-nav-open]):not(.nav-open) body` | Belt-and-suspenders unlock rule now excludes both the attribute-based and class-based locks |
-| `app/fixes.css` | Consolidated portrait edge-pulse `@keyframes` + `will-change` into `@media (prefers-reduced-motion: no-preference)` | Keyframe and will-change never register for reduced-motion users; static opacity variant remains |
+| File                       | Change                                                                                                                          | Impact                                                                                                                                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ScrollCinemaProvider.tsx` | Re-asserts `document.documentElement.style.overflowX = 'clip'` after Lenis v1 init                                              | Lenis v1 constructor sets `overflow: hidden` inline, overriding the CSS `overflow-x: clip` and creating a conflicting BFC on iOS Safari. This restores horizontal clipping without a scroll container     |
+| `ScrollCinemaProvider.tsx` | Emergency scroll recovery in `onVisibility`: clears stuck `body.overflow = 'hidden'` on tab-visible when neither lock is active | Covers React 19 concurrent unmount races where the Navbar cleanup fires late                                                                                                                              |
+| `Navbar.tsx`               | Replaced `overflow: hidden` scroll lock with `position: fixed` + `body.nav-open` class + scroll save/restore                    | `overflow: hidden` on `body` causes content jump and BFC conflict with `overflow-x: clip` on `html`. The fixed pattern saves `window.scrollY`, applies `body.style.top = -scrollY`, and restores on close |
+| `Navbar.tsx`               | Unmount cleanup removes `nav-open` class and clears `body.style.top`                                                            | Defensive guard for React 19 concurrent unmount during menu animation                                                                                                                                     |
+| `app/fixes.css`            | `body.nav-open { position: fixed; width: 100%; overflow-y: scroll }`                                                            | CSS side of the scroll lock — keeps scrollbar gutter stable                                                                                                                                               |
+| `app/fixes.css`            | `[data-lenis-prevent] { overscroll-behavior: contain; -webkit-overflow-scrolling: touch }`                                      | Tells Lenis to yield to horizontally snapping containers (ProofCarousel)                                                                                                                                  |
+| `app/fixes.css`            | Updated `html:not([data-nav-open]):not(.nav-open) body`                                                                         | Belt-and-suspenders unlock rule now excludes both the attribute-based and class-based locks                                                                                                               |
+| `app/fixes.css`            | Consolidated portrait edge-pulse `@keyframes` + `will-change` into `@media (prefers-reduced-motion: no-preference)`             | Keyframe and will-change never register for reduced-motion users; static opacity variant remains                                                                                                          |
 
 #### Hero section fixes
 
-| File | Change | Impact |
-| --- | --- | --- |
-| `HeroSection.tsx` | Removed `min-h-[100dvh]` from hero section className | `dvh` recalculates with iOS address bar movement causing layout jitter; `100svh` (stable small viewport) only |
-| `app/globals.css` | Removed `min-height: 100dvh` fallback from `#hero` rule | Matching CSS-side removal |
-| `HeroSection.tsx` | Carousel dot: `'active'` → `' active'` (space added) | Produced `carousel-dotactive` (one token) instead of `carousel-dot active` (two tokens); compound selector `.carousel-dot.active` never matched |
+| File              | Change                                                  | Impact                                                                                                                                          |
+| ----------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `HeroSection.tsx` | Removed `min-h-[100dvh]` from hero section className    | `dvh` recalculates with iOS address bar movement causing layout jitter; `100svh` (stable small viewport) only                                   |
+| `app/globals.css` | Removed `min-height: 100dvh` fallback from `#hero` rule | Matching CSS-side removal                                                                                                                       |
+| `HeroSection.tsx` | Carousel dot: `'active'` → `' active'` (space added)    | Produced `carousel-dotactive` (one token) instead of `carousel-dot active` (two tokens); compound selector `.carousel-dot.active` never matched |
 
 #### Motion refinement
 
-| File | Change | Impact |
-| --- | --- | --- |
-| `HeroSection.tsx` | Hero stagger: `staggerContainer(0.055, 0.05)` → `staggerContainer(0.042, 0.04)` | Tighter, more decisive reveal cadence |
-| `HeroSection.tsx` | `wordRevealContainer` stagger: 0.055 → 0.042 | Matched to hero stagger |
+| File                    | Change                                                                                         | Impact                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `HeroSection.tsx`       | Hero stagger: `staggerContainer(0.055, 0.05)` → `staggerContainer(0.042, 0.04)`                | Tighter, more decisive reveal cadence                                                         |
+| `HeroSection.tsx`       | `wordRevealContainer` stagger: 0.055 → 0.042                                                   | Matched to hero stagger                                                                       |
 | `lib/motionVariants.ts` | `wordReveal` transition: `SPRING_WORD_REVEAL` → `{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }` | Spring easing on word reveals produces organic bounce; expo-out is sharper and more cinematic |
-| `HeroSection.tsx` | Primary magnetic: `strength: 0.2, radius: 144` → `strength: 0.16, radius: 108` | Subtler, more credible magnetic pull on the hero CTA |
-| `HeroSection.tsx` | `ConvictionStat.whileHover` guarded with `!isDesktopViewport` | Eliminates unintentional lift animation on touch devices |
-| `HeroSection.tsx` | RAF: `previousScrollYRef` early-exit before computing hero progress | Skips all Math operations on frames where scroll position is unchanged |
+| `HeroSection.tsx`       | Primary magnetic: `strength: 0.2, radius: 144` → `strength: 0.16, radius: 108`                 | Subtler, more credible magnetic pull on the hero CTA                                          |
+| `HeroSection.tsx`       | `ConvictionStat.whileHover` guarded with `!isDesktopViewport`                                  | Eliminates unintentional lift animation on touch devices                                      |
+| `HeroSection.tsx`       | RAF: `previousScrollYRef` early-exit before computing hero progress                            | Skips all Math operations on frames where scroll position is unchanged                        |
 
 #### Visual polish
 
-| File | Change | Impact |
-| --- | --- | --- |
-| `HeroSection.tsx` | Subheadline `max-w-[30ch]` → `max-w-[28ch]` | Tighter editorial column width |
-| `HeroSection.tsx` | Writing link: arrow `translate-x-0.5` → `translate-x-1`, added `hover:underline hover:underline-offset-[3px]` | Clearer affordance, more decisive arrow movement |
-| `app/globals.css` | Scrollbar thumb: 25% → 35% rest, 50% → 55% hover | More visible against dark backgrounds while still feeling subtle |
+| File              | Change                                                                                                                          | Impact                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `HeroSection.tsx` | Subheadline `max-w-[30ch]` → `max-w-[28ch]`                                                                                     | Tighter editorial column width                                                                                                                       |
+| `HeroSection.tsx` | Writing link: arrow `translate-x-0.5` → `translate-x-1`, added `hover:underline hover:underline-offset-[3px]`                   | Clearer affordance, more decisive arrow movement                                                                                                     |
+| `app/globals.css` | Scrollbar thumb: 25% → 35% rest, 50% → 55% hover                                                                                | More visible against dark backgrounds while still feeling subtle                                                                                     |
 | `app/globals.css` | `.glass-*` classes: `will-change: transform` → `will-change: auto` + hover-only via `@media (hover: hover) and (pointer: fine)` | Static will-change promotes every glass card to a compositor layer (wasteful on scroll-heavy pages). Hover-only is free — browser promotes on demand |
 
 Validation pass after v2.1:

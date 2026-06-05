@@ -55,13 +55,13 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Unlocks high-performance open-type legibility tunings on the browser canvas */
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
   }
 }
 @layer components {
   /* Cinematic Text-Sharpness Optimization Layer */
-  [data-cinematic="eyebrow"],
-  [data-cinematic="proof"] {
+  [data-cinematic='eyebrow'],
+  [data-cinematic='proof'] {
     backface-visibility: hidden;
     transform: translateZ(0);
   }
@@ -548,7 +548,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Unlocks high-performance open-type legibility tunings on the browser canvas */
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
   /* 100dvh (dynamic) is primary: adapts to iOS Safari toolbar collapse/expand.
      100svh (small viewport) is the fallback: stable layout when toolbar is
      always visible. Never use 100vh — it locks to initial-containing-block
@@ -6402,10 +6402,10 @@ body {
 /* ══════════════════════════════════════════════════════════════════════════════
    SQUIRCLE GEOMETRY UPGRADE v2026.19
    Companion CSS for IdentityCard.tsx FIX 13 + SquircleDefs.tsx
-   
+
    Replaces: border-radius: 38px (circular arc quadrants, n=2 superellipse)
    With:     corner-shape: superellipse(2.8) + clip-path: url(#squircle-id)
-   
+
    Design rationale:
    - n=2.8 is the empirical sweet spot matching Linear's identity card radius
      and Apple's SF Symbols squircle. Sides read as visually flat; corners

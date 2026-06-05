@@ -52,6 +52,21 @@ function isValidEvent(payload: unknown): payload is BlogAnalyticsEvent {
   return typeof event === "string";
 }
 
+/** Truncate string fields before forwarding to prevent oversized webhook payloads. */
+function sanitizeRecord(record: Record<string, unknown>): Record<string, unknown> {
+  const cap = (v: unknown, max: number): unknown =>
+    typeof v === "string" ? v.slice(0, max) : v;
+  return {
+    ...record,
+    path: cap(record.path, 500),
+    query: cap(record.query, 200),
+    slug: cap(record.slug, 200),
+    tag: cap(record.tag, 100),
+    userAgent: cap(record.userAgent, 500),
+    referrer: cap(record.referrer, 500),
+  };
+}
+
 export async function GET() {
   return NextResponse.json({ ok: true, service: "blog-analytics" });
 }
@@ -64,11 +79,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Invalid analytics event" }, { status: 400 });
     }
 
-    const record = {
-      ...payload,
+    const record = sanitizeRecord({
+      ...(payload as Record<string, unknown>),
       receivedAt: new Date().toISOString(),
       ip: request.headers.get("x-forwarded-for") ?? null,
-    };
+    });
 
     const webhookUrl = process.env.BLOG_ANALYTICS_WEBHOOK_URL;
 

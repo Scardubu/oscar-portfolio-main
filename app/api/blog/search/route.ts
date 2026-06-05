@@ -94,7 +94,8 @@ export async function POST(request: Request) {
 
   try {
     const body = (await request.json()) as SearchRequestBody;
-    const query = typeof body.query === "string" ? body.query.trim() : "";
+    // Cap at 200 chars to prevent runaway OpenAI token spend on malicious/accidental large inputs.
+    const query = (typeof body.query === "string" ? body.query.trim() : "").slice(0, 200);
     const tag = typeof body.tag === "string" && body.tag.trim() ? body.tag.trim() : null;
     const limit = Number.isFinite(body.limit)
       ? Math.max(1, Math.min(20, Number(body.limit)))

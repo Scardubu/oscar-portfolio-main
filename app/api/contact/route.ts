@@ -24,7 +24,16 @@ function getClientKey(request: Request, email: string): string {
   return `${ip}:${email.toLowerCase()}`;
 }
 
+/** Remove entries whose window has expired to prevent unbounded map growth. */
+function pruneRateLimitMap(): void {
+  const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+  for (const [key, entry] of rateLimitMap) {
+    if (entry.timestamp < cutoff) rateLimitMap.delete(key);
+  }
+}
+
 function isRateLimited(key: string): boolean {
+  pruneRateLimitMap();
   const now = Date.now();
   const entry = rateLimitMap.get(key);
 
