@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import { getAllPosts, toSearchBlogPost } from "@/lib/blog";
+import { getAllPosts, toSearchBlogPost } from '@/lib/blog';
 import {
   buildReason,
   buildSearchDocument,
@@ -9,10 +9,10 @@ import {
   sortPosts,
   type BlogTier,
   type RankedBlogPost,
-} from "@/lib/blog-intelligence";
+} from '@/lib/blog-intelligence';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 type SearchRequestBody = {
   query?: string;
@@ -23,23 +23,23 @@ type SearchRequestBody = {
 async function fetchEmbeddings(inputs: string[]): Promise<number[][]> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set");
+    throw new Error('OPENAI_API_KEY is not set');
   }
 
-  const model = process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small";
+  const model = process.env.OPENAI_EMBEDDING_MODEL ?? 'text-embedding-3-small';
 
-  const response = await fetch("https://api.openai.com/v1/embeddings", {
-    method: "POST",
+  const response = await fetch('https://api.openai.com/v1/embeddings', {
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       model,
       input: inputs,
-      encoding_format: "float",
+      encoding_format: 'float',
     }),
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -67,7 +67,7 @@ function buildKeywordFallback(
       const engagementBoost = Math.min(0.05, Math.max(0, post.engagementScore ?? 0) * 0.05);
       const score = Math.max(
         0,
-        Math.min(1, lexicalScore * 0.8 + tierBoost + tagBoost + engagementBoost),
+        Math.min(1, lexicalScore * 0.8 + tierBoost + tagBoost + engagementBoost)
       );
 
       return {
@@ -95,11 +95,9 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SearchRequestBody;
     // Cap at 200 chars to prevent runaway OpenAI token spend on malicious/accidental large inputs.
-    const query = (typeof body.query === "string" ? body.query.trim() : "").slice(0, 200);
-    const tag = typeof body.tag === "string" && body.tag.trim() ? body.tag.trim() : null;
-    const limit = Number.isFinite(body.limit)
-      ? Math.max(1, Math.min(20, Number(body.limit)))
-      : 12;
+    const query = (typeof body.query === 'string' ? body.query.trim() : '').slice(0, 200);
+    const tag = typeof body.tag === 'string' && body.tag.trim() ? body.tag.trim() : null;
+    const limit = Number.isFinite(body.limit) ? Math.max(1, Math.min(20, Number(body.limit))) : 12;
 
     const rawPosts = getAllPosts().map(toSearchBlogPost);
     const published = rawPosts.filter((post) => post.published !== false);
@@ -111,7 +109,7 @@ export async function POST(request: Request) {
     if (!query) {
       const local = buildKeywordFallback(posts, query, tag).slice(0, limit);
       return NextResponse.json({
-        mode: "local",
+        mode: 'local',
         results: local,
         durationMs: Date.now() - startedAt,
       });
@@ -122,13 +120,16 @@ export async function POST(request: Request) {
     if (queryWords.length < 2 || !process.env.OPENAI_API_KEY) {
       const local = buildKeywordFallback(posts, query, tag).slice(0, limit);
       return NextResponse.json({
-        mode: "keyword",
+        mode: 'keyword',
         results: local,
         durationMs: Date.now() - startedAt,
       });
     }
 
-    const candidates = (tag ? posts.filter((post) => post.tags.includes(tag)) : posts).slice(0, 120);
+    const candidates = (tag ? posts.filter((post) => post.tags.includes(tag)) : posts).slice(
+      0,
+      120
+    );
     const inputs = [query, ...candidates.map((post) => buildSearchDocument(post))];
 
     const embeddings = await fetchEmbeddings(inputs);
@@ -137,7 +138,7 @@ export async function POST(request: Request) {
     if (!queryEmbedding) {
       const local = buildKeywordFallback(posts, query, tag).slice(0, limit);
       return NextResponse.json({
-        mode: "keyword",
+        mode: 'keyword',
         results: local,
         durationMs: Date.now() - startedAt,
       });
@@ -158,12 +159,8 @@ export async function POST(request: Request) {
           0,
           Math.min(
             1,
-            semanticScore * 0.72 +
-              lexicalScore * 0.25 +
-              tierBoost +
-              tagBoost +
-              engagementBoost,
-          ),
+            semanticScore * 0.72 + lexicalScore * 0.25 + tierBoost + tagBoost + engagementBoost
+          )
         );
 
         return {
@@ -187,21 +184,21 @@ export async function POST(request: Request) {
       .slice(0, limit);
 
     return NextResponse.json({
-      mode: "semantic",
+      mode: 'semantic',
       results: ranked,
       durationMs: Date.now() - startedAt,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown search error";
+    const message = error instanceof Error ? error.message : 'Unknown search error';
 
     return NextResponse.json(
       {
-        mode: "local",
+        mode: 'local',
         results: [],
         durationMs: Date.now() - startedAt,
         error: message,
       },
-      { status: 200 },
+      { status: 200 }
     );
   }
 }

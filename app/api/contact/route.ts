@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { Resend } from "resend";
-import { contactSchema } from "@/app/lib/validations";
-import { CONTACT_EMAIL, SENDER_EMAIL } from "@/lib/config";
+import { contactSchema } from '@/app/lib/validations';
+import { CONTACT_EMAIL, SENDER_EMAIL } from '@/lib/config';
+import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
 
 // Lazy-initialize Resend client to avoid build-time errors when env var is missing
 let resend: Resend | null = null;
@@ -18,8 +18,8 @@ const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 
 function getClientKey(request: Request, email: string): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const ip = forwardedFor?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  const ip = forwardedFor?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 
   return `${ip}:${email.toLowerCase()}`;
 }
@@ -62,8 +62,8 @@ export async function POST(request: Request) {
 
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: parseResult.error.flatten() },
-        { status: 400 },
+        { error: 'Validation failed', details: parseResult.error.flatten() },
+        { status: 400 }
       );
     }
 
@@ -72,8 +72,8 @@ export async function POST(request: Request) {
 
     if (isRateLimited(rateKey)) {
       return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        { status: 429 },
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
       );
     }
 
@@ -84,8 +84,8 @@ export async function POST(request: Request) {
     const client = getResendClient();
     if (!client) {
       return NextResponse.json(
-        { error: "Contact channel is temporarily unavailable." },
-        { status: 503 },
+        { error: 'Contact channel is temporarily unavailable.' },
+        { status: 503 }
       );
     }
 
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       subject,
       text: `Name: ${data.name}
 Email: ${data.email}
-Company: ${data.company ?? "-"}
+Company: ${data.company ?? '-'}
 Type: ${data.inquiryType}
 
 Message:
@@ -106,9 +106,6 @@ ${data.message}`,
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch {
-    return NextResponse.json(
-      { error: "Unexpected server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Unexpected server error' }, { status: 500 });
   }
 }

@@ -117,7 +117,7 @@ export function TestimonialsSection() {
              container. The capped grid stays centered within the container. */}
         <m.div
           variants={container}
-          className="metrics-grid grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:[grid-template-columns:repeat(4,minmax(0,320px))]"
+          className="metrics-grid grid gap-4 sm:grid-cols-2 xl:[grid-template-columns:repeat(4,minmax(0,320px))] xl:grid-cols-4"
         >
           {PROOF_CARDS.map((card, i) => (
             <m.article

@@ -78,10 +78,7 @@ test.describe('Scroll engine boot path', () => {
     if (browserName === 'firefox') test.skip();
   });
 
-  test('[desktop] data-scroll-engine is "lenis" after page boot', async ({
-    page,
-    isMobile,
-  }) => {
+  test('[desktop] data-scroll-engine is "lenis" after page boot', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Desktop-only: Lenis activates on fine-pointer devices only.');
 
     await goto(page);
@@ -89,10 +86,7 @@ test.describe('Scroll engine boot path', () => {
     expect(engine).toBe('lenis');
   });
 
-  test('[desktop] pointer datasets show fine-pointer after boot', async ({
-    page,
-    isMobile,
-  }) => {
+  test('[desktop] pointer datasets show fine-pointer after boot', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Desktop-only: fine-pointer dataset check.');
 
     await goto(page);
@@ -107,9 +101,7 @@ test.describe('Scroll engine boot path', () => {
     expect(datasets.pointerCoarse).toBe('false');
   });
 
-  test('[mobile] data-scroll-engine is "native" on coarse-pointer device', async ({
-    browser,
-  }) => {
+  test('[mobile] data-scroll-engine is "native" on coarse-pointer device', async ({ browser }) => {
     const context = await browser.newContext({ ...devices['Pixel 5'] });
     const page = await context.newPage();
     try {
@@ -164,17 +156,13 @@ test.describe('Mobile menu scroll restoration', () => {
       await page.goto('/');
       await page.waitForLoadState('load');
 
-      await page.evaluate(
-        (y) => window.scrollTo({ top: y, behavior: 'auto' }),
-        TARGET_SCROLL_Y
-      );
+      await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'auto' }), TARGET_SCROLL_Y);
       // Wait for scroll to settle; emulated devices may not reach exactly TARGET_SCROLL_Y
       await page
         .waitForFunction(
           (target: number) =>
             window.scrollY >= target ||
-            window.scrollY >=
-              document.documentElement.scrollHeight - window.innerHeight - 1,
+            window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 1,
           TARGET_SCROLL_Y,
           { timeout: 2000 }
         )
@@ -216,16 +204,12 @@ test.describe('Mobile menu scroll restoration', () => {
       await page.goto('/');
       await page.waitForLoadState('load');
 
-      await page.evaluate(
-        (y) => window.scrollTo({ top: y, behavior: 'auto' }),
-        TARGET_SCROLL_Y
-      );
+      await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'auto' }), TARGET_SCROLL_Y);
       await page
         .waitForFunction(
           (target: number) =>
             window.scrollY >= target ||
-            window.scrollY >=
-              document.documentElement.scrollHeight - window.innerHeight - 1,
+            window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 1,
           TARGET_SCROLL_Y,
           { timeout: 2000 }
         )
@@ -330,12 +314,8 @@ async function measureProofGrid(
       return {
         gridWidth: Math.round(gridRect.width * 100) / 100,
         parentWidth: parentRect ? Math.round(parentRect.width * 100) / 100 : null,
-        leftInset: parentRect
-          ? Math.round((gridRect.left - parentRect.left) * 100) / 100
-          : null,
-        rightInset: parentRect
-          ? Math.round((parentRect.right - gridRect.right) * 100) / 100
-          : null,
+        leftInset: parentRect ? Math.round((gridRect.left - parentRect.left) * 100) / 100 : null,
+        rightInset: parentRect ? Math.round((parentRect.right - gridRect.right) * 100) / 100 : null,
         maxCardWidth: cards.length ? Math.max(...cards) : null,
         hasHorizontalOverflow:
           document.documentElement.scrollWidth > document.documentElement.clientWidth,
@@ -354,9 +334,7 @@ test.describe('Proof grid centering at ultrawide viewports', () => {
     if (browserName !== 'chromium') test.skip();
   });
 
-  test('proof grid is capped at 1280px and centred at 1920px viewport', async ({
-    browser,
-  }) => {
+  test('proof grid is capped at 1280px and centred at 1920px viewport', async ({ browser }) => {
     const metrics = await measureProofGrid(browser, 1920);
 
     expect(metrics).not.toBeNull();
@@ -371,9 +349,7 @@ test.describe('Proof grid centering at ultrawide viewports', () => {
     expect(metrics!.hasHorizontalOverflow).toBe(false);
   });
 
-  test('proof grid is capped at 1280px and centred at 2560px viewport', async ({
-    browser,
-  }) => {
+  test('proof grid is capped at 1280px and centred at 2560px viewport', async ({ browser }) => {
     const metrics = await measureProofGrid(browser, 2560);
 
     expect(metrics).not.toBeNull();
