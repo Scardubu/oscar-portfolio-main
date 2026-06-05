@@ -2,6 +2,20 @@
 
 This file is reserved for release corrections and follow-up notes for the portfolio production surface.
 
+## 2026-06-05 — Scroll-engine boot-path lock + proof-grid centering + regression test coverage
+
+- Added a synchronous `coarsePointerAtBoot` guard in `components/cinematic/ScrollCinemaProvider.tsx` to eliminate the first-render race where touch/coarse-pointer devices could briefly initialise Lenis before the pointer-state `useEffect` had fired. The `window.matchMedia('(pointer: coarse)').matches` check runs synchronously at the top of the Lenis init effect alongside the existing `isTouchDevice` state guard.
+- Changed `margin-inline: 0` to `margin-inline: auto` in the `.metrics-grid` ultrawide CSS rule in `app/globals.css` so the 1280px-capped proof grid is centred within the section container at viewport widths ≥ 1536px.
+- Updated inline comment in `components/TestimonialsSection.tsx` to reflect the centred grid behaviour.
+- Added `e2e/scroll-engine.spec.ts` with regression tests across three suites: scroll engine boot path (`data-scroll-engine = 'lenis'` on desktop fine-pointer, `'native'` on coarse-pointer/mobile), mobile menu scroll restoration (`position:fixed` lock + `window.scrollTo` restore), and proof grid centering at 1920 px and 2560 px viewports.
+
+Validation after the June 5 patch:
+
+- `pnpm run type-check` passed with zero TypeScript errors.
+- `pnpm run build` passed cleanly on Next.js 15.5.10.
+- `pnpm exec playwright test e2e/smoke.spec.ts --project=chromium --project=mobile-chrome --workers=1 --timeout=120000` passed with 35 tests passed and 5 expected skips.
+- `pnpm exec playwright test e2e/scroll-engine.spec.ts --project=chromium --project=mobile-chrome --workers=1 --timeout=120000` passed with 14 tests passed and 2 expected skips.
+
 ## 2026-06-02 — Scroll-engine hardening + availability surface integration pass
 
 - Hardened `components/cinematic/ScrollCinemaProvider.tsx` so coarse-pointer devices and reduced-motion sessions now bypass Lenis entirely, fall back to the native scroll engine on boot, and still preserve cinematic chapter tracking through the existing native scroll progress path.

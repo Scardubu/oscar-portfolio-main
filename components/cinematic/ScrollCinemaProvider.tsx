@@ -386,6 +386,9 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Guard first-commit touch-device boot where pointer state may still be stale.
+    const coarsePointerAtBoot = window.matchMedia('(pointer: coarse)').matches;
+
     if (!pluginRegisteredRef.current) {
       try {
         gsap.registerPlugin(ScrollTrigger);
@@ -428,12 +431,12 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
-    if (reducedMotion || isTouchDevice) {
+    if (reducedMotion || isTouchDevice || coarsePointerAtBoot) {
       if (lenisRef.current) {
         try {
           lenisRef.current.destroy();
         } catch (error) {
-          warnDev('Lenis destroy failed while entering reduced-motion mode.', error);
+          warnDev('Lenis destroy failed while entering native-scroll mode.', error);
         }
         lenisRef.current = null;
       }

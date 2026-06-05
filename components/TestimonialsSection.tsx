@@ -114,7 +114,7 @@ export function TestimonialsSection() {
              metrics-grid applies the CSS-level ultrawide max-width cap (≥1536px).
              xl:[grid-template-columns:...] caps each card at 320px on ultrawide
              so cards don't stretch beyond comfortable reading width at 1680px+
-             container. The grid stays left-aligned within the container naturally. */}
+             container. The capped grid stays centered within the container. */}
         <m.div
           variants={container}
           className="metrics-grid grid gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:[grid-template-columns:repeat(4,minmax(0,320px))]"

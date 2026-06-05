@@ -5551,7 +5551,7 @@ body {
 @media (min-width: 1536px) {
   .metrics-grid {
     max-width: 1280px;
-    margin-inline: 0; /* left-align within section container, not centred */
+    margin-inline: auto; /* center the capped grid within the section container */
   }
 }
 
