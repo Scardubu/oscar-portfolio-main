@@ -1,5 +1,6 @@
 'use client';
 
+import type { JSX } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
