@@ -9,7 +9,7 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion';
-import type { CSSProperties, PointerEvent } from 'react';
+import type { CSSProperties, JSX, PointerEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type IdentityCardProps = {
