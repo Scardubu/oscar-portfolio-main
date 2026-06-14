@@ -10,6 +10,7 @@ import { Activity, FileText, GitCommit, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { springs } from '@/lib/motionVariants';
+import { formatMonthYear } from '@/lib/utils';
 
 interface ActivityItem {
   id: string;
@@ -21,12 +22,18 @@ interface ActivityItem {
 }
 
 function getRelativeTime(timestamp: string): string {
-  const diff = Date.now() - new Date(timestamp).getTime();
+  const date = new Date(timestamp);
+  const diff = Date.now() - date.getTime();
   const s = Math.floor(diff / 1000);
   if (s < 60) return 'Just now';
   if (s < 3600) return `${Math.floor(s / 60)}m ago`;
   if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-  return `${Math.floor(s / 86400)}d ago`;
+  const days = Math.floor(s / 86400);
+  if (days < 30) return `${days}d ago`;
+  // Beyond a month, an ever-growing day count ("523d ago") reads as stale next
+  // to a "LIVE" badge. Fall back to the same Month/Year format used elsewhere
+  // (e.g. the About section's "Updated <Month Year>" availability timestamp).
+  return formatMonthYear(timestamp);
 }
 
 function SkeletonRow() {
