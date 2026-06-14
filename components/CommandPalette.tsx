@@ -572,7 +572,7 @@ export function CommandPalette() {
               )}
 
               {/* Search input */}
-              <div className="border-color-border flex items-center gap-3 border-b px-4 py-3">
+              <div className="border-color-border focus-within:ring-[color:var(--chapter-accent)] flex items-center gap-3 border-b px-4 py-3 transition-shadow focus-within:ring-2 focus-within:ring-inset">
                 <svg
                   className="text-color-text-muted h-4 w-4 shrink-0"
                   viewBox="0 0 20 20"
