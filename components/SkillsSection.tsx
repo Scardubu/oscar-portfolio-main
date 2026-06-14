@@ -123,7 +123,7 @@ function CoreSkillCard({
       data-cinematic="card"
       className="glass-surface flex h-full min-w-0 flex-col gap-2 rounded-[var(--radius-md)] p-3"
       // eslint-disable-next-line no-restricted-syntax
-      style={{ borderTop: `2px solid ${lvl.color}30` }}
+      style={{ borderTop: `2px solid color-mix(in oklch, ${lvl.color} 30%, transparent)` }}
       aria-label={`${skill.name} — ${lvl.label}${projectLabel ? ` — ${projectLabel}` : ''}`}
     >
       <span
