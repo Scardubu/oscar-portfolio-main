@@ -5,8 +5,8 @@ interface OGImageProps {
 }
 
 export function OGImage({
-  title = 'Oscar Ndugbu (Scardubu)',
-  subtitle = 'Fullstack engineering · AI infrastructure at scale',
+  title = 'SCARDUBU',
+  subtitle = 'Principal full-stack engineer · AI infrastructure at scale',
   caption = 'Shipped work, explicit tradeoffs, and fullstack product execution from interface to infrastructure.',
 }: Readonly<OGImageProps>) {
   return (
@@ -95,8 +95,8 @@ export function OGImage({
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '72%' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ fontSize: 82, fontWeight: 700, letterSpacing: '-0.05em' }}>{title}</div>
-            <div style={{ fontSize: 34, color: '#00d4ff' }}>{subtitle}</div>
+            <div style={{ fontSize: 76, fontWeight: 700, letterSpacing: '0.24em' }}>{title}</div>
+            <div style={{ fontSize: 34, color: '#67e8f9' }}>{subtitle}</div>
           </div>
           <div style={{ fontSize: 28, lineHeight: 1.4, color: 'rgba(226,232,240,0.88)' }}>
             {caption}
