@@ -1,28 +1,7 @@
 'use client';
 
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
-// IdentityCard — Luxury operating-system identity card portrait
-//
-// CHANGELOG v2026.9:
-//
-//   FIX 9–13: Maintained all previous core stability enhancements (cached image
-//     callbacks, inline transform-style single source of truth, superellipse
-//     squircle clip-paths, and loading shimmer state).
-//
-//   FIX 14: SVG Duotone Cinema Mapping Filter.
-//     Embedded a hardware-accelerated SVG filter (#luxury-duotone-cinema) directly
-//     into the component tree. It non-destructively maps image luminance to deep
-//     cinematic teal shadows (#031c24) and vibrant amber-orange highlights (#ff9540),
-//     blending back 15% of the original graphic to retain raw micro-details.
-//
-//   FIX 15: Dynamic Interactive Glare Sheen.
-//     Connected pointer coordinates to spring-damped MotionValues (glareX, glareY).
-//     A custom useMotionTemplate linear glare flare dynamically sweeps across the
-//     glass surface relative to cursor position on desktop frames.
-//
-//   FIX 16: Micro-contrast typography and operational pulse upgrades.
-//     Sharpened letter-tracking, normalized layout boundaries for subpixel alignment,
-//     and elevated text element weights for high-DPI panels.
+// IdentityCard — Luxury operating-system identity card portrait (production-ready)
 
 import { m, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { type MouseEvent as ReactMouseEvent, useCallback, useRef, useState } from 'react';
@@ -68,27 +47,28 @@ function PortraitFallback({ isDesktop }: Readonly<{ isDesktop: boolean }>) {
 export function IdentityCard({
   variant,
   className,
-  reducedMotion,
-  priority,
+  reducedMotion: propReducedMotion,
+  priority: propPriority,
 }: Readonly<IdentityCardProps>) {
   const prefersReducedMotion = useReducedMotion();
-  const shouldReduceMotion = reducedMotion ?? Boolean(prefersReducedMotion);
+  // Explicit default to resolve no-constant-binary-expression (no dead ?? on constants)
+  const shouldReduceMotion = propReducedMotion ?? Boolean(prefersReducedMotion);
   const isDesktop = variant === 'desktop';
-  const shouldPrioritizeImage = priority ?? !isDesktop;
+  const shouldPrioritizeImage = propPriority ?? !isDesktop;
   const imageLoading = shouldPrioritizeImage ? 'eager' : 'lazy';
   const imageFetchPriority = shouldPrioritizeImage ? 'high' : 'auto';
 
-  // Card Tilt physics
+  // Card Tilt physics (weighty, deliberate)
   const rawRotateX = useMotionValue(0);
   const rawRotateY = useMotionValue(0);
-  const rotateX = useSpring(rawRotateX, { stiffness: 220, damping: 24, mass: 0.42 });
-  const rotateY = useSpring(rawRotateY, { stiffness: 220, damping: 24, mass: 0.42 });
+  const rotateX = useSpring(rawRotateX, { stiffness: 210, damping: 26, mass: 0.45 });
+  const rotateY = useSpring(rawRotateY, { stiffness: 210, damping: 26, mass: 0.45 });
 
   // Glare Physics tracking
   const rawGlareX = useMotionValue(50);
   const rawGlareY = useMotionValue(50);
-  const glareX = useSpring(rawGlareX, { stiffness: 200, damping: 26 });
-  const glareY = useSpring(rawGlareY, { stiffness: 200, damping: 26 });
+  const glareX = useSpring(rawGlareX, { stiffness: 190, damping: 28 });
+  const glareY = useSpring(rawGlareY, { stiffness: 190, damping: 28 });
 
   const [portraitIndex, setPortraitIndex] = useState(0);
   const [portraitReady, setPortraitReady] = useState(false);
@@ -137,7 +117,6 @@ export function IdentityCard({
       rawRotateX.set((0.5 - pointerY) * 5.5);
       rawRotateY.set((pointerX - 0.5) * 7);
 
-      // Update interactive glare layout coords (mapped to percentage space)
       rawGlareX.set(pointerX * 100);
       rawGlareY.set(pointerY * 100);
     },
@@ -151,8 +130,7 @@ export function IdentityCard({
     rawGlareY.set(50);
   }, [rawRotateX, rawRotateY, rawGlareX, rawGlareY]);
 
-  // Motion string composition for high-performance GPU-bound layer blending
-  const glareStyle = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.14) 0%, rgba(56, 189, 248, 0.04) 30%, transparent 65%)`;
+  const glareStyle = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.145) 0%, rgba(56, 189, 248, 0.045) 32%, transparent 68%)`;
 
   return (
     <>
@@ -162,14 +140,14 @@ export function IdentityCard({
         whileHover={
           isDesktop && !shouldReduceMotion
             ? {
-                scale: 1.014,
-                y: -2,
-                transition: { type: 'spring', stiffness: 240, damping: 22 },
+                scale: 1.012,
+                y: -1.5,
+                transition: { type: 'spring', stiffness: 230, damping: 24 },
               }
             : undefined
         }
         transition={
-          shouldReduceMotion ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+          shouldReduceMotion ? { duration: 0 } : { duration: 0.42, ease: [0.23, 1, 0.32, 1] }
         }
         aria-label="Oscar Ndugbu — Principal Backend & ML Infrastructure Engineer — interactive profile card"
         className={cn(
@@ -367,7 +345,7 @@ export function IdentityCard({
                     : 'text-[9px] leading-tight break-words whitespace-normal sm:text-[10px]'
                 )}
               >
-                Node.js · Java · ML Infra · Next.js 15
+                Next.js 15 · Node · Java · ML Infra
               </span>
             </div>
 
