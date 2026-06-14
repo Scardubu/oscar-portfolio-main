@@ -803,7 +803,9 @@ button,
 
 .section-deferred {
   content-visibility: auto;
-  contain-intrinsic-size: 0 640px;
+  /* PATCH v2026.22 — was 0 640px; increased to 720px (was duplicated and
+     overridden ~2800 lines below). Consolidated into this single definition. */
+  contain-intrinsic-size: 0 720px;
 }
 .hero-below-fold {
   content-visibility: auto;
@@ -881,7 +883,10 @@ h3,
 }
 .section-number {
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  /* PATCH v2026.22 — was 0.625rem, then overridden via !important two
+     definitions below (v20.1). Baked the v20.1 value in directly and
+     removed that redundant !important block — same computed result. */
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
   font-weight: var(--weight-medium);
   letter-spacing: 0.14em;
   color: var(--color-film-amber);
@@ -3181,12 +3186,10 @@ section.border-t + section.border-t {
 }
 
 /* ── v20.1: Section heading numbers — slightly larger on mobile ───────────
-   Currently 14px on small screens. Bump to 15px for better optical
-   weight matching the adjacent section label text.
+   Superseded by PATCH v2026.22: clamp(0.75rem, 1vw, 0.875rem) is now declared
+   directly in the base .section-number rule above. This !important override
+   block is no longer needed and has been removed (same computed value).
 */
-.section-number {
-  font-size: clamp(0.75rem, 1vw, 0.875rem) !important;
-}
 
 /* ── v26.0: :focus override removed — :focus-visible rule at
    the CONTACT FORM FIELD SYSTEM v26 section already handles keyboard focus
@@ -3588,16 +3591,11 @@ section.border-t {
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
-/* ── Reduce content-visibility jank on section reveal ───────────────────────
-   content-visibility:auto skips paint for off-screen sections, which is good
-   for initial paint but creates a small layout recalc burst on first scroll-into-view.
-   Setting a realistic contain-intrinsic-size prevents the height-estimation jump.
-   Values are generous estimates — actual heights vary by content.
+/* ── content-visibility jank on section reveal ──────────────────────────────
+   Consolidated into the base .section-deferred rule above (PATCH v2026.22).
+   contain-intrinsic-size: 0 720px reflects the "more accurate for dense
+   sections" update — this duplicate definition has been removed.
 */
-.section-deferred {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 720px; /* increased from 640px — more accurate for dense sections */
-}
 
 /* ── Smooth mobile carousel momentum ────────────────────────────────────────
    iOS Safari's momentum scrolling can feel jerky without this.
@@ -4132,36 +4130,10 @@ body {
  * Extends the existing design token layer without replacing any tokens.
  */
 
-/* ==========================================================================
-   FIX 3: Modern radial-gradient syntax for autoprefixer compatibility
-   ========================================================================== */
-
-.gradient-mesh-orb--indigo {
-  background: radial-gradient(
-    ellipse at center,
-    oklch(63% 0.22 258 / 0.11) 0%,
-    oklch(63% 0.22 258 / 0.05) 40%,
-    transparent 70%
-  );
-}
-
-.gradient-mesh-orb--green {
-  background: radial-gradient(
-    ellipse at center,
-    oklch(70% 0.21 188 / 0.09) 0%,
-    oklch(70% 0.21 188 / 0.04) 40%,
-    transparent 70%
-  );
-}
-
-.gradient-mesh-orb--amber {
-  background: radial-gradient(
-    ellipse at center,
-    oklch(73% 0.17 65 / 0.07) 0%,
-    oklch(73% 0.17 65 / 0.03) 40%,
-    transparent 70%
-  );
-}
+/* FIX 3 (removed, PATCH v2026.22): this block redeclared
+   .gradient-mesh-orb--{indigo,green,amber} `background` with values
+   byte-identical to the originals further up this file — a no-op despite
+   the "modern radial-gradient syntax" label (syntax was unchanged). */
 
 /* v1.7 CLEANUP: removed duplicate skeleton-sweep keyframes + .skeleton-shimmer
    rule. The canonical pair sits in the SKELETON BASE block (~1500 lines above)
@@ -4201,6 +4173,12 @@ section {
 
 /* ==========================================================================
    FIX 7: GPU-safe transitions
+   PATCH v2026.22 — restored `color` to the transition list. This rule shares
+   .cta-ghost's specificity and wins by source order, so it was silently
+   replacing (not extending) the base .cta-ghost transition that included
+   `color` — the hover color change on every "View source" / ghost CTA link
+   was firing instantly instead of fading. `color` is additive/no-op for the
+   other five selectors here.
    ========================================================================== */
 
 .glass-nav,
@@ -4210,6 +4188,7 @@ section {
 .cta-secondary,
 .cta-ghost {
   transition:
+    color var(--dur-fast, 200ms) ease,
     transform var(--dur-fast, 200ms) ease,
     opacity var(--dur-fast, 200ms) ease,
     border-color var(--dur-fast, 200ms) ease,
