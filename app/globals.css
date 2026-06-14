@@ -47,6 +47,13 @@
     /* Fallback high-fidelity type stacks mapped directly to CSS configuration variables */
     --font-display: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    --brand-bg: #050607;
+    --brand-text: #f5f7fa;
+    --brand-ink: #0d0f12;
+    --brand-muted: rgba(245, 247, 250, 0.62);
+    --brand-accent: #67e8f9;
+    --brand-mint: #9ef7d0;
+    --font-wordmark: var(--font-syne), 'Söhne', 'Neue Haas Grotesk', 'Inter', system-ui, sans-serif;
   }
   body {
     @apply bg-black text-white antialiased;
@@ -59,6 +66,145 @@
   }
 }
 @layer components {
+
+  /* ── SCARDUBU production wordmark system ────────────────────────────────
+     Concept 01 — CONVICTION. Uppercase, wide-tracked, engineered, restrained.
+     Built as live text for sharp browser rendering while allowing per-glyph
+     micro-adjustments that mimic a custom vector wordmark. */
+  .brand-wordmark {
+    --wordmark-gap: 0.32em;
+    --wordmark-size: 1rem;
+    --wordmark-weight: 650;
+    --wordmark-color: var(--brand-text);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    color: var(--wordmark-color);
+    font-family: var(--font-wordmark);
+    font-size: var(--wordmark-size);
+    font-weight: var(--wordmark-weight);
+    line-height: 0.82;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern', 'liga', 'ss01', 'cv02', 'cv03';
+    contain: layout style;
+  }
+
+  .brand-wordmark__inner {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--wordmark-gap);
+    white-space: nowrap;
+  }
+
+  .brand-wordmark__glyph {
+    display: inline-block;
+    transform-origin: center;
+  }
+
+  .brand-wordmark__glyph--s {
+    transform: scaleX(0.94);
+  }
+
+  .brand-wordmark__glyph--c {
+    transform: scaleX(0.98);
+  }
+
+  .brand-wordmark__glyph--a {
+    transform: translateY(-0.01em) scaleX(1.015);
+  }
+
+  .brand-wordmark__glyph--r {
+    transform: translateX(0.01em) skewX(-1.6deg);
+  }
+
+  .brand-wordmark__glyph--d {
+    transform: scaleX(0.985);
+  }
+
+  .brand-wordmark__glyph--u {
+    transform: scaleX(0.99);
+  }
+
+  .brand-wordmark__glyph--b {
+    transform: scaleX(0.985);
+  }
+
+  .brand-wordmark__glyph--bu-entry {
+    margin-right: calc(var(--wordmark-gap) * -0.08);
+  }
+
+  .brand-wordmark__glyph--bu-exit {
+    margin-left: calc(var(--wordmark-gap) * -0.08);
+  }
+
+  .brand-wordmark--hero {
+    --wordmark-size: clamp(2.35rem, 8vw, 7rem);
+    --wordmark-gap: clamp(0.18em, 1.4vw, 0.34em);
+    --wordmark-weight: 650;
+  }
+
+  .brand-wordmark--nav {
+    --wordmark-size: clamp(1rem, 1.15vw, 1.22rem);
+    --wordmark-gap: 0.28em;
+    --wordmark-weight: 680;
+  }
+
+  .brand-wordmark--compact {
+    --wordmark-size: 0.875rem;
+    --wordmark-gap: 0.24em;
+    --wordmark-weight: 680;
+  }
+
+  .brand-wordmark--social {
+    --wordmark-size: 1.25rem;
+    --wordmark-gap: 0.22em;
+    --wordmark-weight: 700;
+  }
+
+  .brand-wordmark--light {
+    --wordmark-color: var(--brand-text);
+  }
+
+  .brand-wordmark--dark {
+    --wordmark-color: var(--brand-ink);
+  }
+
+  .brand-wordmark--accent {
+    --wordmark-color: var(--brand-accent);
+  }
+
+  .brand-wordmark-lockup {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.36rem;
+  }
+
+  .brand-wordmark-kicker {
+    color: var(--brand-muted);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.24em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 430px) {
+    .brand-wordmark--hero {
+      --wordmark-size: clamp(2rem, 15vw, 3.7rem);
+      --wordmark-gap: 0.16em;
+    }
+
+    .brand-wordmark--nav {
+      --wordmark-size: 0.98rem;
+      --wordmark-gap: 0.22em;
+    }
+  }
+
   /* Cinematic Text-Sharpness Optimization Layer */
   [data-cinematic='eyebrow'],
   [data-cinematic='proof'] {
