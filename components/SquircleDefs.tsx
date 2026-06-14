@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 export default function SquircleDefs(): JSX.Element {
   return (
     <svg
