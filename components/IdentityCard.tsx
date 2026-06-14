@@ -12,17 +12,28 @@ import {
 import type { CSSProperties, JSX, PointerEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { anchorUrl, CONTACT_EMAIL } from '@/lib/config';
+
 type IdentityCardProps = {
   className?: string;
   reducedMotion?: boolean;
 };
 
+// PATCH v2026.18 — Portrait source order corrected to match files that actually
+// exist in /public. Previous list (oscar-portrait.webp, oscar.webp, portrait.webp,
+// avatar.webp, avatar.png) resolved to zero real assets, so every <Image> request
+// 404'd, onError cascaded through the full list, and the card permanently rendered
+// <PortraitFallback /> ("OA" initials) instead of the cinematic duotone headshot the
+// #luxury-duotone-cinema filter (app/layout.tsx) was built for.
+//
+// /headshot.webp is the optimized asset already referenced by the Person schema
+// (app/lib/structured-data.ts → image: "https://www.scardubu.dev/headshot.webp"),
+// so it is the correct primary source. The .jpg/.jpeg variants remain as
+// defense-in-depth fallbacks only.
 const PORTRAIT_SOURCES = [
-  '/images/oscar-portrait.webp',
-  '/images/oscar.webp',
-  '/images/portrait.webp',
-  '/avatar.webp',
-  '/avatar.png',
+  '/headshot.webp',
+  '/images/oscar-headshot.jpg',
+  '/images/scar-headshot.jpeg',
 ] as const;
 
 const STACK_SIGNALS = ['Next.js 15', 'Node', 'Java', 'ML Infra'] as const;
@@ -41,7 +52,7 @@ function PortraitFallback(): JSX.Element {
       className="grid size-full place-items-center bg-[radial-gradient(circle_at_28%_18%,rgba(56,189,248,0.28),transparent_36%),radial-gradient(circle_at_80%_70%,rgba(251,146,60,0.22),transparent_38%),linear-gradient(145deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]"
     >
       <span className="font-mono text-4xl font-semibold tracking-[0.28em] text-white/85">
-        OA
+        ON
       </span>
     </div>
   );
@@ -169,7 +180,7 @@ export default function IdentityCard({
 
   return (
     <motion.article
-      aria-label="Oscar Akintola identity card"
+      aria-label="Oscar Ndugbu identity card"
       className={[
         'group relative mx-auto w-full max-w-[25rem] rounded-[2rem]',
         'border border-white/10 bg-white/[0.055] p-3 shadow-2xl shadow-sky-950/35',
@@ -214,7 +225,7 @@ export default function IdentityCard({
               ) : (
                 <Image
                   src={portraitSrc}
-                  alt="Portrait of Oscar Akintola"
+                  alt="Portrait of Oscar Ndugbu"
                   fill
                   priority
                   sizes="(max-width: 640px) 82vw, 190px"
@@ -237,7 +248,7 @@ export default function IdentityCard({
                   Staff+ Engineer
                 </p>
                 <h2 className="mt-2 text-balance text-3xl font-semibold leading-none text-white sm:text-4xl">
-                  Oscar Akintola
+                  Oscar Ndugbu
                 </h2>
               </div>
 
@@ -273,14 +284,14 @@ export default function IdentityCard({
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <a
-              href="mailto:hello@oscarakintola.dev?subject=Staff%2B%20engineering%20conversation"
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Staff+ engineering conversation')}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:scale-[1.025] hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               Request interview
             </a>
 
             <a
-              href="#projects"
+              href={anchorUrl('section-projects')}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-5 py-3 text-sm font-semibold text-white/86 transition duration-300 hover:scale-[1.025] hover:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               View proof
