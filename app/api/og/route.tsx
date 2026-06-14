@@ -40,10 +40,11 @@ export async function GET() {
               fontSize: 72,
               fontWeight: 700,
               lineHeight: 1,
+              letterSpacing: '0.24em',
               margin: 0,
             }}
           >
-            Oscar Ndugbu (Scardubu)
+            SCARDUBU
           </h1>
           <p
             style={{
@@ -68,7 +69,7 @@ export async function GET() {
           <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13, fontFamily: 'monospace' }}>
             scardubu.dev
           </span>
-          <span style={{ color: '#6366F1', fontSize: 13, fontFamily: 'monospace' }}>
+          <span style={{ color: '#67E8F9', fontSize: 13, fontFamily: 'monospace' }}>
             TaxBridge · SabiScore · Fullstack Systems
           </span>
         </div>
