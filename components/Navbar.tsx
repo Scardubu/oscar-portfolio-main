@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { BrandWordmark } from '@/components/BrandWordmark';
 import { useScrollCinema } from '@/components/cinematic/ScrollCinemaProvider';
 import { anchorUrl } from '@/lib/config';
 
@@ -204,21 +205,19 @@ export default function Navbar() {
           <Link
             href="/"
             className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
-            aria-label="Oscar Ndugbu — Homepage"
+            aria-label="Scardubu — Homepage"
           >
-            <div className="flex flex-col gap-0.5">
-              <m.span
-                className="nav-wordmark-luminary"
-                whileHover={reducedMotion ? undefined : { y: -1 }}
-                whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-              >
-                Oscar Ndugbu
-              </m.span>
-              <span className="text-[10px] tracking-[0.24em] text-white/55 uppercase sm:text-white/45">
+            <m.span
+              className="brand-wordmark-lockup"
+              whileHover={reducedMotion ? undefined : { y: -1 }}
+              whileTap={reducedMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            >
+              <BrandWordmark size="nav" />
+              <span className="brand-wordmark-kicker hidden sm:inline">
                 Principal Full-Stack Engineer
               </span>
-            </div>
+            </m.span>
           </Link>
 
           {/* ── Desktop nav ────────────────────────────────────────────── */}
