@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import SquircleDefs from './SquircleDefs';
+import { anchorUrl, CONTACT_EMAIL } from '@/lib/config';
 
 export function HeroSection(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
@@ -61,14 +62,14 @@ export function HeroSection(): JSX.Element {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
-              href="mailto:hello@oscarakintola.dev?subject=Staff%2B%20engineering%20conversation"
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Staff+ engineering conversation')}`}
               className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.025] hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               Start a Staff+ conversation
             </a>
 
             <a
-              href="#projects"
+              href={anchorUrl('section-projects')}
               className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-6 py-3 text-sm font-semibold text-white/86 transition hover:scale-[1.025] hover:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               Review proof of work
