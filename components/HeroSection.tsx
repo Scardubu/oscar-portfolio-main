@@ -1,10 +1,11 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
+import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import SquircleDefs from './SquircleDefs';
 
-export default function HeroSection(): JSX.Element {
+export function HeroSection(): JSX.Element {
   const prefersReducedMotion = useReducedMotion();
   const shouldReduceMotion = Boolean(prefersReducedMotion);
 
@@ -12,7 +13,7 @@ export default function HeroSection(): JSX.Element {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="relative isolate min-h-screen overflow-hidden bg-slate-950 px-5 py-24 text-white sm:px-8 lg:px-12"
+      className="relative isolate min-h-screen overflow-hidden bg-[color:var(--brand-bg)] px-5 py-24 text-white sm:px-8 lg:px-12"
     >
       <SquircleDefs />
 
@@ -28,7 +29,19 @@ export default function HeroSection(): JSX.Element {
           transition={{ type: 'spring', stiffness: 150, damping: 24, mass: 0.7 }}
           className="max-w-3xl"
         >
-          <p className="mb-5 font-mono text-xs uppercase tracking-[0.32em] text-sky-200/70">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(6px)' }}
+            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-8"
+          >
+            <BrandWordmark size="hero" />
+            <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.28em] text-white/48">
+              Principal Full-Stack Engineer
+            </p>
+          </motion.div>
+
+          <p className="mb-5 font-mono text-xs uppercase tracking-[0.32em] text-[color:var(--brand-accent)]/80">
             Staff+ • Next.js 15 · Node · Java · ML Infra • Lagos · UTC+1
           </p>
 
@@ -67,3 +80,5 @@ export default function HeroSection(): JSX.Element {
     </section>
   );
 }
+
+export default HeroSection;
