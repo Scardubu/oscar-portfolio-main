@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { LiveBuildFeed } from '@/components/LiveBuildFeed';
 import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
@@ -368,6 +369,15 @@ export function AboutSection() {
                   </p>
                 </div>
               ))}
+            </m.div>
+
+            {/* Live build feed — the right column's closing proof. Auto-refreshing
+                every 5 minutes, sourced from GitHub push events + recent writing.
+                Pairs with the left column's closing line: a live record, not a
+                static claim. Hidden gracefully (returns its own empty/error
+                states) if both sources are unavailable. */}
+            <m.div variants={itemVariants} data-cinematic="proof" className="mt-6">
+              <LiveBuildFeed />
             </m.div>
           </aside>
         </div>
