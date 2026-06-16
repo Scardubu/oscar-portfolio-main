@@ -157,11 +157,17 @@ export const metadata: Metadata = {
   },
 };
 
+// SURGICAL PATCH v2026.16 [viewport]: removed maximumScale: 1.
+// WCAG 2.2 SC 1.4.4 (Resize Text, Level AA) requires that text can be resized
+// up to 200% without loss of content or functionality. Blocking user scaling via
+// maximumScale: 1 / user-scalable=no is a hard WCAG violation on mobile browsers
+// and also prevents iOS Safari's reader-mode and accessibility zoom from working.
+// The cinematic design survives at 200% zoom without layout breakage (tested).
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
-  maximumScale: 1,
+  // maximumScale removed — WCAG 1.4.4 compliance
   viewportFit: 'cover',
   themeColor: '#000000',
   colorScheme: 'dark',
