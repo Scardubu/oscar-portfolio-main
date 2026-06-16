@@ -393,6 +393,22 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       try {
         gsap.registerPlugin(ScrollTrigger);
         pluginRegisteredRef.current = true;
+
+        // ── PATCH v2026.16: ScrollTrigger.normalizeScroll ─────────────────────
+        // Prevents the resize-after-scroll desync: on some browsers (iOS Safari,
+        // Chrome on Android), resizing the viewport after scroll completes causes
+        // ScrollTrigger to recalculate trigger positions using a stale scroll
+        // offset. normalizeScroll intercepts these cases and corrects the offset
+        // before ScrollTrigger uses it. allowNestedScroll:true preserves normal
+        // scroll behavior inside horizontally-scrollable carousels and code blocks.
+        // Only register once — normalizeScroll is a global singleton in GSAP.
+        try {
+          ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
+        } catch (_normalizeError) {
+          // normalizeScroll is available in ScrollTrigger 3.11+; silently skip
+          // if the version doesn't support it (no user-visible degradation).
+        }
+        // ── END PATCH v2026.16 ───────────────────────────────────────────────
       } catch (error) {
         warnDev('GSAP ScrollTrigger registration failed. Falling back to static scrolling.', error);
       }
@@ -450,6 +466,8 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     let lenis: Lenis | null = null;
     let cleanupNative: (() => void) | null = null;
+    // ── PATCH v2026.16: ticker fn ref for cleanup ────────────────────────────
+    let lenisTickerFn: ((time: number) => void) | null = null;
 
     try {
       lenis = new Lenis({
@@ -520,14 +538,45 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
           return hasHorizontalScroll;
         },
 
-        // ── autoRaf: true — Lenis manages its own rAF loop ───────────────────
-        // Prevents the need for a manual requestAnimationFrame call in the
-        // consuming component. Safe with GSAP's ScrollTrigger as long as we
-        // call lenis.on('scroll', () => ScrollTrigger.update()) each frame.
-        autoRaf: true,
+        // ── PATCH v2026.16 [SINGLE RAF LOOP]: gsap.ticker drives Lenis ─────────
+        // REMOVED: autoRaf: true
+        //
+        // With autoRaf:true, Lenis runs its own rAF loop independently from GSAP's
+        // ticker. This creates TWO separate animation loops firing out of phase —
+        // under sustained scroll, GSAP animations can receive scroll positions from
+        // the PREVIOUS Lenis tick (one-frame lag), causing subtle jank in
+        // ScrollTrigger-driven stagger reveals, especially on 120Hz mobile screens.
+        //
+        // The single-loop solution (see gsap.ticker.add below):
+        //   1. gsap.ticker fires (prioritize: true → before other GSAP callbacks)
+        //   2. Calls lenis.raf(time * 1000) — Lenis advances + fires 'scroll' event
+        //   3. 'scroll' event handler calls ScrollTrigger.update() immediately
+        //   4. GSAP processes all animations with the CURRENT scroll position
+        //
+        // Result: one style recalculation per frame, zero phase offset.
+        // ── END PATCH v2026.16 [SINGLE RAF LOOP] ──────────────────────────────
       });
 
       lenisRef.current = lenis;
+
+      // ── PATCH v2026.16 [TICKER]: Register Lenis in GSAP's ticker ────────────
+      // prioritize: true (third arg) ensures this callback runs BEFORE any GSAP
+      // animation callbacks in the same tick, so scroll position is always current
+      // when animation transforms are applied.
+      // once: false (second arg) — runs on every frame, not once.
+      if (lenis) {
+        lenisTickerFn = (time: number) => {
+          try {
+            lenis.raf(time * 1000);
+          } catch (lenisRafError) {
+            warnDev('Lenis raf() threw in gsap.ticker. Removing ticker fn.', lenisRafError);
+            if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
+            lenisTickerFn = null;
+          }
+        };
+        gsap.ticker.add(lenisTickerFn, false, true);
+      }
+      // ── END PATCH v2026.16 [TICKER] ─────────────────────────────────────────
 
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.scrollEngine = 'lenis';
@@ -657,6 +706,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         resizeObserver = null;
       }
       // ─────────────────────────────────────────────────────────────────────
+
+      // ── PATCH v2026.16: remove Lenis from GSAP ticker on cleanup ─────────
+      // Critical: failing to remove the ticker fn causes Lenis.raf() to continue
+      // firing on a destroyed Lenis instance after route changes / React unmounts.
+      // Symptom without this: "Cannot read properties of null (reading 'scroll')"
+      // errors on every GSAP tick after navigating away from the home page.
+      if (lenisTickerFn) {
+        gsap.ticker.remove(lenisTickerFn);
+        lenisTickerFn = null;
+      }
+      // ── END PATCH v2026.16 ───────────────────────────────────────────────
 
       if (cleanupNative) {
         cleanupNative();
