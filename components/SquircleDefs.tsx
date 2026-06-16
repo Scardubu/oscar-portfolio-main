@@ -32,7 +32,7 @@ export default function SquircleDefs(): JSX.Element {
             <feFuncG type="gamma" amplitude="1.02" exponent="0.98" offset="0" />
             <feFuncB type="gamma" amplitude="1.08" exponent="0.92" offset="0" />
           </feComponentTransfer>
-        </filteriy>
+        </filter>
       </defs>
     </svg>
   );
