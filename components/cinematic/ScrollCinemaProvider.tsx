@@ -404,9 +404,12 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         // Only register once — normalizeScroll is a global singleton in GSAP.
         try {
           ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
-        } catch (_normalizeError) {
-          // normalizeScroll is available in ScrollTrigger 3.11+; silently skip
-          // if the version doesn't support it (no user-visible degradation).
+        } catch {
+          // Optional catch binding (TS 4.0+ / ES2019): the caught value is
+          // intentionally unused — normalizeScroll is available in ScrollTrigger
+          // 3.11+; silently skip if the installed version doesn't expose it.
+          // No user-visible degradation: ScrollTrigger still functions correctly,
+          // just without the resize-after-scroll desync correction on older builds.
         }
         // ── END PATCH v2026.16 ───────────────────────────────────────────────
       } catch (error) {
