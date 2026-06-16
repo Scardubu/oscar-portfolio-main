@@ -146,6 +146,21 @@ export function ThreeBrushField() {
   const pointerRef = useRef(new THREE.Vector2(0.5, 0.5));
   const [supportsWebGl, setSupportsWebGl] = useState(true);
 
+  // ── PATCH v2026.16 [PALETTE LERP]: target color refs ────────────────────────
+  // When a chapter change fires, the palette effect (below) updates these
+  // target refs. The render loop lerps the ACTUAL uniform values toward these
+  // targets at ~0.06 per frame ≈ 0.65s at 60fps — matching the CSS
+  // `--chapter-accent` cross-fade duration. Without lerp, the WebGL background
+  // snaps to the new palette while the CSS layer fades smoothly — visible as a
+  // one-frame color flash on the canvas at every chapter boundary.
+  //
+  // Initialized inside the main useEffect (not here) to avoid the SSR penalty
+  // of constructing THREE.Color on the server during module evaluation.
+  const targetAccentRef = useRef<THREE.Color | null>(null);
+  const targetWashRef = useRef<THREE.Color | null>(null);
+  const targetIntensityRef = useRef<number>(0.18);
+  // ── END PATCH v2026.16 [PALETTE LERP] ───────────────────────────────────────
+
   const { activeChapter, scrollProgressRef, reducedMotion } = useScrollCinema();
 
   const uniformsRef = useRef<{
@@ -287,8 +302,15 @@ export function ThreeBrushField() {
 
     // Set initial palette from the current chapter at mount time.
     // Subsequent chapter changes are handled by the palette effect below.
+    // PATCH v2026.16: also initialize target refs so the render loop lerp
+    // starts at the correct color (not from the THREE.Color defaults).
     const setInitialPalette = () => {
       const chapter = CHAPTERS.find((item) => item.id === activeChapter) ?? CHAPTERS[0];
+      // Initialize target refs here (first time they're accessible in the effect scope)
+      targetAccentRef.current = new THREE.Color(chapter.colors.accent);
+      targetWashRef.current = new THREE.Color(chapter.colors.wash);
+      targetIntensityRef.current = chapter.motion.drift;
+      // Set actual uniform values to match targets — no initial lerp needed
       uniforms.uAccent.value.set(chapter.colors.accent);
       uniforms.uWash.value.set(chapter.colors.wash);
       uniforms.uIntensity.value = chapter.motion.drift;
@@ -326,6 +348,21 @@ export function ThreeBrushField() {
       uniformsState.uScroll.value +=
         (scrollProgressRef.current - uniformsState.uScroll.value) * 0.06;
       uniformsState.uPointer.value.lerp(pointerRef.current, 0.08);
+
+      // ── PATCH v2026.16 [PALETTE LERP]: smooth chapter color transitions ──────
+      // Lerp factor 0.06 ≈ 0.65s convergence at 60fps — matches the CSS
+      // `--chapter-accent` transition duration. Without this, the WebGL canvas
+      // snaps to the new chapter palette while the CSS layer cross-fades,
+      // creating a one-frame color mismatch flash at every chapter boundary.
+      if (targetAccentRef.current) {
+        uniformsState.uAccent.value.lerp(targetAccentRef.current, 0.06);
+      }
+      if (targetWashRef.current) {
+        uniformsState.uWash.value.lerp(targetWashRef.current, 0.06);
+      }
+      uniformsState.uIntensity.value +=
+        (targetIntensityRef.current - uniformsState.uIntensity.value) * 0.06;
+      // ── END PATCH v2026.16 [PALETTE LERP] ─────────────────────────────────
 
       rendererState.render(scene, camera);
       frameRef.current = window.requestAnimationFrame(render);
@@ -387,16 +424,36 @@ export function ThreeBrushField() {
   }, [reducedMotion]); // activeChapter intentionally excluded — see comment above
 
   // FIX BUG 2 (palette effect): fires only on chapter change, imperatively
-  // mutates existing uniform values. The renderer and RAF loop continue
-  // uninterrupted — zero WebGL context destruction on chapter transitions.
+  // updates palette targets. The renderer and RAF loop continue uninterrupted —
+  // zero WebGL context destruction on chapter transitions.
+  //
+  // PATCH v2026.16: now sets targetAccentRef / targetWashRef / targetIntensityRef
+  // instead of mutating uniform values directly. The render loop lerps toward
+  // these targets at 0.06/frame, creating a ~0.65s smooth transition that matches
+  // the CSS `--chapter-accent` cross-fade. The old direct-set caused a hard snap.
   useEffect(() => {
-    const uniforms = uniformsRef.current;
-    if (!uniforms) return;
-
     const chapter = CHAPTERS.find((item) => item.id === activeChapter) ?? CHAPTERS[0];
-    uniforms.uAccent.value.set(chapter.colors.accent);
-    uniforms.uWash.value.set(chapter.colors.wash);
-    uniforms.uIntensity.value = chapter.motion.drift;
+
+    // Update lerp targets. The render loop smoothly drives uniforms toward them.
+    // Guard: targetAccentRef/targetWashRef are initialized inside the main
+    // useEffect; this effect can fire before the main effect on first render
+    // (React fires effects in order of declaration). If targets aren't set yet,
+    // fall back to directly setting the uniforms for correctness.
+    if (targetAccentRef.current) {
+      targetAccentRef.current.set(chapter.colors.accent);
+    } else {
+      const uniforms = uniformsRef.current;
+      if (uniforms) uniforms.uAccent.value.set(chapter.colors.accent);
+    }
+
+    if (targetWashRef.current) {
+      targetWashRef.current.set(chapter.colors.wash);
+    } else {
+      const uniforms = uniformsRef.current;
+      if (uniforms) uniforms.uWash.value.set(chapter.colors.wash);
+    }
+
+    targetIntensityRef.current = chapter.motion.drift;
   }, [activeChapter]);
 
   if (reducedMotion || !supportsWebGl) {
