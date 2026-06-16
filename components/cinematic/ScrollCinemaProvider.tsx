@@ -568,9 +568,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       // when animation transforms are applied.
       // once: false (second arg) — runs on every frame, not once.
       if (lenis) {
+        // ── TypeScript closure narrowing fix ─────────────────────────────────
+        // `lenis` is typed as `Lenis | null` (a mutable `let`). TypeScript cannot
+        // narrow a mutable variable inside a closure body — it correctly points out
+        // that `lenis` could be set to null between now and any future tick that
+        // executes this closure. Capturing it as a non-null `const` before the
+        // closure is the idiomatic fix: `const` identity never changes, so TypeScript
+        // permanently narrows `activeLenis` to `Lenis` with no suppression needed.
+        const activeLenis = lenis;
         lenisTickerFn = (time: number) => {
           try {
-            lenis.raf(time * 1000);
+            activeLenis.raf(time * 1000);
           } catch (lenisRafError) {
             warnDev('Lenis raf() threw in gsap.ticker. Removing ticker fn.', lenisRafError);
             if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
