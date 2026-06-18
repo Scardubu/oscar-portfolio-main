@@ -233,7 +233,10 @@ export default function IdentityCard({
                   fill
                   priority
                   sizes="(max-width: 640px) 82vw, 190px"
-                  className="object-cover object-center opacity-95 transition duration-700 group-hover:scale-[1.035]"
+                  // PATCH v2026.21 [motion]: group-hover zoom gated behind motion-safe so
+                  // it's fully suppressed under prefers-reduced-motion (matches the rest of
+                  // the codebase's hover-transform discipline).
+                  className="object-cover object-center opacity-95 transition duration-700 motion-safe:group-hover:scale-[1.035]"
                   onError={handlePortraitError}
                   // eslint-disable-next-line no-restricted-syntax -- SVG duotone filter enhancement has safe browser fallback.
                   style={{
@@ -287,16 +290,19 @@ export default function IdentityCard({
           </div>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            {/* PATCH v2026.21 [a11y + motion]: focus: → focus-visible:, hover:scale →
+                motion-safe:hover:scale, added active:scale press feedback. Mirrors the
+                Hero CTA treatment so both primary conversion paths are identical. */}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Staff+ engineering conversation')}`}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:scale-[1.025] hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-slate-950"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:bg-sky-100 focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
             >
               Request interview
             </a>
 
             <a
               href={anchorUrl('section-projects')}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-5 py-3 text-sm font-semibold text-white/86 transition duration-300 hover:scale-[1.025] hover:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-slate-950"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-5 py-3 text-sm font-semibold text-white/86 transition duration-300 hover:border-white/20 hover:bg-white/[0.09] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
             >
               View proof
             </a>
