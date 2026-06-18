@@ -73,7 +73,7 @@ export function BlogBridge({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group block rounded-xl border border-(--border-default) bg-(--bg-elevated) p-5 transition-all duration-300 hover:border-(--accent-primary) hover:bg-(--bg-surface) focus:ring-2 focus:ring-(--accent-primary) focus:ring-offset-2 focus:ring-offset-(--bg-base) focus:outline-none ${className} `}
+      className={`group block rounded-xl border border-(--border-default) bg-(--bg-elevated) p-5 transition-all duration-300 hover:border-(--accent-primary) hover:bg-(--bg-surface) focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2 focus-visible:ring-offset-(--bg-base) focus-visible:outline-none ${className} `}
       variants={shouldAnimate ? fadeUp : {}}
       initial={shouldAnimate ? 'hidden' : false}
       whileInView={shouldAnimate ? 'visible' : undefined}
