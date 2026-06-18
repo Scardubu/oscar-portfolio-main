@@ -47,7 +47,8 @@ export function ScrollProgress() {
                 // CSS transition handles scale — no framer-motion scroll hook
                 'transition-all duration-300',
                 'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
-                active ? 'scale-110' : 'scale-100 opacity-50 hover:scale-105 hover:opacity-90',
+                // PATCH v2026.21 [motion]: hover:scale gated motion-safe for reduced-motion users
+                active ? 'scale-110' : 'scale-100 opacity-50 hover:opacity-90 motion-safe:hover:scale-105',
               ].join(' ')}
               aria-label={`Jump to ${chapter.label}`}
               aria-current={active ? 'step' : undefined}
