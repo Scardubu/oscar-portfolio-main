@@ -54,25 +54,15 @@ const FEATURED_SECONDARY_VARIANT = cardReveal(20);
 const GRID_VARIANT_A = cardReveal(24);
 const GRID_VARIANT_B = cardReveal(-20);
 
-// ── PATCH v2026.13 [1] ──────────────────────────────────────────────────────
-// Was: { once: true, amount: 0.25, margin: '-20px 0px' }
-//
-// The negative top margin in rootMargin shrinks the intersection viewport
-// from the top. On iOS Safari (50px address bar + 44px toolbar = 94px chrome),
-// '-20px 0px' was small enough that tall project cards on compact screens
-// required the element to be 20px past the chrome before triggering — causing
-// the opacity:0/y:12 initial state to be briefly visible on scroll-in.
-//
-// New config:
-//   amount: 0.15  — trigger when 15% of the card is in view (was 25%)
-//   margin: '0px 0px -50px 0px'
-//     ↑ top: no shrinkage (was -20px — removed)
-//     ↑ bottom: fire 50px before the card hits the bottom edge (early trigger)
-//
-// Result: cards animate in the moment they become visible, with a 50px
-// "preview" window so the animation is already in progress when users look at
-// the card. Never fires late. Zero risk of invisible content.
-const SECTION_VIEWPORT = { once: true, amount: 0.15, margin: '0px 0px -50px 0px' } as const;
+// ── PATCH v2026.20 [SECTION_VIEWPORT removed] ───────────────────────────────
+// The SECTION_VIEWPORT constant (and the v2026.13 iOS rootMargin tuning it
+// documented) drove Framer Motion whileInView reveals on the project cards and
+// the section-intro wrapper. Those reveals have been removed because every one
+// of those nodes is a GSAP data-cinematic target — GSAP's useChapterTimeline is
+// now the single reveal owner (see the per-node PATCH v2026.20 comments below).
+// With no remaining whileInView consumer, the constant is deleted to satisfy
+// strict `noUnusedLocals`. The iOS-safe trigger timing it provided is preserved
+// by useChapterTimeline's own `start: 'top 85%'` + onRefresh/in-view failsafes.
 
 function trackProjectClick(projectSlug: string, target: 'case-study' | 'demo' | 'source') {
   trackEvent('Portfolio', 'ProjectClick', projectSlug, undefined, {
@@ -128,10 +118,16 @@ function FeaturedProjectCard({
 
   return (
     <m.article
+      // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
+      // This node carries data-cinematic="proof" — GSAP's useChapterTimeline owns its
+      // scroll-reveal (autoAlpha + y). Having Framer Motion ALSO drive opacity/y here
+      // is a dual-write on the same DOM node, the one constraint the engine must never
+      // break. Concrete failure: GSAP sets autoAlpha:0 at mount; on scroll-up
+      // toggleActions reverses GSAP back to autoAlpha:0, but Framer's whileInView
+      // (once:true) latched opacity:1 — leaving the card stuck visible while GSAP
+      // believes it is hidden, desyncing the next re-entry reveal. `variants` is kept
+      // (harmless when no initial/animate drives it) for any non-cinematic reuse.
       variants={FEATURED_PRIMARY_VARIANT}
-      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-full mb-5 overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="proof"
       data-project-id={featured.slug}
@@ -281,10 +277,11 @@ function SecondaryFeaturedCard({
 
   return (
     <m.article
+      // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
+      // data-cinematic="card" → GSAP owns the scroll-reveal. whileHover is retained:
+      // it's a pointer-driven micro-interaction (y-lift) that fires only after the
+      // reveal settles and never competes with GSAP's autoAlpha/y entrance write.
       variants={FEATURED_SECONDARY_VARIANT}
-      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-full flex flex-col overflow-hidden rounded-[var(--radius-xl)]"
       data-cinematic="card"
       data-project-id={project.slug}
@@ -409,10 +406,10 @@ function ProjectCard({
 }: Readonly<{ project: Project; variant: ReturnType<typeof cardReveal>; reducedMotion: boolean }>) {
   return (
     <m.article
+      // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
+      // data-cinematic="card" → GSAP owns the scroll-reveal (staggered via the grid
+      // timeline). whileHover (y-lift) is retained — safe, pointer-only, post-reveal.
       variants={variant}
-      initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
       className="project-card-glow glass-medium flex flex-col overflow-hidden rounded-[var(--radius-xl)] p-4 sm:p-7"
       data-cinematic="card"
       data-project-id={project.slug}
@@ -518,11 +515,16 @@ export function ProjectsSection() {
     >
       <m.div>
         <m.div
-          variants={child}
+          // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
+          // This wrapper itself has no data-cinematic, but it wraps <SectionIntro>,
+          // whose children carry data-cinematic="eyebrow|title|lede". GSAP's
+          // useChapterTimeline selects those descendants and animates their
+          // autoAlpha/y. A Framer reveal on this parent would fade the whole group
+          // a second time on a different IntersectionObserver clock, producing a
+          // visible double-reveal stutter. The eyebrow/title/lede variants passed
+          // into SectionIntro stay dormant (no initial/animate drives them inside
+          // ChapterFrame) — GSAP is the sole reveal owner.
           className="mb-10 sm:mb-14"
-          initial={reducedMotion ? false : { opacity: 0, y: 12 }}
-          whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={SECTION_VIEWPORT}
         >
           <SectionIntro
             eyebrowNumber="01"
