@@ -56,7 +56,7 @@ export function FeaturedArticle({ post, className = '' }: FeaturedArticleProps):
   return (
     <a
       href={href}
-      className={`group block rounded-xl border border-(--border-default) bg-(--bg-surface) p-6 transition-all duration-300 hover:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary) focus:ring-offset-2 focus:ring-offset-(--bg-base) focus:outline-none ${className} `}
+      className={`group block rounded-xl border border-(--border-default) bg-(--bg-surface) p-6 transition-all duration-300 hover:border-(--accent-primary) focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2 focus-visible:ring-offset-(--bg-base) focus-visible:outline-none ${className} `}
       aria-label={`Featured implementation article: ${post.title}`}
     >
       {/* Header badges */}
