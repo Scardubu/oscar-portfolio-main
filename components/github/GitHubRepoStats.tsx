@@ -105,7 +105,7 @@ export function GitHubRepoStats({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 text-xs font-semibold text-(--accent-primary) underline-offset-2 hover:underline focus:ring-2 focus:ring-(--accent-primary) focus:outline-none"
+          className="flex-shrink-0 text-xs font-semibold text-(--accent-primary) underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:outline-none"
           aria-label={`Open ${name} on GitHub`}
         >
           GitHub →
