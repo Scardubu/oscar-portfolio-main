@@ -1,7 +1,13 @@
 'use client';
 
 import type { JSX } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+// PATCH v2026.20 [LazyMotion]: `motion` → `m` to honour the LazyMotion strict
+// boundary in MotionProvider. `motion.div` imports the full Framer Motion feature
+// bundle (~30KB), bypassing the LazyMotion domAnimation code-split. `m.div` reads
+// only the domAnimation subset that LazyMotion pre-loaded, keeping the hero paint
+// at the intended bundle weight. With strict:true, using `motion.*` inside a
+// LazyMotion boundary emits a console error in development.
+import { m, useReducedMotion } from 'framer-motion';
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import SquircleDefs from './SquircleDefs';
@@ -25,13 +31,13 @@ export function HeroSection(): JSX.Element {
       />
 
       <div className="mx-auto grid min-h-[calc(100vh-12rem)] max-w-7xl items-center gap-12 lg:grid-cols-[1.04fr_0.96fr]">
-        <motion.div
+        <m.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
           animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 150, damping: 24, mass: 0.7 }}
           className="max-w-3xl"
         >
-          <motion.div
+          <m.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(6px)' }}
             animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -41,7 +47,7 @@ export function HeroSection(): JSX.Element {
             <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.28em] text-white/48">
               Principal Full-Stack Engineer
             </p>
-          </motion.div>
+          </m.div>
 
           <p className="mb-5 font-mono text-xs uppercase tracking-[0.32em] text-[color:var(--brand-accent)]/80">
             Staff+ • Next.js 15 · Node · Java · ML Infra • Lagos · UTC+1
@@ -75,7 +81,7 @@ export function HeroSection(): JSX.Element {
               Review proof of work
             </a>
           </div>
-        </motion.div>
+        </m.div>
 
         <IdentityCard reducedMotion={shouldReduceMotion} />
       </div>
