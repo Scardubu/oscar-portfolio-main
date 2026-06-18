@@ -2,7 +2,11 @@
 
 import Image from 'next/image';
 import {
-  motion,
+  // PATCH v2026.20 [LazyMotion]: `motion` → `m` — same rationale as HeroSection.
+  // IdentityCard uses motion.article (the card tilt wrapper) and motion.div (the
+  // tilt content layer). Both are inside the LazyMotion strict boundary from
+  // MotionProvider and must use the `m` prefix to avoid pulling in the full bundle.
+  m,
   useMotionTemplate,
   useMotionValue,
   useReducedMotion,
@@ -179,7 +183,7 @@ export default function IdentityCard({
       };
 
   return (
-    <motion.article
+    <m.article
       aria-label="Oscar Ndugbu identity card"
       className={[
         'group relative mx-auto w-full max-w-[25rem] rounded-[2rem]',
@@ -197,7 +201,7 @@ export default function IdentityCard({
     >
       <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-[linear-gradient(135deg,rgba(56,189,248,0.22),transparent_28%,rgba(251,146,60,0.18)_72%,transparent)] opacity-70" />
 
-      <motion.div
+      <m.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-px rounded-[1.9rem] opacity-0 mix-blend-screen transition-opacity duration-500 group-hover:opacity-100"
         // eslint-disable-next-line no-restricted-syntax -- Dynamic glare follows pointer on a GPU-composited motion layer.
@@ -303,6 +307,6 @@ export default function IdentityCard({
           </p>
         </div>
       </div>
-    </motion.article>
+    </m.article>
   );
 }
