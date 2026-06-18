@@ -174,7 +174,7 @@ export function Footer() {
               aria-label="Tell Oscar your constraints"
             >
               <span
-                className="bg-color-success inline-block h-2.5 w-2.5 rounded-full transition-transform group-hover:scale-125 group-active:scale-90"
+                className="bg-color-success inline-block h-2.5 w-2.5 rounded-full transition-transform group-active:scale-90 motion-safe:group-hover:scale-125"
                 aria-hidden="true"
               />
               Tell me your constraints
