@@ -66,17 +66,22 @@ export function HeroSection(): JSX.Element {
             and high-signal product polish.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="cta-hero-group mt-8 flex flex-col gap-3 sm:flex-row">
+            {/* PATCH v2026.21 [a11y + motion]: focus: → focus-visible: (ring no longer
+                fires on mouse click, only keyboard nav — matches every other interactive
+                element in the codebase). hover:scale → motion-safe:hover:scale so the
+                lift is suppressed under prefers-reduced-motion (matches Footer pattern).
+                Added active:scale for tactile press feedback on touch. */}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Staff+ engineering conversation')}`}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.025] hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-slate-950"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:bg-sky-100 focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
             >
               Start a Staff+ conversation
             </a>
 
             <a
               href={anchorUrl('section-projects')}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-6 py-3 text-sm font-semibold text-white/86 transition hover:scale-[1.025] hover:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-slate-950"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-6 py-3 text-sm font-semibold text-white/86 transition duration-300 hover:border-white/20 hover:bg-white/[0.09] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
             >
               Review proof of work
             </a>
