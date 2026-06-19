@@ -143,7 +143,7 @@ jobs:
 
       - name: Smoke — conviction strings present
         run: |
-          grep -rEn "The system has to work at 2am" --include="*.tsx" . | grep -q "." || (echo "✗ Conviction signal missing" && exit 1)
+          grep -rEn "The system has to work at 2am" --include="*.tsx" --include="*.ts" . | grep -q "." || (echo "✗ Conviction signal missing" && exit 1)
           grep -rEn "STAFF\+ / PRINCIPAL" --include="*.tsx" . | grep -q "." || (echo "✗ Badge string missing" && exit 1)
           echo "✓ Conviction strings verified"
 

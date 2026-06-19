@@ -215,6 +215,7 @@ function FeaturedProjectCard({
                   chosen={featured.chosen}
                   over={featured.over}
                   because={featured.because}
+                  showBecause={false}
                 />
               </div>
             </m.div>
@@ -222,7 +223,12 @@ function FeaturedProjectCard({
         </AnimatePresence>
 
         <div className="hidden pb-10 lg:block">
-          <ArchDecision chosen={featured.chosen} over={featured.over} because={featured.because} />
+          <ArchDecision
+            chosen={featured.chosen}
+            over={featured.over}
+            because={featured.because}
+            showBecause={false}
+          />
         </div>
       </div>
 
@@ -351,6 +357,7 @@ function SecondaryFeaturedCard({
                     chosen={project.chosen}
                     over={project.over}
                     because={project.because}
+                    showBecause={false}
                   />
                 </div>
               </m.div>

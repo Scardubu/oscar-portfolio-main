@@ -10,22 +10,37 @@ interface ArchDecisionProps {
   readonly because: string;
   /** Render a condensed variant for non-featured / grid cards */
   readonly compact?: boolean;
+  /**
+   * Render the BECAUSE conviction row. Default true (standalone case-study use).
+   * Pass false on the home project cards, where `because` is already surfaced as
+   * the always-visible "WHY" hook above the panel — rendering it here too made the
+   * identical sentence appear twice (WHY ≡ BECAUSE) on every featured card.
+   */
+  readonly showBecause?: boolean;
 }
 
-export function ArchDecision({ chosen, over, because, compact = false }: ArchDecisionProps) {
+export function ArchDecision({
+  chosen,
+  over,
+  because,
+  compact = false,
+  showBecause = true,
+}: ArchDecisionProps) {
   return (
     <div className="border-color-border-subtle rounded-[var(--radius-lg)] border bg-[oklch(100%_0_0_/_0.018)]">
       {/* BECAUSE — primary conviction signal */}
-      <div
-        className={`border-color-border-subtle border-b ${compact ? 'px-3 py-3' : 'px-4 py-4 sm:px-6 sm:py-5'}`}
-      >
-        <p className="label-mono text-color-film-teal mb-2 text-[10px]">BECAUSE</p>
-        <p
-          className={`text-color-text-primary leading-[1.75] font-medium ${compact ? 'line-clamp-3 text-xs' : 'text-sm sm:text-base'}`}
+      {showBecause && (
+        <div
+          className={`border-color-border-subtle border-b ${compact ? 'px-3 py-3' : 'px-4 py-4 sm:px-6 sm:py-5'}`}
         >
-          {because}
-        </p>
-      </div>
+          <p className="label-mono text-color-film-teal mb-2 text-[10px]">BECAUSE</p>
+          <p
+            className={`text-color-text-primary leading-[1.75] font-medium ${compact ? 'line-clamp-3 text-xs' : 'text-sm sm:text-base'}`}
+          >
+            {because}
+          </p>
+        </div>
+      )}
 
       {/* CHOSEN / OVER — secondary rows */}
       <div className="divide-color-border-subtle divide-y">

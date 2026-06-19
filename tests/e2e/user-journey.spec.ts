@@ -9,7 +9,7 @@ test.skip('recruiter journey moves from hero to projects to contact', async ({ p
       name: /The system has to work at 2am/i,
     })
   ).toBeVisible();
-  await page.getByRole('link', { name: 'See the work' }).click();
+  await page.getByRole('link', { name: 'See what shipped' }).click();
   await expect(page).toHaveURL(/#section-projects/);
   await expect(page.locator('#section-projects')).toBeAttached();
 

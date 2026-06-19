@@ -121,12 +121,12 @@ test.describe('Hero', () => {
     }
   });
 
-  test('"See the work" CTA is visible', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /see the work/i })).toBeVisible();
+  test('"See what shipped" CTA is visible', async ({ page }) => {
+    await expect(page.getByRole('link', { name: /see what shipped/i })).toBeVisible();
   });
 
   test('"Tell me your constraints" CTA links to contact section', async ({ page }) => {
-    const cta = page.getByRole('link', { name: /tell me about your constraints/i }).first();
+    const cta = page.getByRole('link', { name: /tell me your constraints/i }).first();
     await expect(cta).toHaveAttribute('href', /#section-contact/);
   });
 
