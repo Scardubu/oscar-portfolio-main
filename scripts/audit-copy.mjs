@@ -12,7 +12,18 @@ const RULES = [
   { pattern: /\bme\b/gi, message: 'First-person "me" in rendered copy' },
   { pattern: /24\/7/g, message: '"24/7" phrase found' },
   { pattern: /TODO|FIXME|PLACEHOLDER/g, message: 'Placeholder copy found' },
-  { pattern: /[^=]→[^>]/g, message: 'Text arrow found — use an icon instead' },
+  {
+    // Catch an arrow embedded mid-phrase (a char on both sides). This
+    // deliberately ignores `=>` (arrow fns) and trailing CTA/flow arrows like
+    // "Read case study →", which are an accepted idiom across the site.
+    pattern: /[^=]→[^>]/g,
+    message: "Text arrow found — use an icon, or the 'value → value' idiom",
+    // Exempt the "value → value" transformation idiom — e.g. "4h → 15min",
+    // "4h→15min", "Lagos → Global". Those arrows are transformational notation
+    // (a measured before/after relationship), not a directional UI affordance,
+    // so swapping in an icon would be semantically wrong.
+    allow: /[\w%)\]]\s*→\s*[\w$([]/,
+  },
   ...(STRICT_NRS ? [{ pattern: /\bFIRS\b/g, message: 'FIRS reference found — use NRS' }] : []),
 ];
 
@@ -24,16 +35,55 @@ const CSS_CLASS_PATTERNS = [
 ];
 
 // Skip URL patterns to avoid false positives on domain names like wa.me
-const URL_PATTERNS = [
-  /https?:\/\/[^\s]+/,
-  /wa\.me/,
-];
+const URL_PATTERNS = [/https?:\/\/[^\s]+/, /wa\.me/];
 
 const SCAN_DIRS = ['app', 'components', 'lib', 'content'];
 const EXTENSIONS = new Set(['.ts', '.tsx', '.md', '.mdx']);
 const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts', 'github.ts', 'writing.ts', 'blog'];
 
 let violations = 0;
+
+// Strip comment spans so the rules scan rendered/source copy only — never code
+// comments, where directional arrows and first-person notes are legitimate.
+// Handles inline `//`, single- and multi-line `/* ... */` blocks, and JSX
+// `{/* ... */}`. Multi-line block state carries across calls via `state.inBlock`.
+// (Lines containing a URL are skipped earlier, so `//` inside `https://` is never
+// reached here.)
+function stripComments(line, state) {
+  let result = '';
+  let inBlock = state.inBlock;
+  let i = 0;
+
+  while (i < line.length) {
+    if (inBlock) {
+      const end = line.indexOf('*/', i);
+      if (end === -1) {
+        state.inBlock = true;
+        return result;
+      }
+      inBlock = false;
+      i = end + 2;
+      continue;
+    }
+
+    if (line.startsWith('//', i)) {
+      state.inBlock = false;
+      return result;
+    }
+
+    if (line.startsWith('/*', i)) {
+      inBlock = true;
+      i += 2;
+      continue;
+    }
+
+    result += line[i];
+    i += 1;
+  }
+
+  state.inBlock = inBlock;
+  return result;
+}
 
 async function scanFile(filePath) {
   const filename = path.basename(filePath);
@@ -49,25 +99,43 @@ async function scanFile(filePath) {
   const lines = content.split('\n');
 
   for (const rule of RULES) {
-    for (let index = 0; index < lines.length; index += 1) {
-      const line = lines[index];
-      const trimmed = line.trim();
+    // Block-comment state is per-rule because each rule re-scans every line.
+    const state = { inBlock: false };
 
-      if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('#')) {
+    for (let index = 0; index < lines.length; index += 1) {
+      const rawLine = lines[index];
+      const trimmed = rawLine.trim();
+
+      // Markdown headings are not scanned (preserved from the original).
+      if (!state.inBlock && trimmed.startsWith('#')) {
         continue;
       }
 
-      // Skip lines containing CSS class patterns
-      if (CSS_CLASS_PATTERNS.some((pattern) => pattern.test(line))) {
+      const code = stripComments(rawLine, state);
+      if (!code.trim()) {
+        continue;
+      }
+
+      // Skip lines containing CSS class patterns (Tailwind utilities)
+      if (CSS_CLASS_PATTERNS.some((pattern) => pattern.test(code))) {
         continue;
       }
 
       // Skip lines containing URL patterns
-      if (URL_PATTERNS.some((pattern) => pattern.test(line))) {
+      if (URL_PATTERNS.some((pattern) => pattern.test(code))) {
         continue;
       }
 
-      if (rule.pattern.test(line)) {
+      // Per-rule allow-list — exempts legitimate idioms (e.g. "value → value").
+      if (rule.allow) {
+        rule.allow.lastIndex = 0;
+        if (rule.allow.test(code)) {
+          continue;
+        }
+      }
+
+      rule.pattern.lastIndex = 0;
+      if (rule.pattern.test(code)) {
         console.error(`VIOLATION [${rule.message}]`);
         console.error(`  File: ${path.relative(ROOT, filePath)}:${index + 1}`);
         console.error(`  Line: ${trimmed}`);

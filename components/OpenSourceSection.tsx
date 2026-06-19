@@ -3,6 +3,7 @@
 'use client';
 
 import { m, useAnimate, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useRef } from 'react';
 
@@ -265,14 +266,15 @@ export function OpenSourceSection() {
           variants={child}
           className="text-color-text-muted mt-5 font-mono text-[11px] opacity-40"
         >
-          All packages are publicly auditable →{' '}
+          All packages are publicly auditable on{' '}
           <a
             href="https://github.com/Scardubu"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-color-film-teal underline underline-offset-2 transition-opacity hover:opacity-70"
+            className="text-color-film-teal inline-flex items-center gap-0.5 underline underline-offset-2 transition-opacity hover:opacity-70"
           >
             GitHub
+            <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
           </a>
         </m.p>
 
