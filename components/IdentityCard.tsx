@@ -254,7 +254,7 @@ export default function IdentityCard({
                 <p className="font-mono text-[0.65rem] uppercase tracking-[0.32em] text-white/50">
                   Staff+ Engineer
                 </p>
-                <h2 className="mt-2 text-balance text-3xl font-semibold leading-none text-white sm:text-4xl">
+                <h2 className="mt-2 text-pretty text-3xl font-semibold leading-[1.05] text-white sm:text-4xl">
                   Oscar Ndugbu
                 </h2>
               </div>
