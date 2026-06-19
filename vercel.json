@@ -3,7 +3,7 @@
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install --prod=false",
   "framework": "nextjs",
-  "regions": ["iad1", "fra1"],
+  "regions": ["iad1"],
   "headers": [
     {
       "source": "/(.*)",
