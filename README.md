@@ -361,6 +361,26 @@ Validation pass after v2.1:
 - `pnpm type-check` ✅
 - `pnpm build` ✅ (zero errors, zero warnings)
 
+### Observability integration fixes — analytics + web vitals v2.2
+
+Two silent observability gaps closed. Both were the same class of bug: a feature the docs claimed was live but which never actually emitted in production.
+
+| File                       | Change                                                                                                       | Impact                                                                                                                                                                                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/layout.tsx`           | Replaced the broken `isPreviewDeployment` check with `NEXT_PUBLIC_VERCEL_ENV === 'production'` gating         | `NEXT_PUBLIC_VERCEL_URL` is a `*.vercel.app` URL on **every** deployment (production included), so the old `includes('vercel.app')` test made `isPreviewDeployment` true in production too — `<Analytics />` / `<SpeedInsights />` never mounted anywhere |
+| `components/WebVitals.tsx` | New client component using `useReportWebVitals` (next/web-vitals), forwarding to `lib/monitoring.ts`           | The App Router never auto-invokes a file-level `reportWebVitals` export (that is a Pages Router convention), so the documented `WebVital` custom event was never emitted. This is the correct App Router entry point                          |
+| `app/reportWebVitals.ts`   | Deleted                                                                                                       | Dead Pages-Router-style file with zero effect under the App Router; replaced by `components/WebVitals.tsx`                                                                                                                                  |
+| `lib/monitoring.ts`        | Loosened `WebVitalMetric` type to match `NextWebVitalsMetric` (optional `rating`/`delta`, added `label`)      | Accepts both core web-vitals and Next.js custom metrics ('Next.js-hydration', '…-render') without type errors                                                                                                                               |
+| `lib/portfolio-data.ts`    | Refreshed `HERO.availabilityLastUpdated` → `2026-06-20`                                                       | Keeps the hero/about availability badge within the 90-day freshness threshold                                                                                                                                                              |
+| `components/IdentityCard.tsx` | Tightened the identity-card bio toward the Lagos-constraint voice                                          | "Ships financial, AI, and cinematic systems built to hold under Lagos constraints — with delivery you can measure."                                                                                                                        |
+
+Validation pass after v2.2:
+
+- `pnpm run type-check` ✅
+- `pnpm run lint` ✅
+- `pnpm run build` ✅ (39.9 kB homepage, 232 kB First Load JS — no regression)
+- `pnpm run test:unit` ✅
+
 ---
 
 ## Local setup
@@ -717,7 +737,7 @@ After the v1.1 patch, verify each of the following manually:
 
 - Image formats: AVIF + WebP via Next.js `images.formats` config
 - CSS optimisation: `experimental.optimizeCss: true` via `critters`
-- Font loading: `display: 'swap'` on all Google Fonts (Syne, DM Sans, JetBrains Mono, Playfair Display)
+- Font loading: `display: 'swap'` on all Google Fonts (Syne, DM Sans, JetBrains Mono)
 - LazyMotion + domAnimations — framer-motion tree-shaken to animations-only bundle (~18kB)
 - ThreeBrushField: DPR capped at 1.5× to limit GPU pressure on high-res mobile screens
 - `mix-blend-mode: screen` on the WebGL canvas is disabled at < 640px (saves a GPU compositor pass per frame)

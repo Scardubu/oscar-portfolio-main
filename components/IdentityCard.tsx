@@ -260,8 +260,8 @@ export default function IdentityCard({
               </div>
 
               <p className="text-sm leading-6 text-white/62">
-                Builds production-grade financial, AI, and cinematic web systems
-                with measurable delivery discipline.
+                Ships financial, AI, and cinematic systems built to hold under
+                Lagos constraints — with delivery you can measure.
               </p>
 
               <div className="flex flex-wrap gap-2">

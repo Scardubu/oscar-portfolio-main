@@ -4,24 +4,31 @@
 
 import { trackEvent } from '@/app/lib/analytics';
 
-// Web Vitals metric type (compatible with Next.js built-in types)
+// Web Vitals metric type. Structurally compatible with the `NextWebVitalsMetric`
+// that `useReportWebVitals` (next/web-vitals) passes to its callback: the core
+// web-vital variant carries `rating`/`delta`, while the Next.js custom metrics
+// ('Next.js-hydration', '…-render', etc.) only carry id/name/value/label — so
+// rating, delta, and label are optional here.
 interface WebVitalMetric {
   id: string;
-  name: 'CLS' | 'FCP' | 'INP' | 'LCP' | 'TTFB';
+  name: string;
   value: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
-  delta: number;
+  rating?: 'good' | 'needs-improvement' | 'poor';
+  delta?: number;
+  label?: string;
 }
 
 /**
- * Report Web Vitals to analytics
- * Integrates with Vercel Analytics custom events.
+ * Report Web Vitals to analytics.
+ * Integrates with Vercel Analytics custom events. Consumed by the client-side
+ * `<WebVitals />` reporter, which subscribes via `useReportWebVitals`.
  */
 export function reportWebVitals(metric: WebVitalMetric) {
   trackEvent('Performance', 'WebVital', metric.name, Math.round(metric.value), {
     metric_id: metric.id,
     metric_rating: metric.rating,
-    metric_delta: Math.round(metric.delta),
+    metric_delta: typeof metric.delta === 'number' ? Math.round(metric.delta) : undefined,
+    metric_label: metric.label,
     non_interaction: true,
   });
 }

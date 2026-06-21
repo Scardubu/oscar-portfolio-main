@@ -31,6 +31,7 @@ import { Footer } from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { PageWrapper } from '@/components/PageWrapper';
 import { ScrollProgress } from '@/components/ScrollProgress';
+import { WebVitals } from '@/components/WebVitals';
 import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
 
 // v2026.9: import order corrected — globals.css first, fixes.css second (overrides)
@@ -70,9 +71,15 @@ const siteUrl =
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
     : 'http://localhost:3000');
 
-const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-const isPreviewDeployment = process.env.NEXT_PUBLIC_VERCEL_URL?.includes('vercel.app') ?? false;
-const shouldLoadVercelInsights = isVercelProduction && !isPreviewDeployment;
+// BUGFIX: the previous `isPreviewDeployment` check compared NEXT_PUBLIC_VERCEL_URL
+// against "vercel.app" — but Vercel sets that var to the deployment's own *.vercel.app
+// URL for EVERY deployment, production included (it's the immutable per-deployment
+// URL, distinct from the aliased production domain). That made isPreviewDeployment
+// true on production too, so `shouldLoadVercelInsights` was always false and
+// <Analytics />/<SpeedInsights /> never mounted anywhere, including real production.
+// NEXT_PUBLIC_VERCEL_ENV is the correct, Vercel-documented signal: it is exactly
+// 'production' on production deployments and 'preview'/undefined everywhere else.
+const shouldLoadVercelInsights = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
   title: {
@@ -384,6 +391,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {shouldLoadVercelInsights ? <Analytics /> : null}
         {shouldLoadVercelInsights ? <SpeedInsights /> : null}
+        {/* Web Vitals → `WebVital` custom event. Gated to production: track() is
+            a no-op without the Analytics script, so only emit where it's loaded. */}
+        {shouldLoadVercelInsights ? <WebVitals /> : null}
       </body>
     </html>
   );

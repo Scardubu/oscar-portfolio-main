@@ -83,7 +83,7 @@ export const HERO = {
   // STALENESS THRESHOLD: 90 days. After 90 days without an update, the badge
   // reads as abandoned rather than active. The CI does not currently check this —
   // add a Vercel cron or GitHub Actions check if manual discipline is insufficient.
-  availabilityLastUpdated: '2026-05-19',
+  availabilityLastUpdated: '2026-06-20',
   location: 'Lagos, Nigeria 🇳🇬',
   trustStrip: 'Shipped in Lagos · Running globally · Battle-tested in audit season',
   cta: {
