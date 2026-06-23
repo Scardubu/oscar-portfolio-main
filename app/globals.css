@@ -66,7 +66,6 @@
   }
 }
 @layer components {
-
   /* ── SCARDUBU production wordmark system ────────────────────────────────
      Concept 01 — CONVICTION. Uppercase, wide-tracked, engineered, restrained.
      Built as live text for sharp browser rendering while allowing per-glyph
@@ -6662,3 +6661,68 @@ html.lenis body {
 /* ══════════════════════════════════════════════════════════════════════════════
    END AUDIT PATCH v2026.16 — Lenis Official CSS Integration
    ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AUDIT PATCH v2026.23 — Hero masthead hierarchy (mobile / small viewports)
+   ──────────────────────────────────────────────────────────────────────────────
+   Problem: on phones the giant hero "SCARDUBU" rendered at clamp(2rem,15vw,3.7rem)
+   with --wordmark-gap:0.16em and full --brand-text colour. At ~390px the word
+   spanned the entire 350px content box and kissed the right edge (the section is
+   overflow-hidden, so the final glyph clipped). Rendered at full weight/colour it
+   also read as a SECOND logo competing with the crisp navbar wordmark above it —
+   the "three competing SCARDUBU" comprehension problem.
+
+   Fix (CSS-only, mobile-only — desktop untouched):
+     • Recede, don't compete: step the masthead opacity below 1 so the navbar
+       wordmark stays the primary brand mark and the hero word becomes a
+       typographic masthead / atmospheric identity layer.
+     • Eliminate the edge-kiss: lower the vw coefficient and the clamp ceiling so
+       the word always carries comfortable side margin (~295px at 390px, ~243px
+       at 320px) and can never clip.
+     • Tighten tracking: smaller inter-glyph gap reads as intentional display
+       typography at reduced scale and recovers horizontal room.
+
+   These rules are intentionally unlayered (sit after @layer components) so they
+   win the cascade over .brand-wordmark--hero without an !important.
+   Opacity 0.80 of #f5f7fa over the hero's near-black gradient stays well above
+   WCAG AA contrast; the masthead is decorative typography (glyphs aria-hidden,
+   accessible name preserved on the host element), so this is purely visual.
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .brand-wordmark--hero {
+    opacity: 0.85;
+  }
+}
+
+@media (max-width: 430px) {
+  .brand-wordmark--hero {
+    --wordmark-size: clamp(1.85rem, 12.6vw, 3.05rem);
+    --wordmark-gap: 0.12em;
+    opacity: 0.8;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AUDIT PATCH v2026.24 — Hero masthead hierarchy (landscape / short-viewport)
+   ──────────────────────────────────────────────────────────────────────────────
+   Continuation of v2026.23. The portrait rules above key off max-width and never
+   fire when a phone is rotated: in landscape the viewport WIDTH exceeds 430px, so
+   the masthead falls back to the desktop clamp(2.35rem,8vw,7rem) — ~67px on an
+   844px-wide landscape phone — at full opacity, on a viewport only ~360–430px
+   TALL. That dominates the short vertical axis and pushes the headline + CTAs
+   below the fold.
+
+   Fix: key off viewport HEIGHT. Size the masthead to the short axis (vh) so it
+   scales with the constrained dimension instead of the wide one, and apply the
+   same opacity-recede so the hero word stays a recessive identity layer in every
+   mobile orientation — never a second logo. Gated to (max-height: 600px) so it
+   targets phones/small handsets in landscape only; tablets/laptops in landscape
+   (height > 600px) keep the full desktop masthead.
+   ══════════════════════════════════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 600px) {
+  .brand-wordmark--hero {
+    --wordmark-size: clamp(1.7rem, 7vh, 2.9rem);
+    --wordmark-gap: 0.13em;
+    opacity: 0.85;
+  }
+}

@@ -7,12 +7,12 @@ import type { JSX } from 'react';
 // only the domAnimation subset that LazyMotion pre-loaded, keeping the hero paint
 // at the intended bundle weight. With strict:true, using `motion.*` inside a
 // LazyMotion boundary emits a console error in development.
+import { HERO } from '@/lib/portfolio-data';
+import { formatMonthYear } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import SquircleDefs from './SquircleDefs';
-import { HERO } from '@/lib/portfolio-data';
-import { formatMonthYear } from '@/lib/utils';
 
 // PATCH v2026.22 [conviction re-sync]: HeroSection now consumes the canonical
 // HERO mirror (lib/portfolio-data.ts) directly instead of hardcoding copy. The
@@ -55,7 +55,7 @@ export function HeroSection(): JSX.Element {
             className="mb-8"
           >
             <BrandWordmark size="hero" />
-            <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.28em] text-white/48">
+            <p className="mt-5 font-mono text-[11px] tracking-[0.28em] text-white/48 uppercase sm:mt-4">
               Principal Full-Stack Engineer
             </p>
           </m.div>
@@ -81,19 +81,17 @@ export function HeroSection(): JSX.Element {
           <h1
             id="hero-title"
             aria-label={HERO_ARIA_LABEL}
-            className="text-balance text-5xl font-semibold leading-[0.98] tracking-[-0.04em] text-white sm:text-6xl lg:text-[4.5rem]"
+            className="text-5xl leading-[0.98] font-semibold tracking-[-0.04em] text-balance text-white sm:text-6xl lg:text-[4.5rem]"
           >
             {HERO.h1}
-            <span className="mt-3 block text-2xl font-medium leading-tight tracking-[-0.02em] text-white/55 sm:text-3xl">
+            <span className="mt-4 block text-2xl leading-tight font-medium tracking-[-0.02em] text-white/55 sm:mt-3 sm:text-3xl">
               {HERO.subHeadline}
             </span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-white/62">
-            {HERO.body}
-          </p>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-pretty text-white/62">{HERO.body}</p>
 
-          <div className="cta-hero-group mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="cta-hero-group mt-9 flex flex-col gap-3 sm:mt-8 sm:flex-row">
             {/* PATCH v2026.21 [a11y + motion]: focus: -> focus-visible: (ring no longer
                 fires on mouse click, only keyboard nav — matches every other interactive
                 element in the codebase). hover:scale -> motion-safe:hover:scale so the
