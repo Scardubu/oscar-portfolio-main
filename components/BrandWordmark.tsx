@@ -37,7 +37,6 @@ export function BrandWordmark({
   return (
     <Component
       {...props}
-      aria-label={label}
       className={[
         'brand-wordmark',
         `brand-wordmark--${size}`,
@@ -47,6 +46,7 @@ export function BrandWordmark({
         .filter(Boolean)
         .join(' ')}
     >
+      <span className="sr-only">{label}</span>
       <span aria-hidden="true" className="brand-wordmark__inner">
         {WORDMARK.split('').map((glyph, index) => (
           <span
