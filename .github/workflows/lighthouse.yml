@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   lighthouse:
     name: Lighthouse Performance Audit
@@ -18,13 +23,13 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.24.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -33,12 +38,12 @@ jobs:
         run: pnpm run build
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          NEXT_PUBLIC_BASE_URL: https://scardubu.dev
+          NEXT_PUBLIC_SITE_URL: https://scardubu.dev
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
         with:
-          configPath: "./lighthouserc.json"
+          configPath: './lighthouserc.json'
           uploadArtifacts: true
           temporaryPublicStorage: true
         env:
@@ -52,19 +57,19 @@ jobs:
             const fs = require('fs');
             const results = JSON.parse(fs.readFileSync('.lighthouseci/manifest.json', 'utf8'));
             const summary = results[0];
-            
+
             const comment = `## Lighthouse CI Results
-            
+
             | Category | Score |
             |----------|-------|
             | Performance | ${Math.round(summary.summary.performance * 100)} |
             | Accessibility | ${Math.round(summary.summary.accessibility * 100)} |
             | Best Practices | ${Math.round(summary.summary['best-practices'] * 100)} |
             | SEO | ${Math.round(summary.summary.seo * 100)} |
-            
+
             [View full report](${summary.url})
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
