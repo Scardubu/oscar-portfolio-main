@@ -1,34 +1,20 @@
 {
   "ci": {
-    "collect": [
-      {
-        "startServerCommand": "pnpm run start",
-        "url": ["http://localhost:3000"],
-        "numberOfRuns": 3,
-        "settings": {
-          "preset": "desktop",
-          "throttling": {
-            "rttMs": 40,
-            "throughputKbps": 10240,
-            "cpuSlowdownMultiplier": 1
-          }
-        }
-      },
-      {
-        "startServerCommand": "pnpm run start",
-        "url": ["http://localhost:3000"],
-        "numberOfRuns": 3,
-        "settings": {
-          "emulatedFormFactor": "mobile",
-          "throttlingMethod": "simulate",
-          "throttling": {
-            "rttMs": 150,
-            "throughputKbps": 1638,
-            "cpuSlowdownMultiplier": 4
-          }
+    "collect": {
+      "startServerCommand": "pnpm run start",
+      "startServerReadyPattern": "Ready",
+      "url": ["http://localhost:3000/"],
+      "numberOfRuns": 3,
+      "settings": {
+        "emulatedFormFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638,
+          "cpuSlowdownMultiplier": 4
         }
       }
-    ],
+    },
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
