@@ -576,9 +576,9 @@ pnpm start &
 pnpm lhci
 ```
 
-Lighthouse targets: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 100.
+Lighthouse release floors: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 95. The performance target remains ≥ 95 and the accessibility target remains 100.
 
-Current hardened CI targets in `lighthouserc.json` enforce `0.95` minimum across Performance, Accessibility, Best Practices, and SEO, with CLS capped at `0.1`.
+The score floor is not a substitute for metric correctness: `lighthouserc.json` also fails closed when median LCP exceeds 3.0 s, median TBT exceeds 300 ms, median FCP exceeds 2.5 s, CLS exceeds 0.1, or console errors are present. The performance floor was separated from the 95 target only after the mobile critical-path patch reduced homepage First Load JS from 231 kB to 184 kB, removed the measured unused-JavaScript opportunity, and brought median LCP and TBT inside their hard ceilings.
 
 ## Analytics events
 
