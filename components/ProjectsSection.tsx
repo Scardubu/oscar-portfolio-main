@@ -27,19 +27,17 @@
 
 'use client';
 
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { m, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 
 import { trackEvent } from '@/app/lib/analytics';
-import { ArchDecision } from '@/components/ArchDecision';
 import { ChapterFrame } from '@/components/cinematic/ChapterFrame';
+import { ReliabilityLedger } from '@/components/ReliabilityLedger';
 import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import {
-  accordionReveal,
   cardReveal,
   clipReveal,
   fadeRise,
@@ -110,12 +108,7 @@ function TechStrip({
 }
 
 /* ── Primary featured card ─────────────────────────────────────────────────── */
-function FeaturedProjectCard({
-  featured,
-  reducedMotion,
-}: Readonly<{ featured: Project; reducedMotion: boolean }>) {
-  const [archOpen, setArchOpen] = useState(false);
-
+function FeaturedProjectCard({ featured }: Readonly<{ featured: Project }>) {
   return (
     <m.article
       // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
@@ -146,26 +139,7 @@ function FeaturedProjectCard({
           {featured.tagline}
         </p>
 
-        <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${featured.title} outcomes`}>
-          {featured.outcomes.map((outcome) => (
-            <li key={`${featured.slug}-${outcome}`} className="pill-cyan shrink-0">
-              {outcome}
-            </li>
-          ))}
-        </ul>
-
-        <div className="border-l-color-film-teal mt-5 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 bg-[oklch(73%_0.18_196_/_0.05)] py-3 pr-3 pl-3">
-          <span className="label-mono text-color-film-teal w-12 shrink-0 pt-0.5 text-[10px]">
-            WHY
-          </span>
-          <span className="text-color-text-primary min-w-0 text-[13px] leading-[1.7] font-medium break-words sm:text-sm">
-            {featured.because}
-          </span>
-        </div>
-
-        <p className="text-color-text-muted mt-3 border-l-2 border-l-[oklch(73%_0.18_75_/_0.3)] pl-3 text-xs leading-[1.7] break-words italic">
-          Constraint: {featured.constraint}
-        </p>
+        <ReliabilityLedger {...featured.ledger} label={`${featured.title} Reliability Ledger`} />
 
         <TechStrip stack={featured.stack} slug={featured.slug} />
 
@@ -180,56 +154,6 @@ function FeaturedProjectCard({
             </p>
           </div>
         </details>
-      </div>
-
-      <div className="mt-5 px-4 sm:px-8 lg:px-10">
-        <button
-          type="button"
-          onClick={() => setArchOpen((v) => !v)}
-          className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-3 font-mono text-[11px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none lg:hidden"
-          aria-expanded={archOpen}
-          aria-controls={`arch-mobile-${featured.slug}`}
-          aria-label={`Toggle architecture decision for ${featured.title}`}
-        >
-          <span>Architecture Decision</span>
-          <m.span
-            animate={{ rotate: archOpen ? 180 : 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          >
-            <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-          </m.span>
-        </button>
-
-        <AnimatePresence initial={false}>
-          {archOpen && (
-            <m.div
-              id={`arch-mobile-${featured.slug}`}
-              variants={reducedMotion ? undefined : accordionReveal}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="overflow-hidden lg:hidden"
-            >
-              <div className="py-4">
-                <ArchDecision
-                  chosen={featured.chosen}
-                  over={featured.over}
-                  because={featured.because}
-                  showBecause={false}
-                />
-              </div>
-            </m.div>
-          )}
-        </AnimatePresence>
-
-        <div className="hidden pb-10 lg:block">
-          <ArchDecision
-            chosen={featured.chosen}
-            over={featured.over}
-            because={featured.because}
-            showBecause={false}
-          />
-        </div>
       </div>
 
       <div className="px-4 pb-5 sm:px-8 sm:pb-8 lg:px-10 lg:pb-10">
@@ -279,8 +203,6 @@ function SecondaryFeaturedCard({
   project,
   reducedMotion,
 }: Readonly<{ project: Project; reducedMotion: boolean }>) {
-  const [archOpen, setArchOpen] = useState(false);
-
   return (
     <m.article
       // PATCH v2026.20 [GSAP/Framer isolation]: removed initial/whileInView/viewport.
@@ -305,65 +227,14 @@ function SecondaryFeaturedCard({
 
         <p className="text-color-text-secondary mt-3 text-sm leading-[1.75]">{project.tagline}</p>
 
-        <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${project.title} outcomes`}>
-          {project.outcomes.map((outcome) => (
-            <li key={`${project.slug}-${outcome}`} className="pill-cyan shrink-0 text-[11px]">
-              {outcome}
-            </li>
-          ))}
-        </ul>
-
-        <div className="border-l-color-film-teal mt-4 flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 bg-[oklch(73%_0.18_196_/_0.05)] py-2.5 pr-3 pl-3">
-          <span className="label-mono text-color-film-teal w-10 shrink-0 pt-0.5 text-[10px]">
-            WHY
-          </span>
-          <span className="text-color-text-primary text-[12px] leading-[1.65] font-medium">
-            {project.because}
-          </span>
-        </div>
+        <ReliabilityLedger
+          {...project.ledger}
+          compact
+          label={`${project.title} Reliability Ledger`}
+        />
 
         <TechStrip stack={project.stack} slug={project.slug} limit={4} />
 
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => setArchOpen((v) => !v)}
-            className="border-color-border text-color-text-muted flex min-h-[48px] w-full items-center justify-between border-t py-2.5 font-mono text-[10px] tracking-widest uppercase focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
-            aria-expanded={archOpen}
-            aria-controls={`arch-secondary-${project.slug}`}
-            aria-label={`Toggle architecture decision for ${project.title}`}
-          >
-            <span>Architecture Decision</span>
-            <m.span
-              animate={{ rotate: archOpen ? 180 : 0 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            >
-              <ChevronDown className="h-3 w-3" aria-hidden="true" />
-            </m.span>
-          </button>
-
-          <AnimatePresence initial={false}>
-            {archOpen && (
-              <m.div
-                id={`arch-secondary-${project.slug}`}
-                variants={reducedMotion ? undefined : accordionReveal}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="overflow-hidden"
-              >
-                <div className="py-3">
-                  <ArchDecision
-                    chosen={project.chosen}
-                    over={project.over}
-                    because={project.because}
-                    showBecause={false}
-                  />
-                </div>
-              </m.div>
-            )}
-          </AnimatePresence>
-        </div>
       </div>
 
       <div className="border-color-border mt-3 border-t px-4 pt-4 pb-5 sm:px-6 sm:pb-6">
@@ -432,31 +303,7 @@ function ProjectCard({
       <p className="text-color-text-secondary mt-2 flex-1 text-sm leading-[1.75]">
         {project.tagline}
       </p>
-      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${project.title} outcomes`}>
-        {project.outcomes.slice(0, 3).map((outcome) => (
-          <li key={`${project.slug}-${outcome}`} className="pill-cyan shrink-0">
-            {outcome}
-          </li>
-        ))}
-      </ul>
-      <div className="border-color-border-subtle mt-4 space-y-2.5 border-t pt-4">
-        <div className="flex items-start gap-2.5">
-          <span className="label-mono text-color-film-teal mt-0.5 w-14 shrink-0 text-[10px]">
-            BECAUSE
-          </span>
-          <span className="text-color-text-primary line-clamp-3 text-[12px] leading-[1.6] font-medium">
-            {project.because}
-          </span>
-        </div>
-        <div className="flex items-start gap-2.5">
-          <span className="label-mono text-color-success mt-0.5 w-14 shrink-0 text-[10px]">
-            CHOSEN
-          </span>
-          <span className="text-color-text-secondary line-clamp-2 text-[12px] leading-[1.6]">
-            {project.chosen}
-          </span>
-        </div>
-      </div>
+      <ReliabilityLedger {...project.ledger} compact label={`${project.title} Reliability Ledger`} />
       <div className="mt-3 flex flex-wrap gap-1">
         {project.stack.slice(0, 4).map((tech) => (
           <span key={tech} className="text-color-text-muted font-mono text-[9px] tracking-wide">
@@ -544,7 +391,7 @@ export function ProjectsSection() {
               </>
             }
             description={
-              '4-hour tax filings compressed to 15 minutes. 99.9%+ uptime under ensemble ML inference. AI agents that improve themselves between runs. All of it shipped from Lagos. All of it running in production.'
+              'The work is shown as a decision record: what the system had to survive, what was chosen, what changed, and where the evidence lives.'
             }
             eyebrowVariant={child}
             titleVariant={reducedMotion ? child : clipReveal}
@@ -555,7 +402,7 @@ export function ProjectsSection() {
         </m.div>
 
         {/* Primary featured */}
-        <FeaturedProjectCard featured={primaryFeatured} reducedMotion={reducedMotion ?? false} />
+        <FeaturedProjectCard featured={primaryFeatured} />
 
         {/* Secondary featured — 2-col on md+ */}
         {secondaryFeatured.length > 0 && (

@@ -13,13 +13,12 @@
 //     CSS `@media` — the hover transform is inside a `@media (hover: hover)`
 //     block in globals.css already, but we reinforce it here with conditional
 //     class names.
-//   - SystemStatus, copyright, and all copy are exactly preserved.
+//   - Public evidence language replaces the earlier simulated system-status fixture.
 
 'use client';
 
 import Link from 'next/link';
 
-import { SystemStatus } from '@/components/SystemStatus';
 import { CONTACT_EMAIL, CV_ASSET_PATH, anchorUrl } from '@/lib/config';
 
 const NAV_LINKS = [
@@ -40,7 +39,7 @@ const SOCIAL_LINKS = [
 export function Footer() {
   const year = new Date().getFullYear();
   const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-    "Project constraints — let's build"
+    'Backend and platform system conversation'
   )}`;
 
   return (
@@ -74,8 +73,8 @@ export function Footer() {
             </Link>
 
             <p className="text-color-text-secondary mt-1.5 max-w-[34ch] text-[15px] leading-relaxed">
-              Lagos-built. Globally deployed.{' '}
-              <span className="text-color-text-muted">Battle-tested in audit season.</span>
+              Staff backend and platform engineering.{' '}
+              <span className="text-color-text-muted">Based in Lagos · UTC+1.</span>
             </p>
 
             <p
@@ -90,9 +89,9 @@ export function Footer() {
           </div>
 
           <div className="text-2xs flex flex-col gap-1 font-mono tracking-wide">
-            <div className="text-secondary-boost text-color-text-secondary flex items-center gap-2 sm:text-[oklch(93%_0.006_264_/_0.42)]">
-              <SystemStatus labelMode="full" />
-            </div>
+            <p className="text-secondary-boost text-color-text-secondary sm:text-[oklch(93%_0.006_264_/_0.42)]">
+              Public evidence record
+            </p>
             <p className="text-[oklch(93%_0.006_264_/_0.58)] sm:text-[oklch(93%_0.006_264_/_0.24)]">
               TaxBridge · SabiScore · SwarmXQ
             </p>
@@ -171,17 +170,17 @@ export function Footer() {
             <a
               href={mailHref}
               className="cta-primary group flex w-full items-center justify-center gap-3 px-8 py-3.5 text-base font-medium focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none active:scale-[0.985] sm:w-auto"
-              aria-label="Tell Oscar your constraints"
+              aria-label="Discuss a system with Oscar"
             >
               <span
                 className="bg-color-success inline-block h-2.5 w-2.5 rounded-full transition-transform group-active:scale-90 motion-safe:group-hover:scale-125"
                 aria-hidden="true"
               />
-              Tell me your constraints
+              Discuss a system
             </a>
 
             <p className="text-2xs mt-3 text-center font-mono tracking-wider text-[oklch(93%_0.006_264_/_0.62)] sm:text-left sm:text-[oklch(93%_0.006_264_/_0.45)]">
-              Response within 24 hours · no fluff, only signal
+              Problem · stakes · timeline · contact
             </p>
           </div>
         </div>
@@ -191,7 +190,7 @@ export function Footer() {
       <div className="border-color-border-subtle text-3xs border-t py-4 font-mono">
         <div className="container flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
           <p className="tracking-[0.5px] text-balance text-[oklch(93%_0.006_264_/_0.60)] uppercase sm:text-[oklch(93%_0.006_264_/_0.22)]">
-            Shipped in Lagos · Running globally · Battle-tested in audit season
+            Backend · Platform · AI infrastructure · Reliability
           </p>
           <p className="text-[oklch(93%_0.006_264_/_0.56)] sm:text-[oklch(93%_0.006_264_/_0.16)]">
             scardubu.dev

@@ -115,7 +115,7 @@ export async function submitContactForm(
 
     return {
       status:  "success",
-      message: "Message sent! Responses typically sent within 24 hours.",
+      message: "Message sent. Oscar will review the system brief and reply by email.",
     };
   } catch (err) {
     console.error("[ContactForm] Submission error:", err);

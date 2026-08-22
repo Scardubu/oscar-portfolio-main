@@ -12,7 +12,6 @@ import {
 import type { CSSProperties, JSX, PointerEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { anchorUrl, CONTACT_EMAIL } from '@/lib/config';
 import { PROFILE } from '@/lib/portfolio-data';
 
 type IdentityCardProps = {
@@ -26,13 +25,12 @@ const PORTRAIT_SOURCES = [
   '/images/scar-headshot.jpeg',
 ] as const;
 
-const STACK_SIGNALS = ['Backend · Platform', 'Java · Spring Boot', 'FastAPI', 'ML Infra'] as const;
+const STACK_SIGNALS = ['Backend · Platform', 'AI infrastructure'] as const;
 
 const TRUST_SIGNALS = [
-  'NRS / FIRS-compliant e-invoicing',
-  'Local LLM · 8GB RAM fleet',
-  'Zero-drop queue architecture',
-  'Backend + platform delivery discipline',
+  { label: 'Focus', value: 'Distributed systems · platform reliability' },
+  { label: 'Proof', value: 'TaxBridge · SabiScore · SwarmXQ' },
+  { label: 'Method', value: 'Constraint → decision → evidence' },
 ] as const;
 
 function PortraitFallback(): JSX.Element {
@@ -199,7 +197,7 @@ export default function IdentityCard({
         <div className="relative p-3.5 sm:p-5">
           <div className="mb-3 flex items-center justify-between gap-2 sm:mb-4 sm:gap-3">
             <p className="min-w-0 rounded-full border border-sky-300/20 bg-sky-300/10 px-2.5 py-1.5 font-mono text-[0.56rem] tracking-[0.2em] text-sky-100/90 uppercase sm:px-3 sm:text-[0.62rem] sm:tracking-[0.28em]">
-              Available · Open to Work
+              Operating profile
             </p>
 
             <span className="shrink-0 rounded-full border border-orange-300/20 bg-orange-300/10 px-2.5 py-1.5 font-mono text-[0.56rem] tracking-[0.18em] text-orange-100/85 uppercase sm:px-3 sm:text-[0.62rem] sm:tracking-[0.24em]">
@@ -242,17 +240,14 @@ export default function IdentityCard({
               </div>
 
               <p className="text-xs leading-5 text-white/62 sm:text-sm sm:leading-6">
-                Reliability-first AI, financial, and platform systems built under Lagos constraints — measured in production.
+                Decision-led engineering for systems that must remain observable, recoverable, and understandable under pressure.
               </p>
 
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                {STACK_SIGNALS.map((signal, index) => (
+                {STACK_SIGNALS.map((signal) => (
                   <span
                     key={signal}
-                    className={[
-                      'rounded-full border border-white/10 bg-white/[0.065] px-2.5 py-1 text-[0.68rem] font-medium text-white/76 sm:px-3 sm:py-1.5 sm:text-xs',
-                      index > 1 ? 'hidden sm:inline-flex' : '',
-                    ].join(' ')}
+                    className="rounded-full border border-white/10 bg-white/[0.065] px-2.5 py-1 text-[0.68rem] font-medium text-white/76 sm:px-3 sm:py-1.5 sm:text-xs"
                   >
                     {signal}
                   </span>
@@ -261,36 +256,22 @@ export default function IdentityCard({
             </div>
           </div>
 
-          <div className="mt-5 hidden gap-2 sm:grid">
+          <div className="mt-4 grid gap-2 sm:mt-5 sm:grid-cols-3">
             {TRUST_SIGNALS.map((signal) => (
               <div
-                key={signal}
-                className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.045] px-3.5 py-3 text-sm text-white/72"
+                key={signal.label}
+                className="rounded-xl border border-white/8 bg-white/[0.045] px-3 py-2.5"
               >
-                <span className="size-1.5 rounded-full bg-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.9)]" />
-                <span>{signal}</span>
+                <p className="font-mono text-[0.55rem] tracking-[0.16em] text-sky-200/75 uppercase">
+                  {signal.label}
+                </p>
+                <p className="mt-1 text-[0.7rem] leading-4 text-white/68">{signal.value}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-row sm:gap-3">
-            <a
-              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Backend and platform engineering conversation')}`}
-              className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-full bg-white px-3 py-2.5 text-center text-xs font-semibold text-slate-950 transition duration-300 hover:bg-sky-100 focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025] sm:px-5 sm:py-3 sm:text-sm"
-            >
-              Start a conversation
-            </a>
-
-            <a
-              href={anchorUrl('section-projects')}
-              className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-3 py-2.5 text-center text-xs font-semibold text-white/86 transition duration-300 hover:border-white/20 hover:bg-white/[0.09] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025] sm:px-5 sm:py-3 sm:text-sm"
-            >
-              View proof
-            </a>
-          </div>
-
           <p className="mt-3 font-mono text-[0.55rem] leading-4 tracking-[0.16em] text-white/42 uppercase sm:mt-4 sm:text-[0.62rem] sm:tracking-[0.24em]">
-            Lagos · UTC+1 · Next.js 15 · Node · Java · ML Infra
+            Lagos · UTC+1 · Backend · Platform · AI infrastructure
           </p>
         </div>
       </div>

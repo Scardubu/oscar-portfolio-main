@@ -89,20 +89,33 @@ export async function POST(request: Request) {
       );
     }
 
-    const subject = `[Portfolio] ${data.inquiryType.toUpperCase()} inquiry from ${data.name}`;
+    const subject = `[Portfolio] ${data.inquiryType?.toUpperCase() ?? 'SYSTEM'} conversation from ${data.name}`;
 
-    await client.emails.send({
+    const { error } = await client.emails.send({
       from: `Oscar Portfolio <${SENDER_EMAIL}>`,
       to: CONTACT_EMAIL,
       subject,
       text: `Name: ${data.name}
 Email: ${data.email}
 Company: ${data.company ?? '-'}
-Type: ${data.inquiryType}
+Type: ${data.inquiryType ?? '-'}
+Timeline: ${data.timeline ?? '-'}
+Stakes: ${data.stakes ?? '-'}
 
 Message:
 ${data.message}`,
     });
+
+    if (error) {
+      console.error('[api/contact] Resend rejected the message', {
+        code: error.name,
+        statusCode: error.statusCode,
+      });
+      return NextResponse.json(
+        { error: 'Contact channel is temporarily unavailable.' },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch {

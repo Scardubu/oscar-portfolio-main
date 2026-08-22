@@ -18,17 +18,21 @@ This is scoped consulting — deliverable-led, not hourly. Each engagement ends 
 
 ## Engagement types
 
-**Production ML pipeline review**  
+**Production ML pipeline review**
+
 End-to-end audit of inference serving, retraining cadence, feature store design, and monitoring coverage. Output: a ranked list of correctness risks, an architecture decision record for each significant choice, and an implemented fix for the highest-severity items.
 
-**Incident remediation**  
+**Incident remediation**
+
 Post-incident root cause work for ML systems — silent accuracy degradation, cache invalidation failures, feature distribution drift, OOM crashes under load. The deliverable is a working system, not a write-up of what happened.
 
-**Inference optimisation**  
-Latency reduction for prediction serving under concurrent load. Common sources: missing cache layer, synchronous feature fetches on the hot path, non-batched model calls, cold-start latency on model load. Typical outcome: 30–60% latency reduction without model changes.
+**Inference optimisation**
 
-**Compliance-ready ML documentation**  
-For teams facing NRS, NDPC, or FIRS audit requirements where model behaviour must be explainable and traceable. Covers model cards, decision rationale documents, and audit trail implementation. Built from the actual system — not template documents.
+Latency analysis for prediction serving under concurrent load. Common sources include a missing cache layer, synchronous feature fetches on the hot path, non-batched model calls, and cold-start latency on model load. The deliverable records the baseline, the chosen intervention, and the measured result for that system.
+
+**Audit-traceable ML documentation**
+
+For teams where model behaviour must be explainable and traceable. Covers model cards, decision rationale documents, and audit trail implementation. Built from the actual system rather than presented as regulator certification.
 
 ## What changes in practice
 
@@ -40,12 +44,12 @@ Once the gap is mapped, the work is triage: which correctness risks are live now
 
 Every deliverable is traceable to a production system. No invented benchmarks, no template documents presented as bespoke analysis. If a recommendation cannot be justified against the specific system and its specific constraints, it does not go in the deliverable.
 
-The engagement ends when the infrastructure holds, not when the hours are used.
+Completion criteria are agreed against the named system risk and evidence required for handoff.
 
 ## Relevant experience
 
-The inference optimisation and observability work in SabiScore (30% latency reduction, 45% MTTD improvement, 99.9%+ uptime) and the compliance audit trail in TaxBridge (hash-chained immutable records, 95% test coverage as a compliance artifact) represent the same work applied to owned systems. Consulting engagements apply the same approach to client systems under NDA.
+The SabiScore and TaxBridge case studies show the working method: establish the failure boundary, record the decision, measure the outcome within a named window, and label private evidence as private. Client-system evidence remains subject to the engagement's disclosure boundary.
 
 ## To start a conversation
 
-Use the contact form below. Describe the constraint, the deadline, and the risk. That framing tells me whether this is the right fit for a scoped engagement.
+Use the contact form below. Describe the constraint, the deadline, and the risk. That framing establishes whether the work fits a scoped engagement.

@@ -23,7 +23,7 @@ Hashablanca uses zero-knowledge proofs for document integrity verification. A Ci
 
 For multi-chain token distribution, the system uses Web3.py with per-chain configuration objects that encapsulate finality parameters, gas estimation strategy, and retry semantics appropriate for each network. A common abstraction layer handles the distribution logic; network-specific adapters handle chain differences without leaking them upward.
 
-CBOR streaming handles large file processing without loading entire documents into memory — a practical requirement when the system needs to handle 4GB+ files for legal archives.
+CBOR streaming handles large-file processing without loading an entire legal archive into memory. The public record demonstrates the streaming boundary; no maximum archive size is claimed without a published benchmark artifact.
 
 ## Key decisions
 

@@ -60,27 +60,27 @@ const LEVEL_DISPLAY: Record<
   },
 };
 
-// ── Trust metrics ─────────────────────────────────────────────────────────────
-// Values are consistent with CONVICTION_STATS in lib/portfolio-data.ts.
-// `sub` field provides Skills-specific tool context not present in the global stat record.
+// ── Capability signals ────────────────────────────────────────────────────────
+// Project outcomes live in the Reliability Ledger. This section shows where the
+// stack carries operational responsibility without repeating headline metrics.
 const TRUST_METRICS = [
   {
-    value: '4h → 15min',
-    label: 'tax filing time',
+    value: 'Isolation',
+    label: 'data boundary',
     sub: 'TaxBridge · Fastify 5 · PostgreSQL 15 RLS',
     color: 'var(--color-film-teal)',
     borderColor: 'oklch(70% 0.21 188 / 0.22)',
   },
   {
-    value: '99.9%+',
-    label: 'sustained uptime',
+    value: 'Telemetry',
+    label: 'operating signal',
     sub: 'SabiScore · XGBoost · LightGBM · Prometheus',
     color: 'oklch(72% 0.17 160)',
     borderColor: 'oklch(72% 0.17 160 / 0.22)',
   },
   {
-    value: 'Self-improving',
-    label: 'AI agent fleet',
+    value: 'Recovery',
+    label: 'failure path',
     sub: 'SwarmXQ · Ollama GGUF · Checkpoint Recovery',
     color: 'oklch(75% 0.16 300)',
     borderColor: 'oklch(75% 0.16 300 / 0.22)',
@@ -247,12 +247,7 @@ export function SkillsSection() {
             headingId="skills-heading"
             title={<>The stack behind systems that hold.</>}
             description={
-              // V1.2: Added "(Nigeria's federal tax compliance mandate)" after NRS —
-              // NRS is opaque to non-Nigerian readers. The 7-word parenthetical decodes it
-              // without a footnote. 'compliance constraints' → 'isolation constraints' —
-              // 'multi-tenant isolation' is more technically precise (RLS/tenant separation)
-              // and more universally understandable than 'compliance constraints' alone.
-              '62 tools deployed under NRS audit pressure (Nigeria\'s federal tax compliance mandate), 99.9%+ uptime targets, and multi-tenant isolation constraints. Every skill maps to a decision made in production — not a tutorial, not a certification exercise, not a side project.'
+              'The stack is organized by operational responsibility: isolation, observability, recovery, data movement, and delivery. Each tool maps to a recorded system decision rather than a generic proficiency list.'
             }
             eyebrowVariant={child}
             titleVariant={reducedMotion ? child : clipReveal}
@@ -487,7 +482,7 @@ export function SkillsSection() {
           className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
         >
           <Link href={anchorUrl('section-about')} className="transition-opacity hover:opacity-80">
-            These 62 skills map to three live systems →
+            These 62 skills map to three featured systems →
           </Link>
         </m.p>
       </div>

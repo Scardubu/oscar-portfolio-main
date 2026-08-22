@@ -99,7 +99,7 @@ test.describe('Hero', () => {
   test('hero bio contains reliability-first positioning', async ({ page }) => {
     const hero = page.locator('section#hero[aria-labelledby="hero-title"]');
     await expect(hero.locator('p.hero-body-text')).toContainText(
-      /Reliability-first AI, financial, and platform systems/i
+      /Backend, platform, and AI infrastructure/i
     );
   });
 
@@ -124,23 +124,19 @@ test.describe('Hero', () => {
     }
   });
 
-  test('"See what shipped" CTA is visible', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /see what shipped/i })).toBeVisible();
+  test('"Review production evidence" CTA links to project proof', async ({ page }) => {
+    const cta = page.getByRole('link', { name: /review production evidence/i });
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', /#section-projects/);
   });
 
-  test('"Tell me your constraints" CTA links to contact section', async ({ page }) => {
-    const cta = page.getByRole('link', { name: /tell me your constraints/i }).first();
+  test('"Discuss a system" CTA links to contact section', async ({ page }) => {
+    const cta = page.getByRole('link', { name: /discuss a system/i }).first();
     await expect(cta).toHaveAttribute('href', /#section-contact/);
   });
 
-  test('availability pill is present and contains "AVAILABLE"', async ({ page }) => {
-    await expect(page.getByTestId('hero-availability-pill')).toBeVisible();
-  });
-
-  test('availability pill includes dynamic "Updated" recency text', async ({ page }) => {
-    const pill = page.getByTestId('hero-availability-pill');
-    await expect(pill).toContainText(/AVAILABLE/i);
-    await expect(pill).toContainText(/Updated \w+ \d{4}/);
+  test('hero does not present a stale hard-coded availability date', async ({ page }) => {
+    await expect(page.locator('section#hero')).not.toContainText(/Updated June 2026/i);
   });
 });
 
@@ -206,8 +202,10 @@ test.describe('Projects', () => {
   test('architecture decision content is visible', async ({ page }) => {
     await page.locator('#section-projects').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
-    await expect(page.getByText('Chosen').filter({ visible: true }).first()).toBeVisible();
-    await expect(page.getByText('Because').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Constraint').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Decision').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Outcome').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Evidence').filter({ visible: true }).first()).toBeVisible();
   });
 });
 
@@ -248,7 +246,7 @@ test.describe('Skills — V1.0 flow mechanics', () => {
     const skillsSection = page.locator('section#skills[aria-labelledby="skills-heading"]');
     await skillsSection.scrollIntoViewIfNeeded();
     const flowHook = skillsSection.getByRole('link', {
-      name: /62 skills map to three live systems/i,
+      name: /62 skills map to three featured systems/i,
     });
     await expect(flowHook).toHaveAttribute('href', /#section-about/);
   });
@@ -282,16 +280,16 @@ test.describe('About', () => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
     await expect(
       page.getByRole('heading', {
-        name: /Federal scale|Production ML|Lagos → Global/i,
+        name: /Long-horizon systems|Explicit decisions/i,
       })
     ).toBeVisible();
   });
 
-  test('about availability chip has Updated recency text', async ({ page }) => {
+  test('about section does not duplicate availability or stale recency', async ({ page }) => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
-    const chip = page.getByTestId('about-availability-chip');
-    await expect(chip).toBeVisible();
-    await expect(chip).toContainText(/Updated \w+ \d{4}/);
+    const section = page.locator('#section-about');
+    await expect(section).not.toContainText(/Updated June 2026/i);
+    await expect(section).not.toContainText(/Available · Open to Work/i);
   });
 
   test('stack strip shows expected technologies', async ({ page }) => {
@@ -339,11 +337,11 @@ test.describe('Contact', () => {
     ).toBeAttached();
   });
 
-  test('contact heading is correct', async ({ page }) => {
+  test('contact heading is direct', async ({ page }) => {
     await page.locator('#section-contact').scrollIntoViewIfNeeded();
     await expect(
       page.getByRole('heading', {
-        name: /The system is ready\. Are you\?/i,
+        name: /Discuss the system\./i,
       })
     ).toBeVisible();
   });
@@ -366,16 +364,26 @@ test.describe('Contact', () => {
     await expect(page.locator('form[aria-label="Contact Oscar Ndugbu"]')).toBeVisible();
   });
 
-  test('STAFF+ / PRINCIPAL contact card is visible', async ({ page }) => {
-    const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
-    await section.scrollIntoViewIfNeeded();
-    await expect(section.getByText('STAFF+ / PRINCIPAL', { exact: true })).toBeVisible();
+  test('contact form exposes field errors before sending an incomplete brief', async ({ page }) => {
+    const form = page.locator('form[aria-label="Contact Oscar Ndugbu"]');
+    await form.scrollIntoViewIfNeeded();
+
+    await form.locator('button[type="submit"]').click();
+
+    await expect(form.locator('#cf-name-error')).toBeVisible();
+    await expect(form.locator('#cf-email-error')).toBeVisible();
+    await expect(form.locator('#cf-stakes-error')).toBeVisible();
+    await expect(form.locator('#cf-message-error')).toBeVisible();
+    await expect(form.locator('#cf-name')).toBeFocused();
   });
 
-  test('INFRASTRUCTURE CONSULTING card is visible', async ({ page }) => {
+  test('focused brief guidance is visible', async ({ page }) => {
     const section = page.locator('section#section-contact[aria-labelledby="contact-heading"]');
     await section.scrollIntoViewIfNeeded();
-    await expect(section.getByText('INFRASTRUCTURE CONSULTING', { exact: true })).toBeVisible();
+    await expect(section.getByText('A useful first brief', { exact: true })).toBeVisible();
+    await expect(section.getByText('Problem', { exact: true })).toBeVisible();
+    await expect(section.getByText('Stakes', { exact: true })).toBeVisible();
+    await expect(section.getByText('Timeline', { exact: true }).first()).toBeVisible();
   });
 
   test('GitHub link opens in new tab', async ({ page }) => {
@@ -415,15 +423,17 @@ test.describe('Contact', () => {
 
     await form.locator('#cf-name').fill('Test User');
     await form.locator('#cf-email').fill('test@example.com');
-    await form.locator('select[name="inquiryType"]').selectOption('job');
+    await form.locator('select[name="timeline"]').selectOption('month');
+    await form.locator('textarea[name="stakes"]').fill('A failed launch would block customer onboarding.');
     await form
       .locator('textarea[name="message"]')
       .fill('This is a test constraint message that meets minimum length.');
 
     await form.locator('button[type="submit"]').click();
-    const successState = page.getByRole('status').filter({ hasText: 'Constraint received.' });
-    await expect(successState).toContainText('Constraint received.');
-    await expect(successState).toContainText("I'll review and respond within 24 hours");
+    const successState = page.getByRole('status').filter({ hasText: 'System brief received.' });
+    await expect(successState).toContainText('System brief received.');
+    await expect(successState).toContainText('A useful next step will arrive by email');
+    await expect(successState).not.toContainText(/24 hours|24h/i);
   });
 
   test('contact form error state shows fallback contact path', async ({ page }) => {
@@ -441,7 +451,8 @@ test.describe('Contact', () => {
 
     await form.locator('#cf-name').fill('Test User');
     await form.locator('#cf-email').fill('test@example.com');
-    await form.locator('select[name="inquiryType"]').selectOption('job');
+    await form.locator('select[name="timeline"]').selectOption('month');
+    await form.locator('textarea[name="stakes"]').fill('A failed launch would block customer onboarding.');
     await form
       .locator('textarea[name="message"]')
       .fill('This is a test constraint message that meets minimum length.');
@@ -455,6 +466,19 @@ test.describe('Contact', () => {
   });
 });
 
+test.describe('Claim and freshness contracts', () => {
+  test('homepage does not reintroduce stale or unsupported proof language', async ({ page }) => {
+    await goto(page);
+
+    const body = page.locator('body');
+    await expect(body).not.toContainText('Updated June 2026');
+    await expect(body).not.toContainText(/respond within 24|response within 24/i);
+    await expect(body).not.toContainText('NRS · NDPC Compliant');
+    await expect(body).not.toContainText('40 million Nigerian students');
+    await expect(body).not.toContainText('Live Build Activity');
+  });
+});
+
 test.describe('Footer', () => {
   test.beforeEach(async ({ page }) => {
     await goto(page);
@@ -462,11 +486,11 @@ test.describe('Footer', () => {
 
   test('trust strip copy is correct', async ({ page }) => {
     await expect(page.locator('footer')).toContainText(
-      'Shipped in Lagos · Running globally · Battle-tested in audit season'
+      'Backend · Platform · AI infrastructure · Reliability'
     );
   });
 
-  test('footer status reflects live metrics state', async ({ page }) => {
+  test('footer does not present a portfolio fixture as live system status', async ({ page }) => {
     await page.route('/api/live-metrics', async (route) => {
       await route.fulfill({
         status: 200,
@@ -483,8 +507,9 @@ test.describe('Footer', () => {
     await page.reload();
 
     const footer = page.locator('footer');
-    await expect(footer.getByText('Degraded performance')).toBeVisible();
+    await expect(footer.getByText('Public evidence record')).toBeVisible();
     await expect(footer).not.toContainText('All systems operational');
+    await expect(footer).not.toContainText('Degraded performance');
   });
 
   test('no Next.js 16 reference', async ({ page }) => {
@@ -522,7 +547,7 @@ test.describe('Live Activity Bar', () => {
   });
 
   test('live activity bar is rendered with role=status', async ({ page }) => {
-    const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
+    const bar = page.locator('[role="status"][aria-label="Recent GitHub activity"]');
     await expect(bar).toBeAttached();
   });
 
@@ -532,7 +557,7 @@ test.describe('Live Activity Bar', () => {
     });
     await page.reload();
     await page.locator('h1').waitFor();
-    const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
+    const bar = page.locator('[role="status"][aria-label="Recent GitHub activity"]');
     await expect(bar).toContainText('Activity feed temporarily unavailable');
   });
 });

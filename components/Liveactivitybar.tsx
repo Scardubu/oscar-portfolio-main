@@ -4,8 +4,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { StatusPulseDot } from '@/components/shared/StatusPulseDot';
-
 interface ActivityData {
   ago: string;
   type: string;
@@ -22,7 +20,7 @@ const FALLBACK_LOADING: ActivityData = {
 };
 
 const FALLBACK_UNAVAILABLE: ActivityData = {
-  ago: 'Just now',
+  ago: 'Recently',
   type: 'StatusEvent',
   repo: 'scardubu.dev',
   message: 'Activity feed temporarily unavailable',
@@ -83,7 +81,7 @@ export function LiveActivityBar() {
       aria-live="polite"
       aria-atomic="true"
       aria-busy={loading ? 'true' : 'false'}
-      aria-label="Latest commit activity"
+      aria-label="Recent GitHub activity"
       className="live-bar-text flex h-6 items-center gap-2 overflow-hidden"
     >
       <span className="sr-only">{announcement}</span>
@@ -94,7 +92,11 @@ export function LiveActivityBar() {
         </div>
       ) : (
         <div className="flex h-6 min-w-0 flex-1 items-center gap-2" aria-hidden="true">
-          <StatusPulseDot color="var(--color-live)" pulseDuration="1s" />
+          <span className="size-1.5 shrink-0 rounded-full bg-[var(--color-film-teal)]" />
+
+          <span className="text-color-text-muted hidden shrink-0 font-mono text-[10px] tracking-wider uppercase sm:inline">
+            Recent GitHub activity
+          </span>
 
           {safeActivity.sha && safeActivity.sha !== 'unknown' && (
             <span className="text-color-text-muted shrink-0 font-mono text-[11px] uppercase">

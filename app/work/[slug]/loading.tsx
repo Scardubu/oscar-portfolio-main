@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/Skeleton';
 
 export default function WorkCaseLoading() {
   return (
-    <main id="main-content">
+    <div role="status" aria-live="polite" aria-busy="true" aria-label="Loading case study">
       <section className="pt-[calc(var(--nav-height)+var(--space-12))]">
         <div className="container grid gap-(--space-4)">
           <Skeleton width="8rem" height="1rem" />
@@ -11,6 +11,6 @@ export default function WorkCaseLoading() {
           <Skeleton height="12rem" />
         </div>
       </section>
-    </main>
+    </div>
   );
 }

@@ -15,7 +15,7 @@ tags:
 
 Federal reporting systems inherit the messiness of their source data. Nigeria's Universal Basic Education Commission receives school funding submissions from 36 state ministries — each with different column naming conventions, different file formats (CSV, Excel, XML), and different submission timelines. Some states submit late. Some submit partial data. The pipeline must produce accurate ministry-level reporting under all of these conditions, not just the clean path.
 
-Deduplication is the second hard problem. The same school can appear under "Sunrise Primary School", "SUNRISE PRM SCH", and "sunrise prmry sch" in submissions from different states. Exact-match deduplication produces a false-negative rate of 15–20% on real data — meaning 15–20% of true duplicate records survive into ministry reports as separate entries.
+Deduplication is the second hard problem. The same school can appear under "Sunrise Primary School", "SUNRISE PRM SCH", and "sunrise prmry sch" in submissions from different states. Exact-match logic leaves known duplicate patterns unresolved, so a manual-review sample is used to validate the probabilistic path.
 
 ## Approach
 
@@ -23,7 +23,7 @@ The Airflow DAG uses per-state task isolation as its fundamental design decision
 
 Schema normalisation maps ministry-specific column names to a canonical schema before any downstream processing sees the data. "School Name", "SCHOOL_NM", and "schname" all map to `school_name` at the ingest boundary. Downstream logic never handles raw column names.
 
-Probabilistic deduplication uses dedupe.io with a blocking pass on `school_id + LGA + year` to reduce the comparison space from O(n²) to a tractable candidate set. Fuzzy scoring then handles name variation within each block. The {'<'}2% false-positive rate was validated against a manual review sample before production deployment.
+Probabilistic deduplication uses dedupe.io with a blocking pass on `school_id + LGA + year` to reduce the comparison space from O(n²) to a tractable candidate set. Fuzzy scoring then handles name variation within each block, with candidate results checked against a manual-review sample before acceptance.
 
 Great Expectations runs cross-state consistency checks as a validation gate. A state that passes internal normalisation but fails cross-state checks — implausible enrollment numbers, missing LGA codes — is flagged for manual review and excluded from the current reporting cycle. It is not silently accepted.
 
@@ -35,7 +35,7 @@ A pipeline that waits for all 36 states before producing output creates a single
 
 **Probabilistic record linkage over exact-match deduplication**
 
-Exact-match is simple and wrong. Real ministry data contains 15–20% of true duplicate schools that would survive exact-match deduplication as separate entries. The probablistic approach adds complexity at the deduplication layer but removes error at the output layer — ministry reports that are accurate are worth more than ministry reports that are fast to produce.
+Exact-match is simple and incomplete. Real ministry data contains spelling and naming variation that survives exact equality as separate records. The probabilistic approach adds complexity at the deduplication layer but keeps uncertain matches visible for review rather than silently accepting them.
 
 **Great Expectations validation gate over silent acceptance**
 

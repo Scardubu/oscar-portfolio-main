@@ -6,7 +6,7 @@
 // Refresh: every 5 minutes. AbortController on unmount.
 
 import { m, useReducedMotion } from 'framer-motion';
-import { Activity, FileText, GitCommit, TrendingUp } from 'lucide-react';
+import { Activity, FileText, GitCommit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { springs } from '@/lib/motionVariants';
@@ -14,7 +14,7 @@ import { formatMonthYear } from '@/lib/utils';
 
 interface ActivityItem {
   id: string;
-  type: 'deployment' | 'blog' | 'commit' | 'metric';
+  type: 'deployment' | 'blog' | 'commit';
   title: string;
   timestamp: string;
   icon: typeof GitCommit;
@@ -58,10 +58,9 @@ export function LiveBuildFeed() {
 
     async function fetchAll() {
       try {
-        const [githubRes, blogRes, metricsRes] = await Promise.allSettled([
+        const [githubRes, blogRes] = await Promise.allSettled([
           fetch('/api/activity'),
           fetch('/api/recent-blog-posts'),
-          fetch('/api/live-metrics'),
         ]);
 
         if (cancelled) return;
@@ -106,21 +105,6 @@ export function LiveBuildFeed() {
           );
         }
 
-        if (metricsRes.status === 'fulfilled' && metricsRes.value.ok) {
-          successfulSources += 1;
-          const data = (await metricsRes.value.json()) as { todayPredictions?: number };
-          if (data?.todayPredictions) {
-            combined.push({
-              id: 'metric-live',
-              type: 'metric',
-              title: 'SabiScore serving live match intelligence',
-              timestamp: new Date().toISOString(),
-              icon: TrendingUp,
-              accentColor: 'var(--color-film-teal)',
-            });
-          }
-        }
-
         if (!cancelled) {
           if (successfulSources === 0) {
             setActivities([]);
@@ -151,24 +135,16 @@ export function LiveBuildFeed() {
   return (
     <div
       className="glass-medium overflow-hidden rounded-[var(--radius-xl)]"
-      aria-label="Live build activity"
+      aria-label="Recent engineering activity"
     >
       {/* Header */}
       <div className="border-color-border flex items-center gap-2.5 border-b px-4 py-3">
         <Activity className="h-4 w-4 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
         <h3 className="text-color-text-primary flex-1 text-sm font-semibold">
-          Live Build Activity
+          Recent engineering activity
         </h3>
-
-        {/* Live pulse dot */}
-        <span className="flex items-center gap-1.5" role="status" aria-label="Feed is live">
-          <span className="relative flex h-1.5 w-1.5 shrink-0">
-            <span className="bg-color-success absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
-            <span className="bg-color-success relative inline-flex h-1.5 w-1.5 rounded-full" />
-          </span>
-          <span className="text-color-text-muted font-mono text-[10px] tracking-wider uppercase">
-            Live
-          </span>
+        <span className="text-color-text-muted font-mono text-[10px] tracking-wider uppercase">
+          Public record
         </span>
       </div>
 

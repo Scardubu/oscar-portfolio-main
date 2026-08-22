@@ -19,50 +19,27 @@ import { CopyEmail } from '@/components/CopyEmail';
 import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { CONTACT_EMAIL, CV_ASSET_PATH } from '@/lib/config';
-import { cardReveal, clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
+import { clipReveal, fadeRise, noMotion, staggerContainer } from '@/lib/motionVariants';
 
-const CONTACT_CARDS = [
-  {
-    id: 'staff-plus',
-    title: 'STAFF+ / PRINCIPAL',
-    headline: 'Full-stack delivery · mobile app through production API',
-    body: 'Staff+ and Principal roles at fintech and AI-native companies. Ownership of the entire surface — React Native mobile, Next.js dashboard, Fastify API, PostgreSQL RLS data layer. Multi-tenant isolation and zero-downtime deployments are baseline, not negotiated features.',
-    objection:
-      'TypeScript 5 · Effect-TS · React Native Expo 54 · Next.js 15 · Spring Boot · FastAPI · Turborepo.',
-    accentColor: 'var(--color-success)',
-  },
-  {
-    id: 'technical-cofounder',
-    title: 'TECHNICAL CO-FOUNDER',
-    headline: 'Pre-seed to Series A · Africa / emerging markets',
-    body: 'Four years shipping production platforms from scratch under compliance pressure — NRS/DigiTax 2026, NDPC, and FIRS audit requirements. Systems that hold through due diligence, not just through the demo.',
-    objection:
-      'The system should outlast the seed deck. Available for full-time equity engagements.',
-    accentColor: 'var(--color-accent)',
-  },
-  {
-    id: 'consulting',
-    title: 'INFRASTRUCTURE CONSULTING',
-    headline: 'Production reliability · compliance remediation · ML backends',
-    body: 'Deliverable-led, not hourly. Scoped engagements: incident remediation, architecture review, Nigerian tax compliance (NRS 2026 / FIRS DigiTax), ML inference optimisation, and multi-tenant PostgreSQL RLS implementation.',
-    objection:
-      'You get working infrastructure and documented decisions — not a billable-hour report.',
-    accentColor: 'var(--color-cyan)',
-  },
+const USEFUL_BRIEF = [
+  { label: 'Problem', body: 'The system, workflow, or operating constraint that needs attention.' },
+  { label: 'Stakes', body: 'What breaks, slows down, or becomes risky if it is left unresolved.' },
+  { label: 'Timeline', body: 'When a decision, review, or first delivery needs to happen.' },
+  { label: 'Contact', body: 'A name and working email for the next conversation.' },
 ] as const;
 
 const TRUST_BADGES = [
-  'Shipped in Lagos',
-  'Running globally',
-  'Battle-tested in audit season',
-  'NRS · NDPC Compliant',
+  'Staff backend and platform scope',
+  'AI infrastructure and reliability',
+  'Lagos · UTC+1',
 ] as const;
 
 // V1.0 §Form State Copy — field validation messages (hoisted: static, no closure deps)
 const FIELD_ERRORS: Record<string, string> = {
-  name: "Your name helps me know who I'm writing to.",
+  name: 'A name is needed for the reply.',
   email: 'Need a working address to respond.',
-  inquiryType: 'Select the best fit — it shapes the response.',
+  timeline: 'Choose the closest delivery horizon.',
+  stakes: 'Name what is at risk if the problem remains unresolved.',
   // V1.3: 'describe the constraint' → 'tell the story' — removes the insider verb-noun pair.
   // 'This is the important part' stays — it signals priority correctly.
   // 'tell the story' works for both the technical founder writing a systems brief
@@ -71,11 +48,11 @@ const FIELD_ERRORS: Record<string, string> = {
   message: 'This is the important part — tell the story.',
 };
 
-const INQUIRY_TYPES = [
-  { value: 'job', label: 'Staff+ / Full-time role' },
-  { value: 'consulting', label: 'Consulting / Contract' },
-  { value: 'collaboration', label: 'Co-founder' },
-  { value: 'advisory', label: 'Advisory' },
+const TIMELINE_OPTIONS = [
+  { value: 'immediate', label: 'Immediate · active incident or decision' },
+  { value: 'month', label: 'Within one month' },
+  { value: 'quarter', label: 'This quarter' },
+  { value: 'exploring', label: 'Exploring · no fixed date yet' },
 ] as const;
 
 function GitHubIcon() {
@@ -100,9 +77,23 @@ type FormState = 'idle' | 'loading' | 'success' | 'error';
 interface FormValues {
   name: string;
   email: string;
-  company: string;
-  inquiryType: string;
+  timeline: string;
+  stakes: string;
   message: string;
+}
+
+function validateBrief(values: FormValues): Partial<Record<keyof FormValues, string>> {
+  const errors: Partial<Record<keyof FormValues, string>> = {};
+
+  if (values.name.trim().length < 2) errors.name = FIELD_ERRORS.name;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+    errors.email = FIELD_ERRORS.email;
+  }
+  if (!values.timeline.trim()) errors.timeline = FIELD_ERRORS.timeline;
+  if (values.stakes.trim().length < 5) errors.stakes = FIELD_ERRORS.stakes;
+  if (values.message.trim().length < 10) errors.message = FIELD_ERRORS.message;
+
+  return errors;
 }
 
 function ContactForm() {
@@ -110,8 +101,8 @@ function ContactForm() {
   const [values, setValues] = useState<FormValues>({
     name: '',
     email: '',
-    company: '',
-    inquiryType: 'job',
+    timeline: 'month',
+    stakes: '',
     message: '',
   });
   // Change 1d — V1.0: field-level validation errors per spec §Form State Copy
@@ -143,13 +134,24 @@ function ContactForm() {
     e.preventDefault();
     if (state === 'loading') return;
 
+    const validationErrors = validateBrief(values);
+    const firstInvalidField = Object.keys(validationErrors)[0] as keyof FormValues | undefined;
+
+    if (firstInvalidField) {
+      setFieldErrors(validationErrors);
+      const field = e.currentTarget.elements.namedItem(firstInvalidField);
+      if (field instanceof HTMLElement) field.focus();
+      return;
+    }
+
+    setFieldErrors({});
     setState('loading');
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...values, honeypot: '' }),
+        body: JSON.stringify({ ...values, inquiryType: 'advisory', honeypot: '' }),
       });
 
       if (!res.ok) {
@@ -157,13 +159,13 @@ function ContactForm() {
         throw new Error(json.error ?? `HTTP ${res.status}`);
       }
 
-      trackEvent('Portfolio', 'ContactSubmit', values.inquiryType, undefined, {
+      trackEvent('Portfolio', 'ContactSubmit', values.timeline, undefined, {
         status: 'success',
       });
       setState('success');
-      setValues({ name: '', email: '', company: '', inquiryType: 'job', message: '' });
+      setValues({ name: '', email: '', timeline: 'month', stakes: '', message: '' });
     } catch {
-      trackEvent('Portfolio', 'ContactSubmit', values.inquiryType, undefined, {
+      trackEvent('Portfolio', 'ContactSubmit', values.timeline, undefined, {
         status: 'error',
       });
       setState('error');
@@ -197,10 +199,10 @@ function ContactForm() {
           </svg>
         </div>
         <p className="font-display text-color-text-primary text-lg font-bold">
-          Constraint received.
+          System brief received.
         </p>
         <p className="text-color-text-secondary max-w-[40ch] text-sm leading-7">
-          I&apos;ll review and respond within 24 hours — usually faster.
+          The problem, stakes, and timeline are queued for review. A useful next step will arrive by email.
         </p>
         <button
           type="button"
@@ -295,65 +297,79 @@ function ContactForm() {
         </div>
       </div>
 
-      <div className="mb-4 grid gap-4 sm:grid-cols-2">
-        <div className="contact-field-group">
-          <label htmlFor="cf-company" className="contact-field-label">
-            Company <span className="contact-field-optional">(optional)</span>
-          </label>
-          <input
-            id="cf-company"
-            name="company"
-            type="text"
-            autoComplete="organization"
-            maxLength={80}
-            value={values.company}
-            onChange={handleChange}
-            placeholder="Company or project"
-            className="contact-field-input"
-            disabled={state === 'loading'}
-          />
-        </div>
-
-        <div className="contact-field-group">
-          <label htmlFor="cf-type" className="contact-field-label">
-            Inquiry type{' '}
-            <span aria-hidden="true" className="text-color-success">
-              *
-            </span>
-          </label>
-          <select
-            id="cf-type"
-            name="inquiryType"
-            required
-            value={values.inquiryType}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className="contact-field-input contact-field-select"
-            disabled={state === 'loading'}
-            aria-invalid={Boolean(fieldErrors.inquiryType)}
-            aria-describedby={fieldErrors.inquiryType ? 'cf-type-error' : undefined}
+      <div className="contact-field-group mb-4">
+        <label htmlFor="cf-timeline" className="contact-field-label">
+          Timeline{' '}
+          <span aria-hidden="true" className="text-color-success">
+            *
+          </span>
+        </label>
+        <select
+          id="cf-timeline"
+          name="timeline"
+          required
+          value={values.timeline}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className="contact-field-input contact-field-select"
+          disabled={state === 'loading'}
+          aria-invalid={Boolean(fieldErrors.timeline)}
+          aria-describedby={fieldErrors.timeline ? 'cf-timeline-error' : undefined}
+        >
+          {TIMELINE_OPTIONS.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        {fieldErrors.timeline && (
+          <p
+            id="cf-timeline-error"
+            className="text-2xs text-color-film-teal mt-1 font-mono"
+            role="alert"
           >
-            {INQUIRY_TYPES.map(({ value, label }) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-          {fieldErrors.inquiryType && (
-            <p
-              id="cf-type-error"
-              className="text-2xs text-color-film-teal mt-1 font-mono"
-              role="alert"
-            >
-              {fieldErrors.inquiryType}
-            </p>
-          )}
-        </div>
+            {fieldErrors.timeline}
+          </p>
+        )}
+      </div>
+
+      <div className="contact-field-group mb-4">
+        <label htmlFor="cf-stakes" className="contact-field-label">
+          What is at stake?{' '}
+          <span aria-hidden="true" className="text-color-success">
+            *
+          </span>
+        </label>
+        <textarea
+          id="cf-stakes"
+          name="stakes"
+          required
+          minLength={5}
+          maxLength={240}
+          rows={2}
+          value={values.stakes}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          placeholder="Customer impact, delivery risk, audit exposure, or operational cost."
+          className="contact-field-input contact-field-textarea"
+          disabled={state === 'loading'}
+          aria-invalid={Boolean(fieldErrors.stakes)}
+          aria-describedby={fieldErrors.stakes ? 'cf-stakes-error' : undefined}
+        />
+        {fieldErrors.stakes && (
+          <p
+            id="cf-stakes-error"
+            className="text-2xs text-color-film-teal mt-1 font-mono"
+            role="alert"
+          >
+            {fieldErrors.stakes}
+          </p>
+        )}
       </div>
 
       <div className="contact-field-group mb-5">
         <label htmlFor="cf-message" className="contact-field-label">
-          What are we solving?{' '}
+          Problem or constraint{' '}
           <span aria-hidden="true" className="text-color-success">
             *
           </span>
@@ -368,9 +384,7 @@ function ContactForm() {
           value={values.message}
           onChange={handleChange}
           onBlur={handleBlur}
-          // V1.2: 'constraint' → 'problem', 'risk' → "what's at stake"
-          // Plain-English without sacrificing the telegraphic 3-noun voice.
-          placeholder="The problem, the deadline, and what's at stake."
+          placeholder="What is the system doing now, and what needs to change?"
           className="contact-field-input contact-field-textarea"
           disabled={state === 'loading'}
           aria-invalid={Boolean(fieldErrors.message)}
@@ -398,7 +412,7 @@ function ContactForm() {
           role="alert"
           aria-live="assertive"
         >
-          Something interrupted the send. Try again, or reach me directly at{' '}
+          Something interrupted the send. Try again, or use the direct email path at{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="text-color-film-teal underline underline-offset-2"
@@ -432,7 +446,7 @@ function ContactForm() {
               className="bg-color-success inline-block h-2 w-2 rounded-full"
               aria-hidden="true"
             />
-            Send — I&apos;ll respond within 24h
+            Send system brief
           </>
         )}
       </button>
@@ -459,11 +473,6 @@ export function ContactSection() {
   const child = reducedMotion ? noMotion : fadeRise;
   const headingVariant = reducedMotion ? noMotion : clipReveal;
 
-  const cardVariant = useMemo(
-    () => (i: number) => (reducedMotion ? noMotion : cardReveal(i % 2 === 0 ? 20 : -20)),
-    [reducedMotion]
-  );
-
   return (
     <ChapterFrame
       chapter={chapter}
@@ -476,14 +485,9 @@ export function ContactSection() {
             eyebrowNumber="06"
             eyebrowLabel="Contact"
             headingId="contact-heading"
-            title={<>The system is ready. Are you?</>}
-            // V1.3: (1) 'Hiring for Staff+' → 'Hiring for a senior engineering role' — removes
-            // pre-filtering; CONTACT_CARDS already surfaces Staff+/co-founder/consulting options.
-            // (2) 'send the constraint' → 'send it over' — removes insider noun; pronoun 'it'
-            // refers back to the three concrete situations. Shorter, warmer, universally clear.
-            // (3) 'usually faster' retained — strongest trust signal in this copy.
+            title={<>Discuss the system.</>}
             description={
-              'Hiring for a senior engineering role, building from scratch, or containing a production incident — send it over. I respond within 24 hours, usually faster.'
+              'For Staff backend and platform roles, architecture reviews, AI infrastructure, or reliability work: send the problem, the stakes, and the timeline.'
             }
             eyebrowVariant={child}
             titleVariant={headingVariant}
@@ -515,38 +519,33 @@ export function ContactSection() {
             <ContactForm />
           </m.div>
 
-          <m.div variants={child} className="flex flex-col gap-4">
-            {CONTACT_CARDS.map((card_item, i) => (
-              <m.div
-                key={card_item.id}
-                variants={cardVariant(i)}
-                data-cinematic="card"
-                className="glass-medium relative overflow-hidden rounded-[var(--radius-xl)] p-5"
-                // eslint-disable-next-line no-restricted-syntax
-                style={{ borderLeft: `3px solid ${card_item.accentColor}` }}
-                whileHover={
-                  reducedMotion
-                    ? undefined
-                    : { y: -2, transition: { type: 'spring', stiffness: 420, damping: 30 } }
-                }
-              >
-                <p
-                  className="label-mono mb-2"
-                  // eslint-disable-next-line no-restricted-syntax
-                  style={{ color: card_item.accentColor }}
-                >
-                  {card_item.title}
-                </p>
-                <p className="text-color-text-primary font-display mb-2 text-sm leading-snug font-semibold">
-                  {card_item.headline}
-                </p>
-                <p className="text-color-text-secondary text-xs leading-6">{card_item.body}</p>
-                <p className="border-color-border-subtle text-color-text-muted mt-2 border-t pt-2 text-[11px] leading-5 italic">
-                  {card_item.objection}
-                </p>
-              </m.div>
-            ))}
-          </m.div>
+          <m.aside
+            variants={child}
+            data-cinematic="panel"
+            className="border-color-border rounded-[var(--radius-xl)] border bg-[oklch(100%_0_0_/_0.02)] p-5 sm:p-7"
+            aria-label="What to include in a system brief"
+          >
+            <p className="label-mono text-color-film-teal">A useful first brief</p>
+            <p className="text-color-text-secondary mt-3 max-w-[42ch] text-sm leading-7">
+              Four signals are enough to begin. Technical detail can follow once the operating context is clear.
+            </p>
+            <ol className="border-color-border-subtle mt-6 divide-y divide-[var(--color-border-subtle)] border-y">
+              {USEFUL_BRIEF.map((item, index) => (
+                <li key={item.label} className="grid grid-cols-[2rem_1fr] gap-3 py-4">
+                  <span className="text-color-film-teal font-mono text-xs" aria-hidden="true">
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <p className="text-color-text-primary text-sm font-semibold">{item.label}</p>
+                    <p className="text-color-text-muted mt-1 text-xs leading-6">{item.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className="text-color-text-muted mt-5 font-mono text-[10px] leading-5 tracking-wide uppercase">
+              Backend · Platform · AI infrastructure · Reliability
+            </p>
+          </m.aside>
         </m.div>
 
         {/* Social links */}

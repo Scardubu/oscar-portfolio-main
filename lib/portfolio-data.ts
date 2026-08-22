@@ -24,34 +24,25 @@ export const HERO = {
   title: 'Staff Backend and Platform Engineer',
   kicker: 'Staff Backend and Platform Engineer',
   h1: 'The system has to work at 2am.',
-  subHeadline: "That's not a slogan. It's a design constraint.",
-  body: 'Reliability-first AI, financial, and platform systems built for audit season, compliance pressure, and real incidents. Lagos constraints. Global standards.',
-  availability: 'AVAILABLE · OPEN TO WORK',
-  availabilityLastUpdated: '2026-06-29',
+  subHeadline: 'A design principle for systems under real pressure.',
+  body: 'Backend, platform, and AI infrastructure engineered around explicit failure modes, observable behavior, and clean operational handoffs.',
+  availability: 'OPEN TO STAFF BACKEND AND PLATFORM ROLES',
+  availabilityLastUpdated: '2026-08-22',
   location: 'Lagos, Nigeria 🇳🇬',
-  trustStrip: 'Shipped in Lagos · Running globally · Battle-tested in audit season',
+  trustStrip: 'Backend · Platform · AI infrastructure · Reliability',
   cta: {
-    primary: { label: 'Tell me your constraints', href: anchorUrl('section-contact') },
-    secondary: { label: 'See what shipped', href: anchorUrl('section-projects') },
+    primary: { label: 'Review production evidence', href: anchorUrl('section-projects') },
+    secondary: { label: 'Discuss a system', href: anchorUrl('section-contact') },
     cv: { label: 'Download CV', href: CV_ASSET_PATH },
   },
 } as const;
 
 export const CONVICTION_STATS = [
-  { value: '4h → 15min', label: 'Tax filing time', stat: 'filing' },
-  { value: 'Zero-Drop', label: 'System Resiliency', stat: 'uptime' },
-  { value: 'sub-150ms', label: 'API response', stat: 'latency' },
-  { value: '45% MTTD', label: 'Incident detection', stat: 'mttd' },
+  { value: 'Tenant-scoped', label: 'Data boundaries', stat: 'isolation' },
+  { value: 'Replay-safe', label: 'Queue design', stat: 'recovery' },
+  { value: 'Observable', label: 'Failure paths', stat: 'telemetry' },
+  { value: 'Fallback-ready', label: 'Inference delivery', stat: 'resilience' },
 ] as const;
-
-export const LIVE_METRICS = {
-  uptime: '99.9%+',
-  uptimeTarget: '≥99.9%',
-  p99Latency: 'sub-150ms',
-  mttdImprove: '45%',
-  testCoverage: '95%',
-  bundleTarget: '< 300 KB',
-} as const;
 
 export const SOCIAL = {
   github: 'https://github.com/Scardubu',

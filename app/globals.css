@@ -1748,7 +1748,7 @@ h3,
 
 /* ── Conviction stat container-query font scaling ───────────────────────────
    When each card track is ≤14rem wide (as happens in the 4-column desktop
-   layout), scale the value font via cqi so "4h → 15min" / "sub-150ms" never
+   layout), scale the value font via cqi so long evidence labels never
    bleed past the card boundary regardless of viewport size.
    cqi = 1% of the container inline size (the card width established above).  */
 @container (max-width: 14rem) {
@@ -6356,7 +6356,7 @@ body {
 
 /* ── About section impact stats — 3-column grid on mobile ────────────────────
    On 390px viewports, the existing `flex flex-wrap gap-x-8` layout produced:
-     Row 1: "4h → 15min" | "Zero-Drop"
+     Row 1: longest evidence value | recovery value
      Row 2: "3"  ← orphaned solo stat — weak visual
    The `.about-impact-grid` class switches to a 3-column grid on narrow screens,
    ensuring all three impact stats always land on one row for scan-pattern clarity.
@@ -6370,7 +6370,7 @@ body {
   }
 
   /* Stat value: slight font-size reduction for narrow 3-column cells.
-     "4h → 15min" at 1rem mono = ~96px; column at 390px ≈ 110px. Tight but clean. */
+     Long monospace values must remain inside their column at narrow widths. */
   .about-impact-grid .about-stat-value {
     font-size: clamp(0.8rem, 3.5vw, 1rem);
     line-height: 1.2;
@@ -6722,5 +6722,143 @@ html.lenis body {
 @media (max-width: 767px), (prefers-reduced-motion: reduce) {
   .site-grain {
     display: none;
+  }
+}
+
+/* Reliability Ledger — one evidence grammar across project proof. */
+.reliability-ledger {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 1rem;
+}
+
+.reliability-ledger-title,
+.reliability-ledger-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+}
+
+.reliability-ledger-title {
+  margin-bottom: 0.875rem;
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+}
+
+.reliability-ledger-grid {
+  display: grid;
+  gap: 1rem;
+  padding-left: 1.25rem;
+}
+
+.reliability-ledger-item {
+  position: relative;
+  min-width: 0;
+}
+
+.reliability-ledger-node {
+  position: absolute;
+  top: 0.32rem;
+  left: -1.2rem;
+  z-index: 1;
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: var(--color-bg);
+  box-shadow: 0 0 0 3px color-mix(in oklch, currentColor 10%, transparent);
+}
+
+.reliability-ledger-label {
+  color: currentColor;
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+}
+
+.reliability-ledger-value {
+  margin-top: 0.35rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.ledger-constraint {
+  color: oklch(78% 0.16 75);
+}
+
+.ledger-decision,
+.ledger-outcome {
+  color: var(--color-film-teal);
+}
+
+.ledger-evidence {
+  color: oklch(75% 0.13 300);
+}
+
+.reliability-ledger-trace {
+  position: absolute;
+  display: block;
+  background: linear-gradient(
+    to bottom,
+    oklch(78% 0.16 75 / 0.65),
+    oklch(73% 0.18 196 / 0.65),
+    oklch(75% 0.13 300 / 0.65)
+  );
+}
+
+.reliability-ledger-trace--mobile {
+  top: 0.45rem;
+  bottom: 0.45rem;
+  left: 0.25rem;
+  width: 1px;
+  transform-origin: top;
+}
+
+.reliability-ledger-trace--desktop {
+  display: none;
+}
+
+.reliability-ledger--compact .reliability-ledger-value {
+  font-size: 0.7rem;
+}
+
+@media (min-width: 768px) {
+  .reliability-ledger-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.1rem;
+    padding-top: 0.9rem;
+    padding-left: 0;
+  }
+
+  .reliability-ledger-node {
+    top: -1rem;
+    left: 0;
+  }
+
+  .reliability-ledger-trace--mobile {
+    display: none;
+  }
+
+  .reliability-ledger-trace--desktop {
+    top: 0.12rem;
+    right: 0;
+    left: 0;
+    display: block;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      oklch(78% 0.16 75 / 0.65),
+      oklch(73% 0.18 196 / 0.65),
+      oklch(75% 0.13 300 / 0.65)
+    );
+    transform-origin: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reliability-ledger-trace {
+    transform: none;
   }
 }

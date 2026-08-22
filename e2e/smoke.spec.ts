@@ -70,12 +70,13 @@ test.describe('Portfolio smoke tests', () => {
     expect(firstFocusableClassName).toContain('skip-nav');
   });
 
-  test('hero loads with conviction headline and availability signal', async ({ page }) => {
+  test('hero loads with conviction headline and canonical role', async ({ page }) => {
     await goto(page);
 
     await expect(page.locator('#hero')).toBeVisible();
     await expect(page.locator('h1')).toHaveAttribute('aria-label', /The system has to work at 2am/);
-    await expect(page.getByTestId('hero-availability-pill')).toContainText(/Updated \w+ \d{4}/);
+    await expect(page.locator('#hero')).toContainText('Staff Backend and Platform Engineer');
+    await expect(page.locator('#hero')).not.toContainText(/Updated June 2026/i);
   });
 
   test('root theme defaults to dark semantics', async ({ page }) => {
@@ -117,7 +118,7 @@ test.describe('Portfolio smoke tests', () => {
     await goto(page);
 
     const strictStatusLocator = page.locator(
-      '[role="status"][aria-label="Latest commit activity"]'
+      '[role="status"][aria-label="Recent GitHub activity"]'
     );
     await expect(strictStatusLocator).toHaveCount(1, { timeout: 20000 });
   });
@@ -167,7 +168,7 @@ test.describe('Portfolio smoke tests', () => {
   test('main landmark and scroll progress are present', async ({ page }) => {
     await goto(page);
 
-    await expect(page.locator('main#main-content')).toBeAttached();
+    await expect(page.locator('main#main-content')).toHaveCount(1);
     await expect(page.locator('[data-testid="scroll-progress"]')).toBeAttached();
   });
 
@@ -237,7 +238,7 @@ test.describe('Portfolio smoke tests', () => {
     const footer = page.locator('footer');
     await expect(footer).toBeVisible();
     await expect(footer).toContainText(
-      'Shipped in Lagos · Running globally · Battle-tested in audit season'
+      'Backend · Platform · AI infrastructure · Reliability'
     );
     await expect(footer).toContainText('scardubu.dev');
   });

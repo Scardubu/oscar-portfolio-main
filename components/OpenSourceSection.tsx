@@ -247,8 +247,8 @@ export function OpenSourceSection() {
           className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
         >
           {[
-            { value: '4', label: 'production packages', detail: 'npm + pip' },
-            { value: '15+', label: 'merged contributions', detail: 'XGBoost · scikit-learn' },
+            { value: '4', label: 'public packages', detail: 'npm + pip' },
+            { value: 'Source', label: 'inspectable', detail: 'commits · docs · tests' },
             { value: 'MIT', label: 'open license', detail: 'all packages' },
           ].map(({ value, label, detail }) => (
             <div key={value + label} className="flex items-baseline gap-2">

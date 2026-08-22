@@ -1,7 +1,7 @@
 ---
-title: 'Building in Lagos, Running Globally: Infrastructure That Works Under Constraint'
+title: 'Building in Lagos: Infrastructure That Works Under Constraint'
 date: '2026-01-10'
-summary: 'Why building production systems from Lagos — with unreliable power, variable network, and strict regulatory requirements — produces more resilient infrastructure than systems built in ideal conditions. Constraint is a design tool.'
+summary: 'How variable power, network, and regulatory conditions shape more resilient infrastructure decisions. Constraint is treated as a design input, not a branding claim.'
 tags:
   - 'Architecture'
   - 'Production Systems'
@@ -29,22 +29,22 @@ The result: systems built under constraint tend to hold better under load, recov
 
 **TaxBridge**: The NRS API enforces rate limits that become relevant during filing windows when many businesses submit simultaneously. Building for this constraint from the start produced idempotent BullMQ queues with stable job identifiers and deduplication logic. The system handles burst traffic without client-visible failure. A system built assuming reliable API availability would have needed the same solution retrofitted after the first incident.
 
-**SabiScore**: Inference latency is higher on African network paths than European ones. This constraint produced a Redis cache layer with a 73% hit rate — 73% of requests never touch the model at all. Under constrained network conditions, caching is not a performance optimization. It is a correctness constraint: if inference is slow enough, predictions arrive after the match starts, and they are useless.
+**SabiScore**: Variable network latency made a versioned Redis cache part of the delivery contract, not merely a performance optimization. The cache keeps repeated reads away from the inference path, while model-version keys prevent stale outputs from surviving a retrain. Public artifacts support the architecture; operational hit-rate measurements remain private.
 
 **SwarmXQ**: Agents that call external services must hold correctness when those services are temporarily unavailable. Building under Lagos network conditions meant treating third-party API unavailability as a normal condition, not an edge case. Every external call has retry semantics, timeout budgets, and graceful degradation logic. The system holds partial state rather than propagating failure.
 
-## The global deployment consequence
+## Why the decisions transfer
 
-These constraints produce systems that deploy globally without adjustment. The retry logic, the idempotent queues, the graceful degradation, the checkpoint-based recovery — these are not Africa-specific features. They are correct system design.
+Retry logic, idempotent queues, graceful degradation, and checkpoint-based recovery are not Africa-specific features. They are useful system properties wherever networks, dependencies, and workloads behave unpredictably.
 
-When a system built under Lagos constraints deploys to AWS infrastructure in Frankfurt or GCP in us-central1, it performs well there too — because the failure modes it was designed to handle are universal. Partial network failure happens everywhere. Rate-limited APIs are universal. Burst traffic is a global phenomenon.
+The decisions transfer because the failure modes are common: partial network failure, rate-limited APIs, burst traffic, and interrupted work. The operating environment makes those risks visible early; deployment evidence still has to be measured in each target environment.
 
 The constraint becomes an advantage.
 
 ## What this means for hiring
 
-An engineer who built three production platforms under real operating constraints — not simulated, not in comfortable infrastructure — has encountered failure modes that engineers building in ideal conditions must imagine.
+An engineer who has designed multiple systems under real operating constraints has encountered failure modes that are easy to miss in a controlled environment.
 
 The architecture decisions in TaxBridge, SabiScore, and SwarmXQ are not theoretical. They are the product of operating environments that made certain correctness guarantees non-optional. That is not a disadvantage of where the work was done. It is a feature of the engineer who did it.
 
-Systems that work at 2am in Lagos will work at 2am anywhere.
+The 2am principle travels with the system: make failure behavior explicit before an incident makes it urgent.

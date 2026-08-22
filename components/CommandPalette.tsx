@@ -20,12 +20,6 @@ interface CommandItem {
   action: () => void;
 }
 
-interface LiveStatusSnapshot {
-  systemStatus: 'operational' | 'degraded' | 'down';
-  uptime?: number;
-  todayPredictions?: number | null;
-}
-
 type CommandPaletteWindow = Window & { __commandPaletteRequested?: boolean };
 
 const PANEL_VARIANTS_DESKTOP = {
@@ -47,9 +41,6 @@ export function CommandPalette() {
   const [fabExpanded, setFabExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [whyLagosOpen, setWhyLagosOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
-  const [statusAvailable, setStatusAvailable] = useState(false);
-  const [statusSnapshot, setStatusSnapshot] = useState<LiveStatusSnapshot | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -81,32 +72,6 @@ export function CommandPalette() {
 
     return () => {
       media.removeEventListener('change', syncMobile);
-    };
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    fetch('/api/live-metrics', { signal: controller.signal })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: LiveStatusSnapshot | null) => {
-        if (!data) return;
-        if (
-          data.systemStatus === 'operational' ||
-          data.systemStatus === 'degraded' ||
-          data.systemStatus === 'down'
-        ) {
-          setStatusSnapshot(data);
-          setStatusAvailable(true);
-        }
-      })
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === 'AbortError') return;
-        setStatusAvailable(false);
-      });
-
-    return () => {
-      controller.abort();
     };
   }, []);
 
@@ -284,21 +249,8 @@ export function CommandPalette() {
           close();
         },
       },
-      ...(statusAvailable
-        ? [
-            {
-              id: 'status',
-              group: 'Easter Eggs',
-              label: '/status',
-              action: () => {
-                setStatusOpen(true);
-                close();
-              },
-            },
-          ]
-        : []),
     ],
-    [close, resolvedTheme, router, scrollTo, setTheme, statusAvailable]
+    [close, resolvedTheme, router, scrollTo, setTheme]
   );
 
   const filtered = useMemo(() => {
@@ -726,10 +678,10 @@ export function CommandPalette() {
                   type="button"
                   onClick={openConstraints}
                   className="border-color-border text-color-text-primary flex min-h-[44px] items-center gap-2 rounded-full border bg-[oklch(14%_0.008_264_/_0.92)] px-4 py-2 font-mono text-[11px] tracking-wide transition-colors hover:border-white/30 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
-                  aria-label="Tell me your constraints"
+                  aria-label="Discuss a system"
                 >
                   <MessageSquareText className="h-3.5 w-3.5" aria-hidden="true" />
-                  Tell me your constraints
+                  Discuss a system
                 </button>
 
                 <button
@@ -775,62 +727,6 @@ export function CommandPalette() {
           Spec verbatim: "Constraint is a design tool. Lagos constraint is a sharper one."
           Dismiss on Escape or click-outside. */}
       <AnimatePresence>
-        {statusOpen && statusSnapshot && (
-          <m.div
-            key="status-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-[oklch(0%_0_0_/_0.75)] p-6"
-            onClick={() => setStatusOpen(false)}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Live system status"
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') setStatusOpen(false);
-            }}
-            tabIndex={-1}
-          >
-            <m.div
-              key="status-panel"
-              initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 12, scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              className="border-color-border relative w-full max-w-sm rounded-[var(--radius-xl)] border bg-[oklch(14%_0.008_264)] p-8 shadow-[0_32px_80px_oklch(0%_0_0_/_0.6)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <p className="text-color-film-teal mb-4 font-mono text-[10px] tracking-widest uppercase">
-                /status
-              </p>
-              <p className="text-color-text-primary text-base leading-8 font-medium">
-                {statusSnapshot.systemStatus === 'operational'
-                  ? 'All systems operational.'
-                  : statusSnapshot.systemStatus === 'degraded'
-                    ? 'Systems are degraded.'
-                    : 'Service disruption detected.'}
-              </p>
-              <p className="text-color-text-secondary mt-4 text-sm leading-7">
-                {typeof statusSnapshot.uptime === 'number'
-                  ? `Reported uptime: ${statusSnapshot.uptime.toFixed(2)}%.`
-                  : 'Live metrics available.'}{' '}
-                {typeof statusSnapshot.todayPredictions === 'number'
-                  ? `Today predictions: ${statusSnapshot.todayPredictions}.`
-                  : ''}
-              </p>
-              <button
-                type="button"
-                onClick={() => setStatusOpen(false)}
-                className="text-color-text-muted mt-6 font-mono text-[10px] tracking-widest uppercase transition hover:opacity-70"
-                autoFocus
-              >
-                Dismiss ↩
-              </button>
-            </m.div>
-          </m.div>
-        )}
-
         {whyLagosOpen && (
           <m.div
             key="why-lagos-overlay"
@@ -867,7 +763,7 @@ export function CommandPalette() {
               </p>
               <p className="text-color-text-secondary mt-4 text-sm leading-7">
                 Power cuts at 2am. Rate-limited government APIs. Audit pressure with a 48-hour
-                window. Every system I build has been shaped by these constraints — not despite
+                window. The systems in this portfolio are shaped by these constraints — not despite
                 them, but because of them. Comfortable conditions produce comfortable systems.
               </p>
               <button

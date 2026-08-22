@@ -59,7 +59,7 @@ const siteUrl =
 const shouldLoadVercelInsights = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 const siteTitle = `${PROFILE.name} — ${PROFILE.role} · AI Infrastructure · Fintech Systems`;
 const siteDescription =
-  'Staff backend and platform engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference and resilient queues. Systems that hold at 2am.';
+  'Staff backend and platform engineer in Lagos. Decision records across fintech workflows, ensemble ML inference, resilient queues, and AI infrastructure. Systems that hold at 2am.';
 const socialDescription =
   'Staff Backend and Platform Engineer building reliability-first AI, fintech, and infrastructure systems from Lagos.';
 const socialImagePath = '/og';
