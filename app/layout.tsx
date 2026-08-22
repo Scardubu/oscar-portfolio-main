@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
 
 import { Providers } from '@/app/providers';
-import CursorGlow from '@/components/CursorGlow';
+import { DeferredCursorGlow } from '@/components/DeferredCursorGlow';
 import { DeferredCommandPalette } from '@/components/DeferredCommandPalette';
 import { Footer } from '@/components/Footer';
 import Navbar from '@/components/Navbar';
@@ -251,7 +251,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
 
       <body className={cn('relative min-h-[100dvh] overflow-x-clip antialiased')}>
-        <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]" aria-hidden="true">
+        <div
+          className="site-grain pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
+          aria-hidden="true"
+        >
           <svg className="absolute h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <filter id="scar-grain-noise">
               <feTurbulence
@@ -319,7 +322,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </svg>
 
         <Providers>
-          <CursorGlow />
+          <DeferredCursorGlow />
           <ScrollProgress />
           <DeferredThreeBrushField />
           <Navbar />

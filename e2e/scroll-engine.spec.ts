@@ -133,6 +133,45 @@ test.describe('Scroll engine boot path', () => {
       await context.close();
     }
   });
+
+  test('[mobile] cinematic runtime, cursor physics, and grain stay off the critical path', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ ...devices['Pixel 5'] });
+    const page = await context.newPage();
+    try {
+      await goto(page);
+      await waitForScrollEngine(page);
+
+      const criticalPath = await page.evaluate(() => {
+        const grain = document.querySelector<HTMLElement>('.site-grain');
+        return {
+          cinematicRuntime: document.documentElement.dataset.scrollCinemaRuntime,
+          cursorGlowCount: document.querySelectorAll('[data-testid="cursor-glow"]').length,
+          grainDisplay: grain ? window.getComputedStyle(grain).display : null,
+        };
+      });
+
+      expect(criticalPath.cinematicRuntime).toBeUndefined();
+      expect(criticalPath.cursorGlowCount).toBe(0);
+      expect(criticalPath.grainDisplay).toBe('none');
+    } finally {
+      await context.close();
+    }
+  });
+
+  test('[reduced motion] native scrolling loads without the cinematic runtime', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await goto(page);
+    const engine = await waitForScrollEngine(page);
+
+    expect(engine).toBe('native');
+    await expect(page.locator('[data-testid="cursor-glow"]')).toHaveCount(0);
+    await expect(page.locator('.site-grain')).toHaveCSS('display', 'none');
+    expect(
+      await page.evaluate(() => document.documentElement.dataset.scrollCinemaRuntime)
+    ).toBeUndefined();
+  });
 });
 
 // ── Suite 2: Mobile menu scroll restoration ───────────────────────────────────

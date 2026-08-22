@@ -1,8 +1,6 @@
 'use client';
 
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
+import type Lenis from 'lenis';
 import {
   createContext,
   useCallback,
@@ -18,6 +16,7 @@ import {
 import { trackSectionView } from '@/app/lib/analytics';
 import type { ChapterId } from '@/lib/cinematic/chapters';
 import { CHAPTERS } from '@/lib/cinematic/chapters';
+import { loadScrollCinemaRuntime } from '@/lib/cinematic/load-scroll-cinema';
 
 type ScrollCinemaContextValue = {
   reducedMotion: boolean;
@@ -149,7 +148,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const scrollYRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
-  const pluginRegisteredRef = useRef(false);
+  const normalizeScrollConfiguredRef = useRef(false);
   const retryTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
@@ -287,6 +286,9 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
+    let cancelled = false;
+    let cleanupActiveEngine: (() => void) | null = null;
+
     const setupNativeScrollProgress = () => {
       document.documentElement.dataset.scrollEngine = 'native';
       const onNativeScroll = () => syncNativeScrollProgress();
@@ -304,7 +306,8 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     const coarsePointerAtBoot = window.matchMedia('(pointer: coarse)').matches;
 
     // Mobile/reduced-motion is intentionally resolved before any GSAP/ScrollTrigger
-    // registration or refresh. Native scrolling is the product contract on touch.
+    // download, registration, or refresh. Native scrolling is the product contract
+    // on touch and for people who request reduced motion.
     if (reducedMotion || isTouchDevice || coarsePointerAtBoot) {
       if (lenisRef.current) {
         try {
@@ -314,174 +317,206 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
         lenisRef.current = null;
       }
-      return setupNativeScrollProgress();
+      cleanupActiveEngine = setupNativeScrollProgress();
+      return () => cleanupActiveEngine?.();
     }
 
-    if (!pluginRegisteredRef.current) {
+    const initializeDesktopEngine = async () => {
       try {
-        gsap.registerPlugin(ScrollTrigger);
-        pluginRegisteredRef.current = true;
-        try {
-          ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
-        } catch {
-          // normalizeScroll is an enhancement; core scrolling remains functional.
-        }
-      } catch (error) {
-        warnDev('GSAP ScrollTrigger registration failed. Falling back to static scrolling.', error);
-        return setupNativeScrollProgress();
-      }
-    }
+        const [{ gsap, ScrollTrigger }, { default: LenisConstructor }] = await Promise.all([
+          loadScrollCinemaRuntime(),
+          import('lenis'),
+        ]);
 
-    gsap.ticker.lagSmoothing(500, 33);
+        // Route transitions and capability changes may clean up this effect while
+        // the chunks are still in flight. Never initialize against an unmounted tree.
+        if (cancelled) return;
 
-    const safeRefresh = (force = false) => {
-      try {
-        ScrollTrigger.refresh(force);
-      } catch (error) {
-        warnDev('ScrollTrigger refresh failed.', error);
-      }
-    };
-
-    let lenis: Lenis | null = null;
-    let cleanupNative: (() => void) | null = null;
-    let lenisTickerFn: ((time: number) => void) | null = null;
-
-    try {
-      lenis = new Lenis({
-        lerp: 0.1,
-        smoothWheel: true,
-        syncTouch: true,
-        wheelMultiplier: 0.9,
-        easing: (t: number): number => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        touchMultiplier: 1.0,
-        anchors: true,
-        prevent: (node: HTMLElement) => {
-          if (node.hasAttribute('data-lenis-prevent')) return true;
-          const style = getComputedStyle(node);
-          return (
-            node.scrollWidth > node.clientWidth + 4 &&
-            ['auto', 'scroll'].includes(style.overflowX)
-          );
-        },
-      });
-
-      lenisRef.current = lenis;
-      const activeLenis = lenis;
-      lenisTickerFn = (time: number) => {
-        try {
-          activeLenis.raf(time * 1000);
-        } catch (error) {
-          warnDev('Lenis raf() failed. Removing GSAP ticker integration.', error);
-          if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
-          lenisTickerFn = null;
-        }
-      };
-      gsap.ticker.add(lenisTickerFn, false, true);
-      document.documentElement.dataset.scrollEngine = 'lenis';
-    } catch (error) {
-      lenisRef.current = null;
-      warnDev('Lenis initialization failed. Falling back to native scrolling.', error);
-      cleanupNative = setupNativeScrollProgress();
-    }
-
-    const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
-      syncScrollState(scroll, limit);
-    };
-    const syncScrollTrigger = () => {
-      try {
-        ScrollTrigger.update();
-      } catch (error) {
-        warnDev('ScrollTrigger update failed after Lenis scroll tick.', error);
-      }
-    };
-
-    if (lenis) {
-      lenis.on('scroll', onScroll);
-      lenis.on('scroll', syncScrollTrigger);
-      syncNativeScrollProgress();
-    }
-
-    const refresh = () => {
-      try {
-        lenis?.resize();
-      } catch (error) {
-        warnDev('Lenis resize failed during refresh.', error);
-      }
-      safeRefresh();
-      syncNativeScrollProgress();
-    };
-
-    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
-    const debouncedRefresh = () => {
-      if (refreshTimer !== null) clearTimeout(refreshTimer);
-      refreshTimer = setTimeout(() => {
-        refreshTimer = null;
-        refresh();
-      }, 150);
-    };
-
-    window.addEventListener('resize', debouncedRefresh, { passive: true });
-    window.addEventListener('orientationchange', debouncedRefresh, { passive: true });
-
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && lenis) {
-      let previousHeight = 0;
-      resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          const newHeight = entry.contentRect.height;
-          if (Math.abs(newHeight - previousHeight) > 4) {
-            previousHeight = newHeight;
-            debouncedRefresh();
+        if (!normalizeScrollConfiguredRef.current) {
+          try {
+            ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
+            normalizeScrollConfiguredRef.current = true;
+          } catch (error) {
+            // normalizeScroll is an enhancement; core scrolling remains functional.
+            warnDev('ScrollTrigger normalization failed. Continuing without it.', error);
           }
         }
-      });
-      resizeObserver.observe(document.body);
-    }
 
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        lenis?.start();
-        safeRefresh(true);
-        syncNativeScrollProgress();
-        if (
-          !document.documentElement.hasAttribute('data-nav-open') &&
-          !document.body.classList.contains('nav-open') &&
-          document.body.style.overflow === 'hidden'
-        ) {
-          document.body.style.overflow = '';
+        gsap.ticker.lagSmoothing(500, 33);
+
+        const safeRefresh = (force = false) => {
+          try {
+            ScrollTrigger.refresh(force);
+          } catch (error) {
+            warnDev('ScrollTrigger refresh failed.', error);
+          }
+        };
+
+        let lenis: Lenis | null = null;
+        let cleanupNative: (() => void) | null = null;
+        let lenisTickerFn: ((time: number) => void) | null = null;
+
+        try {
+          lenis = new LenisConstructor({
+            lerp: 0.1,
+            smoothWheel: true,
+            syncTouch: true,
+            wheelMultiplier: 0.9,
+            easing: (t: number): number => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            touchMultiplier: 1.0,
+            anchors: true,
+            prevent: (node: HTMLElement) => {
+              if (node.hasAttribute('data-lenis-prevent')) return true;
+              const style = getComputedStyle(node);
+              return (
+                node.scrollWidth > node.clientWidth + 4 &&
+                ['auto', 'scroll'].includes(style.overflowX)
+              );
+            },
+          });
+
+          if (cancelled) {
+            lenis.destroy();
+            return;
+          }
+
+          lenisRef.current = lenis;
+          const activeLenis = lenis;
+          lenisTickerFn = (time: number) => {
+            try {
+              activeLenis.raf(time * 1000);
+            } catch (error) {
+              warnDev('Lenis raf() failed. Removing GSAP ticker integration.', error);
+              if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
+              lenisTickerFn = null;
+            }
+          };
+          gsap.ticker.add(lenisTickerFn, false, true);
+          document.documentElement.dataset.scrollEngine = 'lenis';
+        } catch (error) {
+          lenisRef.current = null;
+          warnDev('Lenis initialization failed. Falling back to native scrolling.', error);
+          cleanupNative = setupNativeScrollProgress();
         }
-      } else {
-        lenis?.stop();
+
+        const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
+          syncScrollState(scroll, limit);
+        };
+        const syncScrollTrigger = () => {
+          try {
+            ScrollTrigger.update();
+          } catch (error) {
+            warnDev('ScrollTrigger update failed after Lenis scroll tick.', error);
+          }
+        };
+
+        if (lenis) {
+          lenis.on('scroll', onScroll);
+          lenis.on('scroll', syncScrollTrigger);
+          syncNativeScrollProgress();
+        }
+
+        const refresh = () => {
+          try {
+            lenis?.resize();
+          } catch (error) {
+            warnDev('Lenis resize failed during refresh.', error);
+          }
+          safeRefresh();
+          syncNativeScrollProgress();
+        };
+
+        let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+        const debouncedRefresh = () => {
+          if (refreshTimer !== null) clearTimeout(refreshTimer);
+          refreshTimer = setTimeout(() => {
+            refreshTimer = null;
+            refresh();
+          }, 150);
+        };
+
+        window.addEventListener('resize', debouncedRefresh, { passive: true });
+        window.addEventListener('orientationchange', debouncedRefresh, { passive: true });
+
+        let resizeObserver: ResizeObserver | null = null;
+        if (typeof ResizeObserver !== 'undefined' && lenis) {
+          let previousHeight = 0;
+          resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+              const newHeight = entry.contentRect.height;
+              if (Math.abs(newHeight - previousHeight) > 4) {
+                previousHeight = newHeight;
+                debouncedRefresh();
+              }
+            }
+          });
+          resizeObserver.observe(document.body);
+        }
+
+        const onVisibility = () => {
+          if (document.visibilityState === 'visible') {
+            lenis?.start();
+            safeRefresh(true);
+            syncNativeScrollProgress();
+            if (
+              !document.documentElement.hasAttribute('data-nav-open') &&
+              !document.body.classList.contains('nav-open') &&
+              document.body.style.overflow === 'hidden'
+            ) {
+              document.body.style.overflow = '';
+            }
+          } else {
+            lenis?.stop();
+          }
+        };
+        document.addEventListener('visibilitychange', onVisibility);
+
+        const fontsReady = document.fonts?.ready;
+        if (fontsReady) {
+          void fontsReady.then(() => {
+            if (cancelled) return;
+            safeRefresh(true);
+            syncNativeScrollProgress();
+          });
+        }
+
+        cleanupActiveEngine = () => {
+          resizeObserver?.disconnect();
+          if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
+          cleanupNative?.();
+          if (lenis) {
+            lenis.off('scroll', onScroll);
+            lenis.off('scroll', syncScrollTrigger);
+            try {
+              lenis.destroy();
+            } catch (error) {
+              warnDev('Lenis destroy failed during cleanup.', error);
+            }
+          }
+          lenisRef.current = null;
+          window.removeEventListener('resize', debouncedRefresh);
+          window.removeEventListener('orientationchange', debouncedRefresh);
+          if (refreshTimer !== null) clearTimeout(refreshTimer);
+          document.removeEventListener('visibilitychange', onVisibility);
+          try {
+            ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+          } catch (error) {
+            warnDev('ScrollTrigger cleanup failed.', error);
+          }
+        };
+      } catch (error) {
+        if (cancelled) return;
+        warnDev('Cinematic dependencies failed to load. Falling back to native scrolling.', error);
+        cleanupActiveEngine = setupNativeScrollProgress();
       }
     };
-    document.addEventListener('visibilitychange', onVisibility);
 
-    const fontsReady = document.fonts?.ready;
-    if (fontsReady) {
-      void fontsReady.then(() => {
-        safeRefresh(true);
-        syncNativeScrollProgress();
-      });
-    }
+    void initializeDesktopEngine();
 
     return () => {
-      resizeObserver?.disconnect();
-      if (lenisTickerFn) gsap.ticker.remove(lenisTickerFn);
-      cleanupNative?.();
-      if (lenis) {
-        lenis.off('scroll', onScroll);
-        lenis.off('scroll', syncScrollTrigger);
-        try {
-          lenis.destroy();
-        } catch (error) {
-          warnDev('Lenis destroy failed during cleanup.', error);
-        }
-      }
-      lenisRef.current = null;
-      window.removeEventListener('resize', debouncedRefresh);
-      window.removeEventListener('orientationchange', debouncedRefresh);
-      if (refreshTimer !== null) clearTimeout(refreshTimer);
-      document.removeEventListener('visibilitychange', onVisibility);
+      cancelled = true;
+      cleanupActiveEngine?.();
+      cleanupActiveEngine = null;
     };
   }, [isTouchDevice, reducedMotion, syncNativeScrollProgress, syncScrollState, warnDev]);
 

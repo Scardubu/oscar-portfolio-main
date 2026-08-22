@@ -6726,3 +6726,8 @@ html.lenis body {
     opacity: 0.85;
   }
 }
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .site-grain {
+    display: none;
+  }
+}

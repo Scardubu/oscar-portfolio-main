@@ -10,12 +10,14 @@
  * reduced-motion behavior are managed from a single top-level entrypoint.
  */
 
-import { LazyMotion, domAnimation } from 'framer-motion';
+import { LazyMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
+
+const loadFeatures = () => import('./motion-features').then((module) => module.default);
 
 export function MotionProvider({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       {children}
     </LazyMotion>
   );
