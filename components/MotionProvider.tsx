@@ -11,9 +11,13 @@
  */
 
 import { LazyMotion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
-let featurePromise: Promise<typeof import('./motion-features').default> | null = null;
+type MotionFeatures = typeof import('./motion-features').default;
+
+const staticFeatures = {} as MotionFeatures;
+
+let featurePromise: Promise<MotionFeatures> | null = null;
 
 const loadFeatures = () => {
   featurePromise ??= import('./motion-features').then((module) => module.default);
@@ -21,8 +25,27 @@ const loadFeatures = () => {
 };
 
 export function MotionProvider({ children }: Readonly<{ children: ReactNode }>) {
+  const [features, setFeatures] = useState<MotionFeatures>(staticFeatures);
+
+  useEffect(() => {
+    let active = true;
+
+    void loadFeatures().then(
+      (loadedFeatures) => {
+        if (active) setFeatures(loadedFeatures);
+      },
+      () => {
+        // Static content is already rendered; animation features are optional.
+      }
+    );
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
-    <LazyMotion features={loadFeatures} strict>
+    <LazyMotion features={features} strict>
       {children}
     </LazyMotion>
   );
