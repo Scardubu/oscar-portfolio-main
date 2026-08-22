@@ -632,7 +632,6 @@ figure[aria-label*='identity'] img {
 
   /* Body text: slightly tighter line-height for narrow column readability */
   .hero-body-text,
-  #hero p,
   #section-projects p,
   #section-about p {
     font-size: clamp(0.875rem, 4vw + 0.1rem, 1rem);
