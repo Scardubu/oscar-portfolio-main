@@ -4811,7 +4811,8 @@ section[data-chapter] {
   }
 
   #hero .hero-body-text {
-    text-wrap: pretty;
+    text-wrap: wrap;
+    hyphens: none;
   }
 }
 
