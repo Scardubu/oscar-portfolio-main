@@ -1,31 +1,10 @@
-// ENGINE V1.0 — Oscar Ndugbu Design System
-// Major Reset • Lagos → Global • Production Conviction Architecture
-//
-// ─────────────────────────────────────────────────────────────────────────────
-// CHANGELOG v14.1 (Site URL + Production Hardening)
-// ─────────────────────────────────────────────────────────────────────────────
-//
-//   UPGRADE: Introduced `NEXT_PUBLIC_SITE_URL` for robust canonical URL management
-//     across local, preview, and production environments. Replaces hardcoded
-//     domain references. Follows Vercel + Next.js best practices.
-//
-//   UPGRADE: `metadataBase`, `openGraph.url`, `alternates.canonical`, and all
-//     JSON-LD `@id` / `url` fields now use dynamic `siteUrl`.
-//
-//   MAINTAINED: All v14.0 improvements (twitter:description, scoped SVG filters,
-//     consolidated @graph schema, command palette enhancement, etc.)
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { DM_Sans, JetBrains_Mono, Syne } from 'next/font/google';
 
-import { cn } from '@/lib/utils';
-
 import { Providers } from '@/app/providers';
-import CursorGlow from '@/components/CursorGlow';
+import { DeferredCursorGlow } from '@/components/DeferredCursorGlow';
 import { DeferredCommandPalette } from '@/components/DeferredCommandPalette';
 import { Footer } from '@/components/Footer';
 import Navbar from '@/components/Navbar';
@@ -33,8 +12,9 @@ import { PageWrapper } from '@/components/PageWrapper';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import { WebVitals } from '@/components/WebVitals';
 import { DeferredThreeBrushField } from '@/components/cinematic/DeferredThreeBrushField';
+import { PROFILE } from '@/lib/portfolio-data';
+import { cn } from '@/lib/utils';
 
-// v2026.9: import order corrected — globals.css first, fixes.css second (overrides)
 import './globals.css';
 import './fixes.css';
 
@@ -49,12 +29,18 @@ const syne = Syne({
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
-  display: 'swap',
+  // The hero body is the mobile LCP element. On constrained connections a
+  // late font swap repaints that paragraph well after the fallback text is
+  // already visible, turning an otherwise-fast FCP into a delayed LCP.
+  // `optional` keeps the metrically compatible fallback for that first visit
+  // and still uses DM Sans when it is cached or arrives inside the brief block
+  // period. Keep the preload enabled so the face can settle before first paint
+  // instead of being discovered after critical CSS and scripts have loaded.
+  display: 'optional',
   preload: true,
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
 });
 
-// v13.0: Explicit mono font for code/terminal surfaces.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
@@ -63,45 +49,39 @@ const jetbrainsMono = JetBrains_Mono({
   fallback: ['Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', 'monospace'],
 });
 
-// ── Site URL Configuration (Production Grade) ────────────────────────────────
-// Priority: NEXT_PUBLIC_SITE_URL → Vercel URL → localhost fallback
+const deploymentHost =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL;
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-    : 'http://localhost:3000');
+  (deploymentHost ? `https://${deploymentHost}` : 'http://localhost:3000');
 
-// BUGFIX: the previous `isPreviewDeployment` check compared NEXT_PUBLIC_VERCEL_URL
-// against "vercel.app" — but Vercel sets that var to the deployment's own *.vercel.app
-// URL for EVERY deployment, production included (it's the immutable per-deployment
-// URL, distinct from the aliased production domain). That made isPreviewDeployment
-// true on production too, so `shouldLoadVercelInsights` was always false and
-// <Analytics />/<SpeedInsights /> never mounted anywhere, including real production.
-// NEXT_PUBLIC_VERCEL_ENV is the correct, Vercel-documented signal: it is exactly
-// 'production' on production deployments and 'preview'/undefined everywhere else.
 const shouldLoadVercelInsights = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+const siteTitle = `${PROFILE.name} — ${PROFILE.role} · AI Infrastructure · Fintech Systems`;
+const siteDescription =
+  'Staff backend and platform engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference and resilient queues. Systems that hold at 2am.';
+const socialDescription =
+  'Staff Backend and Platform Engineer building reliability-first AI, fintech, and infrastructure systems from Lagos.';
+const socialImagePath = '/og';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
-    template: '%s · Oscar Ndugbu',
+    default: siteTitle,
+    template: `%s · ${PROFILE.name}`,
   },
-  // CE spec §P3-G: ≤160 chars, outcome-focused
-  description:
-    'Staff+ Full-Stack Engineer in Lagos. TaxBridge: 4h→15min filing. SabiScore: ensemble ML inference + zero-drop queues. SwarmXQ: self-improving agents. Systems that hold at 2am.',
-
+  description: siteDescription,
   metadataBase: new URL(siteUrl),
-
-  authors: [{ name: 'Oscar Ndugbu', url: siteUrl }],
-  creator: 'Oscar Ndugbu',
-
+  authors: [{ name: PROFILE.name, url: siteUrl }],
+  creator: PROFILE.name,
   keywords: [
-    'Full-Stack Engineer',
+    'Staff Backend Engineer',
+    'Platform Engineer',
     'Backend Engineer',
+    'Full-Stack Engineer',
     'Systems Architect',
     'AI Infrastructure',
     'SRE',
-    'Principal Engineer',
+    'Staff Engineer',
     'Next.js 15',
     'React Native',
     'Expo SDK 54',
@@ -124,36 +104,29 @@ export const metadata: Metadata = {
     'AI Agent Orchestration',
     'Ollama',
     'LLM Routing',
-    'Staff+ Engineer',
   ],
-
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    siteName: 'Oscar Ndugbu',
-    title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
-    description:
-      'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
+    siteName: PROFILE.name,
+    title: siteTitle,
+    description: socialDescription,
     images: [
       {
-        url: '/api/og',
+        url: socialImagePath,
         width: 1200,
         height: 630,
-        alt: 'Oscar Ndugbu — Principal Full-Stack Engineer, AI Infrastructure & Fintech Systems',
+        alt: `${PROFILE.name} — ${PROFILE.role}, AI Infrastructure & Fintech Systems`,
       },
     ],
   },
-
   twitter: {
     card: 'summary_large_image',
-    title: 'Oscar Ndugbu — Principal Full-Stack Engineer · AI Infrastructure · Fintech Systems',
-    description:
-      'Staff+ Full-Stack Engineer · built TaxBridge (4h → 15min Nigerian SME tax filing) and SabiScore (ensemble ML inference + zero-drop queues) from Lagos.',
-    images: ['/api/og'],
-    // creator: '@scardubu', // add once X/Twitter handle is confirmed
+    title: siteTitle,
+    description: socialDescription,
+    images: [socialImagePath],
   },
-
   robots: { index: true, follow: true },
   alternates: { canonical: siteUrl },
   manifest: '/manifest.json',
@@ -164,41 +137,33 @@ export const metadata: Metadata = {
   },
 };
 
-// SURGICAL PATCH v2026.16 [viewport]: removed maximumScale: 1.
-// WCAG 2.2 SC 1.4.4 (Resize Text, Level AA) requires that text can be resized
-// up to 200% without loss of content or functionality. Blocking user scaling via
-// maximumScale: 1 / user-scalable=no is a hard WCAG violation on mobile browsers
-// and also prevents iOS Safari's reader-mode and accessibility zoom from working.
-// The cinematic design survives at 200% zoom without layout breakage (tested).
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
-  // maximumScale removed — WCAG 1.4.4 compliance
   viewportFit: 'cover',
   themeColor: '#000000',
   colorScheme: 'dark',
 };
 
-// ── Schema.org @graph ─────────────────────────────────────────────────────────
 const schemaGraph = {
   '@context': 'https://schema.org',
   '@graph': [
     {
       '@type': 'Person',
       '@id': `${siteUrl}/#person`,
-      name: 'Oscar Ndugbu',
+      name: PROFILE.name,
       url: siteUrl,
-      jobTitle: 'Principal Full-Stack Engineer',
+      jobTitle: PROFILE.role,
       description:
-        'Principal full-stack engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, React Native mobile, and SRE. TaxBridge, SabiScore, SwarmXQ.',
+        'Staff backend and platform engineer based in Lagos, Nigeria. Specialises in backend infrastructure, AI systems, production reliability, React Native, and SRE.',
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': siteUrl,
       },
       image: {
         '@type': 'ImageObject',
-        url: `${siteUrl}/api/og`,
+        url: `${siteUrl}${socialImagePath}`,
         width: 1200,
         height: 630,
       },
@@ -231,6 +196,7 @@ const schemaGraph = {
         'Fintech',
         'SRE',
         'AI Infrastructure',
+        'Platform Engineering',
         'Systems Architecture',
         'Distributed Systems',
       ],
@@ -241,16 +207,16 @@ const schemaGraph = {
           url: 'https://ubec.gov.ng',
         },
       ],
-      sameAs: ['https://github.com/Scardubu', 'https://linkedin.com/in/oscardubu', siteUrl],
+      sameAs: [PROFILE.github, PROFILE.linkedin, siteUrl],
     },
     {
       '@type': 'WebSite',
       '@id': `${siteUrl}/#website`,
-      name: 'Oscar Ndugbu',
+      name: PROFILE.name,
       alternateName: 'scardubu.dev',
       url: siteUrl,
       description:
-        'Portfolio and operational registry for Oscar Ndugbu — principal full-stack engineer specialising in AI infrastructure, fintech systems, and React Native.',
+        'Portfolio and operational registry for Oscar Ndugbu — staff backend and platform engineer specialising in AI infrastructure, fintech systems, and production reliability.',
       inLanguage: 'en-US',
       author: { '@id': `${siteUrl}/#person` },
       copyrightHolder: { '@id': `${siteUrl}/#person` },
@@ -268,8 +234,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <head>
         <meta name="color-scheme" content="dark" />
-
-        {/* Command palette early key intercept */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
@@ -286,8 +250,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             })();`,
           }}
         />
-
-        {/* Structured Data */}
         <script
           id="json-ld-schema"
           type="application/ld+json"
@@ -296,8 +258,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
 
       <body className={cn('relative min-h-[100dvh] overflow-x-clip antialiased')}>
-        {/* Grain Noise Overlay */}
-        <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]" aria-hidden="true">
+        <div
+          className="site-grain pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
+          aria-hidden="true"
+        >
           <svg className="absolute h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <filter id="scar-grain-noise">
               <feTurbulence
@@ -311,15 +275,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </svg>
         </div>
 
-        {/* Skip Navigation */}
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
 
-        {/* Global SVG Defs — glass refraction, squircle clip path, cinematic portrait filter */}
         <svg width="0" height="0" aria-hidden="true" className="absolute">
           <defs>
-            {/* Glass refraction for LiquidGlassRefractionSVG */}
             <filter id="glass-refraction">
               <feTurbulence
                 type="fractalNoise"
@@ -336,21 +297,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 yChannelSelector="G"
               />
             </filter>
-            {/* Squircle (n≈4 superellipse) clip path shared by all IdentityCard instances */}
             <clipPath id="squircle-id" clipPathUnits="objectBoundingBox">
               <path d="M 0.500 0.000 C 0.817 0.000 0.870 0.030 0.920 0.080 C 0.977 0.136 1.000 0.183 1.000 0.500 C 1.000 0.817 0.977 0.864 0.920 0.920 C 0.870 0.970 0.817 1.000 0.500 1.000 C 0.183 1.000 0.130 0.970 0.080 0.920 C 0.023 0.864 0.000 0.817 0.000 0.500 C 0.000 0.183 0.023 0.136 0.080 0.080 C 0.130 0.030 0.183 0.000 0.500 0.000 Z" />
             </clipPath>
-            {/*
-              Cinematic duotone portrait filter — IdentityCard headshot
-              Maps luminance to teal shadows (#031c24) / amber highlights (#ff9540),
-              then composites 15% of the original image back for texture retention.
-              Correction from inline version:
-                - feBlend mode="normal" in="SourceGraphic" over duotone was a no-op
-                  (opaque SourceGraphic fully covered the duotone layer).
-                - opacity="0.85" on feBlend is not a valid SVG filter attribute.
-              Fixed approach: feComposite operator="over" places a 15%-opacity
-              SourceGraphic over the duotone, yielding 85% duotone + 15% original.
-            */}
             <filter id="luxury-duotone-cinema" colorInterpolationFilters="sRGB">
               <feColorMatrix
                 type="matrix"
@@ -380,7 +329,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </svg>
 
         <Providers>
-          <CursorGlow />
+          <DeferredCursorGlow />
           <ScrollProgress />
           <DeferredThreeBrushField />
           <Navbar />
@@ -391,8 +340,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {shouldLoadVercelInsights ? <Analytics /> : null}
         {shouldLoadVercelInsights ? <SpeedInsights /> : null}
-        {/* Web Vitals → `WebVital` custom event. Gated to production: track() is
-            a no-op without the Analytics script, so only emit where it's loaded. */}
         {shouldLoadVercelInsights ? <WebVitals /> : null}
       </body>
     </html>

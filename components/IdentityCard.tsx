@@ -2,10 +2,6 @@
 
 import Image from 'next/image';
 import {
-  // PATCH v2026.20 [LazyMotion]: `motion` → `m` — same rationale as HeroSection.
-  // IdentityCard uses motion.article (the card tilt wrapper) and motion.div (the
-  // tilt content layer). Both are inside the LazyMotion strict boundary from
-  // MotionProvider and must use the `m` prefix to avoid pulling in the full bundle.
   m,
   useMotionTemplate,
   useMotionValue,
@@ -17,36 +13,26 @@ import type { CSSProperties, JSX, PointerEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { anchorUrl, CONTACT_EMAIL } from '@/lib/config';
+import { PROFILE } from '@/lib/portfolio-data';
 
 type IdentityCardProps = {
   className?: string;
   reducedMotion?: boolean;
 };
 
-// PATCH v2026.18 — Portrait source order corrected to match files that actually
-// exist in /public. Previous list (oscar-portrait.webp, oscar.webp, portrait.webp,
-// avatar.webp, avatar.png) resolved to zero real assets, so every <Image> request
-// 404'd, onError cascaded through the full list, and the card permanently rendered
-// <PortraitFallback /> ("OA" initials) instead of the cinematic duotone headshot the
-// #luxury-duotone-cinema filter (app/layout.tsx) was built for.
-//
-// /headshot.webp is the optimized asset already referenced by the Person schema
-// (app/lib/structured-data.ts → image: "https://www.scardubu.dev/headshot.webp"),
-// so it is the correct primary source. The .jpg/.jpeg variants remain as
-// defense-in-depth fallbacks only.
 const PORTRAIT_SOURCES = [
   '/headshot.webp',
   '/images/oscar-headshot.jpg',
   '/images/scar-headshot.jpeg',
 ] as const;
 
-const STACK_SIGNALS = ['Next.js 15', 'Java · Spring Boot', 'FastAPI', 'ML Infra'] as const;
+const STACK_SIGNALS = ['Backend · Platform', 'Java · Spring Boot', 'FastAPI', 'ML Infra'] as const;
 
 const TRUST_SIGNALS = [
   'NRS / FIRS-compliant e-invoicing',
   'Local LLM · 8GB RAM fleet',
   'Zero-drop queue architecture',
-  'Staff+ delivery discipline',
+  'Backend + platform delivery discipline',
 ] as const;
 
 function PortraitFallback(): JSX.Element {
@@ -152,7 +138,7 @@ export default function IdentityCard({
       glareX.set(x * 100);
       glareY.set(y * 100);
     },
-    [coarsePointer, glareX, glareY, pointerX, pointerY, shouldReduceMotion],
+    [coarsePointer, glareX, glareY, pointerX, pointerY, shouldReduceMotion]
   );
 
   const handlePortraitError = useCallback((): void => {
@@ -171,7 +157,7 @@ export default function IdentityCard({
       transformStyle: 'preserve-3d',
       willChange: shouldReduceMotion || coarsePointer ? 'auto' : 'transform',
     }),
-    [coarsePointer, shouldReduceMotion],
+    [coarsePointer, shouldReduceMotion]
   );
 
   const interactiveMotionStyle = shouldReduceMotion || coarsePointer
@@ -185,9 +171,10 @@ export default function IdentityCard({
   return (
     <m.article
       aria-label="Oscar Ndugbu identity card"
+      data-testid="hero-identity-card"
       className={[
         'group relative mx-auto w-full max-w-[25rem] rounded-[2rem]',
-        'border border-white/10 bg-white/[0.055] p-3 shadow-2xl shadow-sky-950/35',
+        'border border-white/10 bg-white/[0.055] p-2.5 shadow-2xl shadow-sky-950/35 sm:p-3',
         'backdrop-blur-2xl [perspective:1200px] transform-gpu',
         className,
       ].join(' ')}
@@ -196,7 +183,6 @@ export default function IdentityCard({
       initial={shouldReduceMotion ? false : { opacity: 0, y: 18, scale: 0.985 }}
       animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 180, damping: 24, mass: 0.6 }}
-      // eslint-disable-next-line no-restricted-syntax -- GPU-bound Framer Motion tilt values.
       style={interactiveMotionStyle}
     >
       <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-[linear-gradient(135deg,rgba(56,189,248,0.22),transparent_28%,rgba(251,146,60,0.18)_72%,transparent)] opacity-70" />
@@ -204,26 +190,28 @@ export default function IdentityCard({
       <m.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-px rounded-[1.9rem] opacity-0 mix-blend-screen transition-opacity duration-500 group-hover:opacity-100"
-        // eslint-disable-next-line no-restricted-syntax -- Dynamic glare follows pointer on a GPU-composited motion layer.
         style={{ background: glareBackground }}
       />
 
       <div className="relative overflow-hidden rounded-[1.65rem] border border-white/10 bg-slate-950/72">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,189,248,0.18),transparent_34%),radial-gradient(circle_at_90%_12%,rgba(251,146,60,0.16),transparent_30%)]" />
 
-        <div className="relative p-4 sm:p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <p className="rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.28em] text-sky-100/90">
+        <div className="relative p-3.5 sm:p-5">
+          <div className="mb-3 flex items-center justify-between gap-2 sm:mb-4 sm:gap-3">
+            <p className="min-w-0 rounded-full border border-sky-300/20 bg-sky-300/10 px-2.5 py-1.5 font-mono text-[0.56rem] tracking-[0.2em] text-sky-100/90 uppercase sm:px-3 sm:text-[0.62rem] sm:tracking-[0.28em]">
               Available · Open to Work
             </p>
 
-            <span className="rounded-full border border-orange-300/20 bg-orange-300/10 px-3 py-1.5 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-orange-100/85">
+            <span className="shrink-0 rounded-full border border-orange-300/20 bg-orange-300/10 px-2.5 py-1.5 font-mono text-[0.56rem] tracking-[0.18em] text-orange-100/85 uppercase sm:px-3 sm:text-[0.62rem] sm:tracking-[0.24em]">
               UTC+1
             </span>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-[0.82fr_1fr] sm:items-end">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.35rem] border border-white/10 bg-slate-900 shadow-2xl shadow-black/35">
+          <div className="grid grid-cols-[7.25rem_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[0.82fr_1fr] sm:items-end sm:gap-5">
+            <div
+              className="relative aspect-[4/5] overflow-hidden rounded-[1.15rem] border border-white/10 bg-slate-900 shadow-2xl shadow-black/35 sm:rounded-[1.35rem]"
+              data-testid="identity-portrait"
+            >
               {portraitFailed ? (
                 <PortraitFallback />
               ) : (
@@ -231,17 +219,11 @@ export default function IdentityCard({
                   src={portraitSrc}
                   alt="Portrait of Oscar Ndugbu"
                   fill
-                  priority
-                  sizes="(max-width: 640px) 82vw, 190px"
-                  // PATCH v2026.21 [motion]: group-hover zoom gated behind motion-safe so
-                  // it's fully suppressed under prefers-reduced-motion (matches the rest of
-                  // the codebase's hover-transform discipline).
+                  sizes="(max-width: 640px) 116px, 190px"
                   className="object-cover object-center opacity-95 transition duration-700 motion-safe:group-hover:scale-[1.035]"
                   onError={handlePortraitError}
-                  // eslint-disable-next-line no-restricted-syntax -- SVG duotone filter enhancement has safe browser fallback.
                   style={{
-                    filter:
-                      'url(#luxury-duotone-cinema) saturate(1.08) contrast(1.04)',
+                    filter: 'url(#luxury-duotone-cinema) saturate(1.08) contrast(1.04)',
                   }}
                 />
               )}
@@ -249,26 +231,28 @@ export default function IdentityCard({
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_46%,rgba(2,6,23,0.72))]" />
             </div>
 
-            <div className="space-y-3">
+            <div className="min-w-0 space-y-2.5 sm:space-y-3">
               <div>
-                <p className="font-mono text-[0.65rem] uppercase tracking-[0.32em] text-white/50">
-                  Staff+ Engineer
+                <p className="font-mono text-[0.56rem] leading-4 tracking-[0.18em] text-white/50 uppercase sm:text-[0.65rem] sm:tracking-[0.24em]">
+                  {PROFILE.role}
                 </p>
-                <h2 className="mt-2 text-pretty text-3xl font-semibold leading-[1.05] text-white sm:text-4xl">
+                <h2 className="mt-1.5 text-pretty text-2xl leading-[1.02] font-semibold tracking-[-0.035em] text-white sm:mt-2 sm:text-4xl">
                   Oscar Ndugbu
                 </h2>
               </div>
 
-              <p className="text-sm leading-6 text-white/62">
-                Ships financial, AI, and infrastructure systems built to hold under
-                Lagos constraints — with delivery you can measure.
+              <p className="text-xs leading-5 text-white/62 sm:text-sm sm:leading-6">
+                Reliability-first AI, financial, and platform systems built under Lagos constraints — measured in production.
               </p>
 
-              <div className="flex flex-wrap gap-2">
-                {STACK_SIGNALS.map((signal) => (
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {STACK_SIGNALS.map((signal, index) => (
                   <span
                     key={signal}
-                    className="rounded-full border border-white/10 bg-white/[0.065] px-3 py-1.5 text-xs font-medium text-white/76"
+                    className={[
+                      'rounded-full border border-white/10 bg-white/[0.065] px-2.5 py-1 text-[0.68rem] font-medium text-white/76 sm:px-3 sm:py-1.5 sm:text-xs',
+                      index > 1 ? 'hidden sm:inline-flex' : '',
+                    ].join(' ')}
                   >
                     {signal}
                   </span>
@@ -277,7 +261,7 @@ export default function IdentityCard({
             </div>
           </div>
 
-          <div className="mt-5 grid gap-2">
+          <div className="mt-5 hidden gap-2 sm:grid">
             {TRUST_SIGNALS.map((signal) => (
               <div
                 key={signal}
@@ -289,26 +273,23 @@ export default function IdentityCard({
             ))}
           </div>
 
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            {/* PATCH v2026.21 [a11y + motion]: focus: → focus-visible:, hover:scale →
-                motion-safe:hover:scale, added active:scale press feedback. Mirrors the
-                Hero CTA treatment so both primary conversion paths are identical. */}
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-row sm:gap-3">
             <a
-              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Staff+ engineering conversation')}`}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:bg-sky-100 focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Backend and platform engineering conversation')}`}
+              className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-full bg-white px-3 py-2.5 text-center text-xs font-semibold text-slate-950 transition duration-300 hover:bg-sky-100 focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025] sm:px-5 sm:py-3 sm:text-sm"
             >
               Start a conversation
             </a>
 
             <a
               href={anchorUrl('section-projects')}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-5 py-3 text-sm font-semibold text-white/86 transition duration-300 hover:border-white/20 hover:bg-white/[0.09] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025]"
+              className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-full border border-white/12 bg-white/[0.055] px-3 py-2.5 text-center text-xs font-semibold text-white/86 transition duration-300 hover:border-white/20 hover:bg-white/[0.09] focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none active:scale-[0.985] motion-safe:hover:scale-[1.025] sm:px-5 sm:py-3 sm:text-sm"
             >
               View proof
             </a>
           </div>
 
-          <p className="mt-4 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-white/42">
+          <p className="mt-3 font-mono text-[0.55rem] leading-4 tracking-[0.16em] text-white/42 uppercase sm:mt-4 sm:text-[0.62rem] sm:tracking-[0.24em]">
             Lagos · UTC+1 · Next.js 15 · Node · Java · ML Infra
           </p>
         </div>

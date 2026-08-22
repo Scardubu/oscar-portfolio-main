@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   lighthouse:
     name: Lighthouse Performance Audit
@@ -18,13 +23,13 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.24.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -33,39 +38,86 @@ jobs:
         run: pnpm run build
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          NEXT_PUBLIC_BASE_URL: https://scardubu.dev
+          NEXT_PUBLIC_SITE_URL: https://scardubu.dev
 
       - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
+        uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: "./lighthouserc.json"
-          uploadArtifacts: true
+          configPath: './lighthouserc.json'
+          uploadArtifacts: false
           temporaryPublicStorage: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results-${{ github.run_id }}
+          path: .lighthouseci/
+          include-hidden-files: true
+          retention-days: 7
+
       - name: Comment PR with Lighthouse results
+        if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
         with:
           script: |
             const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('.lighthouseci/manifest.json', 'utf8'));
-            const summary = results[0];
-            
+            const manifestPath = '.lighthouseci/manifest.json';
+            if (!fs.existsSync(manifestPath)) {
+              core.warning('Lighthouse manifest was not generated; skipping score comment.');
+              return;
+            }
+
+            const results = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const completed = results.filter((result) => result?.summary);
+            if (completed.length === 0) {
+              core.warning('Lighthouse manifest did not contain a summary; skipping score comment.');
+              return;
+            }
+
+            const median = (values) => {
+              const sorted = [...values].filter(Number.isFinite).sort((a, b) => a - b);
+              return sorted[Math.floor(sorted.length / 2)];
+            };
+            const medianScore = (key) =>
+              Math.round(median(completed.map((result) => result.summary[key])) * 100);
+            const reports = completed
+              .map((result) => {
+                if (!result.jsonPath || !fs.existsSync(result.jsonPath)) return null;
+                return JSON.parse(fs.readFileSync(result.jsonPath, 'utf8'));
+              })
+              .filter(Boolean);
+            const medianAudit = (id) => median(
+              reports.map((report) => report.audits?.[id]?.numericValue)
+            );
+            const formatMs = (value) => Number.isFinite(value) ? `${Math.round(value)} ms` : 'n/a';
+            const formatCls = (value) => Number.isFinite(value) ? value.toFixed(3) : 'n/a';
+            const reportUrl = completed.find((result) => result.url)?.url;
+
             const comment = `## Lighthouse CI Results
-            
-            | Category | Score |
-            |----------|-------|
-            | Performance | ${Math.round(summary.summary.performance * 100)} |
-            | Accessibility | ${Math.round(summary.summary.accessibility * 100)} |
-            | Best Practices | ${Math.round(summary.summary['best-practices'] * 100)} |
-            | SEO | ${Math.round(summary.summary.seo * 100)} |
-            
-            [View full report](${summary.url})
+
+            Three-run mobile median. Performance has a hard release floor of 90 and a target of 95; metric ceilings remain hard failures.
+
+            | Category | Median | Hard gate | Target |
+            |----------|--------|-----------|--------|
+            | Performance | ${medianScore('performance')} | 90 | 95 |
+            | Accessibility | ${medianScore('accessibility')} | 95 | 100 |
+            | Best Practices | ${medianScore('best-practices')} | 95 | 100 |
+            | SEO | ${medianScore('seo')} | 95 | 100 |
+
+            | Metric | Median | Hard gate |
+            |--------|--------|-----------|
+            | FCP | ${formatMs(medianAudit('first-contentful-paint'))} | ≤ 2500 ms |
+            | LCP | ${formatMs(medianAudit('largest-contentful-paint'))} | ≤ 3000 ms |
+            | TBT | ${formatMs(medianAudit('total-blocking-time'))} | ≤ 300 ms |
+            | CLS | ${formatCls(medianAudit('cumulative-layout-shift'))} | ≤ 0.100 |
+
+            ${reportUrl ? `[View median report](${reportUrl})` : ''}
             `;
-            
-            github.rest.issues.createComment({
+
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,

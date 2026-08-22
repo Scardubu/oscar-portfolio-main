@@ -606,17 +606,9 @@ html[data-active-chapter='epilogue'] {
   --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* Light mode defensive */
-@media (prefers-color-scheme: light) {
-  :root:not(.dark) {
-    --glass-bg: oklch(100% 0 0 / 0.72);
-    --glass-bg-hover: oklch(100% 0 0 / 0.88);
-    --glass-border: oklch(0% 0 0 / 0.08);
-    --glass-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.9) inset, 0 8px 32px -4px rgba(0, 0, 0, 0.09),
-      0 1px 2px rgba(0, 0, 0, 0.06);
-  }
-}
+/* Theme selection is explicit. Do not infer a light surface from the operating
+   system while the application is still rendering its dark text palette: that
+   combination turns glass cards white before hydration and fails contrast. */
 .light {
   --glass-bg: oklch(100% 0 0 / 0.72);
   --glass-bg-hover: oklch(100% 0 0 / 0.88);
@@ -4819,7 +4811,8 @@ section[data-chapter] {
   }
 
   #hero .hero-body-text {
-    text-wrap: pretty;
+    text-wrap: wrap;
+    hyphens: none;
   }
 }
 
@@ -6724,5 +6717,10 @@ html.lenis body {
     --wordmark-size: clamp(1.7rem, 7vh, 2.9rem);
     --wordmark-gap: 0.13em;
     opacity: 0.85;
+  }
+}
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .site-grain {
+    display: none;
   }
 }

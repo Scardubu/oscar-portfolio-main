@@ -177,7 +177,7 @@ export default async function WritingPostPage({ params }: WritingPageProps) {
                   <div className="mt-4 space-y-4">
                     {articleMeta.map((item) => (
                       <div key={item.label} className="space-y-1">
-                        <p className="text-xs tracking-[0.14em] text-white/35 uppercase">
+                        <p className="text-color-text-muted text-xs tracking-[0.14em] uppercase">
                           {item.label}
                         </p>
                         <p className="text-sm text-white/80">{item.value}</p>

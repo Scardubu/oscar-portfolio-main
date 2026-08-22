@@ -1,34 +1,36 @@
 /**
  * tests/portfolio.spec.ts — scardubu.dev
- *
- * v3 — V1.0 Compliance Hardening: aligned to CONVICTION ENGINE V1.0
- *       Section IDs, copy, availability chip, Skills flow hook,
- *       contact form state copy, command palette easter-egg commands,
- *       and motion/layout contracts.
- * Run: pnpm test (all browsers) | pnpm test:e2e (Chromium only)
+ * Core positioning, interaction, accessibility, responsiveness, and reliability contracts.
  */
 import { CONTACT_EMAIL } from '@/lib/config';
 import { expect, test, type Page } from '@playwright/test';
 
-/* ─── Helpers ────────────────────────────────────────────────── */
-
 async function goto(page: Page) {
   await page.goto('/');
-  // Hero h1 has aria-label "The system has to work at 2am. That's not a slogan…"
   await expect(page.locator('h1')).toBeVisible();
 }
 
-/* ─── Test suites ────────────────────────────────────────────── */
+async function visibleNavLink(page: Page, name: string) {
+  const desktopLink = page
+    .locator('nav[aria-label="Primary"]')
+    .getByRole('link', { name, exact: true });
+  if (await desktopLink.isVisible()) return desktopLink;
+
+  const menuButton = page.getByRole('button', { name: /open navigation menu/i });
+  if (await menuButton.isVisible()) await menuButton.click();
+
+  return page
+    .locator('nav[aria-label="Mobile navigation"]')
+    .getByRole('link', { name, exact: true });
+}
 
 test.describe('Nav', () => {
   test.beforeEach(async ({ page }) => {
     await goto(page);
   });
 
-  test('kicker contains correct stack identifiers', async ({ page }) => {
-    await expect(page.locator('.hero-kicker')).toContainText(
-      'Full-Stack · Java · React Native · Next.js 15 · AI Systems · Fintech'
-    );
+  test('hero kicker uses canonical positioning', async ({ page }) => {
+    await expect(page.locator('.hero-kicker')).toContainText('Staff Backend and Platform Engineer');
   });
 
   test('does not contain "Portfolio •" prefix', async ({ page }) => {
@@ -36,7 +38,7 @@ test.describe('Nav', () => {
   });
 
   test('Projects nav link is present', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Projects' }).first()).toBeVisible();
+    await expect(await visibleNavLink(page, 'Projects')).toBeVisible();
   });
 
   test('Contact nav link links to contact section', async ({ page }) => {
@@ -52,7 +54,6 @@ test.describe('Nav', () => {
     await page.waitForTimeout(300);
 
     await expect(header).toBeVisible();
-
     const position = await header.evaluate((element) => window.getComputedStyle(element).position);
     expect(position).toBe('fixed');
   });
@@ -95,12 +96,14 @@ test.describe('Hero', () => {
     await expect(headshot).toBeAttached();
   });
 
-  test('hero bio contains conviction copy', async ({ page }) => {
-    await expect(page.getByText(/compliant, fast, and relentlessly reliable/)).toBeVisible();
+  test('hero bio contains reliability-first positioning', async ({ page }) => {
+    const hero = page.locator('section#hero[aria-labelledby="hero-title"]');
+    await expect(hero.locator('p.hero-body-text')).toContainText(
+      /Reliability-first AI, financial, and platform systems/i
+    );
   });
 
   test('headline "The system has to work at 2am." is visible', async ({ page }) => {
-    // Rendered via word-reveal spans; check reconstructed text via aria-label
     await expect(page.locator('h1')).toHaveAttribute('aria-label', /The system has to work at 2am/);
   });
 
@@ -130,7 +133,6 @@ test.describe('Hero', () => {
     await expect(cta).toHaveAttribute('href', /#section-contact/);
   });
 
-  // V1.0 Phase 3 — Availability recency
   test('availability pill is present and contains "AVAILABLE"', async ({ page }) => {
     await expect(page.getByTestId('hero-availability-pill')).toBeVisible();
   });
@@ -138,8 +140,35 @@ test.describe('Hero', () => {
   test('availability pill includes dynamic "Updated" recency text', async ({ page }) => {
     const pill = page.getByTestId('hero-availability-pill');
     await expect(pill).toContainText(/AVAILABLE/i);
-    // Dynamic month-year rendered via formatAvailabilityMonthYear()
     await expect(pill).toContainText(/Updated \w+ \d{4}/);
+  });
+});
+
+test.describe('Hero — Mobile composition', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('identity card stays compact and portrait does not dominate the viewport', async ({ page }) => {
+    await goto(page);
+
+    const card = page.getByTestId('hero-identity-card');
+    const portrait = page.getByTestId('identity-portrait');
+    await expect(card).toBeVisible();
+    await expect(portrait).toBeVisible();
+
+    const cardBox = await card.boundingBox();
+    const portraitBox = await portrait.boundingBox();
+    expect(cardBox).not.toBeNull();
+    expect(portraitBox).not.toBeNull();
+    expect(cardBox!.height).toBeLessThan(520);
+    expect(portraitBox!.width).toBeLessThanOrEqual(130);
+  });
+
+  test('hero remains horizontally contained at 375px', async ({ page }) => {
+    await goto(page);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth
+    );
+    expect(overflow).toBe(false);
   });
 });
 
@@ -176,8 +205,9 @@ test.describe('Projects', () => {
 
   test('architecture decision content is visible', async ({ page }) => {
     await page.locator('#section-projects').scrollIntoViewIfNeeded();
-    await expect(page.getByText('Chosen').first()).toBeVisible();
-    await expect(page.getByText('Because').first()).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.getByText('Chosen').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Because').filter({ visible: true }).first()).toBeVisible();
   });
 });
 
@@ -214,9 +244,7 @@ test.describe('Skills — V1.0 flow mechanics', () => {
     await expect(page.locator('#skills')).toBeAttached();
   });
 
-  // V1.0 Phase 2 — Skills flow hook links to #section-about (not #section-projects)
   test('skills flow hook links to the About section', async ({ page }) => {
-    // Use the strict selector to avoid matching the Suspense skeleton (aria-busy)
     const skillsSection = page.locator('section#skills[aria-labelledby="skills-heading"]');
     await skillsSection.scrollIntoViewIfNeeded();
     const flowHook = skillsSection.getByRole('link', {
@@ -259,7 +287,6 @@ test.describe('About', () => {
     ).toBeVisible();
   });
 
-  // V1.0 Phase 3 — About availability chip also has dynamic date
   test('about availability chip has Updated recency text', async ({ page }) => {
     await page.locator('#section-about').scrollIntoViewIfNeeded();
     const chip = page.getByTestId('about-availability-chip');
@@ -373,7 +400,6 @@ test.describe('Contact', () => {
     await expect(body).not.toContainText('Avg. session');
   });
 
-  // V1.0 Phase 4 — Contact form success state copy
   test('contact form success state shows correct copy', async ({ page }) => {
     await page.route('/api/contact', async (route) => {
       await route.fulfill({
@@ -387,7 +413,6 @@ test.describe('Contact', () => {
     await section.scrollIntoViewIfNeeded();
     const form = page.locator('form[aria-label="Contact Oscar Ndugbu"]');
 
-    // Fill and submit form
     await form.locator('#cf-name').fill('Test User');
     await form.locator('#cf-email').fill('test@example.com');
     await form.locator('select[name="inquiryType"]').selectOption('job');
@@ -485,6 +510,7 @@ test.describe('Footer', () => {
 
   test('footer nav links are present', async ({ page }) => {
     const footer = page.locator('footer');
+    await footer.scrollIntoViewIfNeeded();
     await expect(footer.getByRole('link', { name: 'Skills' })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'About' })).toBeVisible();
   });
@@ -497,19 +523,15 @@ test.describe('Live Activity Bar', () => {
 
   test('live activity bar is rendered with role=status', async ({ page }) => {
     const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
-    // May be loading or showing fallback — just check it's attached and not errored
     await expect(bar).toBeAttached();
   });
 
-  // Current fallback copy surfaces an explicit availability fault state.
   test('live activity fallback copy if API unavailable', async ({ page }) => {
-    // Mock the /api/activity endpoint to return an error, triggering fallback
     await page.route('/api/activity', async (route) => {
       await route.abort('failed');
     });
     await page.reload();
     await page.locator('h1').waitFor();
-    // After abort, component uses FALLBACK_UNAVAILABLE.message.
     const bar = page.locator('[role="status"][aria-label="Latest commit activity"]');
     await expect(bar).toContainText('Activity feed temporarily unavailable');
   });
@@ -520,8 +542,8 @@ test.describe('Accessibility — WCAG AA', () => {
     await goto(page);
   });
 
-  test('page title contains "Full-Stack Engineer"', async ({ page }) => {
-    await expect(page).toHaveTitle(/Full-Stack Engineer|Principal.*Engineer/i);
+  test('page title contains canonical backend and platform role', async ({ page }) => {
+    await expect(page).toHaveTitle(/Staff Backend and Platform Engineer/i);
   });
 
   test('page has exactly one h1', async ({ page }) => {
@@ -568,11 +590,14 @@ test.describe('Accessibility — WCAG AA', () => {
   });
 
   test('nav has aria-label', async ({ page }) => {
-    await expect(page.locator('nav[aria-label]').first()).toBeVisible();
+    const primary = page.locator('nav[aria-label="Primary"]');
+    if (!(await primary.isVisible())) {
+      await page.getByRole('button', { name: /open navigation menu/i }).click();
+    }
+    await expect(page.locator('nav[aria-label]:visible').first()).toBeVisible();
   });
 
   test('key sections have aria-labelledby attributes', async ({ page }) => {
-    // Verify the canonical V1.0 section IDs resolve and have aria-labelledby
     for (const id of ['section-projects', 'section-about', 'section-contact']) {
       await expect(page.locator(`section#${id}[aria-labelledby]`)).toBeAttached();
     }
@@ -585,17 +610,16 @@ test.describe('Anchor scroll — scroll-margin-top', () => {
   });
 
   test('clicking Projects nav link scrolls to #section-projects', async ({ page }) => {
-    await page.getByRole('link', { name: 'Projects' }).first().click();
+    await (await visibleNavLink(page, 'Projects')).click();
     await page.waitForTimeout(600);
 
     const navBottom = await page
       .locator('header')
-      .evaluate((el) => el.getBoundingClientRect().bottom);
+      .evaluate((element) => element.getBoundingClientRect().bottom);
     const sectionTop = await page
       .locator('#section-projects')
-      .evaluate((el) => el.getBoundingClientRect().top);
-    // Section top should be at or below nav bottom (scroll-margin-top ensures clearance)
-    expect(sectionTop).toBeGreaterThanOrEqual(navBottom - 8); // 8px tolerance
+      .evaluate((element) => element.getBoundingClientRect().top);
+    expect(sectionTop).toBeGreaterThanOrEqual(navBottom - 8);
   });
 });
 
@@ -605,7 +629,6 @@ test.describe('Command Palette — V1.0 Easter Eggs', () => {
   });
 
   test('/why-lagos command is accessible via command palette', async ({ page }) => {
-    // Open palette with Ctrl+K (Linux)
     await page.keyboard.press('Control+k');
     await page.waitForTimeout(200);
 
@@ -615,14 +638,11 @@ test.describe('Command Palette — V1.0 Easter Eggs', () => {
     const isPaletteOpen = await palette.isVisible().catch(() => false);
 
     if (isPaletteOpen) {
-      // Type to search for the command
       await page.keyboard.type('/why-lagos');
       await page.waitForTimeout(200);
       await expect(page.getByText(/why.lagos|Why Lagos/i)).toBeVisible();
-      // Escape to close
       await page.keyboard.press('Escape');
     } else {
-      // Command palette may not be bound to Ctrl+K on all browsers/OSes — skip gracefully
       test.skip();
     }
   });
@@ -648,7 +668,6 @@ test.describe('Performance — CLS', () => {
         }, 3000);
       });
     });
-    // Good CLS < 0.1 (Google Core Web Vitals threshold)
     expect(cls).toBeLessThan(0.1);
   });
 });

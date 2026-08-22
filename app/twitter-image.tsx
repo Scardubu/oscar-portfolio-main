@@ -4,7 +4,8 @@ import { OGImage } from '@/components/OGImage';
 
 export const runtime = 'edge';
 
-export const alt = 'Oscar Ndugbu (Scardubu) - Fullstack engineering and AI infrastructure systems';
+export const alt =
+  'Oscar Ndugbu (Scardubu) — Staff Backend and Platform Engineer · AI infrastructure systems';
 export const size = {
   width: 1200,
   height: 630,

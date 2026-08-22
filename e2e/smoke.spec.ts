@@ -122,15 +122,25 @@ test.describe('Portfolio smoke tests', () => {
     await expect(strictStatusLocator).toHaveCount(1, { timeout: 20000 });
   });
 
-  test('homepage has no serious accessibility violations', async ({ page }) => {
-    await goto(page);
+  test('representative routes have no serious accessibility violations', async ({ page }) => {
+    const routes = [
+      '/',
+      '/writing',
+      '/work/sabiscore',
+      '/writing/building-sabiscore',
+    ] as const;
 
-    const results = await new AxeBuilder({ page }).include('body').analyze();
-    const blockingViolations = results.violations.filter((violation) => {
-      return violation.impact === 'serious' || violation.impact === 'critical';
-    });
+    for (const route of routes) {
+      await page.goto(route);
+      await page.waitForLoadState('load');
 
-    expect(blockingViolations).toEqual([]);
+      const results = await new AxeBuilder({ page }).include('body').analyze();
+      const blockingViolations = results.violations.filter((violation) => {
+        return violation.impact === 'serious' || violation.impact === 'critical';
+      });
+
+      expect(blockingViolations, `${route} has serious or critical Axe violations`).toEqual([]);
+    }
   });
 
   test('command palette opens and closes from its global trigger', async ({ page }) => {
@@ -179,7 +189,11 @@ test.describe('Portfolio smoke tests', () => {
   test('resume download points to the canonical asset', async ({ page }) => {
     await goto(page);
 
-    const resumeLink = page.locator('a[href="/cv/oscar-ndugbu-resume.pdf"][download]').first();
+    const resumeLink = page
+      .locator('a[href="/cv/oscar-ndugbu-resume.pdf"][download]')
+      .filter({ visible: true })
+      .first();
+    await resumeLink.scrollIntoViewIfNeeded();
     await expect(resumeLink).toBeVisible();
     await expect(resumeLink).toHaveAttribute('download', '');
   });

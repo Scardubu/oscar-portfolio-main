@@ -205,7 +205,11 @@ export function CodeBlockClient({
       </div>
 
       <div className="relative overflow-x-auto">
-        <pre className="bg-bg-secondary p-4 text-sm leading-relaxed">
+        <pre
+          className="bg-bg-secondary p-4 text-sm leading-relaxed"
+          tabIndex={0}
+          aria-label={`${displayLanguage} code sample`}
+        >
           {showLineNumbers ? (
             <code className="block font-mono">
               {lines.map((line, index) => (

@@ -6,8 +6,8 @@ interface OGImageProps {
 
 export function OGImage({
   title = 'SCARDUBU',
-  subtitle = 'Principal full-stack engineer · AI infrastructure at scale',
-  caption = 'Shipped work, explicit tradeoffs, and fullstack product execution from interface to infrastructure.',
+  subtitle = 'Staff Backend and Platform Engineer · AI infrastructure at scale',
+  caption = 'Reliability-first systems, explicit tradeoffs, and platform execution from interface to infrastructure.',
 }: Readonly<OGImageProps>) {
   return (
     <div
@@ -69,7 +69,7 @@ export function OGImage({
               color: 'rgba(226,232,240,0.82)',
             }}
           >
-            Nigeria NG · Remote-First
+            Lagos NG · Remote-First
           </div>
           <div
             style={{
@@ -93,7 +93,7 @@ export function OGImage({
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '72%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '76%' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ fontSize: 76, fontWeight: 700, letterSpacing: '0.24em' }}>{title}</div>
             <div style={{ fontSize: 34, color: '#67e8f9' }}>{subtitle}</div>
@@ -104,7 +104,7 @@ export function OGImage({
         </div>
 
         <div style={{ display: 'flex', gap: 18 }}>
-          {['Work that shipped', 'How systems are built', 'Projects owned'].map((item) => (
+          {['Work that shipped', 'Failure modes designed', 'Projects owned'].map((item) => (
             <div
               key={item}
               style={{
