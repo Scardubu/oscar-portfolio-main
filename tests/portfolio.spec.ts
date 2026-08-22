@@ -83,9 +83,10 @@ test.describe('Hero', () => {
   });
 
   test('hero bio contains reliability-first positioning', async ({ page }) => {
-    await expect(
-      page.getByText(/Reliability-first AI, financial, and platform systems/i)
-    ).toBeVisible();
+    const hero = page.locator('section#hero[aria-labelledby="hero-title"]');
+    await expect(hero.locator('p.hero-body-text')).toContainText(
+      /Reliability-first AI, financial, and platform systems/i
+    );
   });
 
   test('headline "The system has to work at 2am." is visible', async ({ page }) => {
