@@ -29,7 +29,13 @@ const syne = Syne({
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
-  display: 'swap',
+  // The hero body is the mobile LCP element. On constrained connections a
+  // late font swap repaints that paragraph well after the fallback text is
+  // already visible, turning an otherwise-fast FCP into a delayed LCP.
+  // `optional` keeps the metrically compatible fallback for that first visit
+  // and still uses DM Sans when it is cached or arrives inside the brief block
+  // period.
+  display: 'optional',
   preload: true,
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
 });
