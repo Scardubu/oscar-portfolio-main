@@ -2,9 +2,9 @@
 // components/PageWrapper.tsx
 // CONVICTION ENGINE V1.0 — Oscar Ndugbu Design System
 // Major Reset • Lagos → Global • Production Conviction Architecture
-// Mobile-native page shell: bottom-nav padding, scroll-reveal init,
-// reduced-motion safety. Page transitions removed from mobile path —
-// they add ~120ms perceived latency on Android mid-range.
+// Mobile-native page shell with reduced-motion-safe, CSS-only route entry.
+// The first server render is always fully visible; Framer Motion is not part
+// of this critical layout boundary.
 //
 // v2026.7: wrapper overflow `overflow-x-hidden` → `overflow-x-clip`.
 //   `hidden` creates a new Block Formatting Context which, on iOS Safari,
@@ -14,77 +14,57 @@
 //   and Lenis scroll remain unaffected. Aligns with the pattern already used
 //   by ProjectsSection, OpenSourceSection, and TestimonialsSection.
 
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface PageWrapperProps {
   readonly children: ReactNode;
 }
 
 export function PageWrapper({ children }: PageWrapperProps) {
-  const reducedMotion = useReducedMotion();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
-  const [activePath, setActivePath] = useState(pathname);
-  const hasMounted = useRef(false);
+  const previousPath = useRef(pathname);
+  const [isEntering, setIsEntering] = useState(false);
 
   useEffect(() => {
-    hasMounted.current = true;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.documentElement;
+
+    const syncMotionPreference = () => {
+      root.toggleAttribute('data-reduced-motion', motionQuery.matches);
+    };
+
+    syncMotionPreference();
+    motionQuery.addEventListener('change', syncMotionPreference);
+
+    return () => {
+      motionQuery.removeEventListener('change', syncMotionPreference);
+      root.removeAttribute('data-reduced-motion');
+    };
   }, []);
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (reducedMotion) {
-      root.setAttribute('data-reduced-motion', 'true');
-    } else {
-      root.removeAttribute('data-reduced-motion');
-    }
+    if (pathname === previousPath.current) return;
 
-    return () => {
-      if (!reducedMotion) {
-        root.removeAttribute('data-reduced-motion');
-      }
-    };
-  }, [reducedMotion]);
+    previousPath.current = pathname;
+    setIsEntering(true);
 
-  useEffect(() => {
-    if (pathname === activePath) return;
-
-    startTransition(() => {
-      setActivePath(pathname);
-    });
-  }, [activePath, pathname, startTransition]);
-
-  const pageTransition = useMemo(
-    () => ({
-      // The first server render must be fully visible before Motion features
-      // arrive. Only later client-side route entries receive an initial pose.
-      initial: reducedMotion || !hasMounted.current ? false : { opacity: 0, y: 10 },
-      animate: { opacity: 1, y: 0 },
-      exit: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 },
-      transition: reducedMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-    }),
-    [activePath, reducedMotion]
-  );
+    const timer = window.setTimeout(() => setIsEntering(false), 300);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <div
       id="page-wrapper"
       className="relative flex min-h-[100dvh] flex-col overflow-x-clip"
-      data-page-transitioning={isPending ? 'true' : 'false'}
+      data-page-transitioning={isEntering ? 'true' : 'false'}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        <m.div key={activePath} {...pageTransition} className="relative z-[2] flex-1">
-          {children}
-        </m.div>
-      </AnimatePresence>
-      <m.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[3] bg-black/35"
-        animate={{ opacity: isPending && !reducedMotion ? 0.1 : 0 }}
-        transition={reducedMotion ? { duration: 0 } : { duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-      />
+      <div
+        className="page-route-content relative z-[2] flex-1"
+        data-page-entering={isEntering ? 'true' : 'false'}
+      >
+        {children}
+      </div>
     </div>
   );
 }

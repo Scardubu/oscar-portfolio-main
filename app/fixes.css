@@ -802,36 +802,19 @@ body:not([data-lenis-prevent]) {
    ══════════════════════════════════════════════════════════════════════════════ */
 
 /* ══ SURGICAL UPGRADE PATCH v2026.17 ══════════════════════════════════════════
-   Scroll GPU compositing · Mobile rendering quality · Stacking isolation
+   Native scroll rendering · Mobile rendering quality · Stacking isolation
    ══════════════════════════════════════════════════════════════════════════════
 
    FIXES:
-   F11. GPU layer promotion — main content forced to compositor for smooth scroll
+   F11. Native scroll surface — whole-document layer promotion retired
    F12. Stacking isolation — chapter frames grouped in own compositor layer
    F13. Backface flicker prevention on glass cards during momentum scroll
    F14. Scroll surface pointer-events containment
    ══════════════════════════════════════════════════════════════════════════════ */
 
-/* ── F11: GPU compositor layer for primary scroll surface ────────────────────
-   translate3d(0,0,0) forces the browser to create a dedicated GPU compositor
-   layer for the main content element. This prevents jank caused by backdrop-filter
-   recomposition cascading up to repaint the entire page during momentum scroll.
-   On mid-range Android (Snapdragon 665–class), this eliminates the "stutter
-   every 3–4 frames" artifact when scrolling past glass-heavy sections.
-   backface-visibility: hidden prevents the compositor flicker (brief white flash)
-   that can appear as a layer is promoted/demoted. */
-@media (pointer: coarse) {
-  main,
-  #main-content {
-    transform: translate3d(0, 0, 0);            /* GPU compositor layer */
-    -webkit-transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;                 /* No flicker on layer promotion */
-    -webkit-backface-visibility: hidden;
-    /* perspective(1px) completes the 3D context without visual distortion */
-    perspective: 1000px;
-    -webkit-perspective: 1000px;
-  }
-}
+/* F11 retired: promoting the entire mobile document to one compositor layer
+   increased critical paint and memory cost. Native scrolling needs no global
+   transform, perspective, or permanent layer promotion. */
 
 /* ── F12: Chapter frame stacking isolation ───────────────────────────────────
    `isolation: isolate` creates a new stacking context per section without
@@ -879,6 +862,51 @@ body::after {
   #hero [data-testid='hero-identity-card'] {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+
+/* ── F16: Skip layout and paint for distant mobile chapters ─────────────────
+   Projects remains eager because it is the first proof surface. Later chapters
+   retain their server-rendered HTML and become renderable before they approach
+   the viewport. Per-section intrinsic sizes keep anchor geometry stable. */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  #section-testimonials {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
+  #open-source,
+  #skills {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1400px;
+  }
+
+  #section-about,
+  #section-writing,
+  #section-contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1100px;
+  }
+}
+
+@keyframes page-route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-route-content[data-page-entering='true'] {
+  animation: page-route-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-route-content[data-page-entering='true'] {
+    animation: none;
   }
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, m, useAnimationFrame, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -85,7 +85,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = useRef(false);
   const reducedMotion = useReducedMotion();
-  const { activeChapter, scrollToSection, scrollYRef, lenisRef } = useScrollCinema();
+  const { activeChapter, scrollToSection, lenisRef } = useScrollCinema();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -104,13 +104,31 @@ export default function Navbar() {
 
   const activeSectionId = getActiveIdFromChapter(activeChapter);
 
-  useAnimationFrame(() => {
-    const nextScrolled = scrollYRef.current > 20;
-    if (nextScrolled === scrolledRef.current) return;
+  useEffect(() => {
+    let frame = 0;
 
-    scrolledRef.current = nextScrolled;
-    setScrolled(nextScrolled);
-  });
+    const syncScrolled = () => {
+      frame = 0;
+      const nextScrolled = window.scrollY > 20;
+      if (nextScrolled === scrolledRef.current) return;
+
+      scrolledRef.current = nextScrolled;
+      setScrolled(nextScrolled);
+    };
+
+    const onScroll = () => {
+      if (frame !== 0) return;
+      frame = window.requestAnimationFrame(syncScrolled);
+    };
+
+    syncScrolled();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame !== 0) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) {
