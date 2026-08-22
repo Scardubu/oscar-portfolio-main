@@ -13,27 +13,7 @@
 import { LazyMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-let featurePromise: Promise<typeof import('./motion-features').default> | null = null;
-
-const waitForCriticalMobilePaint = async () => {
-  if (typeof window === 'undefined' || !window.matchMedia('(max-width: 767px)').matches) return;
-
-  await new Promise<void>((resolve) => {
-    const schedule = () => window.setTimeout(resolve, 4000);
-    if (document.readyState === 'complete') {
-      schedule();
-      return;
-    }
-    window.addEventListener('load', schedule, { once: true });
-  });
-};
-
-const loadFeatures = () => {
-  featurePromise ??= waitForCriticalMobilePaint().then(() =>
-    import('./motion-features').then((module) => module.default)
-  );
-  return featurePromise;
-};
+const loadFeatures = () => import('./motion-features').then((module) => module.default);
 
 export function MotionProvider({ children }: Readonly<{ children: ReactNode }>) {
   return (
