@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -34,36 +34,6 @@ const navbarVariants = {
     opacity: 1,
     transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
   },
-};
-
-const mobileMenuVariants = {
-  hidden: {
-    opacity: 0,
-    y: -8,
-    transition: {
-      duration: 0.16,
-      ease: [0.16, 1, 0.3, 1],
-      staggerChildren: 0.03,
-      staggerDirection: -1,
-      when: 'afterChildren',
-    },
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.22,
-      ease: [0.16, 1, 0.3, 1],
-      staggerChildren: 0.04,
-      delayChildren: 0.04,
-      when: 'beforeChildren',
-    },
-  },
-};
-
-const mobileItemVariants = {
-  hidden: { opacity: 0, x: -10, transition: { duration: 0.1 } },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] } },
 };
 
 function getActiveIdFromChapter(activeChapter: string) {
@@ -272,80 +242,66 @@ export default function Navbar() {
             aria-controls="mobile-navigation"
           >
             <span className="relative flex h-5 w-5 items-center justify-center">
-              <m.span
-                className="absolute flex items-center justify-center"
-                initial={false}
-                animate={{
-                  opacity: mobileOpen ? 0 : 1,
-                  rotate: mobileOpen ? -90 : 0,
-                  scale: mobileOpen ? 0.5 : 1,
-                }}
-                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              <span
+                className={[
+                  'absolute flex items-center justify-center transition-[opacity,transform] duration-200',
+                  mobileOpen ? '-rotate-90 scale-50 opacity-0' : 'rotate-0 scale-100 opacity-100',
+                ].join(' ')}
                 aria-hidden="true"
               >
                 <Menu className="h-5 w-5" />
-              </m.span>
-              <m.span
-                className="absolute flex items-center justify-center"
-                initial={false}
-                animate={{
-                  opacity: mobileOpen ? 1 : 0,
-                  rotate: mobileOpen ? 0 : 90,
-                  scale: mobileOpen ? 1 : 0.5,
-                }}
-                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              </span>
+              <span
+                className={[
+                  'absolute flex items-center justify-center transition-[opacity,transform] duration-200',
+                  mobileOpen ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-50 opacity-0',
+                ].join(' ')}
                 aria-hidden="true"
               >
                 <X className="h-5 w-5" />
-              </m.span>
+              </span>
             </span>
           </button>
         </div>
       </m.header>
 
-      <AnimatePresence initial={false}>
-        {mobileOpen && (
-          <m.nav
-            id="mobile-navigation"
-            aria-label="Mobile navigation"
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            variants={mobileMenuVariants}
-            className="hero-mobile-nav-panel fixed inset-x-0 top-16 z-50 px-4 py-4 lg:hidden"
-          >
-            <div className="flex flex-col gap-2">
-              {NAV_ITEMS.map((item) => {
-                const active = activeSectionId === item.id;
-                return (
-                  <m.div key={item.id} variants={mobileItemVariants}>
-                    <a
-                      href={item.href}
-                      onClick={(event) => handleNavClick(event, item.id)}
-                      aria-current={active ? 'page' : undefined}
-                      className={[
-                        'hero-mobile-nav-item flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors duration-200',
-                        'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
-                        'focus-visible:ring-[color:var(--chapter-accent)]',
-                        active ? 'text-white' : 'text-white/75',
-                        active ? 'hero-mobile-nav-item--active' : 'hero-mobile-nav-item--idle',
-                      ].join(' ')}
-                    >
-                      <span>{item.label}</span>
-                      {active && (
-                        <span
-                          aria-hidden="true"
-                          className="hero-mobile-nav-item-dot h-1.5 w-1.5 rounded-full"
-                        />
-                      )}
-                    </a>
-                  </m.div>
-                );
-              })}
-            </div>
-          </m.nav>
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
+          className="hero-mobile-nav-panel fixed inset-x-0 top-16 z-50 px-4 py-4 lg:hidden"
+        >
+          <div className="flex flex-col gap-2">
+            {NAV_ITEMS.map((item) => {
+              const active = activeSectionId === item.id;
+              return (
+                <div key={item.id}>
+                  <a
+                    href={item.href}
+                    onClick={(event) => handleNavClick(event, item.id)}
+                    aria-current={active ? 'page' : undefined}
+                    className={[
+                      'hero-mobile-nav-item flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors duration-200',
+                      'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                      'focus-visible:ring-[color:var(--chapter-accent)]',
+                      active ? 'text-white' : 'text-white/75',
+                      active ? 'hero-mobile-nav-item--active' : 'hero-mobile-nav-item--idle',
+                    ].join(' ')}
+                  >
+                    <span>{item.label}</span>
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="hero-mobile-nav-item-dot h-1.5 w-1.5 rounded-full"
+                      />
+                    )}
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </>
   );
 }
