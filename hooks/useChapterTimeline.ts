@@ -30,8 +30,15 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
 
     const reducedMotionAtBoot = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const compactViewportAtBoot = window.matchMedia('(max-width: 767px)').matches;
     const touchAtBoot = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-    if (reducedMotion || reducedMotionAtBoot || coarsePointer || touchAtBoot) {
+    if (
+      reducedMotion ||
+      reducedMotionAtBoot ||
+      coarsePointer ||
+      compactViewportAtBoot ||
+      touchAtBoot
+    ) {
       revealStatic(root);
 
       if (typeof IntersectionObserver === 'undefined') return;

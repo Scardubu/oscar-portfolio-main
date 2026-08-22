@@ -305,6 +305,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
 
     const reducedMotionAtBoot = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointerAtBoot = window.matchMedia('(pointer: coarse)').matches;
+    const compactViewportAtBoot = window.matchMedia('(max-width: 767px)').matches;
     const touchAtBoot = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
 
     // Mobile/reduced-motion is intentionally resolved before any GSAP/ScrollTrigger
@@ -315,6 +316,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       reducedMotionAtBoot ||
       isTouchDevice ||
       coarsePointerAtBoot ||
+      compactViewportAtBoot ||
       touchAtBoot
     ) {
       if (lenisRef.current) {
