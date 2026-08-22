@@ -303,12 +303,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       };
     };
 
+    const reducedMotionAtBoot = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointerAtBoot = window.matchMedia('(pointer: coarse)').matches;
 
     // Mobile/reduced-motion is intentionally resolved before any GSAP/ScrollTrigger
     // download, registration, or refresh. Native scrolling is the product contract
     // on touch and for people who request reduced motion.
-    if (reducedMotion || isTouchDevice || coarsePointerAtBoot) {
+    if (reducedMotion || reducedMotionAtBoot || isTouchDevice || coarsePointerAtBoot) {
       if (lenisRef.current) {
         try {
           lenisRef.current.destroy();
