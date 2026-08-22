@@ -34,9 +34,8 @@ const dmSans = DM_Sans({
   // already visible, turning an otherwise-fast FCP into a delayed LCP.
   // `optional` keeps the metrically compatible fallback for that first visit
   // and still uses DM Sans when it is cached or arrives inside the brief block
-  // period. Keep the preload enabled so the rest of the page does not discover
-  // the body face after first paint; the mobile LCP paragraph uses the stable
-  // system stack declared in fixes.css.
+  // period. Keep the preload enabled so the face can settle before first paint
+  // instead of being discovered after critical CSS and scripts have loaded.
   display: 'optional',
   preload: true,
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],

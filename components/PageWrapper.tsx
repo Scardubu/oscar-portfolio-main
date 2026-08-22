@@ -16,7 +16,7 @@
 
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState, useTransition, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from 'react';
 
 interface PageWrapperProps {
   readonly children: ReactNode;
@@ -27,6 +27,11 @@ export function PageWrapper({ children }: PageWrapperProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [activePath, setActivePath] = useState(pathname);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    hasMounted.current = true;
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -53,12 +58,14 @@ export function PageWrapper({ children }: PageWrapperProps) {
 
   const pageTransition = useMemo(
     () => ({
-      initial: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 },
+      // The first server render must be fully visible before Motion features
+      // arrive. Only later client-side route entries receive an initial pose.
+      initial: reducedMotion || !hasMounted.current ? false : { opacity: 0, y: 10 },
       animate: { opacity: 1, y: 0 },
       exit: reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 },
       transition: reducedMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
     }),
-    [reducedMotion]
+    [activePath, reducedMotion]
   );
 
   return (

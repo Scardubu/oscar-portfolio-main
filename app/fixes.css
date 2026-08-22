@@ -872,16 +872,10 @@ body::after {
   pointer-events: none;
 }
 
-/* ── F15: Keep the mobile LCP text and below-fold glass off late paint ───────
-   The hero paragraph is the audited mobile LCP element. Use the stable system
-   stack for that single paragraph so a web-font arrival cannot repaint it.
+/* ── F15: Keep below-fold mobile glass off critical paint ───────────────────
    The identity card begins below the first viewport, so its backdrop blur is
-   also deferred from the critical mobile paint without altering desktop. */
+   deferred from the critical mobile paint without altering desktop. */
 @media (max-width: 639px) {
-  #hero .hero-body-text {
-    font-family: Inter, 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
-  }
-
   #hero [data-testid='hero-identity-card'] {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
