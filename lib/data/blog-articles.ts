@@ -1,15 +1,8 @@
 /**
  * lib/data/blog-articles.ts  — v2
  *
- * All metrics verified against live article content (2026-03-23).
- *
- * Uptime article (newly verified from live article):
- *   Before: ~97–98% uptime, 80+ incidents/month, p95 ~800ms
- *   After:  99.9%+ over following quarter, ~2/month, p95 ~150–200ms
- *
- * FastAPI article (newly verified):
- *   Independently confirms 73% cache hit rate — two-source confirmation.
- *   Confirms 450ms → 87ms p95 latency journey from Flask migration.
+ * Article metadata for portfolio cross-links. Operational measurements remain
+ * private unless an inspectable report and measurement window are linked.
  */
 
 import { blogUrl }       from '@/lib/config'
@@ -20,41 +13,41 @@ import type { BlogPost } from '@/lib/types'
 export const TIER_1_ARTICLES: BlogPost[] = [
   {
     slug:              'ensemble-models-production',
-    title:             'Ensemble Models in Production: How We Achieved 71% Accuracy',
+    title:             'Ensemble Models in Production: Designing the Evaluation Path',
     tier:              1,
     system_tag:        'sabiscore',
-    key_metric:        '64% to 71% accuracy',
+    key_metric:        'Chronological evaluation',
     metric_badge:      'documented',
     read_time_minutes: 11,
     published_at:      '2024-11-25',
     excerpt:
-      'The stacking pipeline that took SabiScore from 64% to 71% — OOF leakage prevention, why LogisticRegression(C=0.1) beat a neural meta-learner, Brier score from 0.19 to 0.15, and the 73% Redis cache hit rate from production.',
+      'The stacking pipeline behind SabiScore: out-of-fold leakage prevention, calibrated comparison, model-versioned caching, and a deterministic fallback when inference is unavailable.',
     tags: ['xgboost', 'lightgbm', 'ensemble', 'python'],
   },
   {
     slug:              'fastapi-ml-engineers',
-    title:             'FastAPI for ML Engineers: Serving Models with <100ms Latency',
+    title:             'FastAPI for ML Engineers: Designing the Serving Path',
     tier:              1,
     system_tag:        'sabiscore',
-    key_metric:        '450ms to 87ms latency',
+    key_metric:        'Observable serving path',
     metric_badge:      'documented',
     read_time_minutes: 10,
     published_at:      '2024-11-22',
     excerpt:
-      'The full migration from Flask to FastAPI that drove p95 latency from 450ms to 87ms. Async model loading, Redis caching (73% hit rate from production), Prometheus metrics, and the uvicorn config that holds under load.',
+      'Async model loading, model-versioned Redis caching, Prometheus metrics, and the serving configuration used to keep degraded behavior visible and recoverable.',
     tags: ['fastapi', 'python', 'api', 'performance'],
   },
   {
     slug:              'mlops-999-uptime-transformation-case-study',
-    title:             '0 to 99.9% Uptime: Turning a Flaky ML API Into a Reliable Product in 4 Weeks',
+    title:             'Turning a Flaky ML API Into a Recoverable Service',
     tier:              1,
     system_tag:        'sabiscore',
-    key_metric:        '80+ incidents to 2/month',
+    key_metric:        'Evidence-led recovery',
     metric_badge:      'documented',
     read_time_minutes: 12,
     published_at:      '2024-12-05',
     excerpt:
-      '80+ incidents/month, p95 at 800ms, founders calling it a reliability crisis. Four weeks later: 99.9%+ uptime, p95 under 200ms, 2 incidents/month. Week-by-week playbook: instrumentation, topology redesign, monitoring thresholds, zero-downtime deploys.',
+      'A week-by-week playbook covering instrumentation, topology redesign, monitoring thresholds, staged deployment, and the evidence needed to make a recovery decision.',
     tags: ['mlops', 'uptime', 'reliability', 'monitoring'],
   },
   {
@@ -62,12 +55,12 @@ export const TIER_1_ARTICLES: BlogPost[] = [
     title:             'Redis Caching Patterns for ML APIs',
     tier:              1,
     system_tag:        'sabiscore',
-    key_metric:        '73% cache hit rate',
+    key_metric:        'Versioned cache contract',
     metric_badge:      'documented',
     read_time_minutes: 7,
     published_at:      '2024-11-18',
     excerpt:
-      'Production Redis patterns for ML inference: cache key on match_id + model_version hash, TTL design, invalidation on retrain. The 73% hit rate is confirmed independently in both this article and the ensemble deep dive.',
+      'Redis patterns for ML inference: cache keys based on match and model identity, bounded TTLs, and precise invalidation after retraining.',
     tags: ['redis', 'caching', 'performance', 'ml-apis'],
   },
 ]

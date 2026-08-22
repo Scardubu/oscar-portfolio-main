@@ -3,7 +3,7 @@
 
 export default function Loading() {
   return (
-    <main id="main-content" aria-busy="true" aria-label="Loading page">
+    <div role="status" aria-live="polite" aria-busy="true" aria-label="Loading page">
       {/* Nav bar skeleton */}
       <div
         aria-hidden="true"
@@ -103,7 +103,7 @@ export default function Loading() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

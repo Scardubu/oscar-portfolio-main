@@ -12,8 +12,6 @@ import { SectionIntro } from '@/components/shared/SectionIntro';
 import { getChapterBySectionId } from '@/lib/cinematic/chapters';
 import { anchorUrl } from '@/lib/config';
 import { cardReveal, clipReveal, fadeRise, noMotion } from '@/lib/motionVariants';
-import { HERO } from '@/lib/portfolio-data';
-import { formatMonthYear } from '@/lib/utils';
 
 const CERTS = [
   { name: 'AWS Certified Developer', date: 'Dec 2023', provider: 'AWS' },
@@ -34,18 +32,11 @@ const STACK_STRIP = [
   { name: 'Redis 7', cat: 'Cache', dot: 'oklch(66% 0.22 22)' },
 ] as const;
 
-// Outcome numbers — scannable for non-technical founders
-const IMPACT_STATS = [
-  { value: '4h → 15min', label: 'Tax filing time', color: 'var(--color-film-teal)' },
-  { value: '99.9%+', label: 'Sustained uptime', color: 'oklch(72% 0.17 160)' },
-  { value: '40M', label: 'Students served', color: 'oklch(75% 0.16 300)' },
-] as const;
-
 // Quick facts for the sidebar — scannable proof at a glance
 const QUICK_FACTS = [
-  { value: '4', label: 'Cloud certs' },
-  { value: '15+', label: 'Upstream PRs' },
-  { value: '5+', label: 'Yrs in prod.' },
+  { value: 'Resume', label: 'Listed certs' },
+  { value: 'Public', label: 'GitHub record' },
+  { value: '10+ yrs', label: 'Federal data' },
 ] as const;
 
 // Provider-specific accent colours
@@ -93,13 +84,12 @@ export function AboutSection() {
                 headingId="about-heading"
                 title={
                   <>
-                    Federal scale. <br className="hidden sm:block" />
-                    Production ML. <br className="hidden sm:block" />
-                    Lagos → Global.
+                    Long-horizon systems. <br className="hidden sm:block" />
+                    Explicit decisions.
                   </>
                 }
                 description={
-                  'Built the digital learning infrastructure for 40 million Nigerian students at UBEC (Abuja HQ). Then shipped three production systems from Lagos that hold at 2am.'
+                  'More than a decade in federal data systems, including reporting pipelines across 36 state sources, followed by backend, platform, and AI infrastructure work built around failure-aware delivery.'
                 }
                 eyebrowVariant={itemVariants}
                 titleVariant={headingVariant}
@@ -109,29 +99,6 @@ export function AboutSection() {
               />
             </m.div>
 
-            {/* Impact stat strip — outcome numbers before narrative */}
-            <m.div
-              variants={itemVariants}
-              data-cinematic="proof"
-              className="about-impact-grid border-color-border-subtle mt-7 flex flex-wrap gap-x-8 gap-y-4 border-t border-b py-5"
-              aria-label="Impact stats"
-            >
-              {IMPACT_STATS.map(({ value, label, color }) => (
-                <div key={label} className="flex flex-col gap-0.5">
-                  <span
-                    className="about-stat-value font-mono text-base font-semibold tracking-tight tabular-nums"
-                    // eslint-disable-next-line no-restricted-syntax
-                    style={{ color }}
-                  >
-                    {value}
-                  </span>
-                  <span className="text-color-text-muted font-mono text-[10px] tracking-widest uppercase">
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </m.div>
-
             {/* Narrative — about-narrative-block activates mobile paragraph spacing (globals.css v21);
                 about-narrative-p activates tighter font-size/line-height on ≤640px (globals.css v20.1) */}
             <div className="about-narrative-block">
@@ -139,29 +106,29 @@ export function AboutSection() {
                 variants={itemVariants}
                 className="about-narrative-p text-color-text-primary mt-7 max-w-[var(--max-width-prose)] text-base leading-8 opacity-[0.82]"
               >
-                The UBEC work meant no staging mirror, no padded support layer, and no room for
-                vague ownership at federal scale. That operating constraint carried into every
-                system after it. First-principles thinking, explicit failure modes, architecture
-                decisions written so the next engineer can read the reasoning long after deploy.
+                The UBEC work centered on heterogeneous submissions, partial state data, and
+                reporting that could not silently accept bad inputs. That operating context carried
+                into every system after it: explicit failure modes and architecture decisions written
+                so the next engineer can understand the reasoning long after deploy.
               </m.p>
 
               <m.p
                 variants={itemVariants}
                 className="about-narrative-p text-color-text-primary mt-5 max-w-[var(--max-width-prose)] text-base leading-8 opacity-75"
               >
-                TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, PostgreSQL 15 RLS for
-                hard multi-tenant isolation. SabiScore: ensemble ML inference (XGBoost, LightGBM, CatBoost)
-                behind a Next.js 15 dashboard — 99.9%+ uptime across a 90-day Prometheus window.
-                SwarmXQ: self-improving AI agent fleet with live ops visibility.
+                TaxBridge: React Native / Expo 54 mobile app, Fastify 5 API, and PostgreSQL 15 RLS
+                for database-enforced tenant isolation. SabiScore: ensemble ML inference behind a
+                Next.js dashboard with caching, telemetry, and a deterministic fallback path.
+                SwarmXQ: checkpointed agent orchestration with explicit retry and recovery semantics.
               </m.p>
 
               <m.p
                 variants={itemVariants}
                 className="about-narrative-p text-color-text-primary mt-5 max-w-[var(--max-width-prose)] text-base leading-8 opacity-[0.65]"
               >
-                Fifteen-plus upstream contributions merged, four cloud certifications, and public
-                code that outlives any single job title. Constraint is the credential. The work is
-                the record.
+                The current resume records the professional history and certifications; public
+                repositories provide the inspectable layer. The work is the record, and private
+                evidence is labelled as private.
               </m.p>
             </div>
 
@@ -233,7 +200,7 @@ export function AboutSection() {
                 ))}
               </div>
               <p className="text-color-text-muted mt-5 font-mono text-[10px] tracking-wider opacity-60">
-                Traced to live production decisions across TaxBridge · SabiScore · SwarmXQ
+                Traced to architecture decisions across TaxBridge · SabiScore · SwarmXQ
               </p>
             </m.div>
 
@@ -241,11 +208,11 @@ export function AboutSection() {
               variants={itemVariants}
               className="text-color-text-primary font-display mt-8 text-lg font-semibold"
             >
-              Lagos-built. <span className="text-color-film-teal">Running globally.</span>
+              Based in Lagos. <span className="text-color-film-teal">Operating on UTC+1.</span>
             </m.p>
           </div>
 
-          {/* ── RIGHT COLUMN — headshot + availability + certs + quick facts ── */}
+          {/* ── RIGHT COLUMN — headshot + resume-listed certs + quick facts ── */}
           <aside aria-label="Profile, certifications and quick facts">
             {/* Headshot — desktop only; hero handles mobile */}
             <m.div
@@ -284,27 +251,9 @@ export function AboutSection() {
                   Oscar Ndugbu
                 </p>
                 <p className="text-color-text-muted mt-0.5 font-mono text-[10px] tracking-widest uppercase">
-                  Full-Stack · Infra · ML · Lagos
+                  Backend · Platform · AI infrastructure
                 </p>
               </div>
-            </m.div>
-
-            {/* Availability chip — links to contact */}
-            <m.div variants={itemVariants} data-cinematic="cta" className="mb-6">
-              <a
-                href={anchorUrl('section-contact')}
-                className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20"
-                data-testid="about-availability-chip"
-                aria-label="Currently available for Staff+ roles — contact Oscar"
-              >
-                <span className="dot-live" aria-hidden="true" />
-                <span className="font-mono text-[11px] leading-tight tracking-widest text-white/70 uppercase">
-                  {HERO.availability}
-                  <span className="ml-2 text-[9px] tracking-normal normal-case opacity-50">
-                    · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
-                  </span>
-                </span>
-              </a>
             </m.div>
 
             {/* Certifications heading */}
@@ -312,7 +261,7 @@ export function AboutSection() {
               variants={itemVariants}
               className="font-body text-color-text-secondary text-xs tracking-widest uppercase"
             >
-              Certifications
+              Certifications listed on the current resume
             </m.h3>
 
             {/* Cert cards */}
@@ -371,9 +320,9 @@ export function AboutSection() {
               ))}
             </m.div>
 
-            {/* Live build feed — the right column's closing proof. Auto-refreshing
+            {/* Recent activity feed — the right column's closing proof. Auto-refreshing
                 every 5 minutes, sourced from GitHub push events + recent writing.
-                Pairs with the left column's closing line: a live record, not a
+                Pairs with the left column's closing line: a public record, not a
                 static claim. Hidden gracefully (returns its own empty/error
                 states) if both sources are unavailable. */}
             <m.div variants={itemVariants} data-cinematic="proof" className="mt-6">

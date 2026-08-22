@@ -1,6 +1,6 @@
 ---
 title: 'TaxBridge'
-summary: 'Full-stack Nigerian SME tax compliance platform — 4 hours of manual filing compressed to 15 minutes. NRS-integrated, audit-ready, zero data-loss record.'
+summary: 'Nigerian SME tax workflow platform with database-enforced tenant isolation, idempotent submission replay, and a hash-chained audit record.'
 tags:
   - 'Fastify 5'
   - 'Java 17'
@@ -14,7 +14,7 @@ tags:
 
 ## The problem
 
-Nigerian SME tax filing in 2024 was a four-hour manual process per client. Not because the tax rules are especially complex — they are not — but because the tooling forced accountants through a sequence of manual data entry steps, PDF exports, web portal submissions, and phone calls to confirm receipt. Every step was a potential error. None had a machine-readable audit trail.
+The observed SME tax workflow was a manual sequence of data entry, PDF exports, portal submissions, and phone calls to confirm receipt. Every step was a potential error, and the process lacked a machine-readable audit trail. The timing observation is part of the private project record rather than a public benchmark.
 
 The Nigerian Revenue Service (NRS) enforces filing deadlines strictly. Missing one means penalties. Getting one wrong means an audit trail that doesn't match the submission. The friction was not just time — it was regulatory risk sitting inside a manual process.
 
@@ -41,7 +41,7 @@ The monorepo enforces a single TypeScript schema across mobile, web, and API sur
 
 **Chosen:** BullMQ with stable job identifiers and pre-execution deduplication  
 **Over:** Synchronous NRS API calls with simple 429 retry  
-**Because:** The NRS API enforces 30 requests per minute per TIN. Filing windows — when many SMEs submit simultaneously — produce burst traffic that exceeds this limit. A simple retry loop works until a job fails mid-execution, because the retry re-sends the same request. The NRS API processes it again: duplicate submission, real consequence. Every BullMQ job in TaxBridge carries an idempotency key derived from the submission content. Before execution, the worker checks whether that key has already succeeded. If it has, the job completes without re-submitting. No duplicate submissions, no double-processed tax returns, even through mid-request server failure.
+**Because:** Filing windows produce burst traffic against a rate-limited external API. A simple retry loop can re-send a request after an ambiguous mid-execution failure. Every BullMQ job therefore carries an idempotency key derived from the submission content. Before execution, the worker checks whether that key has already succeeded; completed work is not submitted again.
 
 ## Key decision: Hash-chained audit trail as a data model property
 
@@ -51,23 +51,23 @@ The monorepo enforces a single TypeScript schema across mobile, web, and API sur
 
 ## Constraint
 
-The NRS API rate limit (30 req/min per TIN) becomes a hard constraint during filing deadlines, when concurrent submissions are highest. The system must handle burst traffic without client-visible failure and without producing duplicate filings on retry.
+The NRS API rate limit becomes a hard constraint during filing deadlines, when concurrent submissions are highest. The system must queue burst traffic and make retries safe against duplicate filing operations.
 
 Offline filing is a real user requirement. Accountants in the field work on spotty Nigerian mobile networks. Every submission must survive the mobile app being killed mid-flight.
 
-## Results
+## Evidence record
 
-- **4h → 15min** filing time per client (measured end-to-end, accountant-reported)
-- **sub-150ms** real-time tax calculations at p99 under load (Redis rule cache)
-- **95% test coverage** — every jurisdiction rule, every edge case in withholding rate calculation, every submission state transition has a corresponding test
-- **Zero data-loss record** — offline SQLite queue survives app kills; BullMQ replays on reconnect with idempotency intact
+- **Workflow timing** — an accountant-reported before/after observation exists in the private project record; no public benchmark artifact is published
+- **Calculation path** — load testing and coverage reports are part of the private project suite and are available to verified employers
+- **Tenant boundary** — PostgreSQL RLS policies make isolation inspectable at the database schema rather than dependent on every application query
+- **Durable replay path** — the offline SQLite queue persists work across app termination; BullMQ replays on reconnect with idempotency intact
 
 ## Lessons
 
 Compliance-critical systems fail most often at the seam between external API rate limits and internal queue management. The naive assumption is that external APIs are reliable enough to call synchronously. They are not, especially not under load, especially not with enforcement windows. Building the queue before the first incident — not retrofitting it after — is the only approach that holds.
 
-The 95% test coverage figure is not a quality target. It is a compliance artifact. NRS audit inquiries ask for evidence that calculation logic was validated. The test suite is that evidence.
+The test suite is treated as an evidence artifact for calculation rules and submission state transitions. Coverage is not presented publicly without the underlying report.
 
 ## Status
 
-Active build. NRS DigiTax 2026 / FIRS integration in progress. Source available to verified employers on request.
+Active build. NRS DigiTax integration is in progress. Source is available to verified employers on request.

@@ -27,6 +27,22 @@ const RULES = [
   ...(STRICT_NRS ? [{ pattern: /\bFIRS\b/g, message: 'FIRS reference found — use NRS' }] : []),
 ];
 
+// Evidence contract: these phrases were removed by the claim ledger and must
+// not return through legacy data, RSS metadata, or machine-readable endpoints.
+const CLAIM_RULES = [
+  { pattern: /99\.9(?:4)?%/gi, message: 'Unlinked uptime claim found' },
+  { pattern: /45%\s+MTTD/gi, message: 'Unlinked MTTD claim found' },
+  { pattern: /\bsub[- ]?150ms\b/gi, message: 'Unlinked latency claim found' },
+  { pattern: /95%\s+test coverage/gi, message: 'Unlinked coverage claim found' },
+  { pattern: /\bzero(?:-| )?(?:data loss|drop)\b/gi, message: 'Unbounded data-loss claim found' },
+  { pattern: /40 million(?: Nigerian)? (?:students|children)/gi, message: 'Unsupported population claim found' },
+  { pattern: /15\+\s+merged contributions/gi, message: 'Unlinked contribution-count claim found' },
+  { pattern: /\bNDPC\s+(?:compliance|compliant)\b/gi, message: 'Unsupported compliance claim found' },
+  { pattern: /(?:respond|responds|response)[^\n]{0,24}within 24 hours/gi, message: 'Unsustainable response-time promise found' },
+  { pattern: /350\+\s+international users/gi, message: 'Unsupported user-count claim found' },
+  { pattern: /\$3k\+?\s+MRR/gi, message: 'Unsupported revenue claim found' },
+];
+
 // Skip lines containing CSS class patterns (Tailwind utilities)
 const CSS_CLASS_PATTERNS = [
   /\b(my-|mx-|p-|m-|gap-|pt-|pb-|pl-|pr-|px-|py-|mt-|mb-|ml-|mr-)/,
@@ -87,16 +103,32 @@ function stripComments(line, state) {
 
 async function scanFile(filePath) {
   const filename = path.basename(filePath);
-  if (SKIP_FILES.some((item) => filename.includes(item))) {
-    return;
-  }
-  // Skip blog directory (first-person narrative is intentional in posts)
-  if (filePath.includes('/blog/') || filePath.includes('\\blog\\')) {
-    return;
-  }
-
   const content = await readFile(filePath, 'utf8');
   const lines = content.split('\n');
+
+  for (const rule of CLAIM_RULES) {
+    const state = { inBlock: false };
+
+    for (let index = 0; index < lines.length; index += 1) {
+      const code = stripComments(lines[index], state);
+      if (!code.trim()) continue;
+
+      rule.pattern.lastIndex = 0;
+      if (rule.pattern.test(code)) {
+        console.error(`VIOLATION [${rule.message}]`);
+        console.error(`  File: ${path.relative(ROOT, filePath)}:${index + 1}`);
+        console.error(`  Line: ${lines[index].trim()}`);
+        console.error('');
+        violations += 1;
+      }
+      rule.pattern.lastIndex = 0;
+    }
+  }
+
+  if (SKIP_FILES.some((item) => filename.includes(item))) return;
+
+  // Skip blog directory (first-person narrative is intentional in posts)
+  if (filePath.includes('/blog/') || filePath.includes('\\blog\\')) return;
 
   for (const rule of RULES) {
     // Block-comment state is per-rule because each rule re-scans every line.

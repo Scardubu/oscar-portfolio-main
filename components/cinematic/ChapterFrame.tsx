@@ -79,9 +79,6 @@ export function ChapterFrame({
       }
     >
       <div className={clsx('relative z-10 container', contentClassName)}>{children}</div>
-      <p className="sr-only">
-        {chapter.label}. {chapter.purpose} {chapter.transition}
-      </p>
       <ChapterTransition chapter={chapter} />
     </section>
   );

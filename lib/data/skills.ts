@@ -378,9 +378,8 @@ export const SKILLS: SkillNode[] = [
     tags: ['used-in:taxbridge', 'documented'],
   },
   {
-    // v28: NDPC Compliance — Nigerian Data Protection Act 2023 applied in TaxBridge data flows
-    id: 'ndpc',
-    name: 'NDPC Compliance',
+    id: 'privacy-boundaries',
+    name: 'Privacy Boundaries',
     pillar: 'Fintech & Compliance',
     level: 'proficient',
     tags: ['used-in:taxbridge', 'documented'],

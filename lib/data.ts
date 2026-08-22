@@ -166,7 +166,7 @@ export const PROJECTS: Project[] = [
     description:
       'Production ML platform with ensemble gradient-boosted models, monitored inference delivery, and a legible decision-support surface.',
     longDescription:
-      'End-to-end ML system: data ingestion pipelines from 3 sports APIs, feature engineering for 140+ match features, ensemble model training with Optuna hyperparameter tuning, real-time inference API at sub-87ms latency, and a Next.js dashboard for user-facing predictions. Auto-retraining CI/CD kicks off weekly.',
+      'End-to-end ML system with provider ingestion, versioned feature engineering, ensemble model training, observable inference, and a Next.js decision-support surface. Retraining and delivery behavior remain explicit and reviewable.',
     tags: ['Next.js', 'FastAPI', 'XGBoost', 'PostgreSQL', 'Redis', 'Docker'],
     accent: 'cyan',
     featured: true,
@@ -197,16 +197,16 @@ export const PROJECTS: Project[] = [
         variant: 'live',
       },
       {
-        value: '99.9%',
-        label: 'System Uptime',
-        sublabel: 'HA cluster',
-        variant: 'live',
+        value: 'Fallback',
+        label: 'Failure Behavior',
+        sublabel: 'Deterministic degraded path',
+        variant: 'documented',
       },
       {
-        value: '87ms',
-        label: 'API Latency',
-        sublabel: 'Avg. prediction response',
-        variant: 'live',
+        value: 'Versioned',
+        label: 'Inference Cache',
+        sublabel: 'Model-aware invalidation',
+        variant: 'documented',
       },
     ],
     links: {
@@ -587,7 +587,7 @@ async def process_distribution(file_path: Path) -> DistributionResult:
   {
     id: "bullmq-tax-sync",
     title: "Offline-First Tax Sync Queue",
-    subtitle: "BullMQ + SQLite — zero data loss on disconnect",
+    subtitle: "BullMQ + SQLite — replay-safe offline workflow",
     description:
       "All tax submissions land in a local SQLite queue first. BullMQ workers replay them against the NTA API when connectivity returns, with idempotency keys preventing duplicate filings.",
     codeSnippet: `// TaxBridge offline-first submission queue
@@ -626,7 +626,7 @@ export async function enqueueTaxSubmission(
 }`,
     language: "typescript",
     tradeoffs: [
-      { pro: "Zero data loss — SQLite survives app kills/crashes", con: "Duplicate-check logic required on NTA API side" },
+      { pro: "Local persistence keeps interrupted work available for replay", con: "Duplicate-check logic required on the external API side" },
       { pro: "Idempotency keys prevent double-filing on retry", con: "Local queue grows unbounded on long offline periods" },
     ],
     tags: ["Offline-First", "BullMQ", "Fintech", "Reliability"],
@@ -784,13 +784,8 @@ export const GITHUB_STATS = {
 // ─── Portfolio Performance ───────────────────────────────────────────────────
 
 export const PERF_METRICS = {
-  uptime: "99.94%",
-  fcp: "120ms",
-  lcp: "420ms",
-  ttfb: "80ms",
-  bundleSize: "280KB",
-  monthlyVisitors: 350,
-  avgSession: "180s",
+  status: "Measured in release CI",
+  evidence: "Lighthouse artifacts are retained per run",
 };
 
 // ─── Personal ────────────────────────────────────────────────────────────────
@@ -807,7 +802,7 @@ export const PERSONAL = {
   kaggle: "https://www.kaggle.com/scardubu",
   availableForWork: true,
   availabilityLabel: "Open to Senior Fullstack Roles & Consulting",
-  responseTime: "Typically responds within 24 hours",
+  responseTime: "No fixed response-time promise",
   quote: "Ship it, then iterate.",
   cvUrl: CV_ASSET_PATH,
 };

@@ -1,6 +1,6 @@
 ---
 title: 'SabiScore'
-summary: 'Ensemble ML prediction platform with real-time model quality monitoring — 99.9%+ uptime over 90 days, 45% MTTD improvement, 30% inference latency reduction.'
+summary: 'Ensemble ML prediction platform with versioned caching, model-quality monitoring, and an explicit lower-confidence fallback path.'
 tags:
   - 'FastAPI'
   - 'XGBoost'
@@ -23,9 +23,9 @@ SabiScore needed to solve both problems: deliver accurate predictions during liv
 
 An end-to-end ML platform with three distinct layers:
 
-**Inference layer**: FastAPI serving ensemble gradient-boosted predictions (XGBoost, LightGBM, CatBoost) with Redis Pub/Sub for sub-50ms event fan-out to concurrent sessions. Stale-while-revalidate cache strategy keeps p99 under 150ms even during retraining windows — 73% of requests never touch the model.
+**Inference layer**: FastAPI serves ensemble gradient-boosted predictions (XGBoost, LightGBM, CatBoost) with Redis Pub/Sub for concurrent sessions. A stale-while-revalidate strategy is keyed by model version so predictions from an old model cannot survive a retrain.
 
-**Observability layer**: Prometheus tracks Brier score, PSI (Population Stability Index), prediction latency at p50/p95/p99, and cache hit rate per model version. An alert fires when Brier score degrades beyond 0.03 from the established baseline — a model performance alert, not a system health alert. Engineers are notified before users experience any quality change.
+**Observability layer**: Prometheus tracks Brier score, PSI (Population Stability Index), prediction latency, and cache behavior per model version. The alerting path compares quality signals with an established baseline — a model performance signal, not only a system-health check.
 
 **Dashboard**: Next.js 15 interface surfacing predictions with legible confidence signals and a model health view. The product communicates trust before it explains capability.
 
@@ -33,7 +33,7 @@ An end-to-end ML platform with three distinct layers:
 
 **Chosen:** FastAPI + Redis Pub/Sub for inference serving  
 **Over:** Synchronous REST endpoints with database polling  
-**Because:** Sub-50ms event fan-out at sustained concurrent load is not achievable with synchronous polling. When 200 sessions are watching live match predictions simultaneously, polling creates a thundering herd against the database on every score update. Redis Pub/Sub fans out to all subscribers in a single write operation. Dead-letter recovery ensures no session misses an update if the subscriber is temporarily disconnected.
+**Because:** Synchronous polling creates a thundering herd against the database as concurrent sessions request the same update. Redis Pub/Sub fans out from one published event, while the reconnect path gives temporarily disconnected subscribers a defined recovery boundary.
 
 ## Key decision: Time-based train/test splits
 
@@ -49,17 +49,16 @@ An end-to-end ML platform with three distinct layers:
 
 ## Constraint
 
-Ensemble inference must complete at p99 < 150ms at peak concurrent load, with no model warmup on cold start. The Redis cache layer must handle model version transitions cleanly — stale predictions from an old model version must not survive a retrain.
+Ensemble inference must remain useful under concurrent load and through model transitions. The Redis cache layer must invalidate by model version so stale predictions do not survive a retrain.
 
 The cache key strategy handles this: keys are scoped to `match_id + model_version`. On retrain, only keys containing the old model_version expire. Predictions for unchanged matches remain cached. The retrain does not flush the entire cache.
 
-## Results
+## Evidence record
 
-- **99.9%+ uptime** across a 90-day Prometheus proof window
-- **45% MTTD improvement** over reactive alerting baseline (Prometheus-measured)
-- **~30% inference latency reduction** via Redis caching and query optimisation
-- **73% cache hit rate** — 73% of requests served without touching the model
-- **sub-150ms p99** under peak concurrent load
+- **Public source** — the repository exposes the system structure and implementation history
+- **Model-version boundary** — cache keys make retraining invalidation inspectable in code
+- **Degraded behavior** — dependency failure returns a labelled lower-confidence baseline rather than stale output
+- **Private measurements** — uptime, latency, and detection reports are not presented as public proof without their underlying artifacts
 
 ## Lessons
 
@@ -69,4 +68,4 @@ Reliability is usually decided in the fallback design, not in the training noteb
 
 ## Status
 
-Live at [sabiscore.scardubu.dev](https://sabiscore.scardubu.dev). Auto-retraining CI/CD runs weekly plus PSI-triggered. Prometheus 90-day window maintained.
+The public demo is available at [sabiscore.scardubu.dev](https://sabiscore.scardubu.dev). The source repository and architecture record are the public evidence paths; operational measurement artifacts are not published here.

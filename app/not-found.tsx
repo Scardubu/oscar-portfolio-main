@@ -50,7 +50,7 @@ export default function NotFound() {
 
         {/* Trust signal */}
         <p className="text-color-text-muted mb-8 font-mono text-[10px] tracking-widest uppercase">
-          Response within 24h · Zero data-loss record · Shipped from Lagos.
+          Backend systems · platform reliability · clear recovery paths.
         </p>
 
         {/* Divider */}

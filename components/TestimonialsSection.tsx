@@ -20,19 +20,17 @@ import {
 
 // ── Proof card data — sourced from lib/projects.ts verified outcomes ──────────
 // Every metric here is traceable to a project slug and its outcomes[] or description.
-// TaxBridge: 4h→15min (tagline), NRS rate limits (constraint), 95% coverage (outcomes)
-// SabiScore: 99.9%+ uptime (outcomes), 45% MTTD (outcomes), 30% latency (description)
-// SwarmXQ:   self-improving fleet (outcomes), checkpoint recovery (outcomes), 8GB RAM (constraint)
-// UBEC:      36 states (outcomes), <2% dedup (description), 40M students (tagline)
+// This section does not repeat homepage metrics. It names the failure mode,
+// response, and evidence path behind each project record.
 
 const PROOF_CARDS = [
   {
     id: 'taxbridge',
     type: 'COMPLIANCE PLATFORM · FINTECH',
-    metric: '4h \u2192 15min',
-    metricSub: 'Filing time',
-    headline: 'Tax filing compressed. Zero data-loss record.',
-    body: 'BullMQ absorbs NRS API rate limits (30 req/min per TIN) without client-visible failure. PostgreSQL RLS isolates each tenant at the database engine level — not the application layer. Immutable hash-chained audit trail. 95% test coverage.',
+    metric: 'RLS + Queue',
+    metricSub: 'Failure boundary',
+    headline: 'Duplicate filing and tenant leakage are designed out of the critical path.',
+    body: 'BullMQ absorbs NRS API rate limits with idempotent submission keys. PostgreSQL RLS keeps tenant isolation at the database engine, while the case study records the integration status and private evidence path.',
     decision:
       'Chosen: RLS at engine level, not application-layer filtering — NRS audit scrutiny demands proof that tenant data cannot cross-contaminate.',
     accent: 'var(--color-film-teal)',
@@ -40,10 +38,10 @@ const PROOF_CARDS = [
   {
     id: 'sabiscore',
     type: 'ML PLATFORM · OBSERVABILITY',
-    metric: '99.9%+',
-    metricSub: '90-day uptime',
-    headline: 'Ensemble ML. Engineers alerted before users notice.',
-    body: 'XGBoost, LightGBM, and CatBoost inference with real-time model quality monitoring. ~30% inference latency reduction via Redis caching. 45% MTTD improvement over reactive alerting baseline. Prometheus 90-day proof window.',
+    metric: 'Fallback',
+    metricSub: 'Degraded mode',
+    headline: 'Inference stays useful when cache or feature-store dependencies fail.',
+    body: 'Versioned Redis caching and a lower-confidence baseline model provide a deliberate degraded path. The measured record is bounded to a 90-day Prometheus window and a named reactive-alerting baseline.',
     decision:
       'Chosen: FastAPI + Redis Pub/Sub — sub-50ms event fan-out at sustained load, impossible with synchronous polling under concurrent sessions.',
     accent: 'oklch(72% 0.17 160)',
@@ -51,10 +49,10 @@ const PROOF_CARDS = [
   {
     id: 'swarmxq',
     type: 'AI AGENT PLATFORM · ORCHESTRATION',
-    metric: 'Zero',
-    metricSub: 'Manual tuning cycles',
-    headline: 'Self-improving fleet. Checkpoint recovery.',
-    body: 'Triadic LLM routing under 8GB RAM — Phi-4-mini for task routing, DeepSeek-R1 for multi-step reasoning, Qwen2.5-Coder for generation. Agents evolve their own task strategies between runs. Failed sub-tasks restart from last consistent checkpoint, not from scratch.',
+    metric: 'Checkpoint',
+    metricSub: 'Recovery model',
+    headline: 'Agent work resumes from a known state instead of replaying the entire run.',
+    body: 'Task-specific model routing operates within an 8GB local-inference budget. Checkpointed state, timeout budgets, and bounded fallbacks make partial failure visible and recoverable.',
     decision:
       'Chosen: Autonomous evolution layer over static agent configs — manual tuning cannot adapt to novel inputs at scale.',
     accent: 'oklch(75% 0.16 300)',
@@ -62,10 +60,10 @@ const PROOF_CARDS = [
   {
     id: 'ubec',
     type: 'FEDERAL INFRASTRUCTURE · DATA',
-    metric: '36',
-    metricSub: 'State sources',
-    headline: '40M Nigerian students. <2% deduplication error.',
-    body: 'Batch ingestion for the Universal Basic Education Commission across all 36 Nigerian states. Probabilistic record linkage (dedupe.io + PostgreSQL) where exact-match alone misses 15\u201320% of true duplicates. Per-state DAG tasks — one late submission does not block reporting for the other 35.',
+    metric: 'Per-state',
+    metricSub: 'Retry boundary',
+    headline: 'One late state submission does not block every completed report.',
+    body: 'Isolated Airflow task groups, canonical ingest schemas, probabilistic record linkage, and cross-state validation gates keep partial output explicit across 36 state sources.',
     decision:
       'Chosen: Probabilistic deduplication over exact-match — state submissions use inconsistent school name spellings across ministries.',
     accent: 'oklch(78% 0.17 65)',
@@ -97,11 +95,11 @@ export function TestimonialsSection() {
             headingId="proof-record-heading"
             title={
               <>
-                Shipped systems. <br className="hidden lg:block" />
-                Verified outcomes.
+                Failure modes, <br className="hidden lg:block" />
+                made explicit.
               </>
             }
-            description="Three live platforms. One federal engagement. Every metric independently verifiable — traceable to a deployed codebase, not a deck."
+            description="The evidence is strongest when the failure boundary is named: what can break, how the system responds, and which record supports the claim."
             eyebrowVariant={itemVariant}
             titleVariant={headVariant}
             descriptionVariant={itemVariant}
@@ -124,7 +122,6 @@ export function TestimonialsSection() {
               key={card.id}
               variants={reducedMotion ? noMotion : cardReveal(i % 2 === 0 ? 20 : 28)}
               data-cinematic="proof"
-              data-live={card.id === 'taxbridge' || card.id === 'sabiscore' ? 'true' : undefined}
               className="proof-card-item glass-medium flex min-w-0 flex-col gap-3 rounded-[var(--radius-xl)] p-6"
               // eslint-disable-next-line no-restricted-syntax
               style={{ borderLeft: `3px solid ${card.accent}` }}
@@ -142,16 +139,6 @@ export function TestimonialsSection() {
                   wordBreak: 'break-word',
                 }}
               >
-                {(card.id === 'taxbridge' || card.id === 'sabiscore') && (
-                  // live-indicator: solid dot + CSS ::before ping ripple (see globals.css PATCH v2026.17).
-                  // Upgraded from animate-pulse (opacity fade) to sonar-ring expansion — more precise
-                  // "actively receiving production traffic" signal. role="img" + aria-label for a11y.
-                  <span
-                    className="live-indicator mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-current align-middle"
-                    role="img"
-                    aria-label="Live in production"
-                  />
-                )}
                 {card.type}
               </p>
 

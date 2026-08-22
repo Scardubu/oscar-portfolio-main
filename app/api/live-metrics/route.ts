@@ -4,9 +4,10 @@ export async function GET() {
   return NextResponse.json(
     {
       todayPredictions: null,
-      systemStatus: 'operational',
-      uptime: 99.94,
-      note: 'Public portfolio does not expose real-time prediction counts.',
+      systemStatus: null,
+      uptime: null,
+      telemetryAvailable: false,
+      note: 'No public real-time operational telemetry is exposed by this portfolio.',
     },
     {
       status: 200,

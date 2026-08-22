@@ -26,7 +26,7 @@ export async function GET() {
   <channel>
     <title>Oscar Ndugbu - Production ML Blog</title>
     <link>${siteUrl}/blog</link>
-    <description>Deep dives into production ML systems, MLOps, and building AI products. Technical content from a Full-Stack ML Engineer based in Nigeria.</description>
+    <description>Deep dives into backend systems, platform reliability, MLOps, and AI infrastructure from a Staff Backend and Platform Engineer based in Nigeria.</description>
     <language>en-US</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>

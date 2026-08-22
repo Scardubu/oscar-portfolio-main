@@ -1,11 +1,9 @@
 import type { JSX } from 'react';
 
-import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import { LiveActivityBar } from './Liveactivitybar';
 import SquircleDefs from './SquircleDefs';
 import { HERO } from '@/lib/portfolio-data';
-import { formatMonthYear } from '@/lib/utils';
 
 const HERO_ARIA_LABEL = `${HERO.h1} ${HERO.subHeadline}`;
 
@@ -14,7 +12,7 @@ export function HeroSection(): JSX.Element {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="relative isolate min-h-screen overflow-hidden bg-[color:var(--brand-bg)] px-5 pt-24 pb-16 text-white sm:px-8 sm:py-24 lg:px-12"
+      className="relative isolate overflow-hidden bg-[color:var(--brand-bg)] px-5 pt-24 pb-14 text-white sm:px-8 sm:py-24 lg:min-h-screen lg:px-12"
     >
       <SquircleDefs />
 
@@ -23,37 +21,21 @@ export function HeroSection(): JSX.Element {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(56,189,248,0.18),transparent_32%),radial-gradient(circle_at_84%_20%,rgba(251,146,60,0.14),transparent_30%),linear-gradient(180deg,rgba(2,6,23,1),rgba(15,23,42,0.94))]"
       />
 
-      <div className="hero-grid-shell mx-auto grid min-h-[calc(100svh-8rem)] max-w-7xl items-center gap-10 sm:gap-12 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.04fr_0.96fr]">
+      <div className="hero-grid-shell mx-auto grid max-w-7xl items-center gap-9 sm:gap-12 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.04fr_0.96fr]">
         <div className="hero-grid-child max-w-3xl">
           <div className="mb-6 sm:mb-8">
-            <BrandWordmark
-              size="hero"
-              className="[--wordmark-size:clamp(2rem,9.6vw,3.35rem)] sm:[--wordmark-size:clamp(2.35rem,8vw,7rem)]"
-            />
-            <p className="hero-kicker mt-4 font-mono text-[10px] leading-5 tracking-[0.2em] text-white/52 uppercase sm:text-[11px] sm:tracking-[0.24em]">
+            <p className="text-xl font-semibold tracking-[-0.025em] text-white sm:text-2xl">
+              Oscar Ndugbu
+            </p>
+            <p className="hero-kicker mt-2 font-mono text-[10px] leading-5 tracking-[0.2em] text-white/60 uppercase sm:text-[11px] sm:tracking-[0.24em]">
               {HERO.kicker}
             </p>
           </div>
 
-          <a
-            href={HERO.cta.primary.href}
-            data-testid="hero-availability-pill"
-            aria-label="Currently available — open to work. Contact Oscar."
-            className="hero-availability-pill mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-white/14 bg-white/5 px-4 py-2 transition hover:border-white/20 focus-visible:ring-2 focus-visible:ring-[color:var(--brand-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none sm:mb-6"
-          >
-            <span className="dot-live" aria-hidden="true" />
-            <span className="hero-availability-label font-mono text-[10px] leading-tight tracking-[0.16em] text-white/72 uppercase sm:text-[11px] sm:tracking-widest">
-              {HERO.availability}
-              <span className="hero-availability-updated ml-2 text-[9px] tracking-normal normal-case opacity-50">
-                · Updated {formatMonthYear(HERO.availabilityLastUpdated)}
-              </span>
-            </span>
-          </a>
-
           <h1
             id="hero-title"
             aria-label={HERO_ARIA_LABEL}
-            className="text-[clamp(2.75rem,12.2vw,3.55rem)] leading-[0.98] font-semibold tracking-[-0.045em] text-balance text-white sm:text-6xl lg:text-[4.5rem]"
+            className="text-[clamp(2.6rem,11.6vw,3.55rem)] leading-[0.98] font-semibold tracking-[-0.045em] text-balance text-white sm:text-6xl lg:text-[4.5rem]"
           >
             {HERO.h1}
             <span className="mt-3 block text-xl leading-[1.12] font-medium tracking-[-0.02em] text-white/70 sm:text-3xl">

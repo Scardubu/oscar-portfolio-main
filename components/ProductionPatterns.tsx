@@ -18,7 +18,7 @@ const PRODUCTION_PATTERNS = [
     caption: 'ML SYSTEMS',
     title: 'Ensemble inference with live drift monitoring',
     description:
-      "SabiScore uses three models in production — XGBoost, LightGBM, and CatBoost — with Prometheus tracking feature drift against training baselines. When any model's AUC drops below threshold, the ensemble weight shifts automatically without redeployment. MTTD went from reactive-alerting hours to 45% improvement over baseline.",
+      'SabiScore combines independently evaluated model outputs behind a versioned cache. Telemetry makes drift and delivery failures visible, while a deterministic fallback keeps the response path understandable when inference is unavailable.',
     accent: 'teal',
   },
   {
@@ -26,7 +26,7 @@ const PRODUCTION_PATTERNS = [
     caption: 'COMPLIANCE · FINTECH',
     title: 'Row-Level Security at the database engine',
     description:
-      "TaxBridge enforces tenant isolation at the PostgreSQL engine, not the application layer. NRS audit scrutiny requires mathematical proof that one TIN's data cannot be read by another session. RLS policies fire before any query reaches application code — even a full application compromise cannot leak cross-tenant records.",
+      'TaxBridge enforces tenant isolation at the PostgreSQL engine instead of relying only on application filters. RLS narrows the failure surface, while tests and scoped database sessions provide the inspectable evidence for each boundary.',
     accent: 'cyan',
   },
   {
@@ -42,7 +42,7 @@ const PRODUCTION_PATTERNS = [
     caption: 'RELIABILITY · DEVOPS',
     title: 'Zero-downtime deploy with full observability',
     description:
-      'Health checks, idempotent BullMQ queues, circuit breakers, and rate-limit scoping are baseline — not retrofitted after the first 3am incident. Blue-green deploys with automated rollback on SLO breach. OpenTelemetry traces from HTTP edge to DB query, with Grafana alerting on p99 latency regression within 60s.',
+      'Health checks, idempotent queues, circuit breakers, and rate-limit scoping are designed into the delivery path. Traces connect the HTTP edge to queue and database work so rollback and recovery decisions are based on observable behavior.',
     accent: 'amber',
   },
 ] as const;

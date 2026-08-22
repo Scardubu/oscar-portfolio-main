@@ -82,7 +82,7 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'ensemble-models-production',
-    title: 'Ensemble Models in Production: How We Achieved 71% Accuracy',
+    title: 'Ensemble Models in Production: Designing the Evaluation Path',
     description:
       'Deep dive into building and deploying ensemble models with XGBoost, LightGBM, and neural networks for real-world predictions.',
     date: '2024-11-25',
@@ -95,7 +95,7 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'fastapi-ml-engineers',
-    title: 'FastAPI for ML Engineers: Serving Models with <100ms Latency',
+    title: 'FastAPI for ML Engineers: Designing the Serving Path',
     description:
       'Complete guide to building high-performance ML APIs with FastAPI, Redis caching, and production-grade monitoring.',
     date: '2024-11-22',
@@ -150,9 +150,9 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'mlops-playbook-999-uptime-production-ml-systems',
-    title: 'Achieving 99.9% Uptime for ML Systems: The Production MLOps Playbook',
+    title: 'Designing Recoverable ML Systems: A Production MLOps Playbook',
     description:
-      'The exact MLOps strategies behind 99.9% uptime: monitoring, blue-green deployments, incident response, and cost optimization.',
+      'Monitoring, staged deployments, incident response, and fallback patterns for ML services that need explicit recovery behavior.',
     date: '2024-12-02',
     author: 'Oscar Ndugbu',
     category: 'mlops',
@@ -164,9 +164,9 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'building-in-nigeria-shipping-globally-remote-ml-engineer',
-    title: 'Building in Nigeria, Shipping Globally: From Lagos to Serving 350+ International Users',
+    title: 'Building in Nigeria: Infrastructure Decisions Under Constraint',
     description:
-      'An honest journey as a remote ML engineer in Nigeria: infrastructure, payments, trust, revenue milestones, and playbook for going global.',
+      'An engineering account of infrastructure, payments, and trust decisions shaped by operating from Nigeria.',
     date: '2024-12-03',
     author: 'Oscar Ndugbu',
     category: 'ai-nigeria',
@@ -178,9 +178,9 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'mlops-999-uptime-transformation-case-study',
-    title: '0 to 99.9% Uptime: Turning a Flaky ML API Into a Reliable Product in 4 Weeks',
+    title: 'Turning a Flaky ML API Into a Recoverable Service',
     description:
-      'A step-by-step case study showing how we took a real ML API from constant outages to 99.9% uptime in one month.',
+      'A step-by-step case study in instrumentation, topology changes, monitoring thresholds, and safer deployment behavior.',
     date: '2024-12-05',
     author: 'Oscar Ndugbu',
     category: 'mlops',
@@ -192,9 +192,9 @@ export const BLOG_POSTS: PostMeta[] = [
   },
   {
     slug: 'nigeria-ml-engineer-mrr-playbook',
-    title: 'From Lagos to $3k MRR: A 12-Month Playbook for Nigerian ML Engineers Going Global',
+    title: 'A Practical Independent-Engineering Playbook for Nigerian ML Engineers',
     description:
-      'A practical roadmap for Nigerian and African ML engineers to go from zero to $3k+ MRR working with international clients.',
+      'A practical roadmap for Nigerian and African ML engineers building an independent practice around clear technical evidence.',
     date: '2024-12-06',
     author: 'Oscar Ndugbu',
     category: 'ai-nigeria',
@@ -208,7 +208,7 @@ export const BLOG_POSTS: PostMeta[] = [
     slug: 'africa-ai-infra-stack-for-founders',
     title: 'The AI Infrastructure Stack Recommended for Every African Founder',
     description:
-      'An opinionated, battle-tested AI infrastructure stack for African founders building reliable ML products under real-world constraints.',
+      'An opinionated AI infrastructure stack for African founders building reliable ML products under real-world constraints.',
     date: '2024-12-07',
     author: 'Oscar Ndugbu',
     category: 'ai-nigeria',
@@ -236,7 +236,7 @@ export const BLOG_POSTS: PostMeta[] = [
     slug: 'side-project-to-mrr-12-month-playbook',
     title: 'From Side Project to Revenue: An AI Business Playbook While Working Full-Time',
     description:
-      'The complete 12-month playbook from side project to $3k MRR: what worked, what failed spectacularly, and the exact steps you can copy.',
+      'A 12-month playbook for moving from side project to a sustainable independent product practice, including what failed and what changed.',
     date: '2025-01-09',
     author: 'Oscar Ndugbu',
     category: 'ai-nigeria',

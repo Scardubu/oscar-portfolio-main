@@ -56,7 +56,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             // Non-technical reader: 'actually built' = accessible entry.
             // Technical reader: 'architecture, ML decisions' = confirms relevant depth.
             description={
-              'How the systems are actually built — architecture, ML decisions, and the production calls behind them. From Lagos to the world.'
+              'Architecture, ML systems, failure modes, and the decisions behind them — written for engineers who need the reasoning, not just the result.'
             }
             eyebrowVariant={child}
             titleVariant={reducedMotion ? child : clipReveal}
@@ -81,8 +81,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             role="group"
             aria-label="Filter articles by topic"
           >
-            {/* Scroll wrapper — horizontal on mobile, wrap on md+ */}
-            <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible">
+            <div className="flex flex-wrap gap-2 pb-1">
               {(['ALL', ...FILTER_LABELS] as const).map((label) => {
                 const isActive = activeFilter === label;
                 return (
@@ -93,7 +92,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                     aria-pressed={isActive}
                     data-active={isActive ? 'true' : 'false'}
                     className={[
-                      'writing-filter-chip shrink-0 snap-start rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest whitespace-nowrap uppercase',
+                      'writing-filter-chip shrink-0 rounded-full px-4 py-2.5 font-mono text-[11px] tracking-widest whitespace-nowrap uppercase',
                       'min-h-[44px] border transition-all duration-200',
                       'focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                       'active:scale-[0.97]',
@@ -252,7 +251,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                 href={anchorUrl('section-contact')}
                 className="transition-opacity hover:opacity-80"
               >
-                3 systems. 4 certifications. Federal scale. Bring your constraint →
+                Have a system problem worth examining? Start with the stakes →
               </Link>
             </m.p>
           </>
