@@ -190,6 +190,7 @@ test.describe('Portfolio smoke tests', () => {
     await goto(page);
 
     const resumeLink = page.locator('a[href="/cv/oscar-ndugbu-resume.pdf"][download]').first();
+    await resumeLink.scrollIntoViewIfNeeded();
     await expect(resumeLink).toBeVisible();
     await expect(resumeLink).toHaveAttribute('download', '');
   });

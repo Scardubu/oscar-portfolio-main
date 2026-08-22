@@ -176,6 +176,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       return (
         <pre
           className="my-6 overflow-x-auto rounded-[var(--radius-md)] p-4 font-mono text-sm leading-6"
+          tabIndex={0}
+          aria-label="Code sample"
           style={{
             background: 'oklch(100% 0 0 / 0.04)',
             border: '1px solid var(--color-border)',

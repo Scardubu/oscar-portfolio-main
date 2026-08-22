@@ -10,6 +10,20 @@ async function goto(page: Page) {
   await expect(page.locator('h1')).toBeVisible();
 }
 
+async function visibleNavLink(page: Page, name: string) {
+  const desktopLink = page
+    .locator('nav[aria-label="Primary"]')
+    .getByRole('link', { name, exact: true });
+  if (await desktopLink.isVisible()) return desktopLink;
+
+  const menuButton = page.getByRole('button', { name: /open navigation menu/i });
+  if (await menuButton.isVisible()) await menuButton.click();
+
+  return page
+    .locator('nav[aria-label="Mobile navigation"]')
+    .getByRole('link', { name, exact: true });
+}
+
 test.describe('Nav', () => {
   test.beforeEach(async ({ page }) => {
     await goto(page);
@@ -24,7 +38,7 @@ test.describe('Nav', () => {
   });
 
   test('Projects nav link is present', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Projects' }).first()).toBeVisible();
+    await expect(await visibleNavLink(page, 'Projects')).toBeVisible();
   });
 
   test('Contact nav link links to contact section', async ({ page }) => {
@@ -191,6 +205,7 @@ test.describe('Projects', () => {
 
   test('architecture decision content is visible', async ({ page }) => {
     await page.locator('#section-projects').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
     await expect(page.getByText('Chosen').first()).toBeVisible();
     await expect(page.getByText('Because').first()).toBeVisible();
   });
@@ -495,6 +510,7 @@ test.describe('Footer', () => {
 
   test('footer nav links are present', async ({ page }) => {
     const footer = page.locator('footer');
+    await footer.scrollIntoViewIfNeeded();
     await expect(footer.getByRole('link', { name: 'Skills' })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'About' })).toBeVisible();
   });
@@ -574,7 +590,11 @@ test.describe('Accessibility — WCAG AA', () => {
   });
 
   test('nav has aria-label', async ({ page }) => {
-    await expect(page.locator('nav[aria-label]').first()).toBeVisible();
+    const primary = page.locator('nav[aria-label="Primary"]');
+    if (!(await primary.isVisible())) {
+      await page.getByRole('button', { name: /open navigation menu/i }).click();
+    }
+    await expect(page.locator('nav[aria-label]:visible').first()).toBeVisible();
   });
 
   test('key sections have aria-labelledby attributes', async ({ page }) => {
@@ -590,7 +610,7 @@ test.describe('Anchor scroll — scroll-margin-top', () => {
   });
 
   test('clicking Projects nav link scrolls to #section-projects', async ({ page }) => {
-    await page.getByRole('link', { name: 'Projects' }).first().click();
+    await (await visibleNavLink(page, 'Projects')).click();
     await page.waitForTimeout(600);
 
     const navBottom = await page

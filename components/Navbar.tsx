@@ -84,6 +84,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = useRef(false);
+  const lockedScrollYRef = useRef(0);
   const reducedMotion = useReducedMotion();
   const { activeChapter, scrollToSection, lenisRef } = useScrollCinema();
   const pathname = usePathname();
@@ -137,6 +138,7 @@ export default function Navbar() {
     }
 
     const scrollY = window.scrollY;
+    lockedScrollYRef.current = scrollY;
     document.body.style.top = `-${scrollY}px`;
     document.body.classList.add('nav-open');
     document.documentElement.setAttribute('data-nav-open', 'true');
@@ -147,7 +149,8 @@ export default function Navbar() {
       document.body.classList.remove('nav-open');
       document.body.style.top = '';
       document.documentElement.removeAttribute('data-nav-open');
-      window.scrollTo(0, scrollY);
+      window.scrollTo(0, lockedScrollYRef.current);
+      window.requestAnimationFrame(() => window.scrollTo(0, lockedScrollYRef.current));
       lenis?.start();
     };
   }, [mobileOpen, lenisRef]);
@@ -302,8 +305,9 @@ export default function Navbar() {
 
       <AnimatePresence initial={false}>
         {mobileOpen && (
-          <m.div
+          <m.nav
             id="mobile-navigation"
+            aria-label="Mobile navigation"
             initial="hidden"
             animate="visible"
             exit="hidden"
@@ -339,7 +343,7 @@ export default function Navbar() {
                 );
               })}
             </div>
-          </m.div>
+          </m.nav>
         )}
       </AnimatePresence>
     </>
