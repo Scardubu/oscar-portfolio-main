@@ -6,6 +6,7 @@ import { formatMonthYear } from '@/lib/utils';
 import { m, useReducedMotion } from 'framer-motion';
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
+import { LiveActivityBar } from './Liveactivitybar';
 import SquircleDefs from './SquircleDefs';
 
 const HERO_ARIA_LABEL = `${HERO.h1} ${HERO.subHeadline}`;
@@ -93,6 +94,10 @@ export function HeroSection(): JSX.Element {
             >
               {HERO.cta.secondary.label}
             </a>
+          </div>
+
+          <div className="live-bar-wrapper-hero max-w-full">
+            <LiveActivityBar />
           </div>
         </m.div>
 
