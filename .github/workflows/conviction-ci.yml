@@ -128,10 +128,18 @@ jobs:
           CI: true
           NEXT_PUBLIC_SITE_URL: https://www.scardubu.dev
 
-      - name: Smoke — font violations
+      - name: Smoke — font contract
+        shell: bash
         run: |
-          COUNT=$(grep -rEn "Crimson_Pro|CrimsonPro|Geist|Inter|Space[[:space:]]*Grotesk" --include="*.tsx" --include="*.ts" --include="*.css" . | grep -v node_modules | grep -v ".next" | wc -l)
-          [ "$COUNT" -eq 0 ] && echo "✓ Font check passed" || (echo "✗ Font violations: $COUNT" && exit 1)
+          set -euo pipefail
+          FONT_CONSTRUCTORS=$(grep -rEn '(Crimson_Pro|CrimsonPro|Geist|Inter|Space_Grotesk)[[:space:]]*\(' --include='*.tsx' --include='*.ts' app components lib 2>/dev/null || true)
+          FONT_FAMILIES=$(grep -rEn 'font-family:[^;]*(Crimson Pro|Crimson_Pro|CrimsonPro|Geist|Inter|Space Grotesk)' --include='*.css' app components 2>/dev/null || true)
+          if [ -n "$FONT_CONSTRUCTORS$FONT_FAMILIES" ]; then
+            echo '✗ Forbidden font declaration detected:'
+            printf '%s\n%s\n' "$FONT_CONSTRUCTORS" "$FONT_FAMILIES"
+            exit 1
+          fi
+          echo '✓ Font contract passed'
 
       - name: Smoke — no TypeScript any
         run: |

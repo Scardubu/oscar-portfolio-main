@@ -1,24 +1,10 @@
 {
-  "name": "Oscar Ndugbu — Principal Backend Engineer",
+  "name": "Oscar Ndugbu — Staff Backend and Platform Engineer",
   "short_name": "scardubu.dev",
-  "description": "Principal backend engineer specialising in infrastructure, SRE, and AI systems.",
+  "description": "Staff backend and platform engineer specialising in reliability-first AI infrastructure, fintech systems, and production engineering.",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#0A0A0B",
   "theme_color": "#0A0A0B",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+  "orientation": "any"
 }

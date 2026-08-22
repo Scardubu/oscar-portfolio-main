@@ -1,20 +1,15 @@
-'use client';
-
 import type { JSX } from 'react';
-import { HERO } from '@/lib/portfolio-data';
-import { formatMonthYear } from '@/lib/utils';
-import { m, useReducedMotion } from 'framer-motion';
+
 import { BrandWordmark } from './BrandWordmark';
 import IdentityCard from './IdentityCard';
 import { LiveActivityBar } from './Liveactivitybar';
 import SquircleDefs from './SquircleDefs';
+import { HERO } from '@/lib/portfolio-data';
+import { formatMonthYear } from '@/lib/utils';
 
 const HERO_ARIA_LABEL = `${HERO.h1} ${HERO.subHeadline}`;
 
 export function HeroSection(): JSX.Element {
-  const prefersReducedMotion = useReducedMotion();
-  const shouldReduceMotion = Boolean(prefersReducedMotion);
-
   return (
     <section
       id="hero"
@@ -29,18 +24,8 @@ export function HeroSection(): JSX.Element {
       />
 
       <div className="hero-grid-shell mx-auto grid min-h-[calc(100svh-8rem)] max-w-7xl items-center gap-10 sm:gap-12 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.04fr_0.96fr]">
-        <m.div
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 150, damping: 24, mass: 0.7 }}
-          className="hero-grid-child max-w-3xl"
-        >
-          <m.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(6px)' }}
-            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-6 sm:mb-8"
-          >
+        <div className="hero-grid-child max-w-3xl">
+          <div className="mb-6 sm:mb-8">
             <BrandWordmark
               size="hero"
               className="[--wordmark-size:clamp(2rem,9.6vw,3.35rem)] sm:[--wordmark-size:clamp(2.35rem,8vw,7rem)]"
@@ -48,7 +33,7 @@ export function HeroSection(): JSX.Element {
             <p className="hero-kicker mt-4 font-mono text-[10px] leading-5 tracking-[0.2em] text-white/52 uppercase sm:text-[11px] sm:tracking-[0.24em]">
               {HERO.kicker}
             </p>
-          </m.div>
+          </div>
 
           <a
             href={HERO.cta.primary.href}
@@ -99,9 +84,9 @@ export function HeroSection(): JSX.Element {
           <div className="live-bar-wrapper-hero max-w-full">
             <LiveActivityBar />
           </div>
-        </m.div>
+        </div>
 
-        <IdentityCard className="hero-grid-child" reducedMotion={shouldReduceMotion} />
+        <IdentityCard className="hero-grid-child" />
       </div>
     </section>
   );
