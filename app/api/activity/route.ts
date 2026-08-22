@@ -84,6 +84,7 @@ export async function GET() {
         repo: 'Scardubu/oscar-portfolio-main',
         sha: commit.sha.slice(0, 7),
         message: trimCommitMessage(commit.commit.message),
+        createdAt: commit.commit.author.date,
       },
       { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' } }
     );

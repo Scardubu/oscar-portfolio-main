@@ -59,7 +59,7 @@ export function LiveBuildFeed() {
     async function fetchAll() {
       try {
         const [githubRes, blogRes, metricsRes] = await Promise.allSettled([
-          fetch('https://api.github.com/users/Scardubu/events/public'),
+          fetch('/api/activity'),
           fetch('/api/recent-blog-posts'),
           fetch('/api/live-metrics'),
         ]);
@@ -70,22 +70,24 @@ export function LiveBuildFeed() {
         let successfulSources = 0;
 
         if (githubRes.status === 'fulfilled' && githubRes.value.ok) {
-          successfulSources += 1;
-          type GHEvent = { id: string; type: string; repo: { name: string }; created_at: string };
-          const events = (await githubRes.value.json()) as GHEvent[];
-          events
-            .filter((e) => e.type === 'PushEvent')
-            .slice(0, 3)
-            .forEach((e) =>
-              combined.push({
-                id: e.id,
-                type: 'commit',
-                title: `Pushed to ${e.repo.name.split('/')[1]}`,
-                timestamp: e.created_at,
-                icon: GitCommit,
-                accentColor: 'oklch(65% 0.15 220)',
-              })
-            );
+          type GitHubActivity = {
+            createdAt?: string;
+            message?: string;
+            repo?: string;
+            sha?: string;
+          };
+          const event = (await githubRes.value.json()) as GitHubActivity;
+          if (event.createdAt && event.message) {
+            successfulSources += 1;
+            combined.push({
+              id: event.sha ?? `commit-${event.createdAt}`,
+              type: 'commit',
+              title: event.message,
+              timestamp: event.createdAt,
+              icon: GitCommit,
+              accentColor: 'oklch(65% 0.15 220)',
+            });
+          }
         }
 
         if (blogRes.status === 'fulfilled' && blogRes.value.ok) {
