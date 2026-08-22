@@ -11,7 +11,8 @@ interface SectionSkeletonProps {
 export function SectionSkeleton({ id, label, height }: Readonly<SectionSkeletonProps>) {
   return (
     <section
-      id={id}
+      id={`loading-${id}`}
+      data-loading-for={id}
       className="border-color-border border-t py-[var(--section-py)]"
       aria-busy="true"
       aria-label={`Loading ${label}`}

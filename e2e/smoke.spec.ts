@@ -189,7 +189,10 @@ test.describe('Portfolio smoke tests', () => {
   test('resume download points to the canonical asset', async ({ page }) => {
     await goto(page);
 
-    const resumeLink = page.locator('a[href="/cv/oscar-ndugbu-resume.pdf"][download]').first();
+    const resumeLink = page
+      .locator('a[href="/cv/oscar-ndugbu-resume.pdf"][download]')
+      .filter({ visible: true })
+      .first();
     await resumeLink.scrollIntoViewIfNeeded();
     await expect(resumeLink).toBeVisible();
     await expect(resumeLink).toHaveAttribute('download', '');
