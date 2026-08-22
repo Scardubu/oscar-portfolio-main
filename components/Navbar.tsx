@@ -1,6 +1,5 @@
 'use client';
 
-import { m, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -27,15 +26,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Contact', href: anchorUrl('section-contact'), id: 'section-contact' },
 ];
 
-const navbarVariants = {
-  hidden: { y: -20, opacity: 1 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
 function getActiveIdFromChapter(activeChapter: string) {
   const map: Record<string, string> = {
     prologue: 'hero',
@@ -55,7 +45,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = useRef(false);
   const lockedScrollYRef = useRef(0);
-  const reducedMotion = useReducedMotion();
   const { activeChapter, scrollToSection, lenisRef } = useScrollCinema();
   const pathname = usePathname();
 
@@ -159,10 +148,7 @@ export default function Navbar() {
 
   return (
     <>
-      <m.header
-        initial="hidden"
-        animate="visible"
-        variants={navbarVariants}
+      <header
         className="glass-nav hero-nav-shell [transform:translateZ(0)]"
         data-scrolled={scrolled ? 'true' : 'false'}
       >
@@ -172,15 +158,10 @@ export default function Navbar() {
             className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
             aria-label="Scardubu — Homepage"
           >
-            <m.span
-              className="brand-wordmark-lockup"
-              whileHover={reducedMotion ? undefined : { y: -1 }}
-              whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            >
+            <span className="brand-wordmark-lockup motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:-translate-y-px motion-safe:group-active:scale-[0.97]">
               <BrandWordmark size="nav" />
               <span className="brand-wordmark-kicker hidden sm:inline">{PROFILE.role}</span>
-            </m.span>
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
@@ -263,7 +244,7 @@ export default function Navbar() {
             </span>
           </button>
         </div>
-      </m.header>
+      </header>
 
       {mobileOpen && (
         <nav
