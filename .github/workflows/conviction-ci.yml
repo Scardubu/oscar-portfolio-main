@@ -123,7 +123,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run smoke tests
-        run: pnpm exec playwright test e2e/smoke.spec.ts
+        run: pnpm exec playwright test e2e/smoke.spec.ts --project=chromium
         env:
           CI: true
           NEXT_PUBLIC_SITE_URL: https://www.scardubu.dev
@@ -168,7 +168,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
