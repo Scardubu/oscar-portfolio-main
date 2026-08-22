@@ -141,10 +141,15 @@ jobs:
           fi
           echo '✓ Font contract passed'
 
-      - name: Smoke — no TypeScript any
+      - name: Smoke — TypeScript safety contract
+        shell: bash
         run: |
-          COUNT=$(grep -rEn ": any|as any|<any>" --include="*.tsx" --include="*.ts" . | grep -v node_modules | wc -l)
-          [ "$COUNT" -eq 0 ] && echo "✓ No any types" || (echo "✗ any types: $COUNT" && exit 1)
+          set -euo pipefail
+          grep -Fq "'@typescript-eslint/no-explicit-any': 'error'" eslint.config.mjs || {
+            echo '✗ @typescript-eslint/no-explicit-any must remain an error';
+            exit 1;
+          }
+          echo '✓ Explicit any remains blocked by the canonical ESLint gate'
 
       - name: Smoke — conviction strings present
         run: |

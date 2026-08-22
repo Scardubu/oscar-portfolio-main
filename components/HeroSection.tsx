@@ -8,6 +8,8 @@ import { HERO } from '@/lib/portfolio-data';
 import { formatMonthYear } from '@/lib/utils';
 
 const HERO_ARIA_LABEL = `${HERO.h1} ${HERO.subHeadline}`;
+const HERO_CRITICAL_FONT_STACK =
+  'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 
 export function HeroSection(): JSX.Element {
   return (
@@ -24,7 +26,10 @@ export function HeroSection(): JSX.Element {
       />
 
       <div className="hero-grid-shell mx-auto grid min-h-[calc(100svh-8rem)] max-w-7xl items-center gap-10 sm:gap-12 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.04fr_0.96fr]">
-        <div className="hero-grid-child max-w-3xl">
+        <div
+          className="hero-grid-child max-w-3xl"
+          style={{ fontFamily: HERO_CRITICAL_FONT_STACK }}
+        >
           <div className="mb-6 sm:mb-8">
             <BrandWordmark
               size="hero"

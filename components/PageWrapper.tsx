@@ -30,9 +30,6 @@ export function PageWrapper({ children }: PageWrapperProps) {
 
   useEffect(() => {
     const root = document.documentElement;
-    // Apply reduced-motion class for CSS fallbacks
-    // Note: overscroll-behavior-y: none is already declared in globals.css on body,
-    // so we do not mutate it here to avoid unnecessary style recalculations.
     if (reducedMotion) {
       root.setAttribute('data-reduced-motion', 'true');
     } else {
@@ -71,11 +68,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
       data-page-transitioning={isPending ? 'true' : 'false'}
     >
       <AnimatePresence mode="wait" initial={false}>
-        <m.div
-          key={activePath}
-          {...pageTransition}
-          className="relative z-[2] flex-1 will-change-transform"
-        >
+        <m.div key={activePath} {...pageTransition} className="relative z-[2] flex-1">
           {children}
         </m.div>
       </AnimatePresence>
