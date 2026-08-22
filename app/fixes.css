@@ -866,10 +866,15 @@ body::after {
 }
 
 /* ── F16: Skip layout and paint for distant mobile chapters ─────────────────
-   Projects remains eager because it is the first proof surface. Later chapters
-   retain their server-rendered HTML and become renderable before they approach
-   the viewport. Per-section intrinsic sizes keep anchor geometry stable. */
+   Chapters retain their server-rendered HTML and become renderable before they
+   approach the viewport. Per-section intrinsic sizes keep anchor geometry
+   stable while keeping their dense card layouts out of the hero's LCP work. */
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  #section-projects {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 3200px;
+  }
+
   #section-testimonials {
     content-visibility: auto;
     contain-intrinsic-size: auto 900px;
