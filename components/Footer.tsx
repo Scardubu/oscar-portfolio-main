@@ -103,7 +103,7 @@ export function Footer() {
         </div>
 
         {/* ── Navigation ──────────────────────────────────────────────── */}
-        <nav aria-label="Footer navigation" className="hidden sm:block">
+        <nav aria-label="Footer navigation">
           <p className="text-2xs text-color-text-muted mb-3 font-mono tracking-widest uppercase">
             Navigation
           </p>

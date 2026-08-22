@@ -44,6 +44,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = useRef(false);
+  const mobileContentReadyRef = useRef(false);
   const lockedScrollYRef = useRef(0);
   const { activeChapter, scrollToSection, lenisRef } = useScrollCinema();
   const pathname = usePathname();
@@ -70,6 +71,15 @@ export default function Navbar() {
     const syncScrolled = () => {
       frame = 0;
       const nextScrolled = window.scrollY > 20;
+
+      // Mobile chapters are contained only for the first paint. Release that
+      // containment permanently after the visitor starts scrolling so anchor
+      // geometry, menu scroll locking, and interactive content remain stable.
+      if (nextScrolled && !mobileContentReadyRef.current) {
+        mobileContentReadyRef.current = true;
+        document.documentElement.setAttribute('data-mobile-content-ready', 'true');
+      }
+
       if (nextScrolled === scrolledRef.current) return;
 
       scrolledRef.current = nextScrolled;

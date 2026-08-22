@@ -206,8 +206,8 @@ test.describe('Projects', () => {
   test('architecture decision content is visible', async ({ page }) => {
     await page.locator('#section-projects').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
-    await expect(page.getByText('Chosen').first()).toBeVisible();
-    await expect(page.getByText('Because').first()).toBeVisible();
+    await expect(page.getByText('Chosen').filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText('Because').filter({ visible: true }).first()).toBeVisible();
   });
 });
 

@@ -870,25 +870,25 @@ body::after {
    approach the viewport. Per-section intrinsic sizes keep anchor geometry
    stable while keeping their dense card layouts out of the hero's LCP work. */
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  #section-projects {
+  html:not([data-mobile-content-ready]) #section-projects {
     content-visibility: auto;
     contain-intrinsic-size: auto 3200px;
   }
 
-  #section-testimonials {
+  html:not([data-mobile-content-ready]) #section-testimonials {
     content-visibility: auto;
     contain-intrinsic-size: auto 900px;
   }
 
-  #open-source,
-  #skills {
+  html:not([data-mobile-content-ready]) #open-source,
+  html:not([data-mobile-content-ready]) #skills {
     content-visibility: auto;
     contain-intrinsic-size: auto 1400px;
   }
 
-  #section-about,
-  #section-writing,
-  #section-contact {
+  html:not([data-mobile-content-ready]) #section-about,
+  html:not([data-mobile-content-ready]) #section-writing,
+  html:not([data-mobile-content-ready]) #section-contact {
     content-visibility: auto;
     contain-intrinsic-size: auto 1100px;
   }

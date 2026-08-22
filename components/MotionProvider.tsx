@@ -13,7 +13,12 @@
 import { LazyMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-const loadFeatures = () => import('./motion-features').then((module) => module.default);
+let featurePromise: Promise<typeof import('./motion-features').default> | null = null;
+
+const loadFeatures = () => {
+  featurePromise ??= import('./motion-features').then((module) => module.default);
+  return featurePromise;
+};
 
 export function MotionProvider({ children }: Readonly<{ children: ReactNode }>) {
   return (
