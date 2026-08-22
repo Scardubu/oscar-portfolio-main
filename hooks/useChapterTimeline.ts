@@ -28,8 +28,10 @@ export function useChapterTimeline({ chapter, rootRef }: UseChapterTimelineArgs)
     const root = rootRef.current;
     if (!root) return;
 
+    const reducedMotionAtBoot = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    if (reducedMotion || coarsePointer) {
+    const touchAtBoot = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+    if (reducedMotion || reducedMotionAtBoot || coarsePointer || touchAtBoot) {
       revealStatic(root);
 
       if (typeof IntersectionObserver === 'undefined') return;
