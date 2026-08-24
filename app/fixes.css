@@ -226,13 +226,7 @@ body.nav-open {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Belt-and-suspenders: ensure body overflow lock never escapes its scope.
-   Updated to also exclude the class-based lock path so the two mechanisms
-   don't fight each other. */
-html:not([data-nav-open="true"]):not(.nav-open) body {
-  overflow-y: auto !important;
-  overflow-x: clip !important;
-}
+
 
 /* CTA group on very small screens — stack vertically with proper touch sizing */
 @media (max-width: 389px) {
