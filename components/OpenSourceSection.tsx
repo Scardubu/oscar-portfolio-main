@@ -282,7 +282,7 @@ export function OpenSourceSection() {
         <m.p
           variants={child}
           data-cinematic="cta"
-          className="text-color-text-muted mt-4 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          className="text-color-text-muted mt-4 font-mono text-[13px] [letter-spacing:0.06em]"
         >
           <Link href={anchorUrl('skills')} className="transition-opacity hover:opacity-80">
             The stack that makes these possible →

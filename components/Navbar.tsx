@@ -226,7 +226,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="hero-nav-menu-button inline-flex h-10 w-10 items-center justify-center rounded-full lg:hidden"
+            className="hero-nav-menu-button inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full lg:hidden"
             onClick={() => setMobileOpen((value) => !value)}
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}

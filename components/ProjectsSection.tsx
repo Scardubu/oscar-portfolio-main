@@ -441,7 +441,7 @@ export function ProjectsSection() {
         <m.p
           variants={child}
           data-cinematic="cta"
-          className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em]"
         >
           <Link
             href={anchorUrl('section-testimonials')}

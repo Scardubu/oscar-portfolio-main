@@ -178,7 +178,7 @@ export function TestimonialsSection() {
         <m.p
           variants={itemVariant}
           data-cinematic="cta"
-          className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em]"
         >
           {/* V1.2: 'Tools extracted' > 'What got open-sourced' — more specific (tools, not
               vague 'what'), more vivid (extracted = real surgery on live systems), shorter

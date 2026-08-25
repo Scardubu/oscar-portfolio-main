@@ -116,7 +116,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
                   before they commit. Per spec §CTA Warmup Path: mono, 12px, opacity 0.50. */}
             <m.p
               variants={child}
-              className="text-color-text-muted mb-4 font-mono text-[12px] opacity-50"
+              className="text-color-text-muted mb-4 font-mono text-[12px]"
             >
               Start here if you want to understand how these systems were designed.
             </m.p>
@@ -245,7 +245,7 @@ export function WritingSection({ posts }: Readonly<{ posts: WritingPost[] }>) {
             <m.p
               variants={child}
               data-cinematic="cta"
-              className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+              className="text-color-text-muted mt-10 font-mono text-[13px] [letter-spacing:0.06em]"
             >
               <Link
                 href={anchorUrl('section-contact')}

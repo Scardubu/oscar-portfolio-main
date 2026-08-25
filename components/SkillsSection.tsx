@@ -388,7 +388,7 @@ export function SkillsSection() {
                     tabIndex={!radarView ? 0 : -1}
                     onClick={() => setRadarView(false)}
                     className={[
-                      'min-h-[36px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                      'min-h-[44px] min-w-[44px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                       !radarView
                         ? 'text-color-text-primary bg-white/10 shadow-[0_10px_24px_oklch(0%_0_0_/_0.18)]'
                         : 'text-color-text-muted hover:text-color-text-secondary',
@@ -406,7 +406,7 @@ export function SkillsSection() {
                     tabIndex={radarView ? 0 : -1}
                     onClick={() => setRadarView(true)}
                     className={[
-                      'min-h-[36px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
+                      'min-h-[44px] min-w-[44px] rounded-full px-3 py-1.5 font-mono text-[11px] tracking-widest uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none',
                       radarView
                         ? 'text-color-text-primary bg-white/10 shadow-[0_10px_24px_oklch(0%_0_0_/_0.18)]'
                         : 'text-color-text-muted hover:text-color-text-secondary',
@@ -479,7 +479,7 @@ export function SkillsSection() {
         <m.p
           variants={child}
           data-cinematic="cta"
-          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em]"
         >
           <Link href={anchorUrl('section-about')} className="transition-opacity hover:opacity-80">
             These 62 skills map to three featured systems →

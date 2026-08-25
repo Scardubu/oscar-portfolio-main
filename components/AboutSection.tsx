@@ -335,7 +335,7 @@ export function AboutSection() {
         <m.p
           variants={itemVariants}
           data-cinematic="cta"
-          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em] opacity-50"
+          className="text-color-text-muted mt-8 font-mono text-[13px] [letter-spacing:0.06em]"
         >
           <Link href={anchorUrl('section-writing')} className="transition-opacity hover:opacity-80">
             Architecture calls documented →
