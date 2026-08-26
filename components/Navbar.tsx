@@ -194,7 +194,7 @@ export default function Navbar() {
         className="glass-nav hero-nav-shell [transform:translateZ(0)]"
         data-scrolled={scrolled ? 'true' : 'false'}
       >
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-[var(--nav-height)] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="group relative flex items-center gap-3 rounded-[13px] focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
@@ -292,7 +292,7 @@ export default function Navbar() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="hero-mobile-nav-panel fixed inset-x-0 top-16 z-50 px-4 py-4 lg:hidden"
+          className="hero-mobile-nav-panel fixed inset-x-0 top-[var(--nav-height)] z-50 px-4 py-4 lg:hidden"
         >
           <div className="flex flex-col gap-2">
             {NAV_ITEMS.map((item) => {
