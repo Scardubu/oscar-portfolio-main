@@ -198,18 +198,36 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
 
         retryTimerRef.current = null;
+        const getTargetTop = () =>
+          Math.max(0, element.getBoundingClientRect().top + window.scrollY + getSectionOffset());
         const nativeScroll = () => {
-          const top = element.getBoundingClientRect().top + window.scrollY + getSectionOffset();
-          window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
+          window.scrollTo({
+            top: getTargetTop(),
+            behavior: reducedMotion ? 'auto' : 'smooth',
+          });
         };
 
-        if (reducedMotion || !lenisRef.current) {
+        const activeLenis = lenisRef.current;
+        if (reducedMotion || !activeLenis) {
           nativeScroll();
           return;
         }
 
         try {
-          lenisRef.current.scrollTo(element, { offset: getSectionOffset() });
+          // Resolve the element to a numeric document coordinate before the
+          // animation starts. Deferred sections can change their containing
+          // geometry during a smooth scroll; a moving HTMLElement target can
+          // therefore settle above or below the sticky-nav safe zone.
+          activeLenis.resize();
+          activeLenis.scrollTo(getTargetTop(), {
+            onComplete: () => {
+              window.requestAnimationFrame(() => {
+                const correctedTop = getTargetTop();
+                if (Math.abs(window.scrollY - correctedTop) <= 2) return;
+                activeLenis.scrollTo(correctedTop, { immediate: true, force: true });
+              });
+            },
+          });
         } catch (error) {
           warnDev('Lenis scrollTo failed. Falling back to native smooth scrolling.', error);
           lenisRef.current = null;
