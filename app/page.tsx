@@ -26,6 +26,8 @@ import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
 import { getWritingPosts } from '@/lib/content';
 
+import './home-critical.css';
+
 const ProjectsSection = dynamic(
   () => import('@/components/ProjectsSection').then((m) => ({ default: m.ProjectsSection })),
   { ssr: true }
