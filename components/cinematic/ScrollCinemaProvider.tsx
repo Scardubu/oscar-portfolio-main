@@ -148,7 +148,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const scrollYRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
-  const normalizeScrollConfiguredRef = useRef(false);
   const retryTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
@@ -342,17 +341,11 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         // the chunks are still in flight. Never initialize against an unmounted tree.
         if (cancelled) return;
 
-        if (!normalizeScrollConfiguredRef.current) {
-          try {
-            ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
-            normalizeScrollConfiguredRef.current = true;
-          } catch (error) {
-            // normalizeScroll is an enhancement; core scrolling remains functional.
-            warnDev('ScrollTrigger normalization failed. Continuing without it.', error);
-          }
-        }
-
-        gsap.ticker.lagSmoothing(500, 33);
+        // Lenis is the single desktop wheel owner. ScrollTrigger remains synchronized
+        // from Lenis' scroll event, but does not install normalizeScroll(), which would
+        // independently intercept the same wheel input on the JavaScript thread.
+        // Touch/coarse-pointer devices never reach this branch and keep native scrolling.
+        gsap.ticker.lagSmoothing(0);
 
         const safeRefresh = (force = false) => {
           try {
@@ -370,11 +363,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
           lenis = new LenisConstructor({
             lerp: 0.1,
             smoothWheel: true,
-            syncTouch: true,
-            wheelMultiplier: 0.9,
-            easing: (t: number): number => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            touchMultiplier: 1.0,
+            syncTouch: false,
+            wheelMultiplier: 1,
             anchors: true,
+            stopInertiaOnNavigate: true,
             prevent: (node: HTMLElement) => {
               if (node.hasAttribute('data-lenis-prevent')) return true;
               const style = getComputedStyle(node);
