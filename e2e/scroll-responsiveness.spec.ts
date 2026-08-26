@@ -49,7 +49,7 @@ test.describe('Scroll responsiveness contract', () => {
       await waitForEngine(page, 'native');
 
       await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'auto' }));
-      await page.waitForFunction(() => window.scrollY >= 300, { timeout: 2_000 });
+      await page.waitForFunction(() => window.scrollY >= 300, undefined, { timeout: 2_000 });
 
       expect(await page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(300);
       expect(
@@ -72,15 +72,20 @@ test.describe('Scroll responsiveness contract', () => {
     await page.locator('nav[aria-label="Primary"]').getByRole('link', { name: 'Projects' }).click();
     await expect(page).toHaveURL(/#section-projects$/);
 
-    await page.waitForFunction(() => {
-      const target = document.getElementById('section-projects');
-      if (!target) return false;
-      const navHeight = Number.parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--nav-height')
-      );
-      const safeTop = Number.isFinite(navHeight) ? navHeight + 24 : 112;
-      const top = target.getBoundingClientRect().top;
-      return top >= 0 && top <= safeTop;
-    }, { timeout: 5_000 });
+    await page.waitForFunction(
+      () => {
+        const target = document.getElementById('section-projects');
+        const nav = document.querySelector<HTMLElement>('.glass-nav');
+        if (!target || !nav) return false;
+
+        const targetTop = target.getBoundingClientRect().top;
+        const navBottom = nav.getBoundingClientRect().bottom;
+        const safeTop = navBottom + 24;
+
+        return targetTop >= navBottom && targetTop <= safeTop;
+      },
+      undefined,
+      { timeout: 5_000 }
+    );
   });
 });
