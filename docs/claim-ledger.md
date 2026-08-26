@@ -1,6 +1,6 @@
 # PortfolioX claim ledger
 
-Verified on 2026-08-22 before the Reliability Ledger copy pass. Repository evidence is treated as authored evidence unless a public source or measurement window is named. The homepage must not imply third-party verification where only an internal project record exists.
+Verified on 2026-08-26 for the final evidence-certification pass. Repository evidence is treated as authored evidence unless a public source or measurement window is named. The homepage must not imply third-party verification where only an internal project record exists.
 
 | Claim | Current location | Evidence source | Confidence | Action |
 | --- | --- | --- | --- | --- |
@@ -21,6 +21,11 @@ Verified on 2026-08-22 before the Reliability Ledger copy pass. Repository evide
 | Availability / `Updated June 2026` | Hero and About | Date is hard-coded and stale | Low | `REMOVE` — keep a direct contact path without fabricated recency |
 | Lagos / Abuja / UTC+1 / global operation | Hero, identity card, About, footer, work records | Profile location is Lagos; UBEC engagement is Abuja HQ; UTC+1 is the relevant time zone; “running globally” is not tied to a deployment inventory | Mixed | `QUALIFY` — use Lagos as profile location, Abuja only for UBEC context, UTC+1 only where scheduling helps, and avoid unsupported global-operation claims |
 | 24-hour response | Contact success, button, section and footer | No sustainable service-level commitment is evidenced | Low | `REMOVE` — confirm receipt and describe the next step without a deadline promise |
+| `mathematically invisible` tenant records | Open Source / `pg-tenant` | Public source can show the RLS implementation, but not guarantee isolation under every application, policy, or operational failure mode | Low | `REWRITE_AS_ARCHITECTURAL_INTENT` — describe database-bound isolation policy and link the repository |
+| Audit-chain edits `break instantly` | Open Source / `audit-chain` | Public source can show hash-link construction and verification logic; “instantly” is an unmeasured runtime outcome | Low | `REWRITE_AS_ARCHITECTURAL_INTENT` — say retrospective changes are designed to be detectable during integrity checks |
+| `incident triage in minutes, not hours` | Open Source / `node-debug-llm` | No public before/after incident-duration benchmark is linked | Low | `REMOVE` — retain the ranked root-cause workflow without a time-savings claim |
+| `zero cloud egress` | Open Source / `llm-dispatch` | Local model routing can reduce or avoid cloud calls by design, but the public source does not establish an absolute deployment-wide egress guarantee | Low-medium | `QUALIFY` — describe task-aware local routing and linked source instead of an absolute zero claim |
+| `production-hardened packages` / `all packages publicly auditable` | Open Source section | Repository links establish inspectable source paths for named entries, not blanket production-hardening, publication, packaging, licensing, or deployment status for every entry | Mixed | `QUALIFY` — use source-linked / inspectable wording per entry and avoid blanket package-status claims |
 
 ## Evidence policy
 
@@ -28,4 +33,5 @@ Verified on 2026-08-22 before the Reliability Ledger copy pass. Repository evide
 - Private or authored evidence is labelled rather than presented as independently verified.
 - Compliance architecture is not described as regulator certification.
 - Absolute reliability claims are converted to bounded measurements or architectural intent.
-- All three public resume artifacts use the canonical role and the same evidence-bounded copy.
+- Open-source evidence is scoped to what the linked repository can actually demonstrate; repository presence is not treated as proof of production deployment or measured outcomes.
+- All public resume artifacts should use the canonical role and the same evidence-bounded copy.
