@@ -43,7 +43,11 @@ const dmSans = DM_Sans({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
-  display: 'swap',
+  // The mono hero kicker sits directly above the mobile LCP heading. A late
+  // `swap` can change its metrics, shift the heading, and register a new LCP
+  // paint several seconds after first content. Keep the constrained cold-load
+  // layout on the fallback just like the other optional brand faces.
+  display: 'optional',
   preload: false,
   fallback: ['Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', 'monospace'],
 });
@@ -178,48 +182,30 @@ const schemaGraph = {
       knowsAbout: [
         'Next.js',
         'React Native',
-        'Expo',
-        'TypeScript',
-        'Java',
-        'AI Agent Orchestration',
-        'LLM Routing',
-        'SwarmXQ',
-        'Spring Boot',
-        'FastAPI',
-        'Python',
-        'Effect-TS',
-        'Turborepo',
+        'Platform Engineering',
+        'Backend Systems',
+        'AI Infrastructure',
+        'Reliability Engineering',
         'PostgreSQL',
         'Redis',
-        'Machine Learning',
-        'Fintech',
-        'SRE',
-        'AI Infrastructure',
-        'Platform Engineering',
-        'Systems Architecture',
-        'Distributed Systems',
+        'FastAPI',
+        'Fintech Systems',
       ],
-      alumniOf: [
-        {
-          '@type': 'Organization',
-          name: 'Universal Basic Education Commission (UBEC)',
-          url: 'https://ubec.gov.ng',
-        },
+      sameAs: [
+        'https://github.com/Scardubu',
+        'https://www.linkedin.com/in/oscardubu',
+        'https://twitter.com/oscardubu',
       ],
-      sameAs: [PROFILE.github, PROFILE.linkedin, siteUrl],
     },
     {
       '@type': 'WebSite',
       '@id': `${siteUrl}/#website`,
-      name: PROFILE.name,
-      alternateName: 'scardubu.dev',
       url: siteUrl,
-      description:
-        'Portfolio and operational registry for Oscar Ndugbu — staff backend and platform engineer specialising in AI infrastructure, fintech systems, and production reliability.',
-      inLanguage: 'en-US',
-      author: { '@id': `${siteUrl}/#person` },
-      copyrightHolder: { '@id': `${siteUrl}/#person` },
-      copyrightYear: new Date().getFullYear(),
+      name: siteTitle,
+      description: siteDescription,
+      publisher: {
+        '@id': `${siteUrl}/#person`,
+      },
     },
   ],
 };
@@ -228,118 +214,33 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={cn(syne.variable, dmSans.variable, jetbrainsMono.variable)}
       suppressHydrationWarning
+      className={cn(syne.variable, dmSans.variable, jetbrainsMono.variable)}
     >
       <head>
-        <meta name="color-scheme" content="dark" />
         <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => {
-              window.__commandPaletteRequested = window.__commandPaletteRequested ?? false;
-              document.addEventListener('keydown', (event) => {
-                if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-                  event.preventDefault();
-                  window.__commandPaletteRequested = true;
-                  document.dispatchEvent(
-                    new CustomEvent('command-palette:open', { bubbles: true })
-                  );
-                }
-              }, { capture: true });
-            })();`,
-          }}
-        />
-        <script
-          id="json-ld-schema"
           type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
         />
       </head>
-
-      <body className={cn('relative min-h-[100dvh] overflow-x-clip antialiased')}>
-        <div
-          className="site-grain pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
-          aria-hidden="true"
-        >
-          <svg className="absolute h-full w-full" xmlns="http://www.w3.org/2000/svg">
-            <filter id="scar-grain-noise">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.8"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#scar-grain-noise)" />
-          </svg>
-        </div>
-
-        <a href="#main-content" className="skip-nav">
-          Skip to main content
-        </a>
-
-        <svg width="0" height="0" aria-hidden="true" className="absolute">
-          <defs>
-            <filter id="glass-refraction">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.65 0.85"
-                numOctaves="3"
-                seed="2"
-                result="noise"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="noise"
-                scale="3"
-                xChannelSelector="R"
-                yChannelSelector="G"
-              />
-            </filter>
-            <clipPath id="squircle-id" clipPathUnits="objectBoundingBox">
-              <path d="M 0.500 0.000 C 0.817 0.000 0.870 0.030 0.920 0.080 C 0.977 0.136 1.000 0.183 1.000 0.500 C 1.000 0.817 0.977 0.864 0.920 0.920 C 0.870 0.970 0.817 1.000 0.500 1.000 C 0.183 1.000 0.130 0.970 0.080 0.920 C 0.023 0.864 0.000 0.817 0.000 0.500 C 0.000 0.183 0.023 0.136 0.080 0.080 C 0.130 0.030 0.183 0.000 0.500 0.000 Z" />
-            </clipPath>
-            <filter id="luxury-duotone-cinema" colorInterpolationFilters="sRGB">
-              <feColorMatrix
-                type="matrix"
-                values="0.2126 0.7152 0.0722 0 0
-                        0.2126 0.7152 0.0722 0 0
-                        0.2126 0.7152 0.0722 0 0
-                        0      0      0      1 0"
-                result="grayscale"
-              />
-              <feComponentTransfer in="grayscale" result="duotone">
-                <feFuncR type="table" tableValues="0.0118 1.0000" />
-                <feFuncG type="table" tableValues="0.1098 0.5843" />
-                <feFuncB type="table" tableValues="0.1412 0.2510" />
-              </feComponentTransfer>
-              <feColorMatrix
-                type="matrix"
-                values="1 0 0 0 0
-                        0 1 0 0 0
-                        0 0 1 0 0
-                        0 0 0 0.15 0"
-                in="SourceGraphic"
-                result="faint-original"
-              />
-              <feComposite operator="over" in="faint-original" in2="duotone" />
-            </filter>
-          </defs>
-        </svg>
-
+      <body className="font-body min-h-screen bg-black text-white antialiased">
         <Providers>
-          <DeferredCursorGlow />
-          <ScrollProgress />
           <DeferredThreeBrushField />
           <Navbar />
-          <DeferredCommandPalette />
+          <ScrollProgress />
           <PageWrapper>{children}</PageWrapper>
           <Footer />
+          <DeferredCommandPalette />
+          <DeferredCursorGlow />
+          <WebVitals />
+          {shouldLoadVercelInsights ? (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          ) : null}
         </Providers>
-
-        {shouldLoadVercelInsights ? <Analytics /> : null}
-        {shouldLoadVercelInsights ? <SpeedInsights /> : null}
-        {shouldLoadVercelInsights ? <WebVitals /> : null}
       </body>
     </html>
   );
