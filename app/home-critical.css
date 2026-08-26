@@ -1,0 +1,19 @@
+/*
+ * Homepage mobile critical-render contract.
+ *
+ * The hero is the only above-the-fold LCP surface. Below-fold chapters remain
+ * fully present in the DOM and accessibility tree, but the browser may defer
+ * their layout/paint work until they approach the viewport. This removes a
+ * large amount of mobile first-paint style/layout work without deleting or
+ * client-only hiding meaningful content.
+ *
+ * Reduced-motion rules in globals.css use !important and continue to force
+ * immediate visibility. Native mobile scrolling also remains owned by the
+ * browser; this file changes paint containment only, never scroll behavior.
+ */
+@media (max-width: 767px) {
+  .section-deferred {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 720px;
+  }
+}
