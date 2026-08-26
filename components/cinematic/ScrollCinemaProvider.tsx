@@ -378,12 +378,17 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         let lenisTickerFn: ((time: number) => void) | null = null;
 
         try {
+          const sectionOffset = getSectionOffset();
           lenis = new LenisConstructor({
             lerp: 0.1,
             smoothWheel: true,
             syncTouch: false,
             wheelMultiplier: 1,
-            anchors: true,
+            // Lenis' built-in anchor path accounts for both CSS scroll-margin and
+            // root scroll-padding. The app's canonical target uses a direct sticky-nav
+            // offset instead, so compensate here and make both click paths converge on
+            // the same final coordinate rather than launching competing destinations.
+            anchors: { offset: -sectionOffset },
             stopInertiaOnNavigate: true,
             prevent: (node: HTMLElement) => {
               if (node.hasAttribute('data-lenis-prevent')) return true;
