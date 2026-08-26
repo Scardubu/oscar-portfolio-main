@@ -25,7 +25,7 @@ export const HERO = {
   kicker: 'Staff Backend and Platform Engineer',
   h1: 'The system has to work at 2am.',
   subHeadline: 'A design principle for systems under real pressure.',
-  body: 'Backend, platform, and AI infrastructure engineered around explicit failure modes, observable behavior, and clean operational handoffs.',
+  body: 'Backend, platform, and AI infrastructure built for visible failure, clean recovery, and decisive operational handoffs.',
   availability: 'OPEN TO STAFF BACKEND AND PLATFORM ROLES',
   availabilityLastUpdated: '2026-08-22',
   location: 'Lagos, Nigeria 🇳🇬',
