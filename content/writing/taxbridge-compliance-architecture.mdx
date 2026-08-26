@@ -21,7 +21,7 @@ The first design decision was the one that mattered most: multi-tenancy enforcem
 
 Every tax filing platform handles data from multiple clients. The question is where the boundary between tenants is enforced. Application-layer filtering — adding a `WHERE tenant_id = ?` clause to every query — is fragile. An application bug, a missed WHERE clause, or an ORM quirk can silently expose one tenant's records to another.
 
-TaxBridge enforces isolation at the PostgreSQL engine level via Row-Level Security. Even if the application sends a query without a tenant filter, the database rejects it. Tenant data is mathematically invisible across boundaries, not just conditionally filtered.
+TaxBridge enforces the tenant policy at the PostgreSQL engine level via Row-Level Security. When the RLS policy is active for the application role, a query that omits its tenant predicate still remains subject to the database policy. That moves the isolation boundary out of each query path and into a schema-level control that can be exercised directly in tests.
 
 The reason this matters: an application-layer filter alone is not a sufficient tenant boundary. RLS policies attached to the database schema narrow the failure surface and can be exercised directly in isolation tests.
 

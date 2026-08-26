@@ -128,16 +128,8 @@ export function ScrollCinemaStaticProvider({ children }: Readonly<{ children: Re
     }),
     [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
   );
-  const chapterLabel = CHAPTERS.find((chapter) => chapter.id === activeChapter)?.label ?? '';
 
-  return (
-    <ScrollCinemaContext.Provider value={value}>
-      {children}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`Now viewing: ${chapterLabel}`}
-      </div>
-    </ScrollCinemaContext.Provider>
-  );
+  return <ScrollCinemaContext.Provider value={value}>{children}</ScrollCinemaContext.Provider>;
 }
 
 export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNode }>) {
@@ -148,8 +140,8 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const scrollYRef = useRef(0);
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
-  const normalizeScrollConfiguredRef = useRef(false);
   const retryTimerRef = useRef<number | null>(null);
+  const settleTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
   const warnDev = useCallback((message: string, error?: unknown) => {
@@ -185,6 +177,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         window.clearTimeout(retryTimerRef.current);
         retryTimerRef.current = null;
       }
+      if (settleTimerRef.current !== null) {
+        window.clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
+      }
 
       const tryScroll = (attempt: number) => {
         const element = document.getElementById(sectionId);
@@ -199,18 +195,51 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         }
 
         retryTimerRef.current = null;
+        const getTargetTop = () =>
+          Math.max(0, element.getBoundingClientRect().top + window.scrollY + getSectionOffset());
         const nativeScroll = () => {
-          const top = element.getBoundingClientRect().top + window.scrollY + getSectionOffset();
-          window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
+          window.scrollTo({
+            top: getTargetTop(),
+            behavior: reducedMotion ? 'auto' : 'smooth',
+          });
         };
 
-        if (reducedMotion || !lenisRef.current) {
+        const activeLenis = lenisRef.current;
+        if (reducedMotion || !activeLenis) {
           nativeScroll();
           return;
         }
 
         try {
-          lenisRef.current.scrollTo(element, { offset: getSectionOffset() });
+          // Resolve the element to a numeric document coordinate before the
+          // animation starts. Deferred sections can change their containing
+          // geometry during a smooth scroll; a moving HTMLElement target can
+          // therefore settle above or below the sticky-nav safe zone.
+          activeLenis.resize();
+
+          const settleTarget = (settleAttempt: number) => {
+            window.requestAnimationFrame(() => {
+              activeLenis.resize();
+              const correctedTop = getTargetTop();
+              if (Math.abs(window.scrollY - correctedTop) > 2) {
+                activeLenis.scrollTo(correctedTop, { immediate: true, force: true });
+              }
+
+              // Below-fold chapters can release content-visibility containment or
+              // finish font/layout work after the first correction frame. Recheck
+              // for a short bounded window instead of letting the anchor drift.
+              if (settleAttempt < 4) {
+                settleTimerRef.current = window.setTimeout(() => {
+                  settleTimerRef.current = null;
+                  settleTarget(settleAttempt + 1);
+                }, 80);
+              }
+            });
+          };
+
+          activeLenis.scrollTo(getTargetTop(), {
+            onComplete: () => settleTarget(0),
+          });
         } catch (error) {
           warnDev('Lenis scrollTo failed. Falling back to native smooth scrolling.', error);
           lenisRef.current = null;
@@ -224,9 +253,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     [reducedMotion, warnDev]
   );
 
-  useEffect(() => () => {
-    if (retryTimerRef.current !== null) window.clearTimeout(retryTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (retryTimerRef.current !== null) window.clearTimeout(retryTimerRef.current);
+      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current);
+    },
+    []
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -342,17 +375,11 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         // the chunks are still in flight. Never initialize against an unmounted tree.
         if (cancelled) return;
 
-        if (!normalizeScrollConfiguredRef.current) {
-          try {
-            ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
-            normalizeScrollConfiguredRef.current = true;
-          } catch (error) {
-            // normalizeScroll is an enhancement; core scrolling remains functional.
-            warnDev('ScrollTrigger normalization failed. Continuing without it.', error);
-          }
-        }
-
-        gsap.ticker.lagSmoothing(500, 33);
+        // Lenis is the single desktop wheel owner. ScrollTrigger remains synchronized
+        // from Lenis' scroll event, but does not install normalizeScroll(), which would
+        // independently intercept the same wheel input on the JavaScript thread.
+        // Touch/coarse-pointer devices never reach this branch and keep native scrolling.
+        gsap.ticker.lagSmoothing(0);
 
         const safeRefresh = (force = false) => {
           try {
@@ -367,14 +394,18 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
         let lenisTickerFn: ((time: number) => void) | null = null;
 
         try {
+          const sectionOffset = getSectionOffset();
           lenis = new LenisConstructor({
             lerp: 0.1,
             smoothWheel: true,
-            syncTouch: true,
-            wheelMultiplier: 0.9,
-            easing: (t: number): number => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            touchMultiplier: 1.0,
-            anchors: true,
+            syncTouch: false,
+            wheelMultiplier: 1,
+            // Lenis' built-in anchor path accounts for both CSS scroll-margin and
+            // root scroll-padding. The app's canonical target uses a direct sticky-nav
+            // offset instead, so compensate here and make both click paths converge on
+            // the same final coordinate rather than launching competing destinations.
+            anchors: { offset: -sectionOffset },
+            stopInertiaOnNavigate: true,
             prevent: (node: HTMLElement) => {
               if (node.hasAttribute('data-lenis-prevent')) return true;
               const style = getComputedStyle(node);
@@ -543,14 +574,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }),
     [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
   );
-  const chapterLabel = CHAPTERS.find((chapter) => chapter.id === activeChapter)?.label ?? '';
 
-  return (
-    <ScrollCinemaContext.Provider value={value}>
-      {children}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`Now viewing: ${chapterLabel}`}
-      </div>
-    </ScrollCinemaContext.Provider>
-  );
+  return <ScrollCinemaContext.Provider value={value}>{children}</ScrollCinemaContext.Provider>;
 }

@@ -16,12 +16,10 @@
 // - Hero stays synchronous for first paint quality.
 // - Every other section streams through Suspense.
 // - Dynamic imports keep the initial bundle lean while preserving SSR.
-// - BookmarkToastLoader stays outside <main> so it does not pollute the main landmark.
 
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-import { BookmarkToastLoader } from '@/components/BookmarkToastLoader';
 import { HeroSection } from '@/components/HeroSection';
 import { SectionSkeleton } from '@/components/SectionSkeleton';
 import { getWritingPosts } from '@/lib/content';
@@ -84,51 +82,46 @@ export default async function Home() {
   const posts = (await getWritingPosts()).slice(0, 6);
 
   return (
-    <>
-      <main id="main-content" tabIndex={-1} className="min-h-[100dvh]">
-        {/* 00 — Hero: first paint, zero deferred loading */}
-        <HeroSection />
+    <main id="main-content" tabIndex={-1} className="min-h-[100dvh]">
+      {/* 00 — Hero: first paint, zero deferred loading */}
+      <HeroSection />
 
-        {/* 01 — Projects: deepest execution proof */}
-        <SectionBlock id="section-projects" label="Projects" height={560}>
-          <ProjectsSection />
+      {/* 01 — Projects: deepest execution proof */}
+      <SectionBlock id="section-projects" label="Projects" height={560}>
+        <ProjectsSection />
+      </SectionBlock>
+
+      {/* 01.5 — Production Record: proof of outcomes after depth */}
+      <SectionBlock id="section-testimonials" label="Testimonials" height={360}>
+        <TestimonialsSection />
+      </SectionBlock>
+
+      {/* 02 — Open Source: public artifacts and contribution signal */}
+      <SectionBlock id="open-source" label="Open Source" height={340}>
+        <OpenSourceSection />
+      </SectionBlock>
+
+      {/* 03 — Skills: breadth only after depth is established */}
+      <SectionBlock id="skills" label="Skills" height={480}>
+        <SkillsSection />
+      </SectionBlock>
+
+      {/* 04 — About: operating context and human grounding */}
+      <SectionBlock id="section-about" label="About" height={320}>
+        <AboutSection />
+      </SectionBlock>
+
+      {/* 05 — Writing: decision-making depth and technical judgment */}
+      {posts.length > 0 && (
+        <SectionBlock id="section-writing" label="Writing" height={420}>
+          <WritingSection posts={posts} />
         </SectionBlock>
+      )}
 
-        {/* 01.5 — Production Record: proof of outcomes after depth */}
-        <SectionBlock id="section-testimonials" label="Testimonials" height={360}>
-          <TestimonialsSection />
-        </SectionBlock>
-
-        {/* 02 — Open Source: public artifacts and contribution signal */}
-        <SectionBlock id="open-source" label="Open Source" height={340}>
-          <OpenSourceSection />
-        </SectionBlock>
-
-        {/* 03 — Skills: breadth only after depth is established */}
-        <SectionBlock id="skills" label="Skills" height={480}>
-          <SkillsSection />
-        </SectionBlock>
-
-        {/* 04 — About: operating context and human grounding */}
-        <SectionBlock id="section-about" label="About" height={320}>
-          <AboutSection />
-        </SectionBlock>
-
-        {/* 05 — Writing: decision-making depth and technical judgment */}
-        {posts.length > 0 && (
-          <SectionBlock id="section-writing" label="Writing" height={420}>
-            <WritingSection posts={posts} />
-          </SectionBlock>
-        )}
-
-        {/* 06 — Contact: final conversion endpoint */}
-        <SectionBlock id="section-contact" label="Contact" height={280}>
-          <ContactSection />
-        </SectionBlock>
-      </main>
-
-      {/* Transient UI lives outside main to keep the landmark clean */}
-      <BookmarkToastLoader />
-    </>
+      {/* 06 — Contact: final conversion endpoint */}
+      <SectionBlock id="section-contact" label="Contact" height={280}>
+        <ContactSection />
+      </SectionBlock>
+    </main>
   );
 }

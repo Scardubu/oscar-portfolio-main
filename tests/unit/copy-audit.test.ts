@@ -26,6 +26,12 @@ describe('Copy and Claims Audit Validation', () => {
     { pattern: /(?:respond|responds|response)[^\n]{0,24}within 24 hours/gi, message: 'Unsustainable response-time promise found' },
     { pattern: /350\+\s+international users/gi, message: 'Unsupported user-count claim found' },
     { pattern: /\$3k\+?\s+MRR/gi, message: 'Unsupported revenue claim found' },
+    { pattern: /mathematically invisible/gi, message: 'Absolute tenant-isolation outcome claim found' },
+    { pattern: /(?:edit|change)[^\n]{0,28}breaks?[^\n]{0,12}instantly/gi, message: 'Absolute audit-chain detection claim found' },
+    { pattern: /incident triage in minutes(?:,|\s)+not hours/gi, message: 'Unmeasured incident-triage time claim found' },
+    { pattern: /\bzero cloud egress\b/gi, message: 'Unbounded cloud-egress claim found' },
+    { pattern: /\bproduction-hardened packages\b/gi, message: 'Unqualified OSS production-hardening claim found' },
+    { pattern: /\ball packages are publicly auditable\b/gi, message: 'Overbroad public-auditability claim found' },
   ];
 
   const CSS_CLASS_PATTERNS = [
@@ -80,6 +86,7 @@ describe('Copy and Claims Audit Validation', () => {
           const lineNum = i + 1;
 
           for (const rule of RULES) {
+            rule.pattern.lastIndex = 0;
             if (rule.pattern.test(line)) {
               if (URL_PATTERNS.some((p) => p.test(line))) continue;
               if (rule.pattern.source.includes('\\bI\\b') && isCodeOrComment(line)) continue;
@@ -97,12 +104,15 @@ describe('Copy and Claims Audit Validation', () => {
               }
               violations.push(`${relPath}:${lineNum} — ${rule.message}: "${line.trim()}"`);
             }
+            rule.pattern.lastIndex = 0;
           }
 
           for (const rule of CLAIM_RULES) {
+            rule.pattern.lastIndex = 0;
             if (rule.pattern.test(line)) {
               violations.push(`${relPath}:${lineNum} — ${rule.message}: "${line.trim()}"`);
             }
+            rule.pattern.lastIndex = 0;
           }
         });
       }

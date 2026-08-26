@@ -27,23 +27,6 @@ export function PageWrapper({ children }: PageWrapperProps) {
   const [isEntering, setIsEntering] = useState(false);
 
   useEffect(() => {
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const root = document.documentElement;
-
-    const syncMotionPreference = () => {
-      root.toggleAttribute('data-reduced-motion', motionQuery.matches);
-    };
-
-    syncMotionPreference();
-    motionQuery.addEventListener('change', syncMotionPreference);
-
-    return () => {
-      motionQuery.removeEventListener('change', syncMotionPreference);
-      root.removeAttribute('data-reduced-motion');
-    };
-  }, []);
-
-  useEffect(() => {
     if (pathname === previousPath.current) return;
 
     previousPath.current = pathname;

@@ -35,7 +35,7 @@ The monorepo enforces a single TypeScript schema across mobile, web, and API sur
 
 **Chosen:** PostgreSQL Row-Level Security at the database engine  
 **Over:** `WHERE tenant_id = ?` filtering in the application layer  
-**Because:** NRS audit scrutiny demands proof that tenant data cannot cross-contaminate. "We filter in the application" is not proof — it is a claim that is unverifiable by the auditor without reading every query path. RLS policy attached to the database schema is enforceable and verifiable. Even if an application bug omits a WHERE clause, the database rejects the query. Tenant data is mathematically invisible across boundaries, not conditionally filtered.
+**Because:** NRS audit scrutiny demands an inspectable tenant boundary. "We filter in the application" leaves correctness distributed across every query path. PostgreSQL RLS moves that policy to the database schema, where it can reject rows outside the active tenant scope even when an application query omits its tenant predicate. The public evidence therefore treats RLS as a database-enforced isolation boundary, not as a guarantee against every possible schema or policy misconfiguration.
 
 ## Key decision: Idempotent BullMQ queues for NRS API rate limits
 
