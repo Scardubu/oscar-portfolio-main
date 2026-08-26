@@ -128,16 +128,8 @@ export function ScrollCinemaStaticProvider({ children }: Readonly<{ children: Re
     }),
     [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
   );
-  const chapterLabel = CHAPTERS.find((chapter) => chapter.id === activeChapter)?.label ?? '';
 
-  return (
-    <ScrollCinemaContext.Provider value={value}>
-      {children}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`Now viewing: ${chapterLabel}`}
-      </div>
-    </ScrollCinemaContext.Provider>
-  );
+  return <ScrollCinemaContext.Provider value={value}>{children}</ScrollCinemaContext.Provider>;
 }
 
 export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNode }>) {
@@ -149,6 +141,7 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
   const scrollProgressRef = useRef(0);
   const lenisRef = useRef<Lenis | null>(null);
   const retryTimerRef = useRef<number | null>(null);
+  const settleTimerRef = useRef<number | null>(null);
   const trackedSectionsRef = useRef(new Set<ChapterId>());
 
   const warnDev = useCallback((message: string, error?: unknown) => {
@@ -183,6 +176,10 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
       if (retryTimerRef.current !== null) {
         window.clearTimeout(retryTimerRef.current);
         retryTimerRef.current = null;
+      }
+      if (settleTimerRef.current !== null) {
+        window.clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
       }
 
       const tryScroll = (attempt: number) => {
@@ -219,14 +216,29 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
           // geometry during a smooth scroll; a moving HTMLElement target can
           // therefore settle above or below the sticky-nav safe zone.
           activeLenis.resize();
-          activeLenis.scrollTo(getTargetTop(), {
-            onComplete: () => {
-              window.requestAnimationFrame(() => {
-                const correctedTop = getTargetTop();
-                if (Math.abs(window.scrollY - correctedTop) <= 2) return;
+
+          const settleTarget = (settleAttempt: number) => {
+            window.requestAnimationFrame(() => {
+              activeLenis.resize();
+              const correctedTop = getTargetTop();
+              if (Math.abs(window.scrollY - correctedTop) > 2) {
                 activeLenis.scrollTo(correctedTop, { immediate: true, force: true });
-              });
-            },
+              }
+
+              // Below-fold chapters can release content-visibility containment or
+              // finish font/layout work after the first correction frame. Recheck
+              // for a short bounded window instead of letting the anchor drift.
+              if (settleAttempt < 4) {
+                settleTimerRef.current = window.setTimeout(() => {
+                  settleTimerRef.current = null;
+                  settleTarget(settleAttempt + 1);
+                }, 80);
+              }
+            });
+          };
+
+          activeLenis.scrollTo(getTargetTop(), {
+            onComplete: () => settleTarget(0),
           });
         } catch (error) {
           warnDev('Lenis scrollTo failed. Falling back to native smooth scrolling.', error);
@@ -241,9 +253,13 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     [reducedMotion, warnDev]
   );
 
-  useEffect(() => () => {
-    if (retryTimerRef.current !== null) window.clearTimeout(retryTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (retryTimerRef.current !== null) window.clearTimeout(retryTimerRef.current);
+      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current);
+    },
+    []
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -558,14 +574,6 @@ export function ScrollCinemaProvider({ children }: Readonly<{ children: ReactNod
     }),
     [activeChapter, reducedMotion, scrollToSection, setActiveChapter]
   );
-  const chapterLabel = CHAPTERS.find((chapter) => chapter.id === activeChapter)?.label ?? '';
 
-  return (
-    <ScrollCinemaContext.Provider value={value}>
-      {children}
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {`Now viewing: ${chapterLabel}`}
-      </div>
-    </ScrollCinemaContext.Provider>
-  );
+  return <ScrollCinemaContext.Provider value={value}>{children}</ScrollCinemaContext.Provider>;
 }
