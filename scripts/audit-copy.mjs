@@ -13,22 +13,16 @@ const RULES = [
   { pattern: /24\/7/g, message: '"24/7" phrase found' },
   { pattern: /TODO|FIXME|PLACEHOLDER/g, message: 'Placeholder copy found' },
   {
-    // Catch an arrow embedded mid-phrase (a char on both sides). This
-    // deliberately ignores `=>` (arrow fns) and trailing CTA/flow arrows like
-    // "Read case study →", which are an accepted idiom across the site.
     pattern: /[^=]→[^>]/g,
     message: "Text arrow found — use an icon, or the 'value → value' idiom",
-    // Exempt the "value → value" transformation idiom — e.g. "4h → 15min",
-    // "4h→15min", "Lagos → Global". Those arrows are transformational notation
-    // (a measured before/after relationship), not a directional UI affordance,
-    // so swapping in an icon would be semantically wrong.
     allow: /[\w%)\]]\s*→\s*[\w$([]/,
   },
   ...(STRICT_NRS ? [{ pattern: /\bFIRS\b/g, message: 'FIRS reference found — use NRS' }] : []),
 ];
 
-// Evidence contract: these phrases were removed by the claim ledger and must
-// not return through legacy data, RSS metadata, or machine-readable endpoints.
+// Evidence contract: these phrases either lack a public measurement artifact or
+// overstate what the linked source can prove. They must not re-enter rendered
+// copy, feeds, or machine-readable metadata through future refactors.
 const CLAIM_RULES = [
   { pattern: /99\.9(?:4)?%/gi, message: 'Unlinked uptime claim found' },
   { pattern: /45%\s+MTTD/gi, message: 'Unlinked MTTD claim found' },
@@ -41,16 +35,20 @@ const CLAIM_RULES = [
   { pattern: /(?:respond|responds|response)[^\n]{0,24}within 24 hours/gi, message: 'Unsustainable response-time promise found' },
   { pattern: /350\+\s+international users/gi, message: 'Unsupported user-count claim found' },
   { pattern: /\$3k\+?\s+MRR/gi, message: 'Unsupported revenue claim found' },
+  { pattern: /mathematically invisible/gi, message: 'Absolute tenant-isolation outcome claim found' },
+  { pattern: /(?:edit|change)[^\n]{0,28}breaks?[^\n]{0,12}instantly/gi, message: 'Absolute audit-chain detection claim found' },
+  { pattern: /incident triage in minutes(?:,|\s)+not hours/gi, message: 'Unmeasured incident-triage time claim found' },
+  { pattern: /\bzero cloud egress\b/gi, message: 'Unbounded cloud-egress claim found' },
+  { pattern: /\bproduction-hardened packages\b/gi, message: 'Unqualified OSS production-hardening claim found' },
+  { pattern: /\ball packages are publicly auditable\b/gi, message: 'Overbroad public-auditability claim found' },
 ];
 
-// Skip lines containing CSS class patterns (Tailwind utilities)
 const CSS_CLASS_PATTERNS = [
   /\b(my-|mx-|p-|m-|gap-|pt-|pb-|pl-|pr-|px-|py-|mt-|mb-|ml-|mr-)/,
   /\b(w-|h-|text-|bg-|border-|rounded-|flex-|grid-)/,
   /\b(shadow-|opacity-|transition-|transform-)/,
 ];
 
-// Skip URL patterns to avoid false positives on domain names like wa.me
 const URL_PATTERNS = [/https?:\/\/[^\s]+/, /wa\.me/];
 
 const SCAN_DIRS = ['app', 'components', 'lib', 'content'];
@@ -59,12 +57,6 @@ const SKIP_FILES = ['audit-copy.mjs', 'motionVariants.ts', 'github.ts', 'writing
 
 let violations = 0;
 
-// Strip comment spans so the rules scan rendered/source copy only — never code
-// comments, where directional arrows and first-person notes are legitimate.
-// Handles inline `//`, single- and multi-line `/* ... */` blocks, and JSX
-// `{/* ... */}`. Multi-line block state carries across calls via `state.inBlock`.
-// (Lines containing a URL are skipped earlier, so `//` inside `https://` is never
-// reached here.)
 function stripComments(line, state) {
   let result = '';
   let inBlock = state.inBlock;
@@ -127,18 +119,15 @@ async function scanFile(filePath) {
 
   if (SKIP_FILES.some((item) => filename.includes(item))) return;
 
-  // Skip blog directory (first-person narrative is intentional in posts)
   if (filePath.includes('/blog/') || filePath.includes('\\blog\\')) return;
 
   for (const rule of RULES) {
-    // Block-comment state is per-rule because each rule re-scans every line.
     const state = { inBlock: false };
 
     for (let index = 0; index < lines.length; index += 1) {
       const rawLine = lines[index];
       const trimmed = rawLine.trim();
 
-      // Markdown headings are not scanned (preserved from the original).
       if (!state.inBlock && trimmed.startsWith('#')) {
         continue;
       }
@@ -148,17 +137,14 @@ async function scanFile(filePath) {
         continue;
       }
 
-      // Skip lines containing CSS class patterns (Tailwind utilities)
       if (CSS_CLASS_PATTERNS.some((pattern) => pattern.test(code))) {
         continue;
       }
 
-      // Skip lines containing URL patterns
       if (URL_PATTERNS.some((pattern) => pattern.test(code))) {
         continue;
       }
 
-      // Per-rule allow-list — exempts legitimate idioms (e.g. "value → value").
       if (rule.allow) {
         rule.allow.lastIndex = 0;
         if (rule.allow.test(code)) {
