@@ -21,7 +21,11 @@ import './fixes.css';
 const syne = Syne({
   subsets: ['latin'],
   variable: '--font-syne',
-  display: 'swap',
+  // The hero H1 is the mobile LCP element. Avoid a late Syne swap repainting
+  // already-visible fallback text several seconds after first paint. `optional`
+  // preserves the first-paint face on constrained cold loads while preload keeps
+  // Syne available when it arrives early enough or is already cached.
+  display: 'optional',
   preload: true,
   fallback: ['Avenir Next', 'Segoe UI', 'Inter', 'system-ui', 'sans-serif'],
 });
