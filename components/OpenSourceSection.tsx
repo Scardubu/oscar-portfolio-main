@@ -64,8 +64,6 @@ const OSS_PROJECTS = [
   },
 ] as const;
 
-// CopyInstall — useAnimate() imperative sequence per Motion Contract Tier 3.
-// Sequence: COPY → scale(0.96) → COPIED ✓ (teal border pulse) → reset at 1.8s.
 function CopyInstall({ text }: { text: string }) {
   const reducedMotion = useReducedMotion();
   const [scope, animate] = useAnimate();
@@ -111,9 +109,9 @@ function CopyInstall({ text }: { text: string }) {
       onClick={() => {
         void handleCopy();
       }}
-      aria-label={`Copy install command: ${text}`}
       className="flex min-h-[48px] w-full items-center justify-between gap-3 rounded-lg border border-[oklch(100%_0_0_/_0.08)] bg-white/[0.03] px-3 py-3 text-left hover:border-white/16 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none active:scale-[0.98]"
     >
+      <span className="sr-only">Copy install command: </span>
       <code className="text-color-film-teal min-w-0 flex-1 font-mono text-[11px] tracking-wide break-words sm:break-normal">
         {text}
       </code>
@@ -215,12 +213,12 @@ export function OpenSourceSection() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`View ${item.name} on GitHub (opens in new tab)`}
                 className="border-color-border group text-color-text-muted mt-3 flex min-h-[48px] items-center justify-between gap-3 rounded-sm border-t pt-4 focus-visible:ring-2 focus-visible:ring-[color:var(--chapter-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
               >
                 <span className="font-mono text-[11px] tracking-wide uppercase transition group-hover:text-white">
                   View on GitHub
                 </span>
+                <span className="sr-only"> for {item.name} (opens in new tab)</span>
                 <svg
                   viewBox="0 0 24 24"
                   className="h-4 w-4 shrink-0 fill-current transition group-hover:text-white"
