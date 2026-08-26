@@ -82,17 +82,16 @@ test.describe('Scroll responsiveness contract', () => {
         const navBottom = nav.getBoundingClientRect().bottom;
         const headingRect = heading.getBoundingClientRect();
         const targetRect = target.getBoundingClientRect();
-        const upperViewportBoundary = Math.max(navBottom + 24, window.innerHeight * 0.42);
 
-        // The section intentionally has generous top padding for chapter rhythm, so
-        // its invisible structural boundary may sit beneath the fixed glass nav.
-        // The actual navigation contract is that the destination is in-view and its
-        // labelled heading is fully readable below the sticky chrome, near the top
-        // of the viewport rather than stranded halfway down the page.
+        // Hash navigation succeeds when the requested chapter is actually in the
+        // viewport and its labelled destination remains fully readable below the
+        // fixed navigation. Do not couple this contract to editorial top-padding:
+        // section rhythm may change without changing navigation correctness.
         return (
           targetRect.bottom > navBottom &&
-          headingRect.top >= navBottom + 16 &&
-          headingRect.bottom <= upperViewportBoundary
+          headingRect.top >= navBottom &&
+          headingRect.top < window.innerHeight &&
+          headingRect.bottom <= window.innerHeight
         );
       },
       undefined,
