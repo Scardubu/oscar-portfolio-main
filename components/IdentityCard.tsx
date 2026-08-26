@@ -31,7 +31,7 @@ const STACK_SIGNALS = ['Backend · Platform', 'AI infrastructure'] as const;
 const TRUST_SIGNALS = [
   { label: 'Focus', value: 'Distributed systems · platform reliability' },
   { label: 'Proof', value: 'TaxBridge · SabiScore · SwarmXQ' },
-  { label: 'Method', value: 'Constraint → decision → evidence' },
+  { label: 'Method', value: 'Constraint → decision → outcome → evidence' },
 ] as const;
 
 function PortraitFallback(): JSX.Element {
@@ -257,21 +257,23 @@ export default function IdentityCard({
             </div>
           </div>
 
-          <div className="mt-4 grid gap-2 sm:mt-5 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-5 sm:gap-2">
             {TRUST_SIGNALS.map((signal) => (
               <div
                 key={signal.label}
-                className="rounded-xl border border-white/8 bg-white/[0.045] px-3 py-2.5"
+                className="rounded-xl border border-white/8 bg-white/[0.045] px-2 py-2 sm:px-3 sm:py-2.5"
               >
-                <p className="font-mono text-[0.55rem] tracking-[0.16em] text-sky-200/75 uppercase">
+                <p className="font-mono text-[0.48rem] tracking-[0.12em] text-sky-200/75 uppercase sm:text-[0.55rem] sm:tracking-[0.16em]">
                   {signal.label}
                 </p>
-                <p className="mt-1 text-[0.7rem] leading-4 text-white/68">{signal.value}</p>
+                <p className="mt-1 text-[0.6rem] leading-[0.85rem] text-white/68 sm:text-[0.7rem] sm:leading-4">
+                  {signal.value}
+                </p>
               </div>
             ))}
           </div>
 
-          <p className="mt-3 font-mono text-[0.55rem] leading-4 tracking-[0.16em] text-white/42 uppercase sm:mt-4 sm:text-[0.62rem] sm:tracking-[0.24em]">
+          <p className="mt-4 hidden font-mono text-[0.62rem] leading-4 tracking-[0.24em] text-white/42 uppercase sm:block">
             Lagos · UTC+1 · Backend · Platform · AI infrastructure
           </p>
         </div>
