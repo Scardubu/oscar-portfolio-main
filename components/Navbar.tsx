@@ -46,6 +46,7 @@ export default function Navbar() {
   const scrolledRef = useRef(false);
   const mobileContentReadyRef = useRef(false);
   const lockedScrollYRef = useRef(0);
+  const pendingMobileTargetRef = useRef<string | null>(null);
   const { activeChapter, scrollToSection, lenisRef } = useScrollCinema();
   const pathname = usePathname();
 
@@ -115,14 +116,39 @@ export default function Navbar() {
     lenis?.stop();
 
     return () => {
+      const root = document.documentElement;
+      const previousInlineScrollBehavior = root.style.scrollBehavior;
+      const restoreY = lockedScrollYRef.current;
+      const pendingTarget = pendingMobileTargetRef.current;
+      pendingMobileTargetRef.current = null;
+
       document.body.classList.remove('nav-open');
       document.body.style.top = '';
-      document.documentElement.removeAttribute('data-nav-open');
-      window.scrollTo(0, lockedScrollYRef.current);
-      window.requestAnimationFrame(() => window.scrollTo(0, lockedScrollYRef.current));
-      lenis?.start();
+      root.removeAttribute('data-nav-open');
+
+      // WebKit can apply the root's CSS smooth-scroll policy while a fixed-body
+      // lock is being released. Force an instantaneous restoration for two paint
+      // frames so closing the menu cannot jump the document back to the top.
+      root.style.scrollBehavior = 'auto';
+      const restoreLockedPosition = () => {
+        window.scrollTo({ top: restoreY, left: 0, behavior: 'auto' });
+      };
+      restoreLockedPosition();
+
+      window.requestAnimationFrame(() => {
+        restoreLockedPosition();
+        window.requestAnimationFrame(() => {
+          root.style.scrollBehavior = previousInlineScrollBehavior;
+          lenis?.start();
+
+          // A mobile menu link must navigate only after the fixed-body lock has
+          // been released. Scrolling while locked is otherwise overwritten by
+          // the restoration step above, especially on iOS Safari.
+          if (pendingTarget) scrollToSection(pendingTarget);
+        });
+      });
     };
-  }, [mobileOpen, lenisRef]);
+  }, [mobileOpen, lenisRef, scrollToSection]);
 
   useEffect(() => {
     const onResize = () => {
@@ -152,8 +178,14 @@ export default function Navbar() {
     if (window.location.hash !== nextHash) {
       window.history.replaceState(null, '', nextHash);
     }
+
+    if (mobileOpen) {
+      pendingMobileTargetRef.current = id;
+      closeMenu();
+      return;
+    }
+
     scrollToSection(id);
-    closeMenu();
   };
 
   return (
