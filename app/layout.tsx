@@ -21,27 +21,22 @@ import './fixes.css';
 const syne = Syne({
   subsets: ['latin'],
   variable: '--font-syne',
-  // The hero H1 is the mobile LCP element. Avoid a late Syne swap repainting
-  // already-visible fallback text several seconds after first paint. `optional`
-  // preserves the first-paint face on constrained cold loads while preload keeps
-  // Syne available when it arrives early enough or is already cached.
+  // The hero H1 is the mobile LCP element. Keep the first paint on the
+  // metrically compatible fallback during a constrained cold load. Because the
+  // face is optional, preloading it only competes with render-blocking CSS.
   display: 'optional',
-  preload: true,
+  preload: false,
   fallback: ['Avenir Next', 'Segoe UI', 'Inter', 'system-ui', 'sans-serif'],
 });
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
-  // The hero body is the mobile LCP element. On constrained connections a
-  // late font swap repaints that paragraph well after the fallback text is
-  // already visible, turning an otherwise-fast FCP into a delayed LCP.
-  // `optional` keeps the metrically compatible fallback for that first visit
-  // and still uses DM Sans when it is cached or arrives inside the brief block
-  // period. Keep the preload enabled so the face can settle before first paint
-  // instead of being discovered after critical CSS and scripts have loaded.
+  // The hero body can also become the mobile LCP candidate. `optional` avoids
+  // a late repaint, while disabling preload keeps this non-essential face from
+  // competing with critical CSS and application chunks before first paint.
   display: 'optional',
-  preload: true,
+  preload: false,
   fallback: ['Inter', 'Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
 });
 
