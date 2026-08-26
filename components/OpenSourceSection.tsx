@@ -17,48 +17,48 @@ const OSS_PROJECTS = [
   {
     name: 'pg-tenant',
     stack: 'Node.js · PostgreSQL',
-    desc: "Row-Level Security at the engine — not the app. Even when application bugs exist, one tenant's records are mathematically invisible to another. Production-deployed in TaxBridge, where a single data-leak event means regulatory audit.",
-    metric: 'DB-layer tenant isolation',
-    metricEvidence: 'Shipped in TaxBridge',
+    desc: 'A PostgreSQL Row-Level Security helper for moving tenant-isolation policy closer to the database boundary instead of relying only on application checks. The repository documents the implementation and its intended use in multi-tenant systems.',
+    metric: 'DB-layer isolation policy',
+    metricEvidence: 'Public source repository',
     href: 'https://github.com/Scardubu/pg-tenant',
     install: 'npm i pg-tenant',
-    badge: 'Production-grade',
+    badge: 'Public source',
     badgeColor: 'var(--color-film-teal)',
     badgeBorder: 'oklch(73% 0.18 196 / 0.25)',
   },
   {
     name: 'audit-chain',
-    stack: 'Fintech · Compliance',
-    desc: 'Retroactive tampering becomes mathematically detectable. Every log entry is cryptographically bound to the previous — any edit breaks the chain instantly. Built for NRS and GDPR trails where proof of integrity is non-negotiable.',
-    metric: 'Tamper-evident log chain',
-    metricEvidence: 'NRS · GDPR audit trails',
+    stack: 'Fintech · Auditability',
+    desc: 'A hash-linked audit-log pattern designed to make retrospective record changes detectable during integrity checks. The public repository exposes the implementation so the chain construction and verification approach can be inspected directly.',
+    metric: 'Hash-linked audit records',
+    metricEvidence: 'Public source repository',
     href: 'https://github.com/Scardubu/audit-chain',
     install: 'npm i audit-chain',
-    badge: 'NRS · GDPR',
+    badge: 'Public source',
     badgeColor: 'oklch(72% 0.17 160)',
     badgeBorder: 'oklch(72% 0.17 160 / 0.25)',
   },
   {
     name: 'node-debug-llm',
     stack: 'AI · DevOps',
-    desc: 'Incident triage in minutes, not hours. Streams live system logs and traces to an AI model, returning a ranked plain-English list of likely root causes — with full context, not just stack traces.',
+    desc: 'An incident-triage experiment that turns logs and traces into ranked root-cause suggestions for operator review. Its public source makes the input path and ranking workflow inspectable without presenting an unmeasured time-savings claim.',
     metric: 'Ranked root-cause suggestions',
-    metricEvidence: 'Live traces + logs input',
+    metricEvidence: 'Public source repository',
     href: 'https://github.com/Scardubu/node-debug-llm',
     install: 'npm i node-debug-llm',
-    badge: 'AI-powered',
+    badge: 'Public source',
     badgeColor: 'oklch(75% 0.16 300)',
     badgeBorder: 'oklch(75% 0.16 300 / 0.25)',
   },
   {
     name: 'llm-dispatch',
     stack: 'AI · Agent Orchestration',
-    desc: 'Triadic model routing extracted from SwarmXQ. Routes tasks to the right local GGUF model — Phi-4-mini for classification, DeepSeek-R1 for reasoning, Qwen2.5-Coder for code — with fallback chains and zero cloud egress.',
-    metric: 'Triadic local model routing',
-    metricEvidence: 'Zero cloud egress',
+    desc: 'A local-model routing pattern derived from SwarmXQ. It assigns task classes to different GGUF models and defines fallback chains, with the linked public SwarmXQ source providing the inspectable evidence path for the routing approach.',
+    metric: 'Task-aware local routing',
+    metricEvidence: 'SwarmXQ public source',
     href: 'https://github.com/Scardubu/SwarmXQ',
     install: 'pip install llm-dispatch',
-    badge: 'Zero cloud',
+    badge: 'Source-linked',
     badgeColor: 'oklch(73% 0.17 65)',
     badgeBorder: 'oklch(73% 0.17 65 / 0.25)',
   },
@@ -146,9 +146,9 @@ export function OpenSourceSection() {
             eyebrowNumber="02"
             eyebrowLabel="Open Source"
             headingId="oss-heading"
-            title={<>Infrastructure for problems nobody packaged yet.</>}
+            title={<>Infrastructure patterns with inspectable source.</>}
             description={
-              'Four production-hardened packages from the fintech trenches — each solving a gap that general-purpose libraries don’t address. Install in minutes.'
+              'Four source-linked packages and experiments focused on tenant isolation, auditability, incident triage, and local-model routing. Each card names the evidence path it can actually support.'
             }
             eyebrowVariant={child}
             titleVariant={reducedMotion ? child : clipReveal}
@@ -158,19 +158,15 @@ export function OpenSourceSection() {
           />
         </m.div>
 
-        {/* Reciprocity frame — V1.0 Change 4: gift framing before proof. Per spec §Reciprocity Engine.
-              "extracted from production" signals maturity; "solved for real, then published"
-              signals generosity. Must appear before the first package card. */}
         <m.p
           variants={child}
           data-cinematic="panel"
           className="text-color-text-muted mb-6 max-w-[60ch] font-mono text-sm leading-7"
         >
-          Four packages extracted from production TaxBridge and SabiScore — solved for real, then
-          published.
+          The evidence contract is simple: public-source claims link to public source; private project
+          context is not presented as third-party verification.
         </m.p>
 
-        {/* Card grid: 1-col mobile → 2-col sm → 4-col xl */}
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
           {OSS_PROJECTS.map((item) => (
             <m.div
@@ -180,7 +176,6 @@ export function OpenSourceSection() {
               whileHover={reducedMotion ? undefined : hoverLift(-3)}
               className="glass-medium craft-project-card flex min-w-0 flex-col rounded-[var(--radius-xl)] p-5 sm:p-7"
             >
-              {/* Stack + badge row */}
               <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
                 <p className="label-mono text-color-text-muted min-w-0 flex-1 pr-2 leading-snug break-words">
                   {item.stack}
@@ -212,12 +207,10 @@ export function OpenSourceSection() {
                 </span>
               </div>
 
-              {/* Install command with useAnimate() COPY → COPIED ✓ sequence */}
               <div className="mt-5">
                 <CopyInstall text={item.install} />
               </div>
 
-              {/* GitHub link */}
               <a
                 href={item.href}
                 target="_blank"
@@ -240,16 +233,15 @@ export function OpenSourceSection() {
           ))}
         </div>
 
-        {/* Proof strip */}
         <m.div
           variants={child}
           data-cinematic="proof"
           className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
         >
           {[
-            { value: '4', label: 'public packages', detail: 'npm + pip' },
-            { value: 'Source', label: 'inspectable', detail: 'commits · docs · tests' },
-            { value: 'MIT', label: 'open license', detail: 'all packages' },
+            { value: '4', label: 'source-linked entries', detail: 'npm · pip · GitHub' },
+            { value: 'Source', label: 'inspectable', detail: 'implementation paths named' },
+            { value: 'Claims', label: 'bounded', detail: 'no unlinked outcome metrics' },
           ].map(({ value, label, detail }) => (
             <div key={value + label} className="flex items-baseline gap-2">
               <span className="text-color-film-teal font-mono text-sm font-semibold">{value}</span>
@@ -261,12 +253,8 @@ export function OpenSourceSection() {
           ))}
         </m.div>
 
-        {/* OSS transparency footer — V1.0 Change 4: eliminates "is this real?" doubt */}
-        <m.p
-          variants={child}
-          className="text-color-text-muted mt-5 font-mono text-[11px] opacity-40"
-        >
-          All packages are publicly auditable on{' '}
+        <m.p variants={child} className="text-color-text-muted mt-5 font-mono text-[11px]">
+          Public evidence paths are available on{' '}
           <a
             href="https://github.com/Scardubu"
             target="_blank"
@@ -276,9 +264,9 @@ export function OpenSourceSection() {
             GitHub
             <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
           </a>
+          .
         </m.p>
 
-        {/* Flow hook — V1.0 Change 6b: §Flow Mechanics §Open-source */}
         <m.p
           variants={child}
           data-cinematic="cta"
